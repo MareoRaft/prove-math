@@ -1,0 +1,74 @@
+# ask uncle joe what a good domain name service is
+
+#
+http://howto.ccs.neu.edu/howto/mail/configuring-alpine/
+
+zoho offers 10 free addresses!
+After an hour or two, log in to your Zoho Mail Control Panel and click Verify
+verified!
+working!
+
+RoundCube
+https://roundcube.net/download/
+roundcube is free but you may have to install stuff on your server.
+roundcube sounds very good and we may use it in the future when we expand.
+
+
+
+1. create a @provemath.org email account. (or com)
+
+2. create a user GitHub account with that email address.  (in the future, this account can be changed into an organization)
+
+
+---------------------------
+
+
+Victoria uses Digital Ocean.  It's cheap! 
+
+
+1. Create own module for a node (def, thm, ex, etc)
+
+2. Use NetworkX to create graph with the pointers
+
+3. Pickle the graph (will this save the node objects too?) (or a graph format like GML) Graph Modelling Language
+other options for saving a graph: https://networkx.github.io/documentation/latest/reference/readwrite.html
+
+4. Find a JS graph library to manage client side.
+
+
+
+
+--------------------------
+
+1. create company nammed Prove Math, LLC in Delaware.
+
+2. create an internship to fill content.  We could really use a CompSci guy for programming!!
+
+3. consider copyrighting or copylefting or patenting the idea: Firslt, to FORMAT math definitions, thrms, etc as a DIRECTED GRAPH which is VISIBLE to the user so that they can SEE the connections, TRACK their progress, DECIDE in what direction they want to learn. (Algorithms to suggest which definitions to learn, cloud, depth).  To enable professors to create AN ONLINE COURSE CURRICULUM by choosing a connected subgraph and sharing it w/ students, track their progress, etc.
+
+
+---------------------------
+
+figure out how to configure sudoers?
+
+learn to use git
+
+create a git repository on the server.  the *running* version on the server will pull from the git master.  So the master is the real master.
+
+when ready, move git repository to github.  you will have to buy the $7/month personal plan, and upgrade to a company at a later time.
+
+start using git
+
+
+-------------------------------
+
+use a template system to all users to choose preferences such as:
+1. boxed iff or if and only if
+2. always all, always each, or always every, or the default mix up
+3. color scheme
+4. zoom prefs (or maybe size of nodes, tightness of edges?)
+
+
+----------------------------
+
+send out a FB message about internship AFTER finals.  Ask Sarah Grace (Liu) to spread it.

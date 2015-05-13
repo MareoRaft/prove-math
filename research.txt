@@ -1,0 +1,13 @@
+look into this:
+
+http://en.wikipedia.org/wiki/Knowledge_Graph
+
+that is, the resources this thing uses may be the resources i should use too.
+
+
+learn this:
+http://bost.ocks.org/mike/circles/
+and this:
+http://bl.ocks.org/mbostock/929623
+and this!:
+http://bl.ocks.org/mbostock/3750558

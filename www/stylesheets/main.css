@@ -1,0 +1,84 @@
+/**
+ * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/)
+ * http://cssreset.com
+ */
+/* line 17, ../sass/_reset.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  box-sizing: border-box;
+}
+
+/* line 27, ../sass/_reset.scss */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+  box-sizing: border-box;
+}
+
+/* line 31, ../sass/_reset.scss */
+input, textarea {
+  box-sizing: border-box;
+}
+
+/* line 34, ../sass/_reset.scss */
+pre {
+  display: inline;
+}
+
+/* line 37, ../sass/_reset.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 40, ../sass/_reset.scss */
+blockquote, q {
+  quotes: none;
+}
+
+/* line 44, ../sass/_reset.scss */
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+/* line 48, ../sass/_reset.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 19, ../sass/main.scss */
+svg {
+  border: green 1px solid;
+}
+
+/* line 27, ../sass/main.scss */
+svg .link {
+  stroke: gray;
+  stroke-width: 2px;
+}
+
+/* line 32, ../sass/main.scss */
+svg text {
+  fill: white;
+  font: 10px sans-serif;
+  text-anchor: end;
+}

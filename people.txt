@@ -1,0 +1,61 @@
+Math ppl
+=========
+
+students
+----------
+Tom Gill
+thomas.gill@rutgers.edu
+(302) 530-4481
+
+
+professors
+----------
+Kahn, Jeffry
+jkahn@math.rutgers.edu
+Hill 728
+(848) 445-6919
+does graph theory
+
+János Komlos
+does graph theory
+
+
+
+
+
+Comp Sci ppl
+============
+
+students
+-----------
+Josh Matthews
+josh@jmatthews.us
+
+Theo Siu
+theodoresiu7@gmail.com
+might learn Python. learning programming.
+
+
+
+professors
+------------
+Sesh Venugopal
+easy going
+
+Ulrich (Uli) Kremer
+
+Paul Krzynowski
+pk.org
+
+Andrew Tjang
+leader of the peer leaders!  knows comp sci students.
+
+
+
+
+
+
+
+
+----------------------
+gyon and mike are meeting Mon. and Wed. to do complex and real analysis over the summer.

@@ -1,0 +1,471 @@
+// introductory things:
+// all, each, and every are synonyms
+// When definitions are of a certain form, 'if' actually means 'iff'. I should not do this here because you will never see it in math
+// how to study math (understand something completely before moving to the next thing)
+// how to use this resource (login and double click things that you understand to keep track)
+
+
+
+{
+	"definition":"A __vertex__ is a fundamental unit used to create graphs.",
+	"plural":"__vertices__",
+	"note":"Vertices are often drawn as a dot.  They are also called *nodes*.",
+}
+
+{
+	"definition":"An __edge__ is a set ${a,b}$ where $a$ and $b$ are vertices.",
+	"note":"It is possible that $a=b$.",
+	"intuition":"Edges are usually drawn as a line or curve connecting two vertices.  In the case that $a=b$, the edge is drawn as a small loop that connects $a$ to itself.",
+}
+
+{
+	"definition":"A __loop__ is an edge $e = {a,a} = {a}$.",
+}
+
+{
+	"definition":"A __simple edge__ is an edge which is not a loop.",
+}
+
+{
+	"definition":"The vertices $a$ and $b$ have __multiple edges__ if there are more than one edge ${a,b}$.",
+	"note":"$a$ and $b$ need not be distinct.",
+}
+
+{
+	"definition":"Vertices $a$ and $b$ are __adjacent__, denoted $a \sim b$, if there is an edge ${a,b}$.",
+	"denotation":"$a \sim b$",
+}
+
+{
+	"definition":"An edge $e$ is __incident__ to a vertex $v$ iff $v \in $e$.",
+	"intuition":"A loop is considered to be incident to its vertex at both ends.",
+}
+
+{
+	"def":"Two edges are __adjacent__ if there is a vertex that they are both incident to.",
+}
+
+{
+	"definition":"A set of edges $E$ is __on__ a set of vertices $V$ iff every edge in $E$ is incident to only vertices in $V$.",
+}
+
+{ // THIS IS THE GENERAL VERSION
+	"definition":"A __multigraph__ $G$ is an ordered pair $G = (V,E)$ where $V$ is a set of vertices and $E$ is a multiset of edges on $V$.",
+	"intuition":"$E$ is a multiset, so a pair of vertices could have more than one edge incident to them!  Also, there can be loops!",
+}
+
+{
+	"def":"Vertices $a$,$b$ have __multiple edges__ if there are more than one edge ${a,b}$.",
+}
+
+{
+	"def":"Vertex $a$,$b$ has __multiple loops__ if there are more than one edge ${a}$.",
+}
+
+{
+	"definition":"A __graph__ $G$ is a multigraph $G = (V,E)$ where $E$ is a set that contains no loops.",
+	"note":"Here, $E$ is a set, so multiple edges do not occur either.",
+	"note":"multigraphs are more general than graphs.",
+}
+
+{
+	"def":"A __null__ multigraph is a multigraph with 0 vertices.",
+}
+
+{
+	"def":"A __non-null__ multigraph is a multigraph with more than 0 vertices.",
+}
+
+{
+	"def":"A __trivial__ multigraph is a multigraph with exactly 1 vertex.",
+}
+
+{
+	"def":"A __nontrivial__ multigraph is a multigraph with more than 1 vertex.",
+}
+
+{
+	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
+}
+
+{
+	"def":"An __nonempty__ multigraph is a multigraph with more than 0 edges.",
+}
+
+
+{
+	"definition":"The __degree__ of a vertex $v$, denoted $d(v)$, is the number of edges incident to $v$, where loops are counted twice.",
+	"intuition":"For example, in the context of a graph $G = (V,E)$, this would refer to the number of edges *in $E$*.",
+	"definition":"Given a graph $G = (V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
+}
+
+{
+	"def":"The __minimum degree__ of a graph $G=(V,E)$ is the minimum of the degrees of the vertices in $V$.",
+	"den":"\delta(G)",
+}
+
+{
+	"def":"The __maximum degree__ of a graph $G=(V,E)$ is the maximum of the degrees of the vertices in $V$.",
+	"den":"\Delta(G)",
+}
+
+{
+	"definition":"A __walk__ is an alternating sequence of vertices and edges which starts and ends on a vertex, and satisfies the following condition:  For every edge ${a,b}$ in the sequence, the vertices adjacent to it in the sequence are $a$ and $b$.",
+	"intuition":"Pretend you are an ant on the graph.  You begin at a vertex.  You cross edge incident to you and arrive at the other side of that edge: another vertex.  You continue this process, going any way you please, and eventually stop at a vertex.",
+}
+
+{
+	"def":"A multiset of vertices and edges where *no edge is repeated* satisfies the __trail condition__.",
+	"definition":"A __trail__ is a walk that satisfies the trail condition.",
+}
+
+{
+	"def":"A multiset of vertices and edges where *no vertex is repeated* satisfies the __path condition__.",
+	"definition":"A __path__ is a trail that satisfies the path condition.",
+}
+
+{
+	"definition":"A walk which begins and ends on the same vertex is called __closed__.",
+}
+
+{ // these should be separate.
+	"definition":"A __stroll__ is a closed walk.",
+	"definition":"A __circuit__ is a closed trail.",
+	"definition":"A __cycle__ is a closed path.",
+	"note":"By convention, we do not think of the beginning vertex as occuring twice.  In particular, this means that a cycle is still a path by definition of a path.",
+	"note":"In older books, the term *circuit* actually refers to a *cycle*.  If you are using other resources, double check the definition of *circuit* to make sure you know what you are dealing with.",
+}
+
+{
+	"def":"An __$a$,$b$-walk__ is a walk with end vertices $a$ and $b$.",
+	"note":"This defines the terms __$a$,$b$-trail__ and __$a$,$b$-path__ too.",
+}
+
+{
+	"def":"Vertices $a$,$b$ have __multiple trails__ if there exists a class of $a$,$b$-trails (size at least 2) whose (internal) union satisfies the trail condition.",
+}
+
+{
+	"def":"Vertices $a$,$b$ have __multiple paths__ if there exists a class of $a$,$b$-paths (size at least 2) whose (internal) union satisfies the path condition.",
+}
+
+{
+	"definition":"Given a graph $G = (V,E)$, a trail or circuit in $G$ which uses all the edges in $E$ is called __Eulerian__.  This defines the terms __Eulerian trail__ and __Eulerian circuit__.",
+	"intuition":"nh",
+}
+
+{
+	"definition":"Given a graph $G = (V,E)$, a walk in $G$ which uses all the vertices in $V$ is called __Hamiltonian__.",
+	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms __Hamiltonian path__ and __Hamiltonian cycle__.",
+	"note":"In older books, the term *Hamiltonian circuit* is used instead of *Hamiltonian cycle*.",
+	"intuition":"",
+}
+
+
+{
+	"theorem":"Every odd stroll contains an odd cycle.",
+	"thm":"Every odd directed stroll contains an odd directed cycle.", // by the same proof
+}
+
+{
+	"exercise":"Given a complete graph of order $n$, it has an orientation where d+(v)=d-(v) for all v iff $n$ is odd.",
+	"proof":"When n is odd, Kn has even regular degree.  Therefore, an Eulerian circuit exists.  Following the circuit in one direction yields the orientation.  Of course, when n is even, each vertex has an odd number of neighbors, so it's impossible.",
+}
+
+{
+	"def":"define a digraph!",
+	"note":"*Digraph* is short for *directed graph*.  We use digraphs so often that it is convenient to use the shorter term.",
+}
+
+{
+	"definition":"A digraph is __strongly connected__ if for every pair of (distinct) vertices u, v, there exists a directed path from u to v.",
+}
+
+{
+	"thm":"A digraph G=(V,E) is strongly connected iff for every bi-partition of V into S and T, there exists an edge from S to T.",
+}
+
+{
+	"definition":"A __component__ of a graph is a maximally connected subgraph.",
+	"note":"*Component* is short for *connected component*.",
+}
+
+{
+	"definition":"A __strong component__ of a graph is a maximally strongly connected subgraph.",
+	"note":"*Strong component* is short for *strongly connected component*.", // i don't know if i like this entire definition.  because it sounds like a component that is strongly connected.  but a strongly connected component is not necc a connectec component!
+}
+
+{
+	"def":"An __arc__ is an ordered pair of vertices, $(a,b)$.",
+	"note":"also called a *directed edge*.",
+}
+
+{
+	"def":"Given an arc $(a,b)$, $a$ is the __tail__.",
+	"note":"Also called the *initial vertex*.",
+}
+
+{
+	"def":"Given an arc $(a,b)$, $b$ is the __head__.",
+	"note":"Also called the *terminal vertex*.",
+}
+
+{
+	"def":"A set of vertices is __independent__ if no pair of vertices is adjacent.",
+}
+
+{//original
+	"ex":"A nonempty graph has at least $2$ maximal independent sets.",
+}
+
+
+{
+	"definition":"A vertex $a$ __dominates__ a vertex $b$ if there is an arc $(a,b)$.",
+}
+
+{
+	"definition":"A vertex set $A$ __dominates__ a vertex set $B$ if for every $b \in B$, there exists an $a \in A$ such that $a$ dominates $b$.",
+}
+
+{ // or maybe we SHOULDNT union it with A!!!
+	"definition":"The __dominion__ of a vertex set $A$ is the union of $A$ and the largest set $B$ that $A$ dominates.",
+	"note":"The dominion of $x$ (WITHOUT x itself) is denoted $N+(x).", // another reason maybe we shouldn't include A
+}
+
+{
+	"definition":"Given a graph $G=(V,E)$, a set $T \sub V$ is __out-dominating__ if its dominion is $V$.",
+}
+
+{ // but now we need a version for digraphs!
+	"definition":"A __kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which is out-dominating.",
+}
+
+{
+	"def":"An __$n$-kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which when closed under domination $n$ times is $V$.",
+}
+
+{
+	"lemma":"A digraph which is a directed odd cycle has no kernel.",
+}
+
+{
+	"lemma":"A digraph with no odd cycles has at least one kernel.", // prove this! // see thm 1.4.16
+}
+
+{
+	"lemma":"A digraph with no even cycles has at most one kernel.", // prove this!
+}
+
+{
+	"lemma":"An acyclic digraph has a unique kernel.",
+}
+
+{ // oh no do all thrms need to say multigraph now!
+	"lemma":"Every connected multigraph can be oriented so that at most one vertex has odd outdegree.",
+}
+
+{ // use above!
+	"thm":"A connected loopless multigraph with an even number of edges can be decomposed into paths of length 2.",
+}
+
+// De Bruijn cycle for binary words of length 4, avoiding 0101 and 1010. // ask Komlos
+// (see 1.4.26 and then come back to all DeBruin things after it too.
+
+{
+	"thm:":"Given a multigraph with an odd cycle, if it has a strong orientation, then that orientation has an odd directed cycle.",
+}
+
+{
+	"thm":"The shortest Hamiltonian stroll of a digraph $D=(V,E)$ (if such a stroll exists), has a length of at most $\dfrac{(|V|+1)^2}4$ (for $n \geq 3$).",
+} // book uses different proof which i dont understand (gives overview)
+
+{
+	"def":"A __bigraph__ this needs to be finished",
+	"note":"*Bigraph* is short for *bipartite graph*",
+}
+
+{
+	"def":"The set ${s,t}$ is __bigraphic__ if there exists a bigraph where the set of the degrees of vertices in partite set $A$ is $s$, and the set of the degrees of vertices in partite set $B$ is $t$.",
+}
+
+{
+	"thm":"${p,q}$ is bigraphic iff ${p\\\\largest element size \\Delta, q -- subtract 1 from \\Delta largest elements}$ is bigraphic.",
+} // this is obvious because we need only that there exists a bigraph.  delta vertices in q lost an edge.  for the largest vertex in q, subtract and edge and add it to the guy that lost an edge.
+
+// Bipartite 2-switch and 0,1-matrices with fixed row and column sums // what is this stuff??? // komlos
+
+{
+	"def":"A __round-robin tournament__ ...?", // shall we call it tournament or round-robin or round-robin tournament?  i feel like we need the last.
+}
+
+{
+	"G and H are tournaments on a vertex set V s.t. d_G+(v) = d_H+(v) for all v \in V iff there are a series of triangle direction switches from G to H.",
+} // pf algorithm, all vert right side.  pull 1 vert to left side at a time.  each time, fix the edges by letting 3rd vertex be on right side and not caring what happens there.  this works until only 1 vertex left on right.  at that point, all edges across already determined
+
+// come back to 1.4.35
+
+{
+	"def":"Vertex $a$ __virtually dominates__ vertex $b$ if $a$ dominates $b$ or $a$ dominates any $t$ who dominates $b$.",
+}
+
+{
+	"def":"Given a round-robin tournament $R=(V,E)$, a vertex $v \in V$ is a __king__ if it virtually dominates every vertex in $V$ besides itself.",
+}
+
+{
+	"thm":"Every non-null round-robin tournament has a king.",
+}
+
+{
+	"thm":"Let R be a round-robin tournament where every vertex is dominated by some vertex.  If $k \in V$ is a king, then R has another king in $N+(k)$. And another in N-(k)!  3 kings!", // the dominion of k
+}
+
+// ask komlos: who will be teaching combinatorics this summer?
+
+{
+	"thm":"Every loopless digraph has a 2-kernel.",
+	// proof 1, induction
+	// proof 2, put vertices in line, all up arrows make acyclic. take kernel.  all down arrows make acyclic.  take kernel of kernel.
+}
+
+{
+	"def":"A digraph is called __unipathic__ if for any two vertices $j$ and $k$, there is at most one (simple??) path from $j$ to $k$.",
+}// ask komlos
+
+{
+	"thm":"If a unipathic digraph $U=(V_U,E_U)$ is a subgraph of a transitive round-robin tournament $R=(V_R,E_R)$, then $| E_U |$ is at most $\dfrac{|V_R|^2}4$.",
+}// proven! given unipathic subset of trans tourn, take the leftmost source and it's child tree.  then take the next leftmost source and it's child tree, etc.  Come up w/ equation for upper bound of edges.  find max.
+
+{// 1.4.41
+	"thm":"", //ask komlos
+}// not proven yet! (and all below too)
+
+{
+	1.4.42
+}
+
+// chapter 2
+{
+	"def":"A multigraph is __acyclic__ if it has no cycles.",
+}
+
+{
+	"def":"A __forest__ is an acyclic graph.",
+}
+
+{
+	"def":"A __tree__ is a connected forest.",
+	"intuition":"A forest is one or more trees.  That is, each component of a forest is a tree.",
+}
+
+{
+	"thm":"A multigraph is a tree iff it is loopless and has exactly one spanning tree.",
+}
+
+{
+	"def":"A __spanning tree__ of a multigraph $M=(V,E)$ is a subtree of $M$ of the form $T=(V,E_T)$.",
+	"intuition":"A spanning tree *spans* all the vertices $V$ of the multigraph $M$.",
+}
+
+{
+	"thm":"Given a multigraph $G=(V,E)$, there is a bijection between the spanning trees $T=(V,E\A)$ and the sets $A \sub E$, which select exactly one edge from each cycle in $G$.",
+}
+
+{
+	"lemma":"If a multigraph $M=(V,E)$ satisfies $|E|<|V|$, then $M$ has a component which is a tree.",
+}
+
+{
+	"lemma":"A maximal subforest $F$ of a multigraph $M$ consists of a spanning tree in each component of $M$.",
+}
+
+{
+	"lemma":"Every tree $T=(V,E)$ satisfies $|E| + 1 = |V|$.",
+}
+
+{
+	"lemma":"Every tree $T=(V,E)$ with average degree $d$ has $|V| = \dfrac2{2-d}$.",
+}//2.1.6
+
+{//part a
+	"thm":"A graph is a forest iff every induced subgraph has a vertex of degree at most $1$.",
+}
+
+{//part b
+	"thm":"A graph is a forest iff evert connected subgraph is an induced subgraph.",
+}
+
+{// part c
+	"thm":"The number of components of a forest $F=(V,E)$ is $|V|-|E|$.",
+}
+
+{
+	"ex":"If the acyclic graph $G=(V,E)$ satisfies $|E| = |V|-1$, then $G$ is connected.",
+}
+
+
+//2.1.9 here
+
+//2.1.10 here
+
+
+{
+	"lemma":"Every multigraph $M=(V,E)$ has at least $|E|-|V|+1$ cycles.",
+}
+
+// define distance
+// define exentricity
+// define radius
+// define diameter
+
+{
+	"Ex":"Find the diameter and radius of $K_{a,b}$.",
+}//2.1.12
+
+
+{// \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+// http://tex.stackexchange.com/questions/42271/floor-and-ceiling-functions
+	"ex":"Every graph of diameter $d$ has an independent set of vertices of size $\ceil{\dfrac{d+1}2}$.",
+}
+
+{
+	"ex":"What is the diameter and radius of an $n$-cube?",
+}
+
+{
+	"lem":"Every tree $T$ has at least $\Delta(T)$ leaves.",
+}
+
+{// 2.1.21
+	// If a simple n-vertex graph G has a decomposition into k spanning trees, and Delta(G) = delta(G) + 1, then
+	// 2k < n, and G has n − 2k vertices of degree 2k and 2k vertices of degree 2k − 1.
+} // unclear what decomposition means
+
+{
+	"ex":"A tree with degree list $k,k−1,...,2,1,1,...,1$ has $2 + k \choose 2$ vertices.",
+}
+
+{
+	"ex":"Given a tree $T=(V,E)$ and a $k \in \\bb{N}*$ such that every vertex has degree $1$ or $k$, prove that $|V|$ is $2$ more than a multiple of $k-1$.",
+}
+
+{
+	"def":"A __star__ is a bigraph of the form $K_{1,t}.",
+	"note":"Under this definition, the trivial graph is not a star.",
+}
+
+{// orig
+	"ex":"A tree which is not a star has at least $3$ maximal independent sets.",
+}
+
+{
+	"ex":"Given the set of all trees of order $n$, the tree with the maximum number of independent sets is the star.",
+}
+
+
+// start at 2.1.26
+
+
+
+
+
