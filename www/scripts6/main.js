@@ -52,7 +52,7 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 		katex.render(addDisplay+texText, el);
 	}
 	catch(err) {
-		$(this).html("<span class='err'>"+err+"</span>");
+		$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
 	}
 })
 

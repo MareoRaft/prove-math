@@ -34,7 +34,7 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 		try {
 			katex.render(addDisplay + texText, el);
 		} catch (err) {
-			$(this).html("<span class='err'>" + err + "</span>");
+			$(this).html("<span class='err'>" + "Hi! " + err + "</span>");
 		}
 	});
 

@@ -1,4 +1,4 @@
-cd /Users/Matthew/programming/javascript/Proof &&
+cd /Users/Matthew/programming/prove-math &&
 
 babel www/scripts6/lib/profile.js > www/scripts/lib/profile.js &&
 
@@ -10,9 +10,9 @@ babel www/scripts6/main.js > www/scripts/main.js &&
 echo 'done updating files on local machine' &&
 
 
-# cd /Users/Matthew/programming/javascript &&
+# cd /Users/Matthew/programming &&
 
-# scp -i ~/programming/amazon/berry/berry.pem -r ./Proof/* ec2-user@54.174.141.44:Proof/ &&
+# scp -i ~/programming/amazon/berry/berry.pem -r ./prove-math/* ec2-user@54.174.141.44:prove-math/ &&
 
 # echo 'done updating files on server' &&
 
