@@ -17,6 +17,9 @@ MathJax
 ===========
 supports everything.  not as pretty as KaTeX.  May have SLOW side-effect.
 
+here is how you set up, with MathML preference and stuff:
+http://docs.mathjax.org/en/latest/start.html
+
 
 
 
@@ -27,9 +30,7 @@ https://github.com/Khan/KaTeX/issues/186
 go direct to the source!  THIS is how you do it:
 https://github.com/Khan/KaTeX#usage
 
-all the files are missing the define(function(require, exports, module){ ... }) wrapper!  I will make a perl file to add them on.
-now the require("./") sugar is interpreting paths from the baseUrl, instead of the relative location of the file!
-
+ommitting the baseUrl in require.config object makes all path interpretations relative!
 
 What's missing from KaTeX?
 

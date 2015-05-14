@@ -10,10 +10,21 @@ require.config({
 		// backbone: "https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min",
 		d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
 		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
+		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
 	},
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
 		// backbone: { deps: ["jquery", "underscore"], exports: "Backbone" },
+		mathjax: {
+			exports: "MathJax",
+			init: function (){
+				MathJax.Hub.Config({
+					tex2jax: {inlineMath: [['$','$']]},
+				});
+				MathJax.Hub.Startup.onload();
+				return MathJax;
+			}
+		},
 	},
 });
 
@@ -24,6 +35,7 @@ require( [
 	"browser-detect",
 	"check-types",
 	"katex",
+	"mathjax",
 	"profile",
 ], function(
 	$,
@@ -32,6 +44,7 @@ require( [
 	browser,
 	check,
 	katex,
+	mathjax,
 	undefined
 ){
 
@@ -40,6 +53,8 @@ var ws = ('WebSocket' in window)? new WebSocket("ws://54.174.141.44:7766/websock
 if( !def(ws) ){
 	die('Your browser does not support websockets, which are essential for this program.')
 }
+
+
 
 $(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
 	var texText = $(this).text();
@@ -52,7 +67,11 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 		katex.render(addDisplay+texText, el);
 	}
 	catch(err) {
-		$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
+		if (err.__proto__ === katex.ParseError.prototype) {
+			$(this).html('$'+texText+'$')
+		} else {
+			$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
+		}
 	}
 })
 

@@ -11,11 +11,22 @@ require.config({
 		underscore: "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
 		// backbone: "https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min",
 		d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
-		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min" },
+		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
+		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured" },
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
-		underscore: { exports: "_" } } });
+		underscore: { exports: "_" },
+		// backbone: { deps: ["jquery", "underscore"], exports: "Backbone" },
+		mathjax: {
+			exports: "MathJax",
+			init: function init() {
+				MathJax.Hub.Config({
+					tex2jax: { inlineMath: [["$", "$"]] } });
+				MathJax.Hub.Startup.onload();
+				return MathJax;
+			}
+		} } });
 
-require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex", "profile"], function ($, _, d3, browser, check, katex, undefined) {
+require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex", "mathjax", "profile"], function ($, _, d3, browser, check, katex, mathjax, undefined) {
 
 	// websocket stuff!
 	var ws = "WebSocket" in window ? new WebSocket("ws://54.174.141.44:7766/websocket") : undefined; // url to send websocket messages
@@ -34,7 +45,11 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 		try {
 			katex.render(addDisplay + texText, el);
 		} catch (err) {
-			$(this).html("<span class='err'>" + "Hi! " + err + "</span>");
+			if (err.__proto__ === katex.ParseError.prototype) {
+				$(this).html("$" + texText + "$");
+			} else {
+				$(this).html("<span class='err'>" + "Hi! " + err + "</span>");
+			}
 		}
 	});
 
@@ -163,9 +178,6 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 
 	;
 }); // end require
-// or 0.2.0
-
-// backbone: { deps: ["jquery", "underscore"], exports: "Backbone" },
 // 4
 // these can be attributes or styles in SVG.  Both ways work.
 

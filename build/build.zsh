@@ -18,5 +18,7 @@ echo 'done updating files on local machine' &&
 
 # open http://54.174.141.44:7766/index.html &&
 
+open -a 'Opera' www/index.html &&
+
 
 echo 'done.'
