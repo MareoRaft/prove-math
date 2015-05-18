@@ -1,23 +1,17 @@
+1. figure out how to do those Stack Exchange mentioned algorithms...
+
+http://stackoverflow.com/questions/30287410/very-robust-javascript-digraph-library
+
+...on NetworkX in Python
+
+
+
+
+
+------------------------------
+
+
 # ask uncle joe what a good domain name service is
-
-#
-http://howto.ccs.neu.edu/howto/mail/configuring-alpine/
-
-zoho offers 10 free addresses!
-After an hour or two, log in to your Zoho Mail Control Panel and click Verify
-verified!
-working!
-
-RoundCube
-https://roundcube.net/download/
-roundcube is free but you may have to install stuff on your server.
-roundcube sounds very good and we may use it in the future when we expand.
-
-
-
-1. create a @provemath.org email account. (or com)
-
-2. create a user GitHub account with that email address.  (in the future, this account can be changed into an organization)
 
 
 ---------------------------
