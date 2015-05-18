@@ -1,4 +1,6 @@
 # I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
+#5/18 Theo was here
+
 
 from warnings import warn
 
