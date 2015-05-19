@@ -1,6 +1,7 @@
 1. figure out how to do those Stack Exchange mentioned algorithms...
 
 http://stackoverflow.com/questions/30287410/very-robust-javascript-digraph-library
+started a bounty on May 19.  Ends on May 26.
 
 ...on NetworkX in Python
 
@@ -44,15 +45,6 @@ other options for saving a graph: https://networkx.github.io/documentation/lates
 ---------------------------
 
 figure out how to configure sudoers?
-
-learn to use git
-
-create a git repository on the server.  the *running* version on the server will pull from the git master.  So the master is the real master.
-
-when ready, move git repository to github.  you will have to buy the $7/month personal plan, and upgrade to a company at a later time.
-
-start using git
-
 
 -------------------------------
 
