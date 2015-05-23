@@ -6,29 +6,28 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 
 import networkx as nx
 
-def source(DAG): # finds any source in Directed A(dir)cyclic Graph
-	if not nx.is_directed_acyclic_graph(DAG):
+def validate(self):
+	if not nx.is_directed_acyclic_graph(self):
 		raise TypeError('find_source only accepts Directed A(dir)cyclcic Graphs as input')
-	currentNode = DAG.nodes[0]
-	while( not DAG.is_source(currentNode) ):
-		currentNode = DAG.predecessor(currentNode)
+	return True
+
+def source(self): # finds any source in Directed A(dir)cyclic Graph
+	currentNode = self.nodes[0]
+	while( not self.is_source(currentNode) ):
+		currentNode = self.predecessor(currentNode)
 	return currentNode
 
-def sources(DAG): # finds the sources in a Directed A(dir)cyclic Graph
-	if not nx.is_directed_acyclic_graph(DAG):
-		raise TypeError('sources only accepts Directed A(dir)cyclcic Graphs as input')
-	dag = DAG.copy()
+def sources(self): # finds the sources in a Directed A(dir)cyclic Graph
+	dag2 = self.copy()
 	sources = []
-	while(dag.nonempty()):
-		source = source(dag)
+	while(dag2.nonempty()):
+		source = source(dag2)
 		sources.push(source)
 		sourceAndDescendants = {source} | set(source.descendants)
-		dag = dag.subgraph( set(dag.nodes) - sourceAndDescendants )
+		dag2 = dag2.subgraph( set(dag2.nodes) - sourceAndDescendants )
 	return sources
 
-def common_descendant_sources(DAG, nbunchA, nbunchB):
-	if not nx.is_directed_acyclic_graph(DAG):
-		raise TypeError('this func is for Directed A(dir)cyclic Graphs only') # we need a builtin type handling!
-	return sources( DAG.subgraph(common_descendants(DAG, nbunchA, nbunchB)) )
+def common_descendant_sources(self, nbunchA, nbunchB):
+	return sources( self.subgraph(common_descendants(DAG, nbunchA, nbunchB)) )
 
 
