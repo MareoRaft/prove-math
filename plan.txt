@@ -1,4 +1,14 @@
-1. figure out how to do those Stack Exchange mentioned algorithms...
+1. Understand the proper way to add the functionalities we want to NetworkX.  Here is an idea:
+in a seperate file: have the "def: " methods listed that are new methods to add to a Graph.  The code cannot run on it's own.  We will also have one of these files for DiGraph, and possible something for a DAG...  Then whenever NetworkX is updated, the contents of these files will be combined into the Graph, DiGraph and other class definitions of NetworkX itself.
+
+
+
+----------------------------------
+
+
+
+
+2. figure out how to do those Stack Exchange mentioned algorithms...
 
 http://stackoverflow.com/questions/30287410/very-robust-javascript-digraph-library
 started a bounty on May 19.  Ends on May 26.
@@ -58,3 +68,4 @@ use a template system to all users to choose preferences such as:
 ----------------------------
 
 send out a FB message about internship AFTER finals.  Ask Sarah Grace (Liu) to spread it.
+

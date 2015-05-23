@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 import networkx as nx
 
+def is_nonnull(self):
+	return bool(self.nodes())
+nx.Graph.is_nonnull = is_nonnull
 
+
+M = nx.DiGraph()
+M.add_edge('s', 't')
+
+print(M.is_nonnull())
+
+exit()
 
 DG = nx.DiGraph() # in particular, our graph will be a DIRECTED ACYCLIC GRAPH (DAG)
 # that is, the term DAG by definition means directed adirectedcyclic graph.  cycles are ok.  directed cycles are not.
@@ -112,63 +122,69 @@ def source(DAG): # finds any source in Directed A(dir)cyclic Graph
 		currentNode = DAG.predecessor(currentNode)
 	return currentNode
 
-# on hold
-# def sources(DAG): # finds the sources in a Directed A(dir)cyclic Graph
-# 	if not nx.is_directed_acyclic_graph(DAG):
-# 		raise TypeError('sources only accepts Directed A(dir)cyclcic Graphs as input')
-# 	currentNode = DAG.nodes[0]
-# 	while( not DAG.is_source(currentNode) ):
-# 		currentNode = DAG.predecessor(currentNode)
-# 	return currentNode
 
-
-
-
-############################################################
-print('the in edges of c and d are: ')
-print(DG.in_edges(nbunch={'c', 'd'})) # this INCLUDES edges between c and d  :(
-
-print('the out edges of c and d are: ')
-print(DG.out_edges(nbunch={'c', 'd'})) # this INCLUDES edges between c and d  :(
-
-print('the in degree of c is: ')
-print(DG.in_degree('c'))
-
-print('the in degrees of c and d are: ')
-print(DG.in_degree(nbunch={'c', 'd'}))
-
-
-# there is also a DiGraph.has_successor('a', 'b') if you only want to see if a directed path from 'a' to 'b' exists.
-print('the shortest path from a to d is: ')
-print(nx.shortest_path(DG, source='a', target='d')) # this finds shortest DIRECTED path
-
-
-def shortest_anydirectional_path(DG, source=None, target=None):
-	if not nx.is_directed(DG):
-		raise TypeError('shortest_anydirectional_path is for DiGraphs only')
-	G = DG.to_undirected()
-	return nx.shortest_path(G, source=source, target=target)
-
-print('the shortest anydirectional path between a and d is: ')
-print(shortest_anydirectional_path(DG, source='d', target='a'))
-
-
-def common_descendants(DG, nbunchA, nbunchB):
-	if not nx.is_directed(DG):
-		raise TypeError('common_descendants is for DiGraphs only')
-	descA = nx.descendants(DG, nbunchA)
-	descB = nx.descendants(DG, nbunchB)
-	return list(set.intersection(set(descA), set(descB)))
-
-
-print('the common descendants of a and c are: ')
-print(common_descendants(DG, 'a', 'c'))
-
-def common_descendant_sources(DAG, nbunchA, nbunchB):
+def sources(DAG): # finds the sources in a Directed A(dir)cyclic Graph
 	if not nx.is_directed_acyclic_graph(DAG):
-		raise TypeError('this func is for Directed A(dir)cyclic Graphs only') # we need a builtin type handling!
-	return sources( common_descendants(DAG, nbunchA, nbunchB) )
+		raise TypeError('sources only accepts Directed A(dir)cyclcic Graphs as input')
+	dag = DAG.copy()
+	sources = []
+	while(dag.nonempty()):
+		source = source(dag)
+		sources.push(source)
+		sourceAndDescendants = {source} | set(source.descendants)
+		dag = dag.subgraph( set(dag.nodes) - sourceAndDescendants )
+	return sources
 
+print('sources are: ')
+print(sources(DG))
+
+
+
+
+# ############################################################
+# print('the in edges of c and d are: ')
+# print(DG.in_edges(nbunch={'c', 'd'})) # this INCLUDES edges between c and d  :(
+
+# print('the out edges of c and d are: ')
+# print(DG.out_edges(nbunch={'c', 'd'})) # this INCLUDES edges between c and d  :(
+
+# print('the in degree of c is: ')
+# print(DG.in_degree('c'))
+
+# print('the in degrees of c and d are: ')
+# print(DG.in_degree(nbunch={'c', 'd'}))
+
+
+# # there is also a DiGraph.has_successor('a', 'b') if you only want to see if a directed path from 'a' to 'b' exists.
+# print('the shortest path from a to d is: ')
+# print(nx.shortest_path(DG, source='a', target='d')) # this finds shortest DIRECTED path
+
+
+# def shortest_anydirectional_path(DG, source=None, target=None):
+# 	if not nx.is_directed(DG):
+# 		raise TypeError('shortest_anydirectional_path is for DiGraphs only')
+# 	G = DG.to_undirected()
+# 	return nx.shortest_path(G, source=source, target=target)
+
+# print('the shortest anydirectional path between a and d is: ')
+# print(shortest_anydirectional_path(DG, source='d', target='a'))
+
+
+# def common_descendants(DG, nbunchA, nbunchB):
+# 	if not nx.is_directed(DG):
+# 		raise TypeError('common_descendants is for DiGraphs only')
+# 	descA = nx.descendants(DG, nbunchA)
+# 	descB = nx.descendants(DG, nbunchB)
+# 	return list(set.intersection(set(descA), set(descB)))
+
+
+# print('the common descendants of a and c are: ')
+# print(common_descendants(DG, 'a', 'c'))
+
+# def common_descendant_sources(DAG, nbunchA, nbunchB):
+# 	if not nx.is_directed_acyclic_graph(DAG):
+# 		raise TypeError('this func is for Directed A(dir)cyclic Graphs only') # we need a builtin type handling!
+# 	return sources( DAG.subgraph(common_descendants(DAG, nbunchA, nbunchB)) )
 
 
 
