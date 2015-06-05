@@ -11,3 +11,8 @@ The quiz will REMEMBER what it has quizzed you on in the past, so that it can TA
 
 
 3. Oauth accounts (FB, google+, etc) (and OpenID)!
+
+
+
+4. not sure what happened here, but i thought theo added something here about allowing people to request node information in JSON syntax.  maybe he didn't push to origin yet?
+
