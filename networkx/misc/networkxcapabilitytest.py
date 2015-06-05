@@ -11,7 +11,7 @@ import networkx as nx
 M = nx.DiGraph()
 M.add_edge('s', 't')
 
-print(M.is_nonnull())
+# print(M.is_nonnull())
 
 exit()
 
@@ -47,8 +47,8 @@ print(DG.neighbors('c')) # this is DIRECTED.  shows the CHILDREN.
 
 
 
-# undirected = nx.convert_to_undirected(DG)
-# print(undirected.connected_components())
+undirected = nx.convert_to_undirected(DG)
+print(undirected.connected_components())
 
 print(DG.degree())
 print(DG.degree().values())
