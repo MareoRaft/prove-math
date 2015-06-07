@@ -8,10 +8,43 @@ def test_validate():
 		['a', 'b'],
 		['c', 'd'],
 	])
-	# assert DG.validate()
+	assert DG.validate()
 
-	undirected = nx.convert_to_undirected(DG)
 	# assert undirected.validate()
 
+def test_predecessor():
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['y', 'c'],
+		['t', 'c'], ['c', 'd'],
+	])
+	assert DG.predecessor('c') in {'y', 't'}
 
-test_validate()
+def test_successor():
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['y', 'c'], ['c', 'L'],
+		['t', 'c'], ['c', 'd'],
+	])
+	assert DG.successor('c') in {'d', 'L'}
+
+def test_is_source():
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['y', 'c'], ['c', 'L'],
+		['t', 'c'], ['c', 'd'],
+	])
+	assert DG.is_source('y')
+	assert DG.is_source('t')
+	assert DG.is_source('c') == False
+	assert DG.is_source('d') == False
+
+def test_shortest_anydirectional_path():
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['y', 'c'], ['c', 'L'],
+		['t', 'c'], ['c', 'd'],
+	])
+	assert DG.shortest_anydirectional_path('y', 'L') == ['y', 'c', 'L']
+
+
