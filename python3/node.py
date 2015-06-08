@@ -1,5 +1,6 @@
 # I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
 #5/18 Theo was here
+# Next-Clone, setters/getters, read from file
 
 
 from warnings import warn
@@ -34,6 +35,14 @@ class node:
 			msg=msg+example+"\n"
 		
 		return msg
+
+
+def test_function(a):
+	b=a
+	b.append(3)
+	pass
+	
+
 """
 	@property
 	def type(self):
@@ -58,7 +67,9 @@ if __name__=="__main__":
 	b=node(sample_definition)
 	print(a)
 	print(b)
-
+	x=[1,2]
+	test_function(x)
+	print(x)
 
 		
 

@@ -11,3 +11,5 @@ The quiz will REMEMBER what it has quizzed you on in the past, so that it can TA
 
 
 3. Oauth accounts (FB, google+, etc)
+
+4. API for people to request nodes in the form of json dictionaries
