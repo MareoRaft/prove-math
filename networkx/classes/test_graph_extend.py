@@ -30,7 +30,7 @@
 # I really like the simplicity of pytest, so let's go with that...
 
 import networkx as nx
-# extend Graph and DiGraph with our files, and create class DAG
+import graph_extend
 
 def test_is_nonnull():
 	nonnull = nx.Graph()
@@ -41,8 +41,20 @@ def test_is_nonnull():
 	nonnull.add_edge('s', 't')
 	assert nonnull.is_nonnull()
 
+	null = nx.Graph()
+	assert null.is_nonnull() == False
+
+def test_is_null():
 	nonnull = nx.Graph()
-	assert nonnull.is_nonnull() == False
+	nonnull.add_node('a')
+	assert nonnull.is_null() == False
+
+	nonnull = nx.Graph()
+	nonnull.add_edge('s', 't')
+	assert nonnull.is_null() == False
+
+	null = nx.Graph()
+	assert null.is_null()
 
 
 

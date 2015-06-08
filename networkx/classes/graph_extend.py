@@ -6,11 +6,11 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 
 import networkx as nx
 
-def is_nonnull(self):
-	return bool(self.nodes())
-nx.Graph.is_nonnull = is_nonnull
+class Graph (nx.Graph):
+	def is_nonnull(self):
+		return bool(self.nodes())
 
-def is_null(self):
-	return not self.is_nonnull()
-nx.Graph.is_null = is_null
+	def is_null(self):
+		return not self.is_nonnull()
 
+nx.Graph = Graph
