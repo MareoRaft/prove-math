@@ -4,6 +4,8 @@
 
 
 from warnings import warn
+import json
+
 
 class node:
 
@@ -37,11 +39,12 @@ class node:
 		return msg
 
 
-def test_function(a):
-	b=a
-	b.append(3)
-	pass
-	
+def import_json(JsonDocumentFile):
+	print("Importing from"+str(JsonDocumentFile))
+	with open(JsonDocumentFile) as json_data:
+		d=json.load(json_data)
+		json_data.close()
+	return d
 
 """
 	@property
@@ -67,9 +70,12 @@ if __name__=="__main__":
 	b=node(sample_definition)
 	print(a)
 	print(b)
-	x=[1,2]
-	test_function(x)
-	print(x)
+	# Importing the same documents from a file 
+	json_data=import_json('JsonSample.txt')
+	for x in json_data:
+		c=node(x)
+		print c
+	
 
 		
 
