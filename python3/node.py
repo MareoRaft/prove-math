@@ -5,6 +5,7 @@
 
 from warnings import warn
 import json
+import copy
 
 
 class node:
@@ -114,6 +115,12 @@ def import_json(JsonDocumentFile):
 		json_data.close()
 	return d
 
+def node_clone(the_node):
+	clone=copy.deepcopy(the_node)
+	return clone
+
+	
+
 	
 
 if __name__=="__main__":
@@ -131,6 +138,10 @@ if __name__=="__main__":
 		c=node(x)
 		print c
 	
+	test_clone=node_clone(a)
+	test_clone.name="LALATheorem"
+	print(test_clone)
+	print(a)
 
 		
 
