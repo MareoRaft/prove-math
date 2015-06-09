@@ -38,6 +38,79 @@ class node:
 		
 		return msg
 
+	@property
+	def name(self):
+		return self.name
+
+	@name.setter
+	def name(self, new_name):
+		self.name=new_name
+
+	@property
+	def type(self):
+		return self.type
+
+	@type.setter
+	def type(self, newtype  ):
+		if newtype is ('definition' or 'theorem' or 'exercise'):
+			self.type = new_type
+		else:
+			warn('Bad type.')
+	
+	@property
+	def weight(self):
+		return self.weight
+	
+	@weight.setter
+	def weight(self, new_weight):
+		if isinstance(new_weight, (int, long, float)):
+			self.weight=new_weight
+		else:
+			warn('Bad type')
+
+	@property
+	def description(self):
+		return self.description
+	
+	@description.setter
+	def description(self, new_description):
+		self.description=new_description
+	
+	@property
+	def intuition(self):
+		return self.intuition
+
+	@intuition.setter
+	def intuition(self, new_intuition):
+		self.intuition=new_intuition
+
+	@property
+	def examples(self):
+		return self.examples
+
+	@examples.setter
+	def examples(self, example_overwrite):
+		self.examples=[example_overwrite]
+
+	def append_example(self, new_example):
+		self.examples.append(new_example)
+
+	@property
+	def notes(self):
+		return self.notes
+
+	@notes.setter
+	def notes(self, notes_overwrite):
+		self.notes=[notes_overwrite]
+
+	def append_note(self, new_note):
+		self.notes.append(new_note)
+
+	
+	
+	
+
+
 
 def import_json(JsonDocumentFile):
 	print("Importing from"+str(JsonDocumentFile))
@@ -46,21 +119,8 @@ def import_json(JsonDocumentFile):
 		json_data.close()
 	return d
 
-"""
-	@property
-	def type(self):
-		return self.type
+	
 
-	@type.setter
-	def type(self, type):
-		if type is ('definition' or 'theorem' or 'exercise'):
-			self.type = type
-		else:
-			warn('Bad type.')
-	@property
-	def definition(self):
-		return self.__definition
-"""
 if __name__=="__main__":
 
 	print("Hello World")
