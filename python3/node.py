@@ -106,11 +106,6 @@ class node:
 	def append_note(self, new_note):
 		self.notes.append(new_note)
 
-	
-	
-	
-
-
 
 def import_json(JsonDocumentFile):
 	print("Importing from"+str(JsonDocumentFile))
