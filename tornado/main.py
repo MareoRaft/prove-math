@@ -3,9 +3,9 @@ from tornado.web import url #constructs a URLSpec for you
 
 from tornado.web import RequestHandler
 from tornado.web import StaticFileHandler
-from tornado.web import Application
 from tornado.websocket import WebSocketHandler
 
+from tornado.web import Application
 from tornado.log import enable_pretty_logging
 
 class BaseHandler (RequestHandler):
@@ -28,7 +28,7 @@ class FormHandler (BaseHandler):
 		invar = self.get_body_argument("thisistheonlyinput")
 		print( "going to post the input!"+invar )
 
-# The WebSocket protocol is still in development. This module currently implements the “hixie-76” and “hybi-10” versions of the protocol. See this browser compatibility table on Wikipedia: http://en.wikipedia.org/wiki/WebSockets#Browser_support
+# The WebSocket protocol is still in development. This module currently implements the "hixie-76" and "hybi-10" versions of the protocol. See this browser compatibility table on Wikipedia: http://en.wikipedia.org/wiki/WebSockets#Browser_support
 class SocketHandler (WebSocketHandler):
 	def open(self):
 		print('websocket opened!')
