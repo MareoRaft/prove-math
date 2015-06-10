@@ -71,12 +71,20 @@ def test_shortest_anydirectional_path():
 	assert DG.shortest_anydirectional_path('d', 'L') == ['d', 'c', 'L']
 	assert DG.shortest_anydirectional_path('y', 't') == ['y', 'c', 't']
 
+def test_descendants():
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['y', 'c'], ['c', 'L'],
+		['t', 'c'], ['c', 'd'],
+	])
+	assert DG.descendants('t') == {'c', 'L', 'd'}
+
 def test_common_descendants():
 	DG = nx.DiGraph()
 	DG.add_edges_from([
 		['y', 'c'], ['c', 'L'],
 		['t', 'c'], ['c', 'd'],
 	])
-	assert set(DG.common_descendants('y', 't')) == {'c', 'd', 'L'}
-	assert set(DG.common_descendants('y', 'c')) == {'d', 'L'}
+	assert DG.common_descendants('y', 't') == {'c', 'd', 'L'}
+	assert DG.common_descendants('y', 'c') == {'d', 'L'}
 

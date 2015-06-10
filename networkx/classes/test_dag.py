@@ -17,24 +17,45 @@ def test_validate():
 	except TypeError as e:
 		assert str(e) == 'Not a Directed A(dir)cyclcic Graph!'
 
-# def test_source():
-# 	DAG = DAG()
-# 	DAG.add_edges_from([
-# 		['a', 'b'],
-# 		['b', 'c'],
-# 		['c', 'd'],
-# 	])
-# 	assert DAG.source() == 'a'
+def test_source():
+	DAG = nx.DAG()
+	DAG.add_edges_from([
+		['a', 'b'],
+		['b', 'c'],
+		['c', 'd'],
+	])
+	assert DAG.source() == 'a'
+	assert DAG.source() != 'd'
 
-# def test_sources():
-# 	DAG = DAG()
-# 	DAG.add_edges_from([
-# 		['a', 'b'],
-# 		['b', 'c'],
-# 		['c', 'd'],
-# 	])
-# 	assert DAG.sources() == ['a']
+def test_sources():
+	DAG = nx.DAG()
+	DAG.add_edges_from([
+		['a', 'b'],
+		['b', 'c'],
+		['c', 'd'],
+	])
+	assert DAG.sources() == {'a'}
 
-# 	DAG.add_edge('z', 'd')
-# 	assert set(DAG.sources()) == {'a', 'z'}
+	DAG.add_edge('z', 'd')
+	assert DAG.sources() == {'a', 'z'}
+
+def test_common_descendant_sources():
+	DAG = nx.DAG()
+	DAG.add_edges_from([
+		['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'z'],
+		['c', 't'], ['t', 'w'], ['w', 'x'], ['x', 'y'], ['y', 'z'],
+	])
+	assert DAG.common_descendant_sources('a', 'c') == {'d', 't'}
+	assert DAG.common_descendant_sources('d', 't') == {'z'}
+
+	DAG = nx.DAG()
+	DAG.add_edges_from([
+		['A', 'one'], ['one', 'mid'], ['mid', 'end'],
+		['B', 'one'],
+		['A', 'two'], ['two', 'mid'], ['mid', 'end'],
+		['B', 'two'],
+		['t', 'mid'],
+	])
+	assert DAG.common_descendant_sources('A', 'B') == {'one', 'two'}
+	# assert DAG.common_descendant_sources({'A', 'one'}, 'B') == {'two'} # networkx won't accept nbunches
 

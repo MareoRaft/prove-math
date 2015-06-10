@@ -34,10 +34,13 @@ class _DiGraphExtended (nx.DiGraph):
 		G = self.to_undirected()
 		return nx.shortest_path(G, source=source, target=target)
 
+	def descendants(self, nbunch):
+		return nx.descendants(self, nbunch) # returns a SET
+
 	def common_descendants(self, nbunchA, nbunchB):
-		descA = nx.descendants(self, nbunchA)
-		descB = nx.descendants(self, nbunchB)
-		return list(set.intersection(set(descA), set(descB)))
+		descA = self.descendants(nbunchA)
+		descB = self.descendants(nbunchB)
+		return set.intersection(descA, descB)
 
 for key, value in _DiGraphExtended.__dict__.items():
 	try:
