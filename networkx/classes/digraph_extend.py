@@ -5,8 +5,9 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 ###############################################################################
 
 import networkx as nx
+import graph_extend
 
-class DiGraph (nx.DiGraph):
+class _DiGraphExtended (nx.DiGraph):
 	def validate(self):
 		if not self.is_directed():
 			raise TypeError('is_source only accepts DiGraphs as input')
@@ -31,19 +32,17 @@ class DiGraph (nx.DiGraph):
 
 	def shortest_anydirectional_path(self, source=None, target=None):
 		G = self.to_undirected()
-		return G.shortest_path(source=source, target=target) # Graph has no attr shortest_path.  Should we try bleeding edge verion of networkx !?!?!?!?!?!?!?
-		# Should we try bleeding edge verion of networkx !?!?!?!?!?!?!?
+		return nx.shortest_path(G, source=source, target=target)
 
 	def common_descendants(self, nbunchA, nbunchB):
-		descA = self.descendants(nbunchA)
-		descB = self.descendants(nbunchB)
+		descA = nx.descendants(self, nbunchA)
+		descB = nx.descendants(self, nbunchB)
 		return list(set.intersection(set(descA), set(descB)))
 
+for key, value in _DiGraphExtended.__dict__.items():
+	try:
+		setattr(nx.DiGraph, key, value)
+	except TypeError:
+		pass
 
-
-nx.DiGraph = DiGraph
-
-
-G = nx.DiGraph()
-print(G.validate())
 

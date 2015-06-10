@@ -1,6 +1,23 @@
+#!/usr/bin/env python3
+import sys
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+	raise SystemExit('Please use Python version 3.4 or above')
+###############################################################################
+
 import networkx as nx
-import graph_extend
 import digraph_extend
+
+def test_is_nonnull():
+	nn = nx.DiGraph()
+	nn.add_node('a')
+	assert nn.is_nonnull()
+
+	nonnull = nx.DiGraph()
+	nonnull.add_edge('s', 't')
+	assert nonnull.is_nonnull()
+
+	null = nx.DiGraph()
+	assert null.is_nonnull() == False
 
 def test_validate():
 	DG = nx.DiGraph()
@@ -10,7 +27,11 @@ def test_validate():
 	])
 	assert DG.validate()
 
-	# assert undirected.validate()
+	try:
+		DG.to_undirected().validate()
+		assert False
+	except AttributeError as e:
+		assert str(e) == "'Graph' object has no attribute 'validate'"
 
 def test_predecessor():
 	DG = nx.DiGraph()
@@ -46,5 +67,16 @@ def test_shortest_anydirectional_path():
 		['t', 'c'], ['c', 'd'],
 	])
 	assert DG.shortest_anydirectional_path('y', 'L') == ['y', 'c', 'L']
+	assert DG.shortest_anydirectional_path('d', 't') == ['d', 'c', 't']
+	assert DG.shortest_anydirectional_path('d', 'L') == ['d', 'c', 'L']
+	assert DG.shortest_anydirectional_path('y', 't') == ['y', 'c', 't']
 
+def test_common_descendants():
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['y', 'c'], ['c', 'L'],
+		['t', 'c'], ['c', 'd'],
+	])
+	assert set(DG.common_descendants('y', 't')) == {'c', 'd', 'L'}
+	assert set(DG.common_descendants('y', 'c')) == {'d', 'L'}
 

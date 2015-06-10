@@ -29,6 +29,12 @@
 
 # I really like the simplicity of pytest, so let's go with that...
 
+#!/usr/bin/env python3
+import sys
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+	raise SystemExit('Please use Python version 3.4 or above')
+###############################################################################
+
 import networkx as nx
 import graph_extend
 

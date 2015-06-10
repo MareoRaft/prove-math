@@ -6,11 +6,26 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 
 import networkx as nx
 
-class Graph (nx.Graph):
+class _GraphExtended (nx.Graph):
 	def is_nonnull(self):
 		return bool(self.nodes())
 
 	def is_null(self):
 		return not self.is_nonnull()
 
-nx.Graph = Graph
+
+
+
+# for key in _GraphExtended.__dict__:
+for key, value in _GraphExtended.__dict__.items():
+	try:
+		# nx.Graph.is_nonnull = _GraphExtended.is_nonnull
+		setattr(nx.Graph, key, value)
+	except TypeError:
+		pass
+
+
+# nx.Graph.is_nonnull = _GraphExtended.is_nonnull
+# print(_GraphExtended.__dict__)
+# except TypeError as e:
+# 	print(str(e))
