@@ -36,7 +36,7 @@
 
 {
 	"definition":"Vertices $a$ and $b$ are __adjacent__, denoted $a \sim b$, if there is an edge ${a,b}$.",
-	"denotation":"$a \sim b$",
+//	"denotation":"$a \sim b$", // let's keep the denotations in the definitions
 }
 
 {
