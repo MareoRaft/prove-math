@@ -2,8 +2,8 @@
 import sys
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
-###############################################################################
 
+#################################### MAIN #####################################
 import networkx as nx
 import digraph_extend
 
