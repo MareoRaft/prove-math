@@ -19,6 +19,8 @@ def test_validate():
 
 def test_source():
 	DAG = nx.DAG()
+	assert DAG.source() == None
+
 	DAG.add_edges_from([
 		['a', 'b'],
 		['b', 'c'],
@@ -29,6 +31,8 @@ def test_source():
 
 def test_sources():
 	DAG = nx.DAG()
+	assert DAG.sources() == set()
+
 	DAG.add_edges_from([
 		['a', 'b'],
 		['b', 'c'],
@@ -57,5 +61,5 @@ def test_common_descendant_sources():
 		['t', 'mid'],
 	])
 	assert DAG.common_descendant_sources('A', 'B') == {'one', 'two'}
-	# assert DAG.common_descendant_sources({'A', 'one'}, 'B') == {'two'} # networkx won't accept nbunches
+	# assert DAG.common_descendant_sources({'A', 'one'}, 'B') == {'two'} # networkx won't accept nbunches :(
 

@@ -8,14 +8,7 @@ in a seperate file: have the "def: " methods listed that are new methods to add 
 
 
 
-2. figure out how to do those Stack Exchange mentioned algorithms...
-
-http://stackoverflow.com/questions/30287410/very-robust-javascript-digraph-library
-started a bounty on May 19.  Ends on May 26.
-
-...on NetworkX in Python
-
-
+2. all mentioned algorithms are done!!!!!   EXCEPT COMMON_DESCENDANTS needs to be able to except iterables (nbunches)!!!!!    as well as the resulting common_descendant_sources
 
 
 

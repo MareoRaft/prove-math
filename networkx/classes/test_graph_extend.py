@@ -62,7 +62,10 @@ def test_is_null():
 	null = nx.Graph()
 	assert null.is_null()
 
-
-
+def test_add_node_unique():
+	G = nx.Graph()
+	for i in range(0, 1000):
+		G.add_node_unique()
+	assert len(G.nodes()) == 1000
 
 
