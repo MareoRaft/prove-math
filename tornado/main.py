@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+import sys
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+	raise SystemExit('Please use Python version 3.4 or above')
+###############################################################################
 from tornado.ioloop import IOLoop
 from tornado.web import url #constructs a URLSpec for you
 
