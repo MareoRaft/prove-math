@@ -54,7 +54,7 @@ def make_app():
 			url('/websocket', SocketHandler),
 			url('/(.*)', StaticFileHandler, { "path":"../www/" }), # captures anything at all, and serves it as a static file. simple!
 		],
-		#settings
+		# settings:
 		debug = True,
 	)
 
@@ -62,8 +62,9 @@ def make_app():
 def main():
 	enable_pretty_logging()
 	application = make_app()
-	application.listen(7766) # Proof port
-	#other stuff
+	application.listen(80) # by listening on the http port (default for all browsers that i know of), user will not have to type "http://" or ":80" in the URL
+	# other stuff
 	IOLoop.current().start()
 
 if __name__ == "__main__": main()
+
