@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+import sys
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+	raise SystemExit('Please use Python version 3.4 or above')
+###############################################################################
 # I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
 #5/18 Theo was here
 # Next-Clone, setters/getters, read from file
