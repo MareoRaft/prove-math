@@ -2,8 +2,39 @@
 import sys
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
-###############################################################################
 
+################################## HELPERS ####################################
+import time
+
+def string_unique():
+	return str(time.time())
+
+def create_s_pointing_to_source(DG, source):
+	if not hasattr(source, '__iter__'): # although strings are iterable, they don't have __iter__.  My goal is that "scalar" values will get stuffed into a list.  But lists and sets will not.
+		source = [source]
+	s = 'temporary_node.s.' + string_unique() # this node is meant to be unique from everything else in the graph
+	for node in source:
+		DG.add_edge(s, node) # this automatically adds s to G too
+	return s
+
+def create_t_pointing_from_target(DG, target):
+	if not hasattr(target, '__iter__'):
+		target = [target]
+	t = 'temporary_node.t.' + string_unique()
+	for node in target:
+		DG.add_edge(node, t)
+	return t
+
+def shortest_path_helper(DG, source, target):
+	s = create_s_pointing_to_source(DG, source)
+	t = create_t_pointing_from_target(DG, target)
+
+	try:
+		return nx.shortest_path(DG, source=s, target=t)[1:-1] # the final 1:-1 cuts off the first and last element, that is, s and t.
+	except nx.exception.NetworkXNoPath:
+		return None
+
+#################################### MAIN #####################################
 import networkx as nx
 import graph_extend
 
@@ -30,12 +61,19 @@ class _DiGraphExtended (nx.DiGraph):
 	def is_source(self, node): # checks if a node is a source of a Directed Graph
 		return self.predecessor(node) == None
 
+	def shortest_path(self, source=None, target=None): # since this is a DiGraph obj, this gives the shortest DIRECTED path
+		DG = self.copy()
+		return shortest_path_helper(DG, source, target)
+
 	def shortest_anydirectional_path(self, source=None, target=None):
-		G = self.to_undirected()
-		return nx.shortest_path(G, source=source, target=target)
+		DG = self.to_undirected()
+		return shortest_path_helper(DG, source, target)
+
+	def ancestors(self, nbunch):
+		return nx.ancestors(self, nbunch) # returns a SET
 
 	def descendants(self, nbunch):
-		return nx.descendants(self, nbunch) # returns a SET
+		return nx.descendants(self, nbunch)
 
 	def common_descendants(self, nbunchA, nbunchB):
 		descA = self.descendants(nbunchA)

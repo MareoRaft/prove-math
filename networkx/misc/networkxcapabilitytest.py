@@ -41,13 +41,8 @@ DG.add_edges_from([
 
 # w --> x
 
-print('the neighbors (children) of c are: ')
-print(DG.neighbors('c')) # this is DIRECTED.  shows the CHILDREN.
 
-
-
-undirected = nx.convert_to_undirected(DG)
-print(undirected.connected_components())
+# print(undirected.connected_components())
 
 # print(DG.degree())
 # print(DG.degree().values())
@@ -129,7 +124,7 @@ print(undirected.connected_components())
 
 # # there is also a DiGraph.has_successor('a', 'b') if you only want to see if a directed path from 'a' to 'b' exists.
 # print('the shortest path from a to d is: ')
-# print(nx.shortest_path(DG, source='a', target='d')) # this finds shortest DIRECTED path
+print(nx.shortest_path(DG, source='a', target='d')) # this finds shortest DIRECTED path
 
 
 # # shortest_anydirectional_path(DG, source=None, target=None):
