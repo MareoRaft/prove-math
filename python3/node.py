@@ -1,6 +1,7 @@
 # I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
 #5/18 Theo was here
-# Next-Clone, setters/getters, read from file
+#def vs definition, make clone a method, node is capitalized
+# MathJax/Node.js, run bash commands from python script, export json
 
 
 from warnings import warn
@@ -136,7 +137,7 @@ if __name__=="__main__":
 	json_data=import_json('JsonSample.txt')
 	for x in json_data:
 		c=node(x)
-		print c
+		print(c)
 	
 	test_clone=node_clone(a)
 	test_clone.name="LALATheorem"
