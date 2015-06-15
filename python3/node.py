@@ -45,74 +45,6 @@ class node:
 
 		return msg
 
-	@property
-	def name(self):
-		return self.name
-
-	@name.setter
-	def name(self, new_name):
-		self.name=new_name
-
-	@property
-	def type(self):
-		return self.type
-
-	@type.setter
-	def type(self, newtype  ):
-		if newtype is ('definition' or 'theorem' or 'exercise'):
-			self.type = new_type
-		else:
-			warn('Bad type.')
-
-	@property
-	def weight(self):
-		return self.weight
-
-	@weight.setter
-	def weight(self, new_weight):
-		if isinstance(new_weight, (int, long, float)):
-			self.weight=new_weight
-		else:
-			warn('Bad type')
-
-	@property
-	def description(self):
-		return self.description
-
-	@description.setter
-	def description(self, new_description):
-		self.description=new_description
-
-	@property
-	def intuition(self):
-		return self.intuition
-
-	@intuition.setter
-	def intuition(self, new_intuition):
-		self.intuition=new_intuition
-
-	@property
-	def examples(self):
-		return self.examples
-
-	@examples.setter
-	def examples(self, example_overwrite):
-		self.examples=[example_overwrite]
-
-	def append_example(self, new_example):
-		self.examples.append(new_example)
-
-	@property
-	def notes(self):
-		return self.notes
-
-	@notes.setter
-	def notes(self, notes_overwrite):
-		self.notes=[notes_overwrite]
-
-	def append_note(self, new_note):
-		self.notes.append(new_note)
-
 
 def json_import(file_path):
 	print("Importing from: " + str(file_path))
@@ -138,22 +70,17 @@ if __name__=="__main__":
 	b=node(sample_definition)
 	print(a)
 	print(b)
-	# Importing the same documents from a file
+	#Importing the same documents from a file
+
 	data_dictionary = json_import('../data/json-sample.json')
 	for x in data_dictionary:
 		c=node(x)
-<<<<<<< HEAD
 		print(c)
-	
-=======
-		print c
 
->>>>>>> 06557a821fc1051aa31ec295cfbee09f8a51a043
 	test_clone=node_clone(a)
 	test_clone.name="LALATheorem"
 	print(test_clone)
 	print(a)
-
 
 
 
