@@ -1,0 +1,28 @@
+{
+	"nodes":
+	[
+	    {
+	        "name": "Pythagorean theorem",
+	        "type": "theorem",
+	        "weight": 1,
+	        "description": "a^2+b^2=c^2",
+	        "intuition": "A simple explanation",
+	        "examples": [
+	            "Example 1",
+	            "Example 2"
+	        ]
+	    },
+	    {
+	        "name": "vertex",
+	        "type": "definition",
+	        "weight": 1,
+	        "description": "A __vertex__ is a fundamental unit used to create graphs.",
+	        "note":"Vertices are often drawn as a dot.  They are also called *nodes*.",
+	        "intuition": "A simple explanation.",
+	        "examples": [
+	            "Example 1",
+	            "Example 2"
+            ]
+		}
+	]
+}
