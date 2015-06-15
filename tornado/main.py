@@ -2,9 +2,10 @@
 import sys
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
-###############################################################################
+
+################################## MAIN #######################################
 from tornado.ioloop import IOLoop
-from tornado.web import url #constructs a URLSpec for you
+from tornado.web import url # constructs a URLSpec for you
 
 from tornado.web import RequestHandler
 from tornado.web import StaticFileHandler
@@ -37,12 +38,33 @@ class FormHandler (BaseHandler):
 class SocketHandler (WebSocketHandler):
 	def open(self):
 		print('websocket opened!')
+		# get node json info
+		# send it over!!
+		# self.write_message()
 
 	def on_message(self, message):
 		print('got message: ' + message)
-		# do stuff
-		# send a message back
-		self.write_message('ten four')
+		# for the future, consider that these may be FASTER:
+		# 	import simplejson as json
+		# 	json.loads(obj) # first option
+		# 	or
+		# 	cjson.decode(obj) # second option
+		graph = {
+			nodes: [
+				{x: 40, y: 40}, // 0
+				{x: 80, y: 80}, // 1
+				{x: 160, y: 160}, // 2
+				{x: 0, y: 20}, // 3
+				{x: 80, y: 300}, // 4
+			],
+			links: [
+				{source: 0, target: 1, fixed: True, },
+				{source: 2, target: 3},
+				{source: 3, target: 4},
+			],
+		}
+		bundled = json.dumps(graph)
+		# self.write_message(bundled)
 
 	def on_close(self):
 		print('websocket closed')
