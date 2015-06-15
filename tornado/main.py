@@ -13,6 +13,7 @@ from tornado.websocket import WebSocketHandler
 
 from tornado.web import Application
 from tornado.log import enable_pretty_logging
+import json
 
 class BaseHandler (RequestHandler):
 	def initialize(self, var):
@@ -50,21 +51,20 @@ class SocketHandler (WebSocketHandler):
 		# 	or
 		# 	cjson.decode(obj) # second option
 		graph = {
-			nodes: [
-				{x: 40, y: 40}, // 0
-				{x: 80, y: 80}, // 1
-				{x: 160, y: 160}, // 2
-				{x: 0, y: 20}, // 3
-				{x: 80, y: 300}, // 4
+			'nodes': [
+				{'x': 40,  'y': 40}, # 0 is the index of this node
+				{'x': 80,  'y': 80}, # 1
+				{'x': 160, 'y': 160}, # 2
+				{'x': 0,   'y': 20}, # 3
 			],
-			links: [
-				{source: 0, target: 1, fixed: True, },
-				{source: 2, target: 3},
-				{source: 3, target: 4},
+			'links': [
+				{'source': 0, 'target': 1, 'fixed': True, },
+				{'source': 2, 'target': 3},
+				{'source': 3, 'target': 1},
 			],
 		}
 		bundled = json.dumps(graph)
-		# self.write_message(bundled)
+		self.write_message(bundled)
 
 	def on_close(self):
 		print('websocket closed')

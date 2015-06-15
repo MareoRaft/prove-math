@@ -1,0 +1,4 @@
+To kick off server, cd into THIS folder (tornado directory), then type
+
+sudo python3 main.py
+
