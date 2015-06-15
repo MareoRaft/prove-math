@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+import sys
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+	raise SystemExit('Please use Python version 3.4 or above')
+###############################################################################
 # I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
 #5/18 Theo was here
 #def vs definition, make clone a method, node is capitalized
@@ -25,19 +30,19 @@ class node:
 		if "examples" in doc:
 			for single_examples in doc["examples"]:
 				self.examples.append(single_examples)
-				
+
 		if "notes" in doc:
 			for single_notes in doc["notes"]:
 				self.notes.append(single_notes)
 
 	def __repr__(self):
-		
+
 		msg="(%s,%s,%s,%d)\n" %(self.name,self.type,self.description,self.weight)
 		if self.intuition:
 			msg=msg+self.intuition+"\n"
 		for example in self.examples:
 			msg=msg+example+"\n"
-		
+
 		return msg
 
 	@property
@@ -58,11 +63,11 @@ class node:
 			self.type = new_type
 		else:
 			warn('Bad type.')
-	
+
 	@property
 	def weight(self):
 		return self.weight
-	
+
 	@weight.setter
 	def weight(self, new_weight):
 		if isinstance(new_weight, (int, long, float)):
@@ -73,11 +78,11 @@ class node:
 	@property
 	def description(self):
 		return self.description
-	
+
 	@description.setter
 	def description(self, new_description):
 		self.description=new_description
-	
+
 	@property
 	def intuition(self):
 		return self.intuition
@@ -109,20 +114,20 @@ class node:
 		self.notes.append(new_note)
 
 
-def import_json(JsonDocumentFile):
-	print("Importing from"+str(JsonDocumentFile))
-	with open(JsonDocumentFile) as json_data:
-		d=json.load(json_data)
-		json_data.close()
-	return d
+def json_import(file_path):
+	print("Importing from: " + str(file_path))
+	with open(file_path) as file_pointer:
+		dictionary = json.load(file_pointer)
+		# file_pointer.close() # according to SO ppl, this is called implicitly anyway: http://stackoverflow.com/questions/20199126/reading-a-json-file-using-python
+	return dictionary
 
 def node_clone(the_node):
 	clone=copy.deepcopy(the_node)
 	return clone
 
-	
 
-	
+
+
 
 if __name__=="__main__":
 
@@ -133,18 +138,23 @@ if __name__=="__main__":
 	b=node(sample_definition)
 	print(a)
 	print(b)
-	# Importing the same documents from a file 
-	json_data=import_json('JsonSample.txt')
-	for x in json_data:
+	# Importing the same documents from a file
+	data_dictionary = json_import('../data/json-sample.json')
+	for x in data_dictionary:
 		c=node(x)
+<<<<<<< HEAD
 		print(c)
 	
+=======
+		print c
+
+>>>>>>> 06557a821fc1051aa31ec295cfbee09f8a51a043
 	test_clone=node_clone(a)
 	test_clone.name="LALATheorem"
 	print(test_clone)
 	print(a)
 
-		
+
 
 
 

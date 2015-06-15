@@ -29,7 +29,8 @@ require.config({
 require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex", "mathjax", "profile"], function ($, _, d3, browser, check, katex, mathjax, undefined) {
 
 	// websocket stuff!
-	var ws = "WebSocket" in window ? new WebSocket("ws://54.174.141.44:7766/websocket") : undefined; // url to send websocket messages
+	// var ws = ('WebSocket' in window)? new WebSocket("ws://54.174.141.44:7766/websocket"): undefined; // url to send websocket messages
+	var ws = "WebSocket" in window ? new WebSocket("ws://provemath.org/websocket") : undefined; // url to send websocket messages
 	if (!def(ws)) {
 		die("Your browser does not support websockets, which are essential for this program.");
 	}
@@ -56,8 +57,17 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 	ws.onopen = function () {
 		ws.send("Hello, world");
 	};
-	ws.onmessage = function (evt) {
-		alert(evt.data);
+	ws.onmessage = function (event) {
+		alert(event.data);
+		var unbundled = JSON.parse(event.data);
+		// if( typeof(json.message) !== 'undefined' ){
+		// 	$('#container').append( json.message+'".' + '<br /><br />' )
+		// }
+		// if( json.command=='loadprefs' ){
+		// 	loadPrefs(json.prefs)
+		// }
+		var graph = unbundled;
+		begin_node_stuff(graph);
 	};
 
 	var a = ["hi", "there"];
@@ -140,44 +150,50 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 			} });
 	}
 
-	// now that we get the data, do all the things that we can only do once the data comes:
-	// pretend this works
-	// d3.tsv("../data/mybargraph.tsv", d => +d.value, function(error, data){
-	// pretend data comes in as a json unwrapped into a js object
-	var graph = {
-		nodes: [{ x: 40, y: 40 }, // 0
-		{ x: 80, y: 80 }, // 1
-		{ x: 160, y: 160 }, // 2
-		{ x: 0, y: 20 }, // 3
-		{ x: 80, y: 300 }],
-		links: [{ source: 0, target: 1, fixed: true }, { source: 2, target: 3 }, { source: 3, target: 4 }] };
+	function begin_node_stuff(graph) {
+		// now that we get the data, do all the things that we can only do once the data comes:
+		// pretend this works
+		// d3.tsv("../data/mybargraph.tsv", d => +d.value, function(error, data){
+		// pretend data comes in as a json unwrapped into a js object
+		// var graph = {
+		// 	nodes: [
+		// 		{x: 40, y: 40}, // 0
+		// 		{x: 80, y: 80}, // 1
+		// 		{x: 160, y: 160}, // 2
+		// 		{x: 0, y: 20}, // 3
+		// 		{x: 80, y: 300}, // 4
+		// 	],
+		// 	links: [
+		// 		{source: 0, target: 1, fixed: true, },
+		// 		{source: 2, target: 3},
+		// 		{source: 3, target: 4},
+		// 	],
+		// }
 
-	x.domain([0, d3.max(_.pluck(graph.nodes, "x"))]);
+		x.domain([0, d3.max(_.pluck(graph.nodes, "x"))]);
 
-	force.nodes(graph.nodes).links(graph.links).start();
+		force.nodes(graph.nodes).links(graph.links).start();
 
-	links = links.data(graph.links) // links before nodes so that lines in SVG appear *under* nodes
-	.enter().append("line").classed("link", true).attr("marker-end", "url(#arrow-head)"); // add in the marker-end defined above
+		links = links.data(graph.links) // links before nodes so that lines in SVG appear *under* nodes
+		.enter().append("line").classed("link", true).attr("marker-end", "url(#arrow-head)"); // add in the marker-end defined above
 
-	nodes = nodes.data(graph.nodes).enter().append("circle").classed("node", true).attr({
-		r: 12,
-		fill: randColor })
-	// .classed('fixed', true)
-	// .on('dblclick', dblclick)
-	// .on('beginEvent', node => alert('beginEvent') )
-	// .on('animationend', node => alert('animationend') )
-	// .on('DOMContentLoaded', node => alert('DOMContentLoaded') )
-	// .on('drag', node => alert('drag') )
-	// .on('endEvent', node => alert('endEvent') )
-	// .on('readystatechange', node => alert('readystatechange') )
-	.call(drag)
-	// .call( x => alert('running') )
-	// .call( node => d3.select(this).classed('fixed', node.fixed = true) )
+		nodes = nodes.data(graph.nodes).enter().append("circle").classed("node", true).attr({
+			r: 12,
+			fill: randColor })
+		// .classed('fixed', true)
+		// .on('dblclick', dblclick)
+		// .on('beginEvent', node => alert('beginEvent') )
+		// .on('animationend', node => alert('animationend') )
+		// .on('DOMContentLoaded', node => alert('DOMContentLoaded') )
+		// .on('drag', node => alert('drag') )
+		// .on('endEvent', node => alert('endEvent') )
+		// .on('readystatechange', node => alert('readystatechange') )
+		.call(drag)
+		// .call( x => alert('running') )
+		// .call( node => d3.select(this).classed('fixed', node.fixed = true) )
 
-	// })
-
-	;
+		;
+	}
 }); // end require
-// 4
 // these can be attributes or styles in SVG.  Both ways work.
 

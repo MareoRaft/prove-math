@@ -1,0 +1,4 @@
+We may be able to get a good color scheme from the following places:
+
+solarized-light
+solarized-dark

@@ -49,7 +49,8 @@ require( [
 ){
 
 // websocket stuff!
-var ws = ('WebSocket' in window)? new WebSocket("ws://54.174.141.44:7766/websocket"): undefined; // url to send websocket messages
+// var ws = ('WebSocket' in window)? new WebSocket("ws://54.174.141.44:7766/websocket"): undefined; // url to send websocket messages
+var ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined; // url to send websocket messages
 if( !def(ws) ){
 	die('Your browser does not support websockets, which are essential for this program.')
 }
@@ -76,10 +77,20 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 })
 
 ws.onopen = function(){
-   ws.send("Hello, world")
+	ws.send("Hello, world")
 }
-ws.onmessage = function(evt){
-   alert(evt.data)
+ws.onmessage = function(event){
+	alert(event.data)
+	var unbundled = JSON.parse(event.data)
+	// if( typeof(json.message) !== 'undefined' ){
+	// 	$('#container').append( json.message+'".' + '<br /><br />' )
+	// }
+	// if( json.command=='loadprefs' ){
+	// 	loadPrefs(json.prefs)
+	// }
+	var graph = unbundled
+	begin_node_stuff(graph)
+
 }
 
 var a = ['hi', 'there']
@@ -168,24 +179,25 @@ function tick(){
 		})
 }
 
+function begin_node_stuff(graph) {
 // now that we get the data, do all the things that we can only do once the data comes:
 // pretend this works
 // d3.tsv("../data/mybargraph.tsv", d => +d.value, function(error, data){
 	// pretend data comes in as a json unwrapped into a js object
-	var graph = {
-		nodes: [
-			{x: 40, y: 40}, // 0
-			{x: 80, y: 80}, // 1
-			{x: 160, y: 160}, // 2
-			{x: 0, y: 20}, // 3
-			{x: 80, y: 300}, // 4
-		],
-		links: [
-			{source: 0, target: 1, fixed: true, },
-			{source: 2, target: 3},
-			{source: 3, target: 4},
-		],
-	}
+	// var graph = {
+	// 	nodes: [
+	// 		{x: 40, y: 40}, // 0
+	// 		{x: 80, y: 80}, // 1
+	// 		{x: 160, y: 160}, // 2
+	// 		{x: 0, y: 20}, // 3
+	// 		{x: 80, y: 300}, // 4
+	// 	],
+	// 	links: [
+	// 		{source: 0, target: 1, fixed: true, },
+	// 		{source: 2, target: 3},
+	// 		{source: 3, target: 4},
+	// 	],
+	// }
 
 	x.domain([0, d3.max(_.pluck(graph.nodes, 'x'))])
 
@@ -218,7 +230,7 @@ function tick(){
 	    	// .call( x => alert('running') )
 	    	// .call( node => d3.select(this).classed('fixed', node.fixed = true) )
 
-// })
+}
 
 
 
