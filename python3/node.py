@@ -12,6 +12,7 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 from warnings import warn
 import json
 import copy
+import re
 
 
 class node:
@@ -59,7 +60,12 @@ class node:
 
 	@type.setter
 	def type(self, new_type):
-		self._type=new_type
+		if re.match(r'def.*',newtype):
+			self._type='definition'
+		elif re.match(r'theor.*',newtype):
+			self._type='theorem'			
+		else:
+			warn('Bad type')
 
 	@property
 	def weight(self):
