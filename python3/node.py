@@ -13,6 +13,7 @@ from warnings import warn
 import json
 import copy
 import re
+import subprocess
 
 
 class node:
@@ -123,9 +124,6 @@ class node:
 		clone=copy.deepcopy(self)
 		return clone
 
-	
-
-
 def json_import(file_path):
 	print("Importing from: " + str(file_path))
 	with open(file_path) as file_pointer:
@@ -133,10 +131,20 @@ def json_import(file_path):
 		# file_pointer.close() # according to SO ppl, this is called implicitly anyway: http://stackoverflow.com/questions/20199126/reading-a-json-file-using-python
 	return dictionary
 
+def json_export(json_list, file_path):
+	try:
+		print("Saving json to File : "+ str(file_path))
+		with open(file_path, 'w') as outfile:
+			json.dump(json_list,outfile)
+	except TypeError:
+		print("List is not in Json format")
+		print("Pass in object as example.__dict__")
 
-
-
-
+def to_bash():
+# include commands here to be executed in bash
+	bash_out=subprocess.check_output('ls; cd; ls', shell=True)	
+	print (bash_out)
+	subprocess.call('mkdir test_folder', shell=True)
 
 if __name__=="__main__":
 
@@ -153,12 +161,20 @@ if __name__=="__main__":
 	for x in data_dictionary:
 		c=node(x)
 		print(c)
-
+		
+	# Test the clone function
 	test_clone=a.node_clone()
 	test_clone.name="LALATheorem"
 	print(test_clone)
 	print(a)
 
+
+	# Test the export function
+	to_file=[a.__dict__,b.__dict__]
+	json_export(to_file,'test.txt')
+
+	#Test the subprocess/bash function
+	to_bash()
 
 
 
