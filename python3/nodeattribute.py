@@ -20,17 +20,17 @@ class NodeAttribute:
 
 	@property
 	def key(self):
-		return self.__key
+		return self._key
 
 	@key.setter
 	def key(self, new_key):
 		if new_key not in {'definition', 'def', 'theorem', 'thm', 'exercise', 'note', 'plural', 'intuition', 'examples', 'counterexamples', 'proofs'}:
 			raise ValueError(new_key + ' is not an accepted key.')
-		self.__key = new_key
+		self._key = new_key
 
 	@property
 	def value(self):
-		return self.__value
+		return self._value
 
 	@value.setter
 	def value(self, new_value):
@@ -52,7 +52,7 @@ class NodeAttribute:
 		# run mathjax on any $dropins$ to make sure they're valid
 		# blar node.js mathjax new_value
 		# if everything passes, set it
-		self.__value = new_value
+		self._value = new_value
 
 	def export_html(self):
 		return subprocess.call(['../lib/Markdown.pl', '<<<', '"', self.value, '"'])

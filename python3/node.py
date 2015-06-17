@@ -2,128 +2,15 @@
 import sys
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
-###############################################################################
-# I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
-#5/18 Theo was here
-#def vs definition, make clone a method, node is capitalized
-# MathJax/Node.js, run bash commands from python script, export json
 
-
+################################### IMPORTS ###################################
 from warnings import warn
 import json
 import copy
 import re
 import subprocess
 
-
-class node:
-
-	# Pass in a single json doc in order to convert to a node
-	def __init__(self, doc):
-		self._name=doc["name"]
-		self._type=doc["type"]
-		self._weight=doc["weight"]
-		self._description=doc["description"]
-		self._intuition=[]
-		self._examples=[]
-		self._notes=[]
-		if "intuition" in doc:
-			self._intuition=doc["intuition"]
-		if "examples" in doc:
-			for single_examples in doc["examples"]:
-				self._examples.append(single_examples)
-
-		if "notes" in doc:
-			for single_notes in doc["notes"]:
-				self._notes.append(single_notes)
-
-	def __repr__(self):
-
-		msg="(%s,%s,%s,%d)\n" %(self._name,self._type,self._description,self._weight)
-		if self._intuition:
-			msg=msg+self._intuition+"\n"
-		for example in self._examples:
-			msg=msg+example+"\n"
-
-		return msg
-
-	@property
-	def name(self):
-		return self._name
-	
-	@name.setter
-	def name(self, new_name):
-		self._name=new_name
-	
-	@property
-	def type(self):
-		return self._type
-
-	@type.setter
-	def type(self, new_type):
-		if re.match(r'def.*',newtype):
-			self._type='definition'
-		elif re.match(r'theor.*',newtype):
-			self._type='theorem'			
-		else:
-			warn('Bad type')
-
-	@property
-	def weight(self):
-		return self._weight
-
-	@weight.setter
-	def weight(self, new_weight):
-		if isinstance(new_weight, (int, long, float)):
-			self._weight=new_weight
-		else:
-			warn('Weight must be a number')
-
-	@property
-	def description(self):
-		return self._description
-
-	@weight.setter
-	def description(self, new_description):
-		self._description=new_description
-
-	@property
-	def intuition(self):
-		return self._intuition
-
-	@intuition.setter
-	def intuition(self,new_intuition):
-		self._intuition=new_intuition
-		
-	@property
-	def examples(self):
-		return self._examples
-	
-	@examples.setter
-	def examples(self, new_examples):
-		self._example=new_examples
-
-	@property
-	def notes(self):
-		return self._notes
-	
-	@notes.setter
-	def notes(self, new_notes):
-		self._notes=new_notes
-
-	def append_intuition(self, add_intuition):
-		self._intuition.append(add_intuition)
-	
-	def append_example(self, add_example):
-		self._examples.append(add_example)
-
-	def append_note(self, add_note):
-		self._notes.append(add_note)
-
-	def node_clone(self):
-		clone=copy.deepcopy(self)
-		return clone
-
+################################### HELPERS ###################################
 def json_import(file_path):
 	print("Importing from: " + str(file_path))
 	with open(file_path) as file_pointer:
@@ -135,16 +22,130 @@ def json_export(json_list, file_path):
 	try:
 		print("Saving json to File : "+ str(file_path))
 		with open(file_path, 'w') as outfile:
-			json.dump(json_list,outfile)
+			json.dump(json_list, outfile)
 	except TypeError:
-		print("List is not in Json format")
+		print("List is not in Json format.")
 		print("Pass in object as example.__dict__")
 
 def to_bash():
-# include commands here to be executed in bash
-	bash_out=subprocess.check_output('ls; cd; ls', shell=True)	
+	# include commands here to be executed in bash
+	bash_out=subprocess.check_output('ls; cd; ls', shell=True)
 	print (bash_out)
 	subprocess.call('mkdir test_folder', shell=True)
+
+#################################### MAIN #####################################
+# I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
+# def vs definition, make clone a method, node is capitalized
+# MathJax/Node.js, run bash commands from python script, export json
+
+
+class node:
+
+
+	# Pass in a single json dictionary (dic) in order to convert to a node
+	def __init__(self, dic):
+		self.name = dic["name"] # Thanks to the @name.setter, we can (and should) use self.name = value syntax.
+		self.type = dic["type"]
+		self.weight = dic["weight"]
+		self.description = dic["description"]
+		self.intuition = []
+		self.examples = []
+		self.notes = []
+		if "intuition" in dic:
+			self.intuition = dic["intuition"]
+		if "examples" in dic:
+			for single_examples in dic["examples"]:
+				self.examples.append(single_examples)
+
+		if "notes" in dic:
+			for single_notes in dic["notes"]:
+				self.notes.append(single_notes)
+
+	def __repr__(self):
+		msg = "(%s,%s,%s,%d)\n" % (self._name,self._type,self._description,self._weight)
+		if self._intuition:
+			msg = msg + self._intuition + "\n"
+		for example in self._examples:
+			msg = msg + example + "\n"
+		return msg
+
+	@property
+	def name(self):
+		return self._name # Here, and...
+
+	@name.setter
+	def name(self, new_name):
+		self._name = new_name # ...here are the only places where we access the private _name attribute.
+
+	@property
+	def type(self):
+		return self._type
+
+	@type.setter
+	def type(self, new_type):
+		if re.match(r'def.*', newtype):
+			self._type = 'definition'
+		elif re.match(r'theor.*', newtype):
+			self._type = 'theorem'
+		else:
+			warn('Bad type.')
+
+	@property
+	def weight(self):
+		return self._weight
+
+	@weight.setter
+	def weight(self, new_weight):
+		if isinstance(new_weight, (int, long, float)):
+			self._weight = new_weight
+		else:
+			warn('Weight must be a number.')
+
+	@property
+	def description(self):
+		return self._description
+
+	@weight.setter
+	def description(self, new_description):
+		self._description = new_description
+
+	@property
+	def intuition(self):
+		return self._intuition
+
+	@intuition.setter
+	def intuition(self, new_intuition):
+		self._intuition = new_intuition
+
+	@property
+	def examples(self):
+		return self._examples
+
+	@examples.setter
+	def examples(self, new_examples):
+		self._example = new_examples
+
+	@property
+	def notes(self):
+		return self._notes
+
+	@notes.setter
+	def notes(self, new_notes):
+		self._notes = new_notes
+
+	def append_intuition(self, add_intuition):
+		self._intuition.append(add_intuition)
+
+	def append_example(self, add_example):
+		self._examples.append(add_example)
+
+	def append_note(self, add_note):
+		self._notes.append(add_note)
+
+	def node_clone(self):
+		clone = copy.deepcopy(self)
+		return clone
+
 
 if __name__=="__main__":
 
@@ -159,19 +160,19 @@ if __name__=="__main__":
 
 	data_dictionary = json_import('../data/json-sample.json')
 	for x in data_dictionary:
-		c=node(x)
+		c = node(x)
 		print(c)
-		
+
 	# Test the clone function
-	test_clone=a.node_clone()
-	test_clone.name="LALATheorem"
+	test_clone = a.node_clone()
+	test_clone.name = "LALATheorem"
 	print(test_clone)
 	print(a)
 
 
 	# Test the export function
-	to_file=[a.__dict__,b.__dict__]
-	json_export(to_file,'test.txt')
+	to_file = [a.__dict__,b.__dict__]
+	json_export(to_file, 'test.txt')
 
 	#Test the subprocess/bash function
 	to_bash()
