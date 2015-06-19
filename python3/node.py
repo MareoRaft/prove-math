@@ -35,16 +35,16 @@ def to_bash():
 	print (bash_out)
 	subprocess.call('mkdir test_folder', shell=True)
 
-def insert_to_mongo():
+def insert_to_mongo(dic):
 	connection = pymongo.MongoClient("mongodb://localhost")
 	db=connection.test
 	people = db.people
 	
-	matt ={"name":"Matt", "company":"Rutgers",
-              "interests":"math"}    
+	matt ={"name":"Elliot", "company":"Picatinny",
+              "interests":"engineering"}    
 
 	try:
-		people.insert_one(matt)
+		people.insert_one(dic)
 
 
 	except Exception as e:
@@ -177,8 +177,8 @@ if __name__=="__main__":
 	print(b)
 	#Importing the same documents from a file
 
-	data_dictionary = json_import('../data/json-sample.json')
-	for x in data_dictionary:
+	data_dictionary = json_import('../data/data-test.json')
+	for x in data_dictionary['nodes']:
 		c = node(x)
 		print(c)
 
@@ -197,7 +197,7 @@ if __name__=="__main__":
 	to_bash()
 
 	#Test the pymongo insert
-	insert_to_mongo()
+	insert_to_mongo(b.__dict__)
 
 
 
