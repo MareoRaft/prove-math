@@ -184,7 +184,7 @@ if __name__=="__main__":
 		print(c)
 
 	# Test the clone function
-	test_clone = a.node_clone()
+	test_clone = a.clone()
 	test_clone.name = "LALATheorem"
 	print(test_clone)
 	print(a)
