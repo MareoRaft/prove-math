@@ -9,6 +9,8 @@ import json
 import copy
 import re
 import subprocess
+import pymongo
+import sys
 
 ################################### HELPERS ###################################
 def json_import(file_path):
@@ -32,6 +34,22 @@ def to_bash():
 	bash_out=subprocess.check_output('ls; cd; ls', shell=True)
 	print (bash_out)
 	subprocess.call('mkdir test_folder', shell=True)
+
+def insert_to_mongo():
+	connection = pymongo.MongoClient("mongodb://localhost")
+	db=connection.test
+	people = db.people
+	
+	matt ={"name":"Matt", "company":"Rutgers",
+              "interests":"math"}    
+
+	try:
+		people.insert_one(matt)
+
+
+	except Exception as e:
+		print ("Unexpected error:")
+
 
 #################################### MAIN #####################################
 # I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
@@ -177,6 +195,9 @@ if __name__=="__main__":
 
 	#Test the subprocess/bash function
 	to_bash()
+
+	#Test the pymongo insert
+	insert_to_mongo()
 
 
 
