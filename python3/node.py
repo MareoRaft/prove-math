@@ -2,7 +2,7 @@
 import sys
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
-
+# To Do: Equality method, 
 ################################### IMPORTS ###################################
 from warnings import warn
 import json
@@ -58,7 +58,7 @@ def insert_to_mongo(dic):
 # update __repr__ and __str__ to follow Python standard
 
 
-class node:
+class Node:
 
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
@@ -161,7 +161,7 @@ class node:
 	def append_note(self, add_note):
 		self._notes.append(add_note)
 
-	def node_clone(self):
+	def clone(self):
 		clone = copy.deepcopy(self)
 		return clone
 
@@ -171,15 +171,15 @@ if __name__=="__main__":
 	print("Hello World")
 	sample_theorem={"name":"Pythagorean theorem","type":"theorem","weight":1,"description":"a^2+b^2=c^2","intuition":"A simple explanation","examples":["Example 1","Example 2"]}
 	sample_definition={"name":"triangle","type":"definition","weight":1,"description":"3 sided polygon","intuition":"A simple explanation","examples":["Example 1","Example 2"]}
-	a=node(sample_theorem)
-	b=node(sample_definition)
+	a=Node(sample_theorem)
+	b=Node(sample_definition)
 	print(a)
 	print(b)
 	#Importing the same documents from a file
 
 	data_dictionary = json_import('../data/data-test.json')
 	for x in data_dictionary['nodes']:
-		c = node(x)
+		c = Node(x)
 		insert_to_mongo(c.__dict__)
 		print(c)
 
