@@ -1,27 +1,25 @@
 #!/usr/bin/env python3
+################################# IMPORTS #####################################
 import sys
-if sys.version_info[0] < 3 or sys.version_info[1] < 4:
-	raise SystemExit('Please use Python version 3.4 or above')
 
-################################# HELPERS #####################################
-def json_import(file_path): # this will probably be relocated later
-	print("Importing from: " + str(file_path))
-	with open(file_path) as file_pointer:
-		dictionary = json.load(file_pointer)
-		# file_pointer.close() # according to SO ppl, this is called implicitly anyway: http://stackoverflow.com/questions/20199126/reading-a-json-file-using-python
-	return dictionary
-
-################################## MAIN #######################################
 from tornado.ioloop import IOLoop
 from tornado.web import url # constructs a URLSpec for you
-
+# handlers
 from tornado.web import RequestHandler
 from tornado.web import StaticFileHandler
 from tornado.websocket import WebSocketHandler
-
+# other
 from tornado.web import Application
 from tornado.log import enable_pretty_logging
+
+from lib import helper
 import json
+
+################################# HELPERS #####################################
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+	raise SystemExit('Please use Python version 3.4 or above')
+
+################################## MAIN #######################################
 
 class BaseHandler (RequestHandler):
 	def initialize(self, var):
@@ -61,7 +59,7 @@ class SocketHandler (WebSocketHandler):
 		# 		{'source': 3, 'target': 1},
 		# 	],
 		# }
-		graph = json_import('../data/graph-test.json')
+		graph = helper.json_import('data/graph-test.json')
 		# do NetworkX things to the graph
 		bundled = json.dumps(graph) # for the future, the following may be faster: 1. simplejason or 2. cjson
 		self.write_message(bundled)
