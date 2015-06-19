@@ -46,21 +46,21 @@ class node:
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
 		self.name = dic["name"] # Thanks to the @name.setter, we can (and should) use self.name = value syntax.
-		self.type = dic["type"]
-		self.weight = dic["weight"]
-		self.description = dic["description"]
-		self.intuition = []
-		self.examples = []
-		self.notes = []
+		self._type = dic["type"]
+		self._weight = dic["weight"]
+		self._description = dic["description"]
+		self._intuition = []
+		self._examples = []
+		self._notes = []
 		if "intuition" in dic:
-			self.intuition = dic["intuition"]
+			self._intuition = dic["intuition"]
 		if "examples" in dic:
 			for single_examples in dic["examples"]:
-				self.examples.append(single_examples)
+				self._examples.append(single_examples)
 
 		if "notes" in dic:
 			for single_notes in dic["notes"]:
-				self.notes.append(single_notes)
+				self._notes.append(single_notes)
 
 	def __repr__(self):
 		msg = "(%s,%s,%s,%d)\n" % (self._name,self._type,self._description,self._weight)
@@ -84,9 +84,9 @@ class node:
 
 	@type.setter
 	def type(self, new_type):
-		if re.match(r'def.*', newtype):
+		if re.match(r'def.*', new_type):
 			self._type = 'definition'
-		elif re.match(r'theor.*', newtype):
+		elif re.match(r'theor.*', new_type):
 			self._type = 'theorem'
 		else:
 			warn('Bad type.')
@@ -97,7 +97,7 @@ class node:
 
 	@weight.setter
 	def weight(self, new_weight):
-		if isinstance(new_weight, (int, long, float)):
+		if isinstance(new_weight, (int, float)):
 			self._weight = new_weight
 		else:
 			warn('Weight must be a number.')
