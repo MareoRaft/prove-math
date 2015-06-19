@@ -64,21 +64,21 @@ class node:
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
 		self.name = dic["name"] # Thanks to the @name.setter, we can (and should) use self.name = value syntax.
-		self._type = dic["type"]
-		self._weight = dic["weight"]
-		self._description = dic["description"]
-		self._intuition = []
-		self._examples = []
-		self._notes = []
+		self.type = dic["type"]
+		self.weight = dic["weight"]
+		self.description = dic["description"]
+		self.intuition = []
+		self.examples = []
+		self.notes = []
 		if "intuition" in dic:
-			self._intuition = dic["intuition"]
+			self.intuition = dic["intuition"]
 		if "examples" in dic:
 			for single_examples in dic["examples"]:
-				self._examples.append(single_examples)
+				self.examples.append(single_examples)
 
 		if "notes" in dic:
 			for single_notes in dic["notes"]:
-				self._notes.append(single_notes)
+				self.notes.append(single_notes)
 
 	def __repr__(self):
 		msg = "(%s,%s,%s,%d)\n" % (self._name,self._type,self._description,self._weight)
@@ -142,7 +142,7 @@ class node:
 
 	@examples.setter
 	def examples(self, new_examples):
-		self._example = new_examples
+		self._examples = new_examples
 
 	@property
 	def notes(self):
@@ -199,7 +199,6 @@ if __name__=="__main__":
 
 	#Test the pymongo insert
 	insert_to_mongo(b.__dict__)
-
 
 
 
