@@ -2,7 +2,7 @@
 import sys
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
-# To Do: Equality method, 
+# To Do: Equality method, magic methods, people o-auth, login info
 ################################### IMPORTS ###################################
 from warnings import warn
 import json
