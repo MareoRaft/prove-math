@@ -1,33 +1,21 @@
 #!/usr/bin/env python3
-import sys
-if sys.version_info[0] < 3 or sys.version_info[1] < 4:
-	raise SystemExit('Please use Python version 3.4 or above')
-# To Do: Equality method, magic methods, people o-auth, login info
 ################################### IMPORTS ###################################
+# standard library:
+import sys
 from warnings import warn
-import json
+import subprocess
 import copy
 import re
-import subprocess
+
+# third party:
 import pymongo
-import sys
+
+# local:
+from .. import helper
 
 ################################### HELPERS ###################################
-def json_import(file_path):
-	print("Importing from: " + str(file_path))
-	with open(file_path) as file_pointer:
-		dictionary = json.load(file_pointer)
-		# file_pointer.close() # according to SO ppl, this is called implicitly anyway: http://stackoverflow.com/questions/20199126/reading-a-json-file-using-python
-	return dictionary
-
-def json_export(json_list, file_path):
-	try:
-		print("Saving json to File : "+ str(file_path))
-		with open(file_path, 'w') as outfile:
-			json.dump(json_list, outfile)
-	except TypeError:
-		print("List is not in Json format.")
-		print("Pass in object as example.__dict__")
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+	raise SystemExit('Please use Python version 3.4 or above')
 
 def to_bash():
 	# include commands here to be executed in bash
@@ -39,9 +27,8 @@ def insert_to_mongo(dic):
 	connection = pymongo.MongoClient("mongodb://localhost")
 	db=connection.test
 	people = db.people
-	
-	matt ={"name":"Elliot", "company":"Picatinny",
-              "interests":"engineering"}    
+
+	matt ={"name":"Elliot", "company":"Picatinny", "interests":"engineering"}
 
 	try:
 		people.insert_one(dic)
@@ -56,6 +43,7 @@ def insert_to_mongo(dic):
 # def vs definition, make clone a method, node is capitalized
 # MathJax/Node.js, run bash commands from python script, export json
 # update __repr__ and __str__ to follow Python standard
+# To Do: Equality method, magic methods, people o-auth, login info
 
 
 class Node:
@@ -177,7 +165,7 @@ if __name__=="__main__":
 	print(b)
 	#Importing the same documents from a file
 
-	data_dictionary = json_import('../data/data-test.json')
+	data_dictionary = helper.json_import('data/data-test.json')
 	for x in data_dictionary['nodes']:
 		c = Node(x)
 		insert_to_mongo(c.__dict__)
@@ -192,7 +180,7 @@ if __name__=="__main__":
 
 	# Test the export function
 	to_file = [a.__dict__,b.__dict__]
-	json_export(to_file, 'test.txt')
+	helper.json_export(to_file, 'test.txt')
 
 	#Test the subprocess/bash function
 	to_bash()
