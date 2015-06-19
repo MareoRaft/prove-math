@@ -180,6 +180,7 @@ if __name__=="__main__":
 	data_dictionary = json_import('../data/data-test.json')
 	for x in data_dictionary['nodes']:
 		c = node(x)
+		insert_to_mongo(c.__dict__)
 		print(c)
 
 	# Test the clone function
