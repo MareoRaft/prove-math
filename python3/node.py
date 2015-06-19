@@ -37,6 +37,7 @@ def to_bash():
 # I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
 # def vs definition, make clone a method, node is capitalized
 # MathJax/Node.js, run bash commands from python script, export json
+# update __repr__ and __str__ to follow Python standard
 
 
 class node:
