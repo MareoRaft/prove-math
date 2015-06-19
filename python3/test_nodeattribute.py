@@ -16,12 +16,21 @@ def test___init__():
 	me = NodeAttribute({'definition': '123123'})
 	assert me.key == 'definition'
 	assert me.value == '123123'
-	assert me.__repr__() == '(definition, 123123)'
 
-def test_export_html():
+def test___repr__():
+	x = NodeAttribute({'def': 'the fundamental unit of everything'})
+	assert x.__repr__() == "NodeAttribute({'def': 'The fundamental unit of everything'})" # the thing i typed to make x in the first place
+	y = NodeAttribute({'def': 'the fundamental unit of everything'})
+	assert x != y
+
+def test___str__():
+	x = NodeAttribute({'exercise': 'This is a complete exercise.'})
+	assert str(x) == "{'exercise': 'This is a complete exercise.'}"
+
+def test_as_html():
 	me = NodeAttribute({'thm': 'this is sparta'})
-	assert me.export_html() ==  'this is sparta'
+	assert me.as_html() ==  'This is sparta'
 
 	me = NodeAttribute({'thm': '**bold**, __underline__, and *italics* and _italics_'})
-	assert me.export_html() ==  '<b>bold</b>, <u>underline</u>, and <i>italics</i> and <i>italics</i>'
+	assert me.as_html() ==  '<b>bold</b>, <u>underline</u>, and <i>italics</i> and <i>italics</i>'
 
