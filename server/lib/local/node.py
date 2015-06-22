@@ -11,7 +11,9 @@ import re
 import pymongo
 
 # local:
-from .. import helper
+#It appears that helper has been moved to the parent directory
+sys.path.insert(0, '..')
+import helper
 
 ################################### HELPERS ###################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
@@ -164,8 +166,7 @@ if __name__=="__main__":
 	print(a)
 	print(b)
 	#Importing the same documents from a file
-
-	data_dictionary = helper.json_import('data/data-test.json')
+	data_dictionary = helper.json_import('../../data/data-test.json')
 	for x in data_dictionary['nodes']:
 		c = Node(x)
 		insert_to_mongo(c.__dict__)
