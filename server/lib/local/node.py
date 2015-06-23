@@ -21,23 +21,23 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 
 def to_bash():
 	# include commands here to be executed in bash
-	bash_out=subprocess.check_output('ls; cd; ls', shell=True)
+	bash_out = subprocess.check_output('ls; cd; ls', shell=True)
 	print (bash_out)
 	subprocess.call('mkdir test_folder', shell=True)
 
 def insert_to_mongo(dic):
 	connection = pymongo.MongoClient("mongodb://localhost")
-	db=connection.test
+	db = connection.test
 	people = db.people
 
-	matt ={"name":"Elliot", "company":"Picatinny", "interests":"engineering"}
+	matt = {"name": "Elliot", "company": "Picatinny", "interests": "engineering"}
 
 	try:
 		people.insert_one(dic)
 
 
 	except Exception as e:
-		print ("Unexpected error:")
+		print("Unexpected error:")
 
 
 #################################### MAIN #####################################
@@ -159,10 +159,10 @@ class Node:
 if __name__=="__main__":
 
 	print("Hello World")
-	sample_theorem={"name":"Pythagorean theorem","type":"theorem","weight":1,"description":"a^2+b^2=c^2","intuition":"A simple explanation","examples":["Example 1","Example 2"]}
+	sample_theorem = {"name": "Pythagorean theorem", "type": "theorem", "weight": 1, "description": "a^2+b^2=c^2", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
 	sample_definition={"name":"triangle","type":"definition","weight":1,"description":"3 sided polygon","intuition":"A simple explanation","examples":["Example 1","Example 2"]}
-	a=Node(sample_theorem)
-	b=Node(sample_definition)
+	a = Node(sample_theorem)
+	b = Node(sample_definition)
 	print(a)
 	print(b)
 	#Importing the same documents from a file
