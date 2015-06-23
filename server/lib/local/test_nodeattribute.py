@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
+################################## IMPORTS ####################################
 import sys
+
+from lib.local.nodeattribute import NodeAttribute
+
+################################## HELPERS ####################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
 
 #################################### MAIN #####################################
-from nodeattribute import NodeAttribute
-
 def test___init__():
 	try:
 		you = NodeAttribute({'hi': 'there', 'are': 'we'})
