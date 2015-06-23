@@ -16,6 +16,7 @@ sys.path.insert(0, '..')
 import helper
 
 ################################### HELPERS ###################################
+# Should we make mongo variables global for all methods?
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
 
@@ -25,7 +26,7 @@ def to_bash():
 	print (bash_out)
 	subprocess.call('mkdir test_folder', shell=True)
 
-def insert_to_mongo(dic):
+def single_insert_to_mongo(dic):
 	connection = pymongo.MongoClient("mongodb://localhost")
 	db = connection.test
 	people = db.people
@@ -38,6 +39,46 @@ def insert_to_mongo(dic):
 
 	except Exception as e:
 		print("Unexpected error:")
+
+def list_insert_to_mongo(list_of_dicts):
+	connection = pymongo.MongoClient("mongodb://localhost")
+	db = connection.test
+	people = db.people
+
+	try:
+		people.insert_many(list_of_dicts)
+
+	except Exception as e:
+		print("Unexpected error:")
+
+def query_mongo(dict_fields):
+	connection = pymongo.MongoClient("mongodb://localhost")
+	db = connection.test
+	people = db.people
+
+	try:
+	#Results will be returned as json
+		results=people.find(dict_fields)
+	
+		for x in results:
+			print(x)
+
+	except Exception as e:
+		print("Unexpected error:")
+
+def delete_from_mongo(dict_fields):
+	# This will delete from all fields which match the parameter!!
+	connection = pymongo.MongoClient("mongodb://localhost")
+	db = connection.test
+	people = db.people
+
+
+	try:
+		results=people.delete_many(dict_fields)
+		print("Number deleted: "+str(results.deleted_count))		
+	except Exception as e:
+		print("Unexpected error:")
+
 
 
 #################################### MAIN #####################################
@@ -77,6 +118,28 @@ class Node:
 		for example in self._examples:
 			msg = msg + example + "\n"
 		return msg
+
+	def __eq__(self,other):
+		if self.name!=other.name:
+			return False
+		elif self.type!=other.type:
+			return False
+		elif self.weight!=other.weight:
+			return False
+		elif self.description!=other.description:
+			return False
+		for x in self.intuition:
+			if x not in other.intuition:
+				return False
+		for x in self.examples:
+			if x not in other.examples:
+				return False
+		for x in self.notes:
+			if x not in other.notes:
+				return False
+		return True
+	
+		
 
 	@property
 	def name(self):
@@ -169,7 +232,7 @@ if __name__=="__main__":
 	data_dictionary = helper.json_import('../../data/data-test.json')
 	for x in data_dictionary['nodes']:
 		c = Node(x)
-		insert_to_mongo(c.__dict__)
+		single_insert_to_mongo(c.__dict__)
 		print(c)
 
 	# Test the clone function
@@ -187,10 +250,18 @@ if __name__=="__main__":
 	to_bash()
 
 	#Test the pymongo insert
-	insert_to_mongo(b.__dict__)
+	single_insert_to_mongo(b.__dict__)
 
+	#Test the equality- will use py.test later
+	print(test_clone==a)
+	test_clone.name="Pythagorean theorem"
+	print(test_clone==a)
 
+	#Test the query-need _ in front of fields. For ex: _name instead of name
+	query_mongo({"name":"Matt"})
 
+	#Test the delete-need _ in front of fields. For ex: _name instead of name
+	delete_from_mongo({"name": "triangle"})
 
 
 
