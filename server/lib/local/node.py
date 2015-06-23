@@ -160,7 +160,7 @@ if __name__=="__main__":
 
 	print("Hello World")
 	sample_theorem = {"name": "Pythagorean theorem", "type": "theorem", "weight": 1, "description": "a^2+b^2=c^2", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
-	sample_definition={"name":"triangle","type":"definition","weight":1,"description":"3 sided polygon","intuition":"A simple explanation","examples":["Example 1","Example 2"]}
+	sample_definition = {"name": "triangle", "type": "definition", "weight": 1, "description": "3 sided polygon", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
 	a = Node(sample_theorem)
 	b = Node(sample_definition)
 	print(a)
