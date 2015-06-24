@@ -63,7 +63,7 @@
 }
 
 {
-	"name": "Powerset Identity",
+	"name": "Powerset Identity", // this is a more specific version of the Binomial Theorem!
 	"type": "thm",
 	"weight": 5,
 	"content": "$\\sum_{k=0}^{n} \\binom nk = 2^n$",
@@ -152,4 +152,28 @@
 		"content": "This is just a more specific version of Rectangle Lattice Paths.  Set $a=b$, and use the Choosy Identity to simplify.",
 	},
 }
+
+{
+	"name": "Distribute indistibguishable Gold to distinguishable Pirates",
+	"type": "thm",
+	"weight": 4,
+	"content": "If you have $n$ (distinguishable) pirates and $k$ (indistinguishable) pieces of gold, then the number of ways to distribute the gold among the pirates is $\\binom{n+k-1}{n-1}$.",
+	"proof": {
+		"type": "combinatorial",
+		"content": "Take the $k$ pieces of gold and $n-1$ sticks.  That's $n+k-1$ objects.  Then $\\binom{n+k-1}{n-1}$ is the number of ways you can arrange those objects.  For each arrangement, the gold to the left of stick $1$ goes to pirate $1$, and the gold to the left of stick $j$ goes to pirate $j$, and the gold to the right of stick $n-1$ goes to pirate $n$.",
+	},
+}
+
+{
+	"name": "n balls k bins, BOTH DISTINGUISHABLE",
+	"content": "$ \\sum_{j=0}^{k} \\binom ki (k-i)^n (-1)^j $",
+},
+
+
+
+
+
+
+
+
 
