@@ -1,0 +1,75 @@
+// Combinatorics intro course: http://math.rutgers.edu/~tnaumovi/Math454/Syllabus.html
+
+// notes Tuesday, June 23, 2015
+
+{
+	"name": "Chairperson Identity",
+	"type": "thm",
+	"content": "$ k \binom nk = n \binom{n-1}{k-1} $",
+	"intuition": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee.",
+}
+
+{
+	"name": "Chairperson Identity Generalized",
+	"type": "thm",
+	"content": "$\binom{a_1}{a_2}\binom{a_2}{a_3}\cdots\binom{a_{n-1}}{a_n} = \prod_{j=1}^{n} \binom{a_1-a_{j+1}}{a_j-a_{j+1}}$ where $a_{n+1}=0$.",
+	"intuition": "we have a_1 people, subcommittee of a_2 ppl, subsubcommittee of a_3 ppl, and so forth",
+}
+
+{
+	"name": "star name unknown!",
+	"type": "thm",
+	"content": "$\binom nk + \binom{n}{k+1} = \binom{n+1}{k+1}$",
+	"intuition": "Right side: You have $n+1$ people and you choose $k+1$ of them.  Left side: One of the people is yourself.  $\binom nk$ is the number of choices that include yourself (Because you are included, there are $n$ people remaining and you choose $k$ of them).  $\binom{n}{k+1}$ is the number of choices that do *not* include yourself (Because there you are not included, there are only $n$ people to choose from, and you must choose $k+1$ of them).",
+}
+
+{
+	"name": "Powerset Identity (I made that up but it makes sense)",
+	"type": "thm",
+	"content": "$\sum_{k=0}^{n} \binom nk = 2^n$",
+	"intuition": "Right side: The number of subsets of $[n]$ is $2^n$.  Left side: The number of subsets of $[n]$ of size $k$ is $\binom nk$.  Sum these amounts over all possible sizes of subsets.",
+}
+
+{
+	"name": "Summation Formula 1",
+	"type": "thm",
+	"content": "$\sum_{k=0}^{n} = \frac{n(n+1)}2 = \binom{n+1}{2}$",
+	"intuition": "none",
+	"proofs": [
+		"Build a staircase, then calculate the area.",
+		"Right side: You have $n+1$ people and you choose $2$ of them.  Left side: Your people are numbered from $0$ to $n$.  For each $k$, count the number of pairs which include person $k$ as the highest indexed person.  Sum over all possible $k$.",
+	],
+}
+
+{
+	"name": "star Generalized. name adopted from star!",
+	"type": "thm",
+	"content": "$\sum_{i=k}^{n} \binom ik = \binom{n+1}{k+1}$",
+	"proofs": [
+		"use same 'largest element' trick as the Summation Formula 1 thm.",
+	],
+}
+
+{
+	"name": "Middle Element Breakdown",
+	"type": "thm",
+	"weight": 3,
+	"content": "$\binom n3 = \sum_{k=1}{n} (k-1)(n-k)$",
+	"proof": "Left side: You have people numbered $1$ through $n$, and you choose $3$ of them.  Right side: For each $k$, count the triples of people where person $k$ is the middle indexed person.  The number of such triples is: $(k-1)$ possible people before person $k$, times $n-k$ possible people after person $k$, equals $(k-1)(n-k)$ triples. Finally sum these amounts over all possible values of $k$.",
+}
+
+{
+	"name": "Rectangle Lattice Paths",
+	"type": "thm",
+	"weight": 5,
+	"content": "$\binom{a+b}{r} = \sum_{k=0}{r} \binom ak \binom{b}{r-k}$",
+}
+
+{
+	"name": "Square Lattic Paths",
+	"type": "thm",
+	"weight": 4,
+	"content": "$\binom{2a}{a} = \sum_{k=0}^{a} \binom ak ^2 $",
+	"note": "This is just a more specific version of Rectangle Lattice Paths.  Set a=b, and you'll get this.",
+}
+

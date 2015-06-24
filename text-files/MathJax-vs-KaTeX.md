@@ -1,3 +1,19 @@
+LaTeX things
+================
+we need to import common math things.  for example, \binom, used instead of \choose, is in amsmath.  See /Users/Matthew/programming/LaTeX/SampleCode/SampleCode.tex for more.  Here is the list of packages from that file:
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{cancel}
+\usepackage{array}
+
+\usepackage{color}
+\usepackage{ifpdf}
+
+
 Discussion Links
 ==================
 http://meta.math.stackexchange.com/questions/16809/a-mathjax-alternative-from-khan-academy
