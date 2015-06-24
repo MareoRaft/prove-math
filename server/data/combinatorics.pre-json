@@ -3,50 +3,120 @@
 // notes Tuesday, June 23, 2015
 
 {
+	"name": "Choosy Identity",
+	"type": "thm",
+	"weight": 3,
+	"content": "$ \\binom nk = \\binom{n}{n-k} $",
+	"proofs": [
+		{
+			"type": "algebraic",
+			"content": "Apply $\\binom nk = \\frac{n!}{k!(n-k)!} = \\frac{n!}{[n-(n-k)]!(n-k)!} = \\binom{n}{n-k} $",
+		},
+		{
+			"type": "combinatorial",
+			"content": "Left side: We have $n$ puppies.  We choose $k$ of them and color them blue.  We color the rest of them red.  Right side: We have $n$ puppies.  We choose $n-k$ of them and color them red.  We color the rest of them blue.",
+		},
+	],
+}
+
+{
 	"name": "Chairperson Identity",
 	"type": "thm",
-	"content": "$ k \binom nk = n \binom{n-1}{k-1} $",
-	"intuition": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee.",
+	"weight": 4,
+	"content": "$ k \\binom nk = n \\binom{n-1}{k-1} $",
+	"proofs": [
+		{
+			"type": "combinatorial", // a combinatorial proof means you count the same situation two different ways.
+			"content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee.",
+		},
+	],
 }
 
 {
 	"name": "Chairperson Identity Generalized",
 	"type": "thm",
-	"content": "$\binom{a_1}{a_2}\binom{a_2}{a_3}\cdots\binom{a_{n-1}}{a_n} = \prod_{j=1}^{n} \binom{a_1-a_{j+1}}{a_j-a_{j+1}}$ where $a_{n+1}=0$.",
-	"intuition": "we have a_1 people, subcommittee of a_2 ppl, subsubcommittee of a_3 ppl, and so forth",
+	"weight": 6,
+	"content": "$\\binom{a_1}{a_2}\\binom{a_2}{a_3}\\cdots\\binom{a_{n-1}}{a_n} = \\prod_{j=1}^{n} \\binom{a_1-a_{j+1}}{a_j-a_{j+1}}$ where $a_{n+1}=0$.",
+	"proofs": [
+		{
+			"type": "combinatorial",
+			"content": "Left side: We have a commitee of $a_1$ people.  From this committee, we choose a subcommittee of $a_2$ people.  From this subcommittee, we choose a subsubcommittee of $a_3$ people, and so forth.  Right side: We have a committee of $a_1$ people.  From this committee, we choose the submostcommittee of $a_{n+1}$ people.  Then from the remaining $a_1 - a_{n+1}$ people, we choose the remaining $a_n - a_{n+1}$ people of the second deepest subcommittee in order to complete it.  This corresponds to the last factor of the product.  We continue to work backwards in this way, until we choose the first subcommittee.",
+		},
+	],
 }
 
 {
-	"name": "star name unknown!",
+	"name": "Pascal's Identity",
 	"type": "thm",
-	"content": "$\binom nk + \binom{n}{k+1} = \binom{n+1}{k+1}$",
-	"intuition": "Right side: You have $n+1$ people and you choose $k+1$ of them.  Left side: One of the people is yourself.  $\binom nk$ is the number of choices that include yourself (Because you are included, there are $n$ people remaining and you choose $k$ of them).  $\binom{n}{k+1}$ is the number of choices that do *not* include yourself (Because there you are not included, there are only $n$ people to choose from, and you must choose $k+1$ of them).",
+	"weight": 5,
+	"content": "$\\binom{n-1}{k-1} + \\binom{n-1}{k} = \\binom{n}{k}$",
+	"proofs": [
+		{
+			"type": "combinatorial",
+			"content": "Right side: You have $n$ people and you choose $k$ of them.  Left side: One of the people is yourself.  $\\binom{n-1}{k-1}$ is the number of choices that include yourself (Because you are already included, there are $n-1$ people remaining and you choose $k-1$ of them).  $\\binom{n-1}{k}$ is the number of choices that do *not* include yourself (Because there you are not included, there are only $n-1$ people to choose from, and you must choose $k$ of them).",
+		},
+		{
+			"type": "pascal lattice",
+			"content": "Right side: Choose the point $P$ on the Pascal lattice path grid corresponding to $\\binom nk$.  That is, all paths to it have length $n$, and $k$ of the segments move rightwards.  Left side: We see that every path to $P$ must either travel through the point immediately above and to the left of $P$, which has $\\binom{n-1}{k-1}$ paths leading to it; xor through the point immediately above and to the right of $P$, which has $\\binom{n-1}{k}$ paths leading to it.",
+		},
+	],
 }
 
 {
-	"name": "Powerset Identity (I made that up but it makes sense)",
+	"name": "Powerset Identity",
 	"type": "thm",
-	"content": "$\sum_{k=0}^{n} \binom nk = 2^n$",
-	"intuition": "Right side: The number of subsets of $[n]$ is $2^n$.  Left side: The number of subsets of $[n]$ of size $k$ is $\binom nk$.  Sum these amounts over all possible sizes of subsets.",
+	"weight": 5,
+	"content": "$\\sum_{k=0}^{n} \\binom nk = 2^n$",
+	"proof": {
+		"type": "combinatorial",
+		"Right side: The number of subsets of $[n]$ is $2^n$.  Left side: The number of subsets of $[n]$ of size $k$ is $\\binom nk$.  Sum these amounts over all possible sizes of subsets.",
+	},
 }
 
 {
 	"name": "Summation Formula 1",
 	"type": "thm",
-	"content": "$\sum_{k=0}^{n} = \frac{n(n+1)}2 = \binom{n+1}{2}$",
-	"intuition": "none",
+	"weight": 5,
+	"content": "$\\sum_{k=0}^{n} k = \\frac{n(n+1)}2 = \\binom{n+1}{2}$",
 	"proofs": [
-		"Build a staircase, then calculate the area.",
-		"Right side: You have $n+1$ people and you choose $2$ of them.  Left side: Your people are numbered from $0$ to $n$.  For each $k$, count the number of pairs which include person $k$ as the highest indexed person.  Sum over all possible $k$.",
+		{
+			"type": "geometric",
+			"content": "Build a staircase, then calculate the area.",
+		},
+		{
+			"type": "combinatorial",
+			"content": "Right side: You have $n+1$ people and you choose $2$ of them.  Left side: Your people are numbered from $0$ to $n$.  For each $k$, count the number of pairs which include person $k$ as the highest indexed person.  Sum over all possible $k$.",
+		},
 	],
 }
 
 {
-	"name": "star Generalized. name adopted from star!",
+	"name": "Summation Identity",
 	"type": "thm",
-	"content": "$\sum_{i=k}^{n} \binom ik = \binom{n+1}{k+1}$",
+	"weight": 7,
+	"content": "$\\sum_{i=k}^{n} \\binom ik = \\binom{n+1}{k+1}$",
 	"proofs": [
-		"use same 'largest element' trick as the Summation Formula 1 thm.",
+		{
+			"type": "combinatorial",
+			"content": "use same 'largest element' trick as the Summation Formula 1 thm.",
+		},
+	],
+}
+
+{
+	"name": "Summation Formula 2",
+	"type": "thm",
+	"weight": 5,
+	"content": "$\\sum_{k=0}^{n} k^2 = \\frac{n(n+1)(2n+1)}6 $",
+	"proofs": [
+		{
+			"type": "geometric",
+			"content": "Build three pyramid staircases, then put them together to form a rectangular prism with an additional staircase sticking up.  Calculate the volume.",
+		},
+		{
+			"type": "algebraic",
+			"content": "Take the Summation Identity for $k=2$.  The summation side contains the left side of this formula.  Isolate it.  To simplify the result, apply Summation Formula 1 and combine into one fraction.",
+		},
 	],
 }
 
@@ -54,22 +124,32 @@
 	"name": "Middle Element Breakdown",
 	"type": "thm",
 	"weight": 3,
-	"content": "$\binom n3 = \sum_{k=1}{n} (k-1)(n-k)$",
-	"proof": "Left side: You have people numbered $1$ through $n$, and you choose $3$ of them.  Right side: For each $k$, count the triples of people where person $k$ is the middle indexed person.  The number of such triples is: $(k-1)$ possible people before person $k$, times $n-k$ possible people after person $k$, equals $(k-1)(n-k)$ triples. Finally sum these amounts over all possible values of $k$.",
+	"content": "$\\binom n3 = \\sum_{k=1}{n} (k-1)(n-k)$",
+	"proof": {
+		"type": "combinatorial",
+		"content": "Left side: You have people numbered $1$ through $n$, and you choose $3$ of them.  Right side: For each $k$, count the triples of people where person $k$ is the middle indexed person.  The number of such triples is: $(k-1)$ possible people before person $k$, times $n-k$ possible people after person $k$, equals $(k-1)(n-k)$ triples. Finally sum these amounts over all possible values of $k$.",
+	},
 }
 
 {
 	"name": "Rectangle Lattice Paths",
 	"type": "thm",
 	"weight": 5,
-	"content": "$\binom{a+b}{r} = \sum_{k=0}{r} \binom ak \binom{b}{r-k}$",
+	"content": "$\\binom{a+b}{r} = \\sum_{k=0}{r} \\binom ak \\binom{b}{r-k}$",
+	"proof": {
+		"type": "pascal lattice",
+		"content": "draw the rectangle lattice.  draw a horizontal line at height min(a,b). sum over each point on the line that the paths might go through.",
+	},
 }
 
 {
-	"name": "Square Lattic Paths",
+	"name": "Square Lattice Paths",
 	"type": "thm",
 	"weight": 4,
-	"content": "$\binom{2a}{a} = \sum_{k=0}^{a} \binom ak ^2 $",
-	"note": "This is just a more specific version of Rectangle Lattice Paths.  Set a=b, and you'll get this.",
+	"content": "$\\binom{2a}{a} = \\sum_{k=0}^{a} \\binom ak ^2 $",
+	"proof": {
+		"type": "pascal lattice",
+		"content": "This is just a more specific version of Rectangle Lattice Paths.  Set $a=b$, and use the Choosy Identity to simplify.",
+	},
 }
 
