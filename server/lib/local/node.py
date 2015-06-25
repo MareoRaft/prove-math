@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 ################################### IMPORTS ###################################
 # standard library:
+#Reg expressions for processing definition, name, etc..
+#Mongo class 
 import sys
 from warnings import warn
 import subprocess
