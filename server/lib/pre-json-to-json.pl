@@ -1,7 +1,11 @@
 #!/usr/bin/env perl
-$input = $ARGV[0]
-
 # This perl script will use regex to convert .pre-json files to .json files
+use strict; use warnings;
+
+
+$FH = $ARGV[0]
+
+$input =
 
 # regexs to recognize json values (BUT ONLY THE ONES I WILL BE USING):
 my $frac = qr(\.\d+);
@@ -27,3 +31,5 @@ $input = "[\n\n$input\n\n]";
 
 # 4. Objects/Arrays where the last member/element is followed by a comma will have the comma deleted
 while( $input =~ s/^($gobble_strings(?:$base_value|\]|\})\s*),(\s*[\]\}])/$1$2/ ){} # i think gobble and nibble will have the same performance in this situation
+
+# LOOK INTO Test::More TO GET A UNIT TEST

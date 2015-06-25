@@ -167,7 +167,48 @@
 {
 	"name": "n balls k bins, BOTH DISTINGUISHABLE",
 	"content": "$ \\sum_{j=0}^{k} \\binom ki (k-i)^n (-1)^j $",
-},
+}
+
+{
+	"name": "Stirling Numbers of the 2nd Kind", // this is like pirates who get at least 1 piece of gold, but not the pirates are indistinguishable :(
+	"type": "definition",
+	"content": "A __Stirling Number of the 2nd kind__, denoted $\\bigcurly nk$, is the number of ways of partitioning a set of size $n$ into $k$ sets",
+	"note": "By the definition of *partition*, each of the $k$ sets must be nonempty.",
+}
+
+// latex for stirling notation:
+// \usepackage{amsmath}% http://ctan.org/pkg/amsmath
+// \DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}}
+{
+	"name": "Stirling Identity",
+	"type": "thm",
+	"content": "$ \\stirling nk = \\frac{1}{k!} \\sum_{j=0}^{k} \\binom kj (k-j)^n (-1)^j $",
+
+
+{
+	"name": "Bounds of Factorials",
+	"type": "thm",
+	"content": "$ 2^{n-1} \\leq n^{\\frac n2} \\leq n! \\leq en \\left(\\frac ne\\right)^n \\leq \\left(\\frac n2\\right)^n \\leq n^n $",
+	"proofs": [
+		{
+			"type": "calculus",
+			"content": "Take $\\ln$ of $n!$.  Bound the sum by the integral of $\\ln(x)$ from $1$ to $n+1$. So that $n! \leq \\frac{(n+1)^{n+1}}{e^n}$.  Finally, write $n! = n(n-1)!$ and apply the formula to $(n-1)!$ to get the more elegant bound.",
+		},
+	],
+}
+
+{
+	"name": "Bounds of Chooses",
+	"type": "thm",
+	"content": "$ \\left(\\frac{n-k+1}{k}\\right)^k \\leq \\left(\\frac nk\\right)^k \\leq \\binom nk \\leq n^k $",
+	"proofs": [
+		{
+			"type": "calculus",
+			"content": "Take $\\ln$ of $n!$.  Bound the sum by the integral of $\\ln(x)$ from $1$ to $n+1$. So that $n! \leq \\frac{(n+1)^{n+1}}{e^n}$.  Finally, write $n! = n(n-1)!$ and apply the formula to $(n-1)!$ to get the more elegant bound.",
+		},
+	],
+}
+
 
 
 
