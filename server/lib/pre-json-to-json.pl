@@ -3,22 +3,21 @@ $input = $ARGV[0]
 
 # This perl script will use regex to convert .pre-json files to .json files
 
-# regex to recognize a json value (BUT ONLY THE ONES I WILL BE USING):
+# regexs to recognize json values (BUT ONLY THE ONES I WILL BE USING):
 my $frac = qr(\.\d+);
 my $natural_number = qr(0|[1-9]\d*);
-my $number = qr($int$frac?);
+my $number = qr($natural_number$frac?);
 my $char = qr([^"\\]|\\(?:["\\nt]|u[0-9a-f]{4}));
 my $string = qr("$char*");
 my $base_value = qr($string|$number|true|false|null);
 
-my $gobble_strings = qr(((?:[^"]*$string)*[^"]*)); # guarantees that what is immediately after this isn't in the middle of a string
-my $nibble_strings = qr(((?:[^"]*?$string)*?[^"]*?)); # reluctant version
-my $gobble_strings_no_braces = qr(((?:[^"{}]*$string)*[^"{}]*)); # does not allow { or } outside of strings
-my $embedded_braces = qr(\{$gobble_strings_no_braces(?R)$gobble_strings_no_braces\});
+my $gobble_strings = qr((?:[^"]*$string)*[^"]*); # guarantees that what is immediately after this isn't in the middle of a string
+my $nibble_strings = qr((?:[^"]*$string)*?[^"]*?); # reluctant version (first star greedy is ok)
+my $gobble_strings_no_braces = qr((?:[^"{}]*$string)*[^"{}]*); # does not allow { or } outside of strings
 my $matched_braces = qr(\{(?:$gobble_strings_no_braces(?R))*$gobble_strings_no_braces\});
 
 # 1. All comments will be deleted
-$input =~ s#^($nibble_strings)//.*$#$1#mg;
+$input =~ s|^($nibble_strings)//.*|$1|mg;
 
 # 2. Commas will be added to the end of all top-level dics
 $input =~ s/$matched_braces/$&,/g; # this would naturally pick only the top-level dics
