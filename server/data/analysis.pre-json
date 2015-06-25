@@ -1,0 +1,87 @@
+// introductory things:
+// all, each, and every are synonyms
+// When definitions are of a certain form, 'if' actually means 'iff'. I should not do this here because you will never see it in math
+// how to study math (understand something completely before moving to the next thing)
+// how to use this resource (login and double click things that you understand to keep track)
+
+{
+	"definition":"A __graph__ $G$ is a multigraph $G = (V,E)$ where $E$ is a set that contains no loops.",
+	"note":"multigraphs are more general than graphs.",
+	"intuition":"$E$ is a multiset, so a pair of vertices could have more than one edge incident to them!  Also, there can be loops!",
+	"plural":"__vertices__",
+
+}
+
+{
+	"definition":"A number $n$ is a __natural number__ if it is one of the counting numbers, $0, 1, 2, 3, ...$",
+}
+
+{
+	"definition":"The set $\mathbb{N}$ is defined to be the set of all __natural numbers__, and $\mathbb{N}$ is known colloqually as the __natural numbers__",
+}
+
+{
+	"definition":"A number $z$ is an __integer__ if it is a whole number, including the negatives, and zero, so it is one of ...$-3, -2, -1, 0, 1, 2, 3,$...",
+}
+
+{
+	"definition":"The set $\mathbb{Z}$ is defined to be the set of all __integers__, and $\mathbb{Z}$ is known colloqually as the __integers__",
+}
+
+{
+	"definition":"A number $r$ is a __rational number__ means that for some integers $p$ and $q$, with $q \neq 0$, $r=\frac{p}{q}$",
+	"note":"$q$ can be equal to $1$, so all integers are __rational numbers__",
+}
+
+{
+	"definition":"The set $\mathBB{Q}$ is defined to be the set of all __rational__ numbers, and $\mathbb{Q}$ is known colloquially as the __rationals__",
+}
+
+{
+	"definition":"A real number is __irrational__ if it is not rational",
+	"note":"Try proving that $\sqrt}{2}$ is irrational!",
+}
+
+{
+	"definition":"The set $\emptyset$ is that set which has no element. It is referred to as the __empty set__",
+}
+
+{
+	"definition":"A set which is has at least one element is called __nonempty__",
+}
+
+{
+	"definition":"An __order__ on a set $S$	is a relation $<$ such that exactly one of following hold, for any $x, y \in S$. $x<y, x=y, y<x$, and if $x<y$ and $y<x$, then $x<z$",
+	"note":"The typical use of < within the __natural numbers__, __integers__, and __rationals__ is an order",
+	"note":"If $y<x$, we sometimes write $x>y$",
+}
+
+{
+	"definition":"If a set $S$ has an __order__ defined, then $S$ is an __ordered set__",
+	"note":"The typical use of < turns the __natural numbers__, __integers__, and __rationals__ into an __ordered set__",
+}
+
+{
+	"definition":"The symbol $x \leq y$ means that either $x<y$, or $x=y$, without specifying which",
+	"note":"The logical negation of $x<y$ is $y \leq x$",
+}
+
+{
+	"definition":"If $E \subset S$, and $\exists \beta \in S$ such that $\forall x \in E, x \leq \beta$, then we say that $E$ is __bounded above__ by $\beta$",
+}
+
+{
+	"definition":"If $E$ is __bounded above__ by $\beta$, then we say that $\beta$ is an __upper bound__ of $E$",
+}
+
+{
+	"definition":"If $E \subset S$, and $\exists \gamma \in S$ such that $\forall x \in E, x \geq \gamma$, then we say that $E$ is __bounded below__ by $\gamma",
+}
+
+{
+	"definition":"If $E$ is __bounded gamma__ by $\gamma$, then we say that $\gamma$ is a __lower bound__ of $E$",
+}
+
+{
+	"definition":""
+}
