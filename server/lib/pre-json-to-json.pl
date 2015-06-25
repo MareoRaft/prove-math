@@ -1,37 +1,30 @@
 #!/usr/bin/env perl
+$input = $ARGV[0]
 
 # This perl script will use regex to convert .pre-json files to .json files
 
-# regex to recognize a json value:
-# see json.org !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-my $e = qr([eE][+-]?);
-# $digit is \d, so we'll just type \d
-# $digits is \d+, so we'll just type \d+
-my $exp = qr($e\d+);
+# regex to recognize a json value (BUT ONLY THE ONES I WILL BE USING):
 my $frac = qr(\.\d+);
-my $int = qr(-?\d(?:[1-9]\d+)?);
-my $number = qr($int(?:$frac|$exp|$frac$exp));
-
-my $char = qr([^"\\]|\\(?:["\\/bfnrt]|uFOURHEXDIGITS));
+my $natural_number = qr(0|[1-9]\d*);
+my $number = qr($int$frac?);
+my $char = qr([^"\\]|\\(?:["\\nt]|u[0-9a-f]{4}));
 my $string = qr("$char*");
+my $base_value = qr($string|$number|true|false|null);
 
-my $value = qr($string|$number|$OBJECT|$ARRAY|true|false|null);
-
-my $elements = qr($value(?:\s*,\s*$value)*);
-my $array = qr(\[\s*$elements?\s*\]);
-
-my $pair = qr($string\s*:\s*$value);
-
-my $members = qr($pair(?:\s*,\s*$pair)*);
-my $object = qr(\{\s*$members?\s*\});
-
-
-if( '0.9i' =~ $number ){ print 'success' }
+my $gobble_strings = qr(((?:[^"]*$string)*[^"]*)); # guarantees that what is immediately after this isn't in the middle of a string
+my $nibble_strings = qr(((?:[^"]*?$string)*?[^"]*?)); # reluctant version
+my $gobble_strings_no_braces = qr(((?:[^"{}]*$string)*[^"{}]*)); # does not allow { or } outside of strings
+my $embedded_braces = qr(\{$gobble_strings_no_braces(?R)$gobble_strings_no_braces\});
+my $matched_braces = qr(\{(?:$gobble_strings_no_braces(?R))*$gobble_strings_no_braces\});
 
 # 1. All comments will be deleted
+$input =~ s#^($nibble_strings)//.*$#$1#mg;
 
 # 2. Commas will be added to the end of all top-level dics
+$input =~ s/$matched_braces/$&,/g; # this would naturally pick only the top-level dics
 
 # 3. Everything will be wrapped in a large array
+$input = "[\n\n$input\n\n]";
 
-# 4. Lists and arrays where the last element is followed by a comma will have the comma deleted
+# 4. Objects/Arrays where the last member/element is followed by a comma will have the comma deleted
+while( $input =~ s/^($gobble_strings(?:$base_value|\]|\})\s*),(\s*[\]\}])/$1$2/ ){} # i think gobble and nibble will have the same performance in this situation
