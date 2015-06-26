@@ -1,33 +1,35 @@
-[
+{
+	"nodes": [
 
-	{
-		"name": "Choosy Identity",
-		"type": "thm",
-		"weight": 3,
-		"content": "$ \\binom nk = \\binom{n}{n-k} $",
-		"proofs": [
-			{
-				"type": "algebraic",
-				"content": "Apply $\\binom nk = \\frac{n!}{k!(n-k)!} = \\frac{n!}{[n-(n-k)]!(n-k)!} = \\binom{n}{n-k} $",
-			},
-			{
-				"type": "combinatorial",
-				"content": "Left side: We have $n$ puppies.  We choose $k$ of them and color them blue.  We color the rest of them red.  Right side: We have $n$ puppies.  We choose $n-k$ of them and color them red.  We color the rest of them blue.",
-			},
-		],
-	},
+		{
+			"name": "Choosy Identity",
+			"type": "thm",
+			"weight": 3,
+			"content": "$ \\binom nk = \\binom{n}{n-k} $",
+			"proofs": [
+				{
+					"type": "algebraic",
+					"content": "Apply $\\binom nk = \\frac{n!}{k!(n-k)!} = \\frac{n!}{[n-(n-k)]!(n-k)!} = \\binom{n}{n-k} $",
+				},
+				{
+					"type": "combinatorial",
+					"content": "Left side: We have $n$ puppies.  We choose $k$ of them and color them blue.  We color the rest of them red.  Right side: We have $n$ puppies.  We choose $n-k$ of them and color them red.  We color the rest of them blue.",
+				},
+			],
+		},
 
-	{
-		"name": "Chairperson Identity",
-		"type": "thm",
-		"weight": 4,
-		"content": "$ k \\binom nk = n \\binom{n-1}{k-1} $",
-		"proofs": [
-			{
-				"type": "combinatorial",
-				"content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee.",
-			},
-		],
-	}
+		{
+			"name": "Chairperson Identity",
+			"type": "thm",
+			"weight": 4,
+			"content": "$ k \\binom nk = n \\binom{n-1}{k-1} $",
+			"proofs": [
+				{
+					"type": "combinatorial",
+					"content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee.",
+				},
+			],
+		}
 
-]
+	]
+}
