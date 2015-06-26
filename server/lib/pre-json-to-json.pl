@@ -33,8 +33,10 @@ my $base_value = qr($string|$number|true|false|null);
 my $gobble_strings = qr((?:[^"]*$string)*[^"]*); # guarantees that what is immediately after this isn't in the middle of a string
 my $nibble_strings = qr((?:[^"]*$string)*?[^"]*?); # reluctant version (first star greedy is ok)
 my $gobble_strings_no_braces = qr((?:[^"{}]*$string)*[^"{}]*); # does not allow { or } outside of strings
-my $matched_braces = qr(\{(?:$gobble_strings_no_braces(?R))*$gobble_strings_no_braces\});
 
+my $line_containing_comment = qr(^(?<PRECOMMENT>$nibble_strings)//.*)m; # should be used with multi-line option
+my $matched_braces = qr(\{(?:$gobble_strings_no_braces(?R))*$gobble_strings_no_braces\});
+my $code_with_trailing_comma = qr/^(?<PRETRAILINGCOMMA>$gobble_strings(?:$base_value|\]|\})\s*),(?<POSTTRAILINGCOMMA>\s*[\]\}])/; # should be used with WHILE loop to get ALL trailing commas
 
 # 0. Read the .pre-json file into $input
 my $file_path = $ARGV[0];
@@ -42,7 +44,7 @@ if( $file_path !~ /\.pre-json$/ ){ die 'You must input a .pre-json file.' }
 my $input = read_file($file_path)
 
 # 1. All comments will be deleted
-$input =~ s|^($nibble_strings)//.*|$1|mg;
+$input =~ s|$line_containing_comment|$+{PRECOMMENT}|mg;
 
 # 2. Commas will be added to the end of all top-level dics
 $input =~ s/$matched_braces/$&,/g; # this would naturally pick only the top-level dics
@@ -51,7 +53,7 @@ $input =~ s/$matched_braces/$&,/g; # this would naturally pick only the top-leve
 $input = "[\n\n$input\n\n]";
 
 # 4. Objects/Arrays where the last member/element is followed by a comma will have the comma deleted
-while( $input =~ s/^($gobble_strings(?:$base_value|\]|\})\s*),(\s*[\]\}])/$1$2/ ){} # i think gobble and nibble will have the same performance in this situation
+while( $input =~ s/$code_with_trailing_comma/$+{PRETRAILINGCOMMA}$+{POSTTRAILINGCOMMA}/ ){} # i think gobble and nibble will have the same performance in this situation
 
 # 5. Write a file with the same name, but ending in .json
 $file_path =~ s/\.pre-json$/.json/;
