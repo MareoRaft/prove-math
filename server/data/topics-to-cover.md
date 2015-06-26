@@ -1,17 +1,25 @@
 Tom
 -----
+  1. Analysis (in the future we will "project" this to make RU advanced calculus by applying restrictions, then adding the extra theorems that come out of these restrictions.)
   * Logic (matt will get some notes)
-  * Analysis (in the future we will "project" this to make RU advanced calculus by applying restrictions, then adding the extra theorems that come out of these restrictions.)
   * Set Theory (ZFC)
 
 Matt
 ------
+  1. combinatorics (summer course happening now)
   * Abstract Algebra (intro, abstr alg i, abstr alg ii)
-  * Topology
-  * Graph Theory (already done up to intro level)
 
 
 Think about later
 ------------------
-  * combinatorics
   * complex analysis
+  * Topology
+
+
+Done
+-----------------
+  * Graph Theory (already done up to intro level) NEEDS SOME CLEANING UP:
+>  * separate compound node
+>  * are all Gallai thms there?  alpha + beta = |V| and alpha' + beta' = |V|
+>  * make sure all thms in graph theory.txt in math folder are on there
+>  * see if tom has notes from first half of course
