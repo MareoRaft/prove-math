@@ -13,7 +13,7 @@ our $nibble_strings = qr((?:[^"]*$string)*?[^"]*?); # reluctant version (first s
 our $gobble_strings_no_braces = qr((?:[^"{}]*$string)*[^"{}]*); # does not allow { or } outside of strings
 
 our $line_containing_comment = qr(^(?<PRECOMMENT>$nibble_strings)//.*)m; # should be used with multi-line option
-our $matched_braces = qr(\{(?:$gobble_strings_no_braces(?R))*$gobble_strings_no_braces\});
+our $matched_braces = qr((?<MATCHEDBRACES>\{(?:$gobble_strings_no_braces(?&MATCHEDBRACES))*$gobble_strings_no_braces\}));
 our $code_with_trailing_comma = qr/^(?<PRETRAILINGCOMMA>$gobble_strings(?:$base_value|\]|\})\s*),(?<POSTTRAILINGCOMMA>\s*[\]\}])/; # should be used with WHILE loop to get ALL trailing commas
 
 1

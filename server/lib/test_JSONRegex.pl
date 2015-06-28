@@ -55,9 +55,81 @@ my @nonchars = qw('' {} pp 17 堇 袈 \\ \\\\n \\u975 \\b \\w \\r " \\\\u9999
 my @prestrings = (@chars, concat_cartesian_product(\@chars, \@chars), qw[hello 918234 IGI(*&* (*&* 70\\u9988h], 'i have spaces', '');
 my @strings = map { '"'.$_.'"' } @prestrings;
 	ok_all_match( \@strings, qr/^$JSONRegex::string$/, 'string' );
-my @prenonstrings = qw(堇 袈\\ \\\\n \\u98 \\b \\y " \\\\u7523 pop∢pop);
+my @prenonstrings = qw(\\u98 "); # there were some inconsistent things here: 堇 袈\\ \\b pop∢pop etc
 my @nonstrings = map { '"'.$_.'"' } @prenonstrings;
+push @nonstrings => ('this is"t', 'hi \\u', '$ \\frac{x-1}{\\binom nk}$');
 	ok_all_mismatch( \@nonstrings, qr/^$JSONRegex::string$/, 'string' );
+
+my @base_values = (@strings, @numbers, qw(true false null));
+	ok_all_match( \@base_values, qr/^$JSONRegex::base_value$/, 'base_value' );
+my @nonbase_values = qw(" . .0 .1 00 003 h"i hi "h"i" ' h '');
+	ok_all_mismatch( \@nonbase_values, qr/^$JSONRegex::base_value$/, 'base_value' );
+
+my @gobble_strings_no_braces = (
+	'',
+	'there are no strings here',
+	'here is "one" string',
+	'here "are" "two"',
+	'"918234 IGI(*&* (*&* 70\\u9988h" and "two" and "three" :,,',
+);
+my @gobble_strings = (@gobble_strings_no_braces,
+	'there {are} no strings here',
+	'here} is "one{" string',
+	'her}e "are" "two"',
+	'"918234 IGI(*&* (*&* 70\\u9988h" and "two{"{ and "three" :,,',
+);
+	ok_all_match( \@gobble_strings, qr/^$JSONRegex::gobble_strings$/, 'gobble_strings' );
+	ok_all_match( \@gobble_strings, qr/^$JSONRegex::nibble_strings$/, 'nibble_strings' );
+my @nongobble_strings = (
+	'there is half "a str',
+	'one "and" a "half',
+	'two " 7 9 % @ ! ~ ` \\\\ " "79%@!~`\\\\" um "n a half',
+	'"918234 IGI(*&* (*&* 70\\u9988h" and "two" and "thre:,,',
+);
+	ok_all_mismatch( \@nongobble_strings, qr/^$JSONRegex::gobble_strings$/, 'gobble_strings' );
+	ok_all_mismatch( \@nongobble_strings, qr/^$JSONRegex::nibble_strings$/, 'nibble_strings' );
+
+	ok_all_match( \@gobble_strings_no_braces, qr/^$JSONRegex::gobble_strings_no_braces$/, 'gobble_strings_no_braces' );
+
+# non gobble_strings_no_braces ?
+
+my @lines_containing_comment = (
+	'this //has',
+	'a // comment!',
+	'"918234 IGI(*&* (*&* 70\\u9988h" and "two" an// yo',
+	'// this is fully commented line',
+);
+	ok_all_match( \@lines_containing_comment, qr/^$JSONRegex::line_containing_comment$/, 'line_containing_comment' );
+my @nonlines_containing_comment = (
+	'this has',
+	'no comment!',
+	'918234 IGI(*&* (*&* 70\\u9988h" and "two" an// yo',
+	'"// this is half quoted line',
+	'what " // do you want? "',
+	'what " // do you want? " ok?',
+);
+	ok_all_mismatch( \@nonlines_containing_comment, qr/^$JSONRegex::line_containing_comment$/, 'line_containing_comment' );
+
+my @matched_braces = (
+	qw({} {{}} {{{}}} {{}{}} {{{}}{}} {{}{}{}} {{}{{}}{{{}}}{{}}{}}),
+	qw<{27365} {({}{((}} {oo({}{)}} {p}>,
+	'{ kk "}" }', '{"pizza"  "i){" this {} is "{{{{{" sparta! }',
+);
+	ok_all_match( \@matched_braces, qr/^$JSONRegex::matched_braces$/, 'matched_braces' );
+my @mismatched_braces = (
+	qw({}} {{{}} {{{}}{} {{}}{}} {{{{}}{}} {{}{}}{}} {{}{{}}{{{}}}{{}}{}}} {{{}{}{}}),
+	qw<27365} {({}{((} {o}o"({{)"}} {p"}" {p"}>,
+	'{ kk "}" ', '{"pizza"  "i){" this {} is "{{{{{" sparta! "}"',
+);
+	ok_all_mismatch( \@mismatched_braces, qr/^$JSONRegex::matched_braces$/, 'matched_braces' );
+
+my @codes_with_trailing_comma = (
+	qq("examples": [\n\t\t\t\t"Example 1","Example 2"\n,  ]),
+	qq("Example 1",\n      "Example 2"\n],\n\t\t\t\t}),
+	qq(]},],}),
+);
+	ok_all_match( \@codes_with_trailing_comma, /^$JSONRegex::code_with_trailing_comma$/, 'code_with_trailing_comma' );
+
 
 
 done_testing;
