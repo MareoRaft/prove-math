@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 ################################# IMPORTS #####################################
 use strict; use warnings;
 use JSONRegex;
@@ -47,7 +48,12 @@ my @numbers = (@natural_numbers, concat_cartesian_product(\@natural_numbers, \@f
 my @nonnumbers = qw(-135 -1 -0 01 . .p l 23.l 45. 0x11 b11);
 	ok_all_mismatch( \@fracs, \@nonnatural_numbers, qr/^$JSONRegex::natural_number$/, 'number' );
 
-my @chars = qw(' { p 7 9 % @ ! ~ ` \\\\ \\n \\t \\u9753); # qw performs qq quotes, so ESCAPING IS NECESSARY
+my @slosh_followers = qw(\\ " u8495 n t uabf3);
+	ok_all_match( \@slosh_followers, qr/^$JSONRegex::slosh_follower$/, 'slosh_follower' );
+my @nonslosh_followers = qw(\\\\ u u895 b p d uabg3 a l);
+	ok_all_mismatch( \@nonslosh_followers, qr/^$JSONRegex::slosh_follower$/, 'slosh_follower' );
+
+my @chars = qw(' { p \\" 7 9 % @ ! ~ ` \\\\ \\n \\t \\u9753); # qw performs qq quotes, so ESCAPING IS NECESSARY
 	ok_all_match( \@chars, qr/^$JSONRegex::char$/, 'char' );
 my @nonchars = qw('' {} pp 17 堇 袈 \\ \\\\n \\u975 \\b \\w \\r " \\\\u9999);
 	ok_all_mismatch( \@nonchars, qr/^$JSONRegex::char$/, 'char' );
@@ -65,10 +71,10 @@ my @base_values = (@strings, @numbers, qw(true false null));
 my @nonbase_values = qw(" . .0 .1 00 003 h"i hi "h"i" ' h '');
 	ok_all_mismatch( \@nonbase_values, qr/^$JSONRegex::base_value$/, 'base_value' );
 
-my @gobble_strings_no_braces = (
+my @gobble_strings_no_braces = (@strings,
 	'',
 	'there are no strings here',
-	'here is "one" string',
+	'here is "o\"ne" string',
 	'here "are" "two"',
 	'"918234 IGI(*&* (*&* 70\\u9988h" and "two" and "three" :,,',
 );
@@ -123,12 +129,20 @@ my @mismatched_braces = (
 );
 	ok_all_mismatch( \@mismatched_braces, qr/^$JSONRegex::matched_braces$/, 'matched_braces' );
 
-my @codes_with_trailing_comma = (
+my @codes_with_trailing_comma = ( # keep in mind if the writer doesn't input a value correctly, the trailing comma after it won't be detected!
+	'0, ]',
 	qq("examples": [\n\t\t\t\t"Example 1","Example 2"\n,  ]),
 	qq("Example 1",\n      "Example 2"\n],\n\t\t\t\t}),
 	qq(]},],}),
 );
-	ok_all_match( \@codes_with_trailing_comma, /^$JSONRegex::code_with_trailing_comma$/, 'code_with_trailing_comma' );
+	ok_all_match( \@codes_with_trailing_comma, qr/^$JSONRegex::code_with_trailing_comma$/, 'code_with_trailing_comma' );
+my @noncodes_with_trailing_comma = (
+	'0 ]',
+	qq("examples": [\n\t\t\t\t"Example 1","Example 2"\n  ]),
+	qq("Example 1",\n      "Example 2"\n],\n\t\t\t\t),
+	qq(]},],),
+);
+	ok_all_mismatch( \@noncodes_with_trailing_comma, qr/^$JSONRegex::code_with_trailing_comma$/, 'code_with_trailing_comma' );
 
 
 

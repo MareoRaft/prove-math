@@ -4,11 +4,14 @@ package JSONRegex;
 our $frac = qr(\.\d+);
 our $natural_number = qr(0|[1-9]\d*);
 our $number = qr($natural_number$frac?);
-our $char = qr([^"\\]|\\(?:["\\nt]|u[0-9a-f]{4}));
+our $slosh_follower = qr(["\\nt]|u[0-9a-f]{4});
+our $illegal_slosh = qr(\\(?!$slosh_follower));
+our $char = qr([^"\\]|\\$slosh_follower);
 our $string = qr("$char*");
 our $base_value = qr($string|$number|true|false|null);
 
 our $gobble_strings = qr((?:[^"]*$string)*[^"]*); # guarantees that what is immediately after this isn't in the middle of a string
+our $gobble_mid_strings = qr($gobble_strings"$char*);
 our $nibble_strings = qr((?:[^"]*$string)*?[^"]*?); # reluctant version (first star greedy is ok)
 our $gobble_strings_no_braces = qr((?:[^"{}]*$string)*[^"{}]*); # does not allow { or } outside of strings
 
