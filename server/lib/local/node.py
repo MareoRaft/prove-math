@@ -32,8 +32,8 @@ def single_insert_to_mongo(dic):
 	connection = pymongo.MongoClient("mongodb://localhost")
 	db = connection.test
 	people = db.people
-
-	matt = {"name": "Elliot", "company": "Picatinny", "interests": "engineering"}
+	print(people)
+	matt = {"name": "Prof K", "company": "Rutgers", "interests": "Math Prof"}
 
 	try:
 		people.insert_one(dic)
@@ -114,7 +114,7 @@ class Node:
 				self.notes.append(single_notes)
 
 	def __repr__(self):
-		msg = "(%s,%s,%s,%d)\n" % (self._name,self._type,self._description,self._weight)
+		msg = "(%s,%s,%s,%d)\n" % (self.name,self.type,self.description,self._weight)
 		if self._intuition:
 			msg = msg + self._intuition + "\n"
 		for example in self._examples:
@@ -159,7 +159,7 @@ class Node:
 	def type(self, new_type):
 		if re.match(r'def.*', new_type):
 			self._type = 'definition'
-		elif re.match(r'theor.*', new_type):
+		elif re.match(r'th.*', new_type):
 			self._type = 'theorem'
 		else:
 			warn('Bad type.')
