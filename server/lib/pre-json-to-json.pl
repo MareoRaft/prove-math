@@ -33,8 +33,8 @@ $input =~ s|$JSONRegex::line_containing_comment|$+{PRECOMMENT}|mg;
 
 # 2. Look for illegal sloshes in strings: \ followed by anything other than \, ", n, or t
 while( $input =~ s/^($JSONRegex::gobble_mid_strings)$JSONRegex::illegal_slosh/$1\\\\/ ){}
-# for n and t, we have to be smarter, look for known latex commands...
-$input =~ s/(?<!\\)\\(?=$n_latex_commands|$t_latex_commands)/\\\\/g;
+# for n and t, we have to be smarter, so we interpret a lowecase letter as a latex command.  An actual newline followed by a lowercase letter could not be correct.  It is incorrect grammar.
+$input =~ s/(?<!\\)\\(?=[nt][a-z])/\\\\/g;
 
 # 3. Commas will be added to the end of all top-level dics
 $input =~ s/$JSONRegex::matched_braces/$&,/g; # this would naturally pick only the top-level dics
