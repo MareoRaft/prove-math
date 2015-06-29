@@ -3,6 +3,22 @@
 // notes Tuesday, June 23, 2015
 
 {
+	"name": "Factorial",
+	"type": "def",
+	"weight": 4,
+	"content": "For any $n \\in \\bb{N}$, __$n$ factorial__, denoted $n!$, is $n(n-1)(n-2)\\ldots1$.",
+	"intuition": "$n!$ is just a shorthand notation for $1 \\cdot 2 \\cdots n$, that is, multiplying the numbers from $1$ to $n$ together.",
+}
+
+{
+	"name": "Ordering $p$ distinguishable people",
+	"type": "thm",
+	"weight": 4,
+	"content": "Given a set $P$ of size $p$, then the number of bijective functions from $[p]$ to $P$ is $p!$.",
+	"intuition": "If you have $p$ different people, and you want to order them in a line, then there are exactly $p!$ ways to do this.",
+}
+
+{
 	"name": "Choosy Identity",
 	"type": "thm",
 	"weight": 3,
@@ -154,45 +170,109 @@
 }
 
 {
-	"name": "Distribute indistibguishable Gold to distinguishable Pirates",
+	"name": "$a$ distinguishable balls in $x$ distinguishable boxes",
 	"type": "thm",
 	"weight": 4,
-	"content": "If you have $n$ (distinguishable) pirates and $k$ (indistinguishable) pieces of gold, then the number of ways to distribute the gold among the pirates is $\\binom{n+k-1}{n-1}$.",
+	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$ is\n\n$x^a$.",
+	"intuition": "If you have $a$ distinguishable balls and $x$ distinguishable boxes, then the number of ways (functions) to put the balls in the boxes is $x^a$.",
 	"proof": {
 		"type": "combinatorial",
-		"content": "Take the $k$ pieces of gold and $n-1$ sticks.  That's $n+k-1$ objects.  Then $\\binom{n+k-1}{n-1}$ is the number of ways you can arrange those objects.  For each arrangement, the gold to the left of stick $1$ goes to pirate $1$, and the gold to the left of stick $j$ goes to pirate $j$, and the gold to the right of stick $n-1$ goes to pirate $n$.",
+		"content": "Each ball has $x$ boxes it may be in.  We multiply these $x$s together to get the total number of outcomes.  Since there are $a$ $x$'s, we have $x^a$.",
 	},
 }
 
 {
-	"name": "n balls k bins, BOTH DISTINGUISHABLE",
-	"content": "$ \\sum_{j=0}^{k} \\binom ki (k-i)^n (-1)^j $",
+	"name": "$x$ Pick $a$",
+	"type": "thm",
+	"weight": 4,
+	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of injective functions from $A$ to $X$ is\n\n$x^\\underline{a}$.",
+	"note": "$x^\\underline{a}$ is also known as $x(x-1)(x-2)\\cdots(x-a+1)$.",
+	"intuition": "We have $x$ distinguishable boxes and $a$ distinguishable balls.  We must put the balls in the boxes so that each box has at most $1$ ball.",
+	"proof": {
+		"type": "combinatorial",
+		"content": "We take the $x$ boxes and pick $a$ of them to hold exactly $1$ ball (injective).  The first ball can be in any of the $x$ boxes.  The second ball can be in any of the $(x-1)$ remaining boxes.  We continue this process until we reach the $a^\\text{th}$ ball, which can be in any of the $(x-a+1)$ remaining boxes.  Multiplying these together, we get a total of $x(x-1)\\cdots(x-a+1) = x^\\underline{a}$ possibilities.",
+	},
 }
 
 {
-	"name": "Stirling Numbers of the 2nd Kind", // this is like pirates who get at least 1 piece of gold, but not the pirates are indistinguishable :(
-	"type": "definition",
-	"content": "A __Stirling Number of the 2nd kind__, denoted $\\bigcurly nk$, is the number of ways of partitioning a set of size $n$ into $k$ sets",
-	"note": "By the definition of *partition*, each of the $k$ sets must be nonempty.",
+	"name": "$a$ indistinguishable balls in $x$ distinguishable boxes",
+	"type": "thm",
+	"weight": 4,
+	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{a+x-1}{x-1}$.",
+	"intuition": "If you have $a$ indistinguishable balls and $x$ distinguishable boxes, then the number of ways (functions) to put the balls in the boxes is $\\binom{a+x-1}{x-1}$, which is also equal to $\\binom{a+x-1}{a}$.",
+	"proof": {
+		"type": "combinatorial",
+		"content": "Take the $a$ balls and $x-1$ of the boxes.  That's $a+x-1$ objects.  Then $\\binom{a+x-1}{x-1}$ is the number of ways you can arrange those objects in a vertical line.  Place the $1$ box we originally omitted on the bottom.  For each arrangement, imagine the balls fall downwards until they land in a box.  That is the box they belong in.",
+	},
+}
+
+{
+	"name": "Giving $a$ indistinguishable parachutes to $x$ distinguishable skydivers, at most one each",
+	"type": "thm",
+	"weight": 4,
+	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of injective functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{x}{a}$.",
+	"intuition": "Let $a \leq x$.  If you have $a$ indistinguishable parachutes and $x$ distinguishable skydivers, then the number of ways (functions) to give out the parachutes to the skydivers, where each skydiver gets at most $1$ parachute (injective), is $\\binom xa$.",
+	"proof": {
+		"type": "combinatorial",
+		"content": "$a \leq x$, and each skydiver gets at most one parachute.  Therefore, we are simply choosing which skydivers get parachutes.  We have $x$ skydivers, and we choose $a$ of them to get parachutes.  Therefore, $\\binom xa$ possibilities.",
+	},
+}
+
+{
+	"name": "Giving $a$ indistinguishable parachutes to $x$ distinguishable skydivers, at least one each",
+	"type": "thm",
+	"weight": 4,
+	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{a-1}{a-x}$.",
+	"intuition": "Let $a \geq x$.  If you have $a$ indistinguishable parachutes and $x$ distinguishable skydivers, then the number of ways (functions) to give out the parachutes to the skydivers, where each skydiver gets at least $1$ parachute (surjective), is $\\binom{a-1}{a-x}$.",
+	"proof": {
+		"type": "combinatorial",
+		"content": "$a \geq x$, and each skydiver gets at least one parachute.  Give $1$ parachute to each skydiver.  There are $a-x$ parachutes left, to be distributed among $x$ skydivers with no constraints.  Plugging this into the $\\ell$ indistinguishable balls in $x$ distinguishable boxes formula, $\\binom{\\ell+x-1}{\\ell} = \\binom{a-x+x-1}{a-x}$, we obtain the answer.",
+	},
 }
 
 // latex for stirling notation:
 // \usepackage{amsmath}% http://ctan.org/pkg/amsmath
 // \DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}}
 {
+	"name": "Stirling Numbers of the 2nd Kind",
+	"type": "definition",
+	"content": "A __Stirling Number of the 2nd kind__, denoted $\\bigcurly nk$, is the number of ways of partitioning a set of size $n$ into $k$ sets",
+	"note": "By the definition of *partition*, each of the $k$ sets must be nonempty.",
+}
+
+{
 	"name": "Stirling Identity",
 	"type": "thm",
-	"content": "$ \\stirling nk = \\frac{1}{k!} \\sum_{j=0}^{k} \\binom kj (k-j)^n (-1)^j $",
+	"content": "Stirling Numbers of the 2nd kind can be computed using the equality $ \\stirling nk = \\frac{1}{k!} \\sum_{j=0}^{k} \\binom kj (k-j)^n (-1)^j $.",
+	"intuition": "Partitioning a set containing exactly $n$ (distinguishiable) elements into $k$ (indistinguishable) nonempty subsets is the same thing as distributing $n$ distinguishable balls into $k$ indistinguishable boxes, where each box must contain at least $1$ ball.",
+}
 
+{
+	"name": "$a$ distinguishable balls in $x$ indistinguishable boxes, at least one each.",
+	"type": "thm",
+	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $X$, is\n\n$\\stirling ax$.",
+	"intuition": "$a \\geq x$.  You have $a$ different balls, and you want to put them in $x$ identical boxes so that each box has at least $1$ ball.  The number of ways to do this is $\\stirling ax$.",
+}
+
+{
+	"name": "$a$ distinguishable balls in $x$ distinguishable boxes, at least one each.",
+	"type": "thm",
+	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$ is\n\n$x!\\stirling ax$.",
+	"intuition": "$a \\geq x$.  You have $a$ different balls, and you want to put them in $x$ different boxes so that each box has at least $1$ ball.  The number of ways to do this is $x!\\stirling ax$.",
+	"proof": {
+		"type": "combinatorial",
+		"content": "The number of ways of putting $a$ distinguishable balls in $x$ *indistinguishable* boxes is $\\stirling ax$.  Since the boxes are now distinguishable, we multiply by the possible orderings of the $x$ boxes, $x!$.  Therefore, we obtain $x!\\stirling ax$ possibilities.",
+	},
+}
 
 {
 	"name": "Bounds of Factorials",
 	"type": "thm",
-	"content": "$ 2^{n-1} \\leq n^{\\frac n2} \\leq n! \\leq en \\left(\\frac ne\\right)^n \\leq \\left(\\frac n2\\right)^n \\leq n^n $",
+	"content": "$ 2^{n-1} \\leq n^{\\frac n2} \\leq e\\left(\\frac ne\\right)^n \\leq n! \\leq en\\left(\\frac ne\\right)^n \\leq \\left(\\frac n2\\right)^n \\leq n^n $",
 	"proofs": [
 		{
 			"type": "calculus",
-			"content": "Take $\\ln$ of $n!$.  Bound the sum by the integral of $\\ln(x)$ from $1$ to $n+1$. So that $n! \leq \\frac{(n+1)^{n+1}}{e^n}$.  Finally, write $n! = n(n-1)!$ and apply the formula to $(n-1)!$ to get the more elegant bound.",
+			"content": "Upper bound: Take $\\ln$ of $n!$.  Bound the sum by the integral of $\\ln(x)$ from $1$ to $n+1$. So that $n! \leq \\frac{(n+1)^{n+1}}{e^n}$.  Finally, write $n! = n(n-1)!$ and apply the formula to $(n-1)!$ to get the more elegant bound.\n\nLower bound: Begin using the same method, but when you have the sum of the natural logarithms, it is greater than $\\int_{t=1}^{n} \\ln(t) dt$, which is $1+n\\ln(n)-n$.  This is equal to $ln\\left(e\\left(\\frac ne\\right)^n\\right)$.",
 		},
 	],
 }
@@ -209,12 +289,15 @@
 	],
 }
 
+// probability stuff...
+// definition of P function:
+// S is all outcomes
+//  P: Powerset(S) --> [0,1]
+//  P(S) = 1
+//  P(set) = prob that outcome is an element of set.
+//  E subset of F
+//  P(E) <= P(F)
 
-
-
-
-
-
-
-
-
+// uniform distribution
+// every outcome equally likely
+// in which case, P(E) = |E| / |S|
