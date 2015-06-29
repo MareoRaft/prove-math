@@ -28,60 +28,6 @@ def to_bash():
 	print (bash_out)
 	subprocess.call('mkdir test_folder', shell=True)
 
-def single_insert_to_mongo(dic):
-	connection = pymongo.MongoClient("mongodb://localhost")
-	db = connection.test
-	people = db.people
-	print(people)
-	matt = {"name": "Prof K", "company": "Rutgers", "interests": "Math Prof"}
-
-	try:
-		people.insert_one(dic)
-
-
-	except Exception as e:
-		print("Unexpected error:")
-
-def list_insert_to_mongo(list_of_dicts):
-	connection = pymongo.MongoClient("mongodb://localhost")
-	db = connection.test
-	people = db.people
-
-	try:
-		people.insert_many(list_of_dicts)
-
-	except Exception as e:
-		print("Unexpected error:")
-
-def query_mongo(dict_fields):
-	connection = pymongo.MongoClient("mongodb://localhost")
-	db = connection.test
-	people = db.people
-
-	try:
-	#Results will be returned as json
-		results=people.find(dict_fields)
-	
-		for x in results:
-			print(x)
-
-	except Exception as e:
-		print("Unexpected error:")
-
-def delete_from_mongo(dict_fields):
-	# This will delete from all fields which match the parameter!!
-	connection = pymongo.MongoClient("mongodb://localhost")
-	db = connection.test
-	people = db.people
-
-
-	try:
-		results=people.delete_many(dict_fields)
-		print("Number deleted: "+str(results.deleted_count))		
-	except Exception as e:
-		print("Unexpected error:")
-
-
 
 #################################### MAIN #####################################
 # I would like to make a python3 script which uses this class and allows me to manually input new definitions, theorems, lemmas, etc.
@@ -223,7 +169,6 @@ class Node:
 
 if __name__=="__main__":
 
-	print("Hello World")
 	sample_theorem = {"name": "Pythagorean theorem", "type": "theorem", "weight": 1, "description": "a^2+b^2=c^2", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
 	sample_definition = {"name": "triangle", "type": "definition", "weight": 1, "description": "3 sided polygon", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
 	a = Node(sample_theorem)
@@ -234,37 +179,7 @@ if __name__=="__main__":
 	data_dictionary = helper.json_import('../../data/data-test.json')
 	for x in data_dictionary['nodes']:
 		c = Node(x)
-		single_insert_to_mongo(c.__dict__)
 		print(c)
-
-	# Test the clone function
-	test_clone = a.clone()
-	test_clone.name = "LALATheorem"
-	print(test_clone)
-	print(a)
-
-
-	# Test the export function
-	to_file = [a.__dict__,b.__dict__]
-	helper.json_export(to_file, 'test.txt')
-
-	#Test the subprocess/bash function
-	to_bash()
-
-	#Test the pymongo insert
-	single_insert_to_mongo(b.__dict__)
-
-	#Test the equality- will use py.test later
-	print(test_clone==a)
-	test_clone.name="Pythagorean theorem"
-	print(test_clone==a)
-
-	#Test the query-need _ in front of fields. For ex: _name instead of name
-	query_mongo({"name":"Matt"})
-
-	#Test the delete-need _ in front of fields. For ex: _name instead of name
-	delete_from_mongo({"name": "triangle"})
-
 
 
 

@@ -14,5 +14,6 @@ def test_node_copy():
     a = Node(sample_theorem)
     b = a.clone()
     assert id(a) != id(b)
+    assert a==b
     pass
 
