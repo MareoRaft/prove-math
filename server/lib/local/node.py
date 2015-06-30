@@ -72,10 +72,16 @@ class Node:
 			elif re.match(r'def.*',key,re.IGNORECASE):
 				self.type="definition"
 				self.description=dic[key]
-				if re.search(r'__.*__',dic[key]):
-					word=re.search(r'__.*__',dic[key]).group()
-					print(word)
-					self.name=word.strip("__")
+				if re.findall(r'__[^_]*__',dic[key]):
+					word=re.findall(r'__[^_]*__',dic[key])
+					if len(word)==1:
+						self.name=word[0].strip("__")
+					else:
+						compound_name=""
+						for x in word:
+							compound_name=compound_name+x.strip("__")+"/"
+						self.name=compound_name.strip("/")
+
 				for ii in dic.keys():	
 					if re.match(r'pl',ii,re.IGNORECASE):
 						self.plural=dic[ii]
@@ -97,7 +103,7 @@ class Node:
 								self.proofs.append(x)
 			
 
-			elif re.match(r'des.*',key,re.IGNORECASE):
+			elif re.match(r'des.*',key,re.IGNORECASE) or re.match(r'content.*',key, re.IGNORECASE):
 				self.description=dic[key]
 			
 			elif re.match(r'intuit.*',key,re.IGNORECASE):
@@ -125,12 +131,18 @@ class Node:
 					self.notes.append(dic[key])
 			
 			#At this point python will begin guessing
-			elif  isinstance(dic[key], str) and  re.search(r'__.*__',dic[key]):
+			elif  isinstance(dic[key], str) and  re.search(r'__[^_]*__',dic[key]):
 				self.type="definition"
 				self.description=dic[key]
-				word=re.search(r'__.*__',dic[key]).group()
-				print(word)
-				self.name=word.strip("__")
+				word=re.findall(r'__[^_]*__',dic[key]).group()
+				if len(word)==1:
+					self.name=word.strip("__")
+				else:
+					compound_name=""
+					for x in word:
+						compound_name=compound_name+x.strip("__")+"/"
+					self.name=compound_name.strip("/")
+
 
 			elif isinstance(dic[key], str) and re.search(r'\$',dic[key]):
 				self.type="theorem"
@@ -312,6 +324,8 @@ if __name__=="__main__":
 
 	thomas_example=	{"definition":"If $E \subset S$, and $\exists \gamma \in S$ such that $\forall x \in E, x \geq \gamma$, then we say that $E$ is __bounded below__ by $\gamma"}
 
+	thomas_example_1={"definition":"If $E$ is __bounded gamma__ by $\gamma$, then we say that $\gamma$ is a __lower bound__ of $E$"}
+
 
 
 	a = Node(sample_theorem)
@@ -319,22 +333,24 @@ if __name__=="__main__":
 	c= Node(matt_example1)
 	d=Node(matt_example2)
 	e=Node(thomas_example)
-	print(a)
-	print(b)
-	print(c)
-	print(d.__dict__)
-	print(e.__dict__)
+	f=Node(thomas_example_1)
+	#print(a)
+	#print(b)
+	#print(c)
+	#print(d.__dict__)
+	#print(e.__dict__)
+	print(f.__dict__)
         #Importing the same documents from a file
 	
 	data_dictionary = helper.json_import('../../data/data-test.json')
 	for x in data_dictionary['nodes']:
 		c = Node(x)
-		print(c)
+		#print(c)
 
 	new_data_dictionary = helper.json_import('../../data/commas-removed.json')
 	for x in new_data_dictionary['nodes']:
 		c=Node(x)
-		print(c.__dict__)
+		#print(c.__dict__)
 
 
 
