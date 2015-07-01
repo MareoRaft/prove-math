@@ -1,5 +1,5 @@
 import pymongo
-
+from passlib.context import CryptContext
 
 class Mongo:
     def __init__(self,database,collection):
@@ -15,7 +15,7 @@ class Mongo:
             return True
         else:
             return False
-    
+
     @property
     def address(self):
         return self._address
@@ -68,6 +68,52 @@ class Mongo:
             print("Number deleted: "+str(results.deleted_count))		
         except Exception as e:
             print("Unexpected error:")
+#Handles interactions with User Collection, Database  
+class Users(Mongo):
+    def __init__(self):
+        Mongo.__init__(self,"provemath","users")
+        self.pass_hash=CryptContext(schemes=["sha256_crypt", "md5_crypt", "des_crypt"])
+    def make_pw_hash(self,pw):
+        crypt=self.pass_hash
+        return crypt.encrypt(pw)
+
+    def add_user(self, username,password, email):
+        password_hash=self.make_pw_hash(password)
+        user={'_id':username, 'password':password_hash,'email':email }
+        
+        try:
+            self.address[self.database][self.collection].insert(user)
+        
+        except pymongo.errors.OperationFailure:
+            print("Mongo Error")
+            return False
+        
+        except pymongo.errors.DuplicateKeyError as e:
+            print ("Username is already taken")
+            return False
+
+        return True
+
+    def validate_login(self,username, password):
+        query={'_id':username}
+        crypt=self.pass_hash
+        user=None
+
+        try:
+            user=self.address[self.database][self.collection].find_one(query)
+        except:
+            print("Unexpected Error")
+
+        if user is None:
+            print("User or password not correct")
+            return None
+
+        if not crypt.verify(password,user['password']):
+            print("User or password not correct")
+            return None
+
+        return user
+        
 
 
 if __name__=="__main__":
@@ -77,10 +123,15 @@ if __name__=="__main__":
     l=[dic2,dic3]
 
     a=Mongo("test","people")
-    print(a)
-    print(a.address)
-    a.single_insert_to_mongo(dic)
-    a.list_insert_to_mongo(l)
-    a.query_mongo({"_name":"vertex"})
-    a.delete_from_mongo({"name":"Prof K"})
+    b=Users()
+    b.add_user("Theodore","lala123","sampleEmail@gmail.com")
+    print(b.validate_login("Theo","wrongpassword"))
+    print(b.validate_login("Theo","lala123"))
+    
+    #print(a)
+    #print(a.address)
+    #a.single_insert_to_mongo(dic)
+    #a.list_insert_to_mongo(l)
+    #a.query_mongo({"_name":"vertex"})
+    #a.delete_from_mongo({"name":"Prof K"})
 
