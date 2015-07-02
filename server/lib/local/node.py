@@ -9,13 +9,13 @@ import subprocess
 import copy
 import re
 
-# third party:
-import pymongo
 
 # local:
 #It appears that helper has been moved to the parent directory
 sys.path.insert(0, '..')
 import helper
+import mongo
+
 
 ################################### HELPERS ###################################
 # Should we make mongo variables global for all methods?
@@ -328,18 +328,18 @@ if __name__=="__main__":
 
 
 
-	a = Node(sample_theorem)
-	b = Node(sample_definition)
-	c= Node(matt_example1)
-	d=Node(matt_example2)
-	e=Node(thomas_example)
-	f=Node(thomas_example_1)
+	#a = Node(sample_theorem)
+	#b = Node(sample_definition)
+	#c= Node(matt_example1)
+	#d=Node(matt_example2)
+	#e=Node(thomas_example)
+	#f=Node(thomas_example_1)
 	#print(a)
 	#print(b)
 	#print(c)
 	#print(d.__dict__)
 	#print(e.__dict__)
-	print(f.__dict__)
+	#print(f.__dict__)
         #Importing the same documents from a file
 	
 	data_dictionary = helper.json_import('../../data/data-test.json')
