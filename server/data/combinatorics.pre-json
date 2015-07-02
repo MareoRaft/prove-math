@@ -108,7 +108,7 @@
 	"content": "$\\sum_{k=0}^{n} \\binom nk = 2^n$",
 	"proof": {
 		"type": "combinatorial",
-		"Right side: The number of subsets of $[n]$ is $2^n$.  Left side: The number of subsets of $[n]$ of size $k$ is $\\binom nk$.  Sum these amounts over all possible sizes of subsets.",
+		"content": "Right side: The number of subsets of $[n]$ is $2^n$.  Left side: The number of subsets of $[n]$ of size $k$ is $\\binom nk$.  Sum these amounts over all possible sizes of subsets.",
 	},
 }
 
@@ -120,7 +120,7 @@
 	"content": "Probability version: Given a probability, $0\\leq p\\leq 1$, then $\\sum_{k=0}^{n} \\binom nk p^k (1-p)^{n-k} = 1$.",
 	"proof": {
 		"type": "algebraic",
-		"$1 = 1^n = (p+[1-p])^n = \\sum_{k=0}^{n} \\binom nk p^k(1-p)^{n-k}$",
+		"content": "$1 = 1^n = (p+[1-p])^n = \\sum_{k=0}^{n} \\binom nk p^k(1-p)^{n-k}$",
 	},
 }
 
@@ -131,7 +131,7 @@
 	"content": "Given any finite set, the number of odd sized subsets is equal to the number of even sized subsets.  Algebraically, $0 = \\sum_{k=0}^{n} \\binom nk (-1)^k$.",
 	"proof": {
 		"type": "algebraic",
-		"$0 = (1+(-1))^n = \\sum_{k=0}^{n} \\binom nk (-1)^k$ by the binomial theorem.",
+		"content": "$0 = (1+(-1))^n = \\sum_{k=0}^{n} \\binom nk (-1)^k$ by the binomial theorem.",
 	},
 }
 
