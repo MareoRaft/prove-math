@@ -481,3 +481,67 @@
 	"content": "The expected value function is linear.  That is, $E[X_1+X_2] = E[X_1] + E[X_2]$.",
 	"intuition": "This is true *regardless* of the interdependence of the events causing various $X_1$ and $X_2$ values!",
 }
+
+{
+	"name": "Recurrence Relation",
+	"type": "def",
+	"content": "A __recurrence relation__ is an equation $a_n = f(a_{n-1},a_{n-2},,,a_0)$ that recursively defines a sequence or multidimensional array of values, after one or more initial terms are given: each further term of the sequence or array is defined as a function of the preceding terms.",
+	"example": "The Fibonacci numbers are defined like so:  The initial terms are $a_0=0$ and $a_1=1$.  All other terms are defined by the recurrence relation $a_n = a_{n-1}+a_{n-2}$.",
+	"example": "The Towers of Hanoi is a game where you must move $n$ disks from the left side <img> to the right side <img>.  You may move one disk at a time, and a disk can never be placed above a disk larger than itself.  When the tower is $n=1$ tall, it takes $a_1=1$ moves to move the stack.  When the tower is $n$ tall, it takes $a_n = 2a_{n-1}+1$ moves to move the stack, which is a recurrence relation.",
+}
+
+{
+	"name": "Linear",
+	"type": "def",
+	"content": "Given any module $(X,+)$ over a ring $(C,+,\\cdot)$, a function $f$ is __linear__ if it satisfies the properties\n\n  1. $f(x_1+x_2) = f(x_1)+f(x_2)$ for all $x_1,x_2\\in X$\n  2. $f(cx) = cf(x) for all $c\\in C$ and $x\\in X$.",
+	"note": "It is equivalent to check the property $f(cx_1+x_2) = cf(x_1)+f(x_2)$ for all $c\\in C$ and $x\\in X$",
+	"intuition": "Without knowing what a module or ring is, you can think of $X$ as the domain of the function and $C$ as the set of constants you are allowed to multiply by.  Then all you need to do is check that the two properties are true.",
+	"example": "Let $X$ and $C$ both be the real numbers, $\\mathbb R$.  Then the function $f(x) = 7x+2$ is linear because\n\n  1. $f(x_1+x_2) = 12(x_1+x_2)+2...oh wait.  maybe it's not.",
+}
+
+{
+	"name": "Homogeneous",
+	"type": "def",
+	"content": "A function that satisfies $f(tx_1,,,tx_n) = t^kf(x_1,,,x_n)$ for all $t$ and a fixed $k$.",
+	"example": "The function $f(x) = 6x$ is homogeneous because $f(tx) = 6tx = t^16x = t^1f(x)$.",
+	"example": "The function $f(x,y) = 6x+13y$ is homogeneous because $f(tx) = 6tx+13ty = t^1(6x+13y) = t^1f(x,y)$.",
+}
+
+{
+	"name": "Characteristic Equation Method",
+	"type": "thm",
+	"content": "When a recurrence is of the form $a_n = \\sum_{i=0}^{n-1} k_ia_i$, and the solutions to the equation $x^n = \\sum_{i=0}^{n-1} k_ix^i$ are $x_0,,,x_{n-1}$, then every expression of the form $\\sum_{i=0}^{n-1} c_ix_i^n$ is a solution to the recurrence.  The base cases that determine the specific sequence can be used to solve for the $c$s, giving a closed form formula for the specific sequence.",
+}
+
+{
+	"name": "No Consecutive Heads Recurrence",
+	"type": "exercise",
+	"weight": 2,
+	"content": "Given $n$ consecutive coin flips, let $a_n$ be the number of outcomes that do *not* have consecutive heads.  The base cases for this sequence are [[$a_1 = 2$ and $a_2 = 3$]].  The recurrence relation for this sequence is [[$a_n = a_{n-1}+a_{n-2}$]].",
+	"proof": {
+		"type": "combinatorial",
+		"content": "Consider $n>2$ consecutive coin flips.  How many do not have consecurive heads?  If the first flip is tails, then there are $a_{n-1}$ possibilities for the remaining flips.  If the first flip is heads, then the second flip must be tails, and there are $a_{n-2}$ possibilities for the remaining flips.  This covers all cases, so there are a total of $a_{n-1}+a_{n-2}$ possibilities without consecutive heads.",
+	},
+}
+
+{
+	"name": "No Consecutive 1s Recurrence",
+	"type": "exercise",
+	"weight": 1,
+	"content": "Given a line of length $n$ of letters from ${J,K,L}$.  Let $a_n$ be the number of possible lines that do *not* have consecutive $J$s.  The base cases for this sequence are [[$a_1 = 3$ and $a_2 = 8$]].  The recurrence relation for this sequence is [[$a_n = 2a_{n-1}+2a_{n-2}$]].",
+	"proof": {
+		"type": "combinatorial",
+		"content": "Consider a line of length $n>2$.  How many do not have consecutive $J$s?  If the first number is $K$ or $L$, then there are $a_{n-1}$ possibilities for the rest of the line.  This makes $2a_{n-1}$ possibilities.  If the first number is $J$, then the second number must be $K$ or $L$, and there are $a_{n-2}$ possibilities for the rest of the line.  This makes $2a_{n-2}$ possibilities.  This covers all cases, so there are a total of $2a_{n-1}+2a_{n-2}$ possibilities without consecutive $J$s.",
+	},
+}
+
+{
+	"name": "Filling a 3xn square grid with 1x1 and 2x2 tiles",
+	"type": "exercise",
+	"weight": 1,
+	"content": "Given a $3\\times n$ grid of $1\\times1$ squares, we want to fill it with $1\\times1$ and $2\\times2$ tiles.  Let $a_n$ be the number of ways to do this.  The base cases for this sequence are [[$a_1 = 1$ and $a_2 = 3$]].  The recurrence relation for this sequence is [[$a_n = 2a_{n-1}+2a_{n-2}$]].",
+	"proof": {
+		"type": "combinatorial",
+		"content": "A $3\\times1$ grid can only be filled in $1$ way, that is, with $3$ $1\\times1$ tiles.  So $a_1=1$.  A 3\\times2$ grid can be filled in $3$ ways:\n\n  1. A $2\\times2$ tile on top and $2$ $1\\times1$ tiles on bottom.\n  2. A $2\\times2$ tile on bottom and $2$ $1\\times1$ tiles on top.\n  3. $6$ $1\\times1$ tiles.\n\nSo $a_2=3$.  These are the base cases.\n\nConsider a $3\\times n$ grid where $n>2$.  If the last column is filled with $1\\times1$ tiles, then there are $a_{n-1}$ ways to fill the rest of the grid.  On the other hand, if the last column has part of a $2\\times2$ tile on its bottom, then the second to last column has the other half of the $2\\times2$ in it, and the top of those columns must be filled with $1\\times1$ tiles <img>.  There are $a_{n-2}$ ways to fill the rest of the grid.  Finally, if the last column has half of a $2\\times2$ tile on its top, then we get a symmetrical situation, and again there are $a_{n-2}$ ways to fill the rest of the grid.\n\nThis covers all possible cases, and they are mutually exclusive, so there are a total of $a_{n-1}+2a_{n-2}$ ways to fill the $3\\times n$ grid.  This is the recurrence relation.",
+	},
+}
