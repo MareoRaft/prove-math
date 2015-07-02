@@ -252,10 +252,19 @@
 }
 
 {
-	"name": "Partition positive integer $a$ into $x$ parts",
+	"name": "Partition of a natural number",
+	"weight": 4,
+	"def": "A __partition__ of a natural number $n$ is a multiset of positive integers that add up to $n$.  Each element of the multiset is called a __part__ of the partition.",
+	"note": "Because the integers that add up to $n$ must be positive, $0$ is not used in partitions.",
+	"intuition": "This is analagous to a partition of a set of $n$ elements.  The difference is that in a partition of a *set*, it matters which elements are in each part; on the other hand, in a partition of a *natural number*, it only matters *how many* elements are in each part.",
+	"example": "What are all the partitions of $4$?  They are $1+1+1+1$, $1+1+2$, $1+3$, and $2+2$.  The partition $3+1$, for example, is considered to be the same as $1+3$.",
+}
+
+{
+	"name": "Partition natural number $a$ into $x$ parts",
 	"type": "def",
 	"weight": 4,
-	"content": "The number of ways to __partition__ integer $a>0$ into $x$ (nonempty) parts is denoted $p_x(a)$.  This is the number of ways to write $a$ as the sum of exactly $x$ positive integers.  A formula for this is unknown!",
+	"content": "The number of ways to partition natural number $a$ into $x$ (nonempty) __parts__, denoted $p_x(a)$, is the number of ways to write $a$ as the sum of exactly $x$ positive integers.  A formula for this is unknown!",
 	"note": "The order of the integers does not matter.",
 	"intuition": "Partitioning an integer is analagous to partitioning a set, except that with sets, the elements you choose to be in each part are distinct.  With integers, the elements are identical, so it only matters how many are in each part.",
 	"intuition": "Since different ordering of the same $x$ parts are considered only $1$ possibility, it is easiest to keep track by always listing the sums in lexographical order.  For example, the sum $2+1+5$ can be listed as $1+2+5$.",
@@ -427,7 +436,16 @@
 
 // uniform distribution
 // every outcome equally likely
+{
+	"name": "Uniform Distribution",
+	"type": "def",
+	"content": "If we have a set $U$ of all possible outcomes, and every outcome has the same probability $p$ of occuring, then the probabilities form a __uniform distribution__ .  If we give each outcome a label $k$ and graph all the $(k, P(k))$ points on the $kP$-axis, the result is always a horizontal line.",
+	"intuition": "A uniform distribution is when there is an equal chance of getting each outcome.",
+	"example": "We flip a fair coin.  The possible outcomes are **heads** and **tails**.  The probability of getting **heads** is $50\%$.  The probability of getting **tails** is $50\%$.  The outcomes are uniformly distributed.",
+}
+
 // in which case, P(E) = |E| / |S|
+
 
 {
 	"name": "Probability of A given B",
@@ -455,24 +473,22 @@
 {
 	"name": "Binomial Distribution",
 	"type": "def",
-	"content": "Given we repeat the experiment $n$ times, if we graph the $P($a$ occurs exactly $k$ times)$ on the $kP$-axis, we obtain the __binomial distibution__, denoted $Bin(n,p)$.",
-	"intuition": "",
+	"content": "An experiment has a fixed probability $p$ of being successful.  Given we repeat the experiment $n$ times, if we graph the $P(\\text{$a$ occurs exactly $k$ times})$ on the $kP$-axis, we obtain the __binomial distibution__, denoted $\\text{Bin}(n,p)$.",
 }
 
 // thm: the binomial distibution approaches the normal distribution as n approaches infinity?
 
 {
 	"name": "Geometric Distribution",
-	"type": "",
-	"content": "..., denoted Geo(n,p).",
-	"intuition": "",
+	"type": "def",
+	"content": "An experiment has a fixed probability $p$ of being successful.  The experiment is repeated until it is successful, and the number of times it was executed is $k$.  Each value of $k$ has a certain probability of occuring.  If we graph the $(k, P(k))$ points on the $kP$-axis, we obtain the __geometric distribution__, denoted $\\text{Geom}(p)$.",
 }
 
 {
 	"name": "Expected Value",
 	"type": "def",
-	"content": "The __expected value__ of $X$, denoted $\\mathbb{E}[X]$, is $\\sum_{v = possible values of X} v \\cdot P(X=v)$.",
-	"intuition": "",
+	"content": "The __expected value__ of $X$, denoted $\\mathbb{E}(X)$, is $\\sum_{v = possible values of X} v \\cdot P(X=v)$.",
+	"intuition": "$E(X)$ is sometimes denoted $E[X]$ or $E{x}$, but it is just a function nevertheless.",
 }
 
 {
@@ -544,4 +560,37 @@
 		"type": "combinatorial",
 		"content": "A $3\\times1$ grid can only be filled in $1$ way, that is, with $3$ $1\\times1$ tiles.  So $a_1=1$.  A 3\\times2$ grid can be filled in $3$ ways:\n\n  1. A $2\\times2$ tile on top and $2$ $1\\times1$ tiles on bottom.\n  2. A $2\\times2$ tile on bottom and $2$ $1\\times1$ tiles on top.\n  3. $6$ $1\\times1$ tiles.\n\nSo $a_2=3$.  These are the base cases.\n\nConsider a $3\\times n$ grid where $n>2$.  If the last column is filled with $1\\times1$ tiles, then there are $a_{n-1}$ ways to fill the rest of the grid.  On the other hand, if the last column has part of a $2\\times2$ tile on its bottom, then the second to last column has the other half of the $2\\times2$ in it, and the top of those columns must be filled with $1\\times1$ tiles <img>.  There are $a_{n-2}$ ways to fill the rest of the grid.  Finally, if the last column has half of a $2\\times2$ tile on its top, then we get a symmetrical situation, and again there are $a_{n-2}$ ways to fill the rest of the grid.\n\nThis covers all possible cases, and they are mutually exclusive, so there are a total of $a_{n-1}+2a_{n-2}$ ways to fill the $3\\times n$ grid.  This is the recurrence relation.",
 	},
+}
+
+{
+	"name": "Generating Function",
+	"type": "def",
+	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} a_nx^n$.",
+}
+
+{
+	"name": "$e^x$ Generating Function",
+	"type": "thm",
+	"content": "The generating function for $e^x$ is $\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}$.",
+	"proofs": [
+		{
+			"type": "calculus",
+			"content": "By definition, the Maclauren series for $e^x$ is $fill in here$.  Since the derivative of $e^x$ is $e^x$, all of the derivatives evaluate to $1$.",
+		},
+		{
+			"type": "magic",
+			"content": "$e^x$ is the *only* increasing function whose derivative is itself.  $\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}$ is increasing because each term is positive and each nonzero power is greater than $1$.  Its derivative, $\\sum_{n=0}^{\\infty} \\frac{nx^{n-1}}{n!} = \\sum_{n=1}^{\\infty} \\frac{x^{n-1}}{(n-1)!} = \\sum_{j=0}^{\\infty} \\frac{x^j}{j!}$, is equal to itself.  Therefore, the infinite sum *must* be $e^x$.",
+		},
+	],
+}
+
+{
+	"name": "Number of partitions of a natural number",
+	"type": "thm",
+	"content": "The number of partitions of a natural number $n$ is the coefficient of $x^n$ in $\\prod_{k=0}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
+	"intuition": "Remember that a partition of $n$ is a sum of natural numbers that add up to $n$.  The order of the numbers does not matter.  The given product can be expressed as a Maclaurin series of the form $a_0x^0 + a_1x^1 + a_2x^2 +++$.  Then $a_n$ is the number of ways to partition $n$.",
+	"proof": {
+		"type": "algebraic",
+		"content": "Given $\\prod_{k=0}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$, each factor $\\frac{1}{1-x^k}$ can be replaced with its generating function, $\\sum_{i=0}^{\\infty} x^ki$.\n\nThe result is a product of sums, which looks like $(x^0+x^1+x^2+x^3+++)(x^0+x^2+x^6+x^8+++)(x^0+x^3+x^6+x^9+++)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  The term chosen from the second factor represents the number of $2$s you are using the in the partition, and so forth.  For example, in the second factor, choosing $x^0$ means you are using no $2$s in the partition.  Choosing $x^2$ means you are using one $2$ in the partition.  Or choosing $x^4$ means you are using two $2$s in the partition.\n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$.",
+	}
 }
