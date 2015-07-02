@@ -2,6 +2,7 @@
 ################################### IMPORTS ###################################
 # standard library:
 #Reg expressions for processing definition, name, etc..
+#Stricter Reg Expressions with failure at else
 #Mongo class 
 import sys
 from warnings import warn
@@ -14,7 +15,7 @@ import re
 #It appears that helper has been moved to the parent directory
 sys.path.insert(0, '..')
 import helper
-import mongo
+from mongo import Mongo
 
 
 ################################### HELPERS ###################################
@@ -57,7 +58,7 @@ class Node:
 			elif re.match(r'weight.*',key,re.IGNORECASE):
 				self.weight = dic[key]
 			
-			elif re.match(r'th.*',key,re.IGNORECASE):
+			elif re.match(r'^(theorem|thm)$',key,re.IGNORECASE):
 				self.type="theorem"
 				self.description=dic[key]
 				for ii in dic.keys():
@@ -342,15 +343,17 @@ if __name__=="__main__":
 	#print(f.__dict__)
         #Importing the same documents from a file
 	
-	data_dictionary = helper.json_import('../../data/data-test.json')
-	for x in data_dictionary['nodes']:
-		c = Node(x)
+	#data_dictionary = helper.json_import('../../data/data-test.json')
+	#for x in data_dictionary['nodes']:
+	#	c = Node(x)
 		#print(c)
+	a=Mongo("provemath", "combinatorics")
 
-	new_data_dictionary = helper.json_import('../../data/commas-removed.json')
+	new_data_dictionary = helper.json_import('../../data/combinatorics.json')
 	for x in new_data_dictionary['nodes']:
 		c=Node(x)
 		#print(c.__dict__)
+		a.single_insert_to_mongo(c.__dict__)
 
 
 
