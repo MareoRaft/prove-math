@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-################################### IMPORTS ###################################
-# standard library:
+##################################### TODO ####################################
 #Reg expressions for processing definition, name, etc..
 #Stricter Reg Expressions with failure at else
+
+# MathJax/Node.js, run bash commands from python script, export json
+# update __repr__ and __str__ to follow Python standard
+# To Do: Equality method, magic methods, people o-auth, login info
+
+################################### IMPORTS ###################################
+# standard library:
 import sys
 from warnings import warn
 import subprocess
@@ -67,9 +73,6 @@ def has_at_least_two_dunderscores(string):
 	return len(dunderscore_list) >= 2
 
 #################################### MAIN #####################################
-# MathJax/Node.js, run bash commands from python script, export json
-# update __repr__ and __str__ to follow Python standard
-# To Do: Equality method, magic methods, people o-auth, login info
 
 
 class Node:
