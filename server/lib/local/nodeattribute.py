@@ -72,7 +72,7 @@ class NodeAttribute:
 		self._value = new_value
 
 	def as_html(self):
-		return subprocess.check_output(['../lib/Markdown.pl', '<<<', '"', self.value, '"'])
+		return subprocess.check_output(['lib/Markdown.pl', '<<<', '"', self.value, '"'])
 
 		# check out
 		# try:

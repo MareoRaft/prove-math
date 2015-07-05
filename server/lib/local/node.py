@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 ##################################### TODO ####################################
 #Reg expressions for processing definition, name, etc..
 #Stricter Reg Expressions with failure at else
@@ -14,13 +13,12 @@ from warnings import warn
 import subprocess
 import copy
 import re
+import json
 
 # local:
-import helper
-from mongo import Mongo
+import lib.helper
 
 ################################### HELPERS ###################################
-# Should we make mongo variables global for all methods?
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
 
@@ -36,15 +34,23 @@ def move_attribute(dic, aliases, strict=True):
 			del dic[key]
 			return value
 	if strict:
-		raise KeyError('Could not find any of the following keys in the Node input: ' + aliases)
+		raise KeyError('Could not find any of the following keys in the Node input: ' + str(aliases))
 	else:
 		return None
 
-def is_clean(value):
+def is_capitalized(value):
+	if re.match(r'[\$A-Z]', value): # starts with LaTeX or capital letter
+		return True
+	return False
+
+def is_content_clean(value):
+	if type(value) is list:
+		for el in value:
+			assert is_content_clean(el)
 	if type(value) is str:
 		assert len(value) >= 15 # arbitary length to make sure person actually put some content in
 		assert value[-1] is '.' # make sure they end in period.  in future, support colon followed by a list without period?
-		assert re.match(r'[\$A-Z]', value) # starts with LaTeX or capital letter
+		assert is_capitalized(value)
 	return True
 
 def check_type_and_clean(value, value_type=str, list_of=False):
@@ -52,14 +58,11 @@ def check_type_and_clean(value, value_type=str, list_of=False):
 		if type(value) is list:
 			for el in value:
 				assert type(el) is value_type
-				assert is_clean(el)
-			return value
 		else:
 			assert type(value) is value_type
-			assert is_clean(value)
-			return [value]
-	assert type(value) is value_type
-	assert is_clean(value)
+			value = [value]
+	else:
+		assert type(value) is value_type
 	return value
 
 def find_key(dic, keys):
@@ -92,13 +95,17 @@ class Node:
 		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
 		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
 		if self.type is 'theorem': # but this should be moved to Theorem class
-			self.proofs = move_attribute(dic, {'proofs', 'proof'})
+			self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
 		if self.type is 'definition': # but this should be moved to Definition class?
 			self.plural = move_attribute(dic, {'plural', 'pl'}, strict=False)
 		for key in dic: # if one or more keys are still left in the dictionary...
 			raise KeyError('Unexpected or redundant key "' + key + '" found in input dictionary.')
 
-	def __repr__(self):
+	def as_json(self): # returns json version of self
+		return json.dumps(self.__dict__)
+		# if too simplistic, try this instead: https://github.com/jsonpickle/jsonpickle
+
+	def __str__(self):
 		if self.type=="definition":
 			msg = "(%s,%s,%s,%s,%d)\n" % (self.name, self.plural, self.type, self.description, self.weight)
 			if self._intuition:
@@ -107,7 +114,6 @@ class Node:
 				msg = msg + example + "\n"
 			for single_note in self._notes:
 				msg=msg+ single_note+"\n"
-
 		else:
 			msg = "(%s,%s,%s,%d)\n" % (self.name,self.type,self.description,self.weight)
 			if self._intuition:
@@ -119,7 +125,6 @@ class Node:
 			for single_proof in self._proofs:
 				for x in single_proof:
 					msg=msg+str(x)+": "+single_proof[x]+"\n"
-
 		return msg
 
 	def __eq__(self,other):
@@ -142,13 +147,15 @@ class Node:
 				return False
 		return True
 
-
+	def clone(self):
+		return copy.deepcopy(self)
 
 	@property
 	def name(self):
 		return self._name
 	@name.setter
 	def name(self, new_name):
+		assert is_capitalized(new_name)
 		self._name = check_type_and_clean(new_name, str)
 
 	@property
@@ -157,21 +164,21 @@ class Node:
 	@type.setter
 	def type(self, new_type):
 		clean_type = check_type_and_clean(new_type, str)
-		if clean_type in {'definition', 'defn', 'def'}
+		if clean_type in {'definition', 'defn', 'def'}:
 			self._type = 'definition'
-		if clean_type in {'theorem', 'thm'}
+		elif clean_type in {'theorem', 'thm'}:
 			self._type = 'theorem'
-		if clean_type in {'exercise'}
+		elif clean_type in {'exercise'}:
 			self._type = 'exercise'
 		else:
-			raise ValueError("Node's 'type' attribute must be a 'definition' (or 'defn' or 'def'), a 'theorem' (or 'thm'), or an 'exercise'.")
+			raise ValueError("Node's 'type' attribute must be a 'definition' (or 'defn' or 'def'), a 'theorem' (or 'thm'), or an 'exercise'.\nYOUR TYPE WAS: " + clean_type)
 
 	@property
 	def weight(self):
 		return self._weight
 	@weight.setter
 	def weight(self, new_weight):
-		clean_weight = check_type_and_clean(new_type, int) # but in the future we will accept decimals (floats) too!
+		clean_weight = check_type_and_clean(new_weight, int) # but in the future we will accept decimals (floats) too!
 		assert clean_weight >= 1 and clean_weight <= 10
 		self._weight = clean_weight
 
@@ -182,6 +189,7 @@ class Node:
 	def description(self, new_description):
 		clean_description = check_type_and_clean(new_description, str)
 		# assert has_at_least_two_dunderscores(clean_description) # need this assertion for definitions!!!!
+		assert is_content_clean(clean_description)
 		self._description = clean_description
 
 	@property
@@ -189,20 +197,27 @@ class Node:
 		return self._intuitions
 	@intuitions.setter
 	def intuitions(self, new_intuition):
+		assert is_content_clean(new_intuition)
 		self._intuitions = check_type_and_clean(new_intuition, str, list_of=True)
+	def append_intuition(self, add_intuition):
+		self._intuition.append(add_intuition)
 
 	@property
 	def examples(self):
 		return self._examples
 	@examples.setter
 	def examples(self, new_examples):
+		assert is_content_clean(new_examples)
 		self._examples = check_type_and_clean(new_examples, str, list_of=True)
+	def append_example(self, add_example):
+		self._examples.append(add_example)
 
 	@property
 	def counterexamples(self):
 		return self._examples
 	@counterexamples.setter
 	def counterexamples(self, new_examples):
+		assert is_content_clean(new_examples)
 		self._counterexamples = check_type_and_clean(new_examples, str, list_of=True)
 
 	@property
@@ -210,7 +225,10 @@ class Node:
 		return self._notes
 	@notes.setter
 	def notes(self, new_notes):
+		assert is_content_clean(new_notes)
 		self._notes = check_type_and_clean(new_notes, str, list_of=True)
+	def append_note(self, add_note):
+		self._notes.append(add_note)
 
 	@property
 	def plural(self):
@@ -226,20 +244,7 @@ class Node:
 		return self._proofs
 	@proofs.setter
 	def proofs(self,new_proofs):
+		assert is_content_clean(new_proofs)
 		self._proofs = check_type_and_clean(new_proofs, str, list_of=True)
-
 	def append_proof(self, add_proof): # these need type checking too
 		self._proofs.append(add_proof)
-
-	def append_intuition(self, add_intuition):
-		self._intuition.append(add_intuition)
-
-	def append_example(self, add_example):
-		self._examples.append(add_example)
-
-	def append_note(self, add_note):
-		self._notes.append(add_note)
-
-	def clone(self):
-		return copy.deepcopy(self)
-
