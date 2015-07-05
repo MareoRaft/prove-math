@@ -24,6 +24,17 @@ def to_bash():
 	print(bash_out)
 	subprocess.call('mkdir test_folder', shell=True)
 
+def move_attribute_and_check_value(dic, aliases, value_type=str, list_of=False, strict=True):
+	for key, value in dic.items():
+		if key in aliases:
+			assert type(value) is value_type
+			# OR, in the case that list_of is true, a list of those valyes.
+			# and if its just the value without a list, we want to MAKE it a list.  wrap it in a list.
+			del dic[key]
+			return value
+	if strict:
+		raise KeyError('Could not find any of the following keys in the Node input: ' + aliases)
+	return None #OR IN LIST_OF MODE, RETURN AN EMPTY LIST
 
 #################################### MAIN #####################################
 # MathJax/Node.js, run bash commands from python script, export json
@@ -36,99 +47,27 @@ class Node:
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
-		self.intuition = []
-		self.examples = []
-		self.notes = []
-		self.proofs = []
-		self.plural = None
-
-		for key in dic.keys():
-			if re.match(r'name$', key, re.IGNORECASE):
-				self.name = dic[key]
-
-			# re.match starts at the beginning of the string by default.
-			# so re.match('hi$') is equivalent to re.search('^hi$')
-			elif re.match(r'weight$', key, re.IGNORECASE):
-				self.weight = dic[key]
-
-			elif re.match(r'(?:theorem|thm)$', key, re.IGNORECASE):
-				self.type = "theorem"
-				self.description = dic[key]
-				for ii in dic.keys(): # this needs to be restructured as we write things as subclasses
-					if re.match(r'proofs?$', ii, re.IGNORECASE):
-						if isinstance(dic[ii], dict):
-							self.proofs.append(dic[ii])
-						else:
-							for x in dic[ii]:
-								if isinstance(x,dict):
-									self.proofs.append(x)
-
-			elif re.match(r'(?:def|defn|definition)$', key, re.IGNORECASE):
-				self.type = "definition"
-				self.description = dic[key]
-				if re.findall(r'__[^_]*__',dic[key]): # if no dunderscores are found, we should fail with an error message
-					word=re.findall(r'__[^_]*__',dic[key])
-					if len(word)==1:
-						self.name=word[0].strip("__")
-					else:
-						compound_name=""
-						for x in word:
-							compound_name=compound_name+x.strip("__")+"/"
-						self.name=compound_name.strip("/")
-
-				for ii in dic.keys():
-					if re.match(r'pl',ii,re.IGNORECASE):
-						self.plural=dic[ii]
-
-			elif re.match(r'type.*',key,re.IGNORECASE) and re.match(r'def.*',dic[key],re.IGNORECASE):
-				self.type=dic[key]
-				for ii in dic.keys():
-					if re.match(r'pl',ii,re.IGNORECASE):
-						self.plural=dic[ii]
-
-			elif re.match(r'type.*',key,re.IGNORECASE) and re.match(r'th.*',dic[key],re.IGNORECASE):
-				self.type=dic[key]
-				for ii in dic.keys():
-					if re.match(r'proof.*',ii,re.IGNORECASE):
-						if isinstance(dic[ii],dict):
-							self.proofs.append(dic[ii])
-						else:
-							for x in dic[ii]:
-								self.proofs.append(x)
-
-
-			elif re.match(r'des.*|contentmmmm',key,re.IGNORECASE) or re.match(r'content.*',key, re.IGNORECASE): # this needs to accept "content" as a synonym for description
-				self.description=dic[key]
-
-			elif re.match(r'intuit.*',key,re.IGNORECASE): # a lot of these seem like the same code, but one with "intuition", one with "example", one with "note", etc.  Try writing a function which takes in "intuition", etc, and does this so that you don't have to repeat the code.
-				if isinstance(dic[key],list):
-					for single_intuition in dic[key]:
-						if isinstance(single_intuition,str):
-							self.intuition.append(single_intuition)
-				else:
-					self.intuition = dic[key]
-
-			elif re.match(r'example.*',key,re.IGNORECASE):
-				if isinstance(dic[key],list):
-					for single_examples in dic[key]:
-						if isinstance(single_examples,str):
-							self.examples.append(single_examples)
-				else:
-					self.examples.append(dic[key])
-
-			elif re.match(r'note.*',key,re.IGNORECASE):
-				if isinstance(dic[key],list):
-					for single_notes in dic[key]:
-						if isinstance(single_notes,str):
-							self.notes.append(single_notes)
-				else:
-					self.notes.append(dic[key])
-
-			else: output an error. key is not a valid key name.
-
-
-
-
+		self.name = move_attribute_and_check_value(dic, {'name'})
+		self.weight = move_attribute_and_check_value(dic, {'weight'}, int)
+		self.type = move_attribute_and_check_value(dic, {'type'}, strict=False)
+		if self.type is None:
+			self.type = search_for_key(dic, {('definition', 'defn', 'def'), ('theorem', 'thm'), ('exercise')})
+		self.description = move_attribute_and_check_value(
+			dic,
+			{'description', 'content', 'definition', 'def', 'defn', 'theorem', 'thm', 'exercise'}
+		)
+		self.intuitions = move_attribute_and_check_value(dic, {'intuitions', 'intuition'}, list_of=True, strict=False)
+		self.examples = move_attribute_and_check_value(dic, {'examples', 'example'}, list_of=True, strict=False)
+		if self.type is 'theorem': # but this should be moved to Theorem class
+			self.proofs = move_attribute_and_check_value(dic, {'proofs', 'proof'}, dict, list_of=True)
+		if self.type is 'definition': # but this should be moved to Definition class?
+			# check for at least two __s
+			# make a helper function for this
+			self.plural = move_attribute_and_check_value(dic, {'plural', 'pl'}, strict=False)
+			if self.plural is not None:
+				# check for two __s
+		for key in dic: # if one or more keys are still left in the dictionary...
+			raise KeyError('Unexpected or redundant key "' + key + '" found in input dictionary.')
 
 	def __repr__(self):
 		if self.type=="definition":
