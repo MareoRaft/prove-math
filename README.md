@@ -1,4 +1,5 @@
 # prove-math
+It's an add venture!
 The next generation of math education ;-)
 
 I think this will be very engaging for people interested in programming or math, since it poses a number of challenges.  I am registering an official company name shortly so that contributors can put it on their resume if they wish.
