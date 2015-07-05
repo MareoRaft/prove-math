@@ -24,17 +24,47 @@ def to_bash():
 	print(bash_out)
 	subprocess.call('mkdir test_folder', shell=True)
 
-def move_attribute_and_check_value(dic, aliases, value_type=str, list_of=False, strict=True):
+def move_attribute(dic, aliases, strict=True):
 	for key, value in dic.items():
 		if key in aliases:
-			assert type(value) is value_type
-			# OR, in the case that list_of is true, a list of those valyes.
-			# and if its just the value without a list, we want to MAKE it a list.  wrap it in a list.
 			del dic[key]
 			return value
 	if strict:
 		raise KeyError('Could not find any of the following keys in the Node input: ' + aliases)
-	return None #OR IN LIST_OF MODE, RETURN AN EMPTY LIST
+	else:
+		return None
+
+def is_clean(value):
+	if type(value) is str:
+		assert len(value) >= 15 # arbitary length to make sure person actually put some content in
+		assert value[-1] is '.' # make sure they end in period.  in future, support colon followed by a list without period?
+		assert re.match(r'[\$A-Z]', value) # starts with LaTeX or capital letter
+	return True
+
+def check_type_and_clean(value, value_type=str, list_of=False):
+	if list_of:
+		if type(value) is list:
+			for el in value:
+				assert type(el) is value_type
+				assert is_clean(el)
+			return value
+		else:
+			assert type(value) is value_type
+			assert is_clean(value)
+			return [value]
+	assert type(value) is value_type
+	assert is_clean(value)
+	return value
+
+def find_key(dic, keys):
+	for key in dic:
+		if key in keys:
+			return key
+	raise KeyError('Could not find any of the following keys in the Node input: ' + keys)
+
+def has_at_least_two_dunderscores(string):
+	dunderscore_list = re.findall(r'__', string)
+	return len(dunderscore_list) >= 2
 
 #################################### MAIN #####################################
 # MathJax/Node.js, run bash commands from python script, export json
@@ -47,25 +77,21 @@ class Node:
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
-		self.name = move_attribute_and_check_value(dic, {'name'})
-		self.weight = move_attribute_and_check_value(dic, {'weight'}, int)
-		self.type = move_attribute_and_check_value(dic, {'type'}, strict=False)
+		self.name = move_attribute(dic, {'name'})
+		self.weight = move_attribute(dic, {'weight'})
+		self.type = move_attribute(dic, {'type'}, strict=False)
 		if self.type is None:
-			self.type = search_for_key(dic, {('definition', 'defn', 'def'), ('theorem', 'thm'), ('exercise')})
-		self.description = move_attribute_and_check_value(
+			self.type = find_key(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
+		self.description = move_attribute(
 			dic,
 			{'description', 'content', 'definition', 'def', 'defn', 'theorem', 'thm', 'exercise'}
 		)
-		self.intuitions = move_attribute_and_check_value(dic, {'intuitions', 'intuition'}, list_of=True, strict=False)
-		self.examples = move_attribute_and_check_value(dic, {'examples', 'example'}, list_of=True, strict=False)
+		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
+		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
 		if self.type is 'theorem': # but this should be moved to Theorem class
-			self.proofs = move_attribute_and_check_value(dic, {'proofs', 'proof'}, dict, list_of=True)
+			self.proofs = move_attribute(dic, {'proofs', 'proof'})
 		if self.type is 'definition': # but this should be moved to Definition class?
-			# check for at least two __s
-			# make a helper function for this
-			self.plural = move_attribute_and_check_value(dic, {'plural', 'pl'}, strict=False)
-			if self.plural is not None:
-				# check for two __s
+			self.plural = move_attribute(dic, {'plural', 'pl'}, strict=False)
 		for key in dic: # if one or more keys are still left in the dictionary...
 			raise KeyError('Unexpected or redundant key "' + key + '" found in input dictionary.')
 
@@ -117,83 +143,89 @@ class Node:
 
 	@property
 	def name(self):
-		return self._name # Here, and...
-
+		return self._name
 	@name.setter
 	def name(self, new_name):
-		self._name = new_name # ...here are the only places where we access the private _name attribute.
+		self._name = check_type_and_clean(new_name, str)
 
 	@property
 	def type(self):
 		return self._type
-
 	@type.setter
 	def type(self, new_type):
-		if re.match(r'def.*', new_type):
+		clean_type = check_type_and_clean(new_type, str)
+		if clean_type in {'definition', 'defn', 'def'}
 			self._type = 'definition'
-		elif re.match(r'th.*', new_type):
+		if clean_type in {'theorem', 'thm'}
 			self._type = 'theorem'
+		if clean_type in {'exercise'}
+			self._type = 'exercise'
 		else:
-			warn('Bad type. Must either be a theorem or definition')
+			raise ValueError("Node's 'type' attribute must be a 'definition' (or 'defn' or 'def'), a 'theorem' (or 'thm'), or an 'exercise'.")
 
 	@property
 	def weight(self):
 		return self._weight
-
 	@weight.setter
 	def weight(self, new_weight):
-		if isinstance(new_weight, (int, float)):
-			self._weight = new_weight
-		else:
-			warn('Weight must be a number.')
+		clean_weight = check_type_and_clean(new_type, int) # but in the future we will accept decimals (floats) too!
+		assert clean_weight >= 1 and clean_weight <= 10
+		self._weight = clean_weight
 
 	@property
 	def description(self):
 		return self._description
-
 	@description.setter
 	def description(self, new_description):
-		self._description = new_description
+		clean_description = check_type_and_clean(new_description, str)
+		# assert has_at_least_two_dunderscores(clean_description) # need this assertion for definitions!!!!
+		self._description = clean_description
 
 	@property
-	def intuition(self):
-		return self._intuition
-
-	@intuition.setter
-	def intuition(self, new_intuition):
-		self._intuition = new_intuition
+	def intuitions(self):
+		return self._intuitions
+	@intuitions.setter
+	def intuitions(self, new_intuition):
+		self._intuitions = check_type_and_clean(new_intuition, str, list_of=True)
 
 	@property
 	def examples(self):
 		return self._examples
-
 	@examples.setter
 	def examples(self, new_examples):
-		self._examples = new_examples
+		self._examples = check_type_and_clean(new_examples, str, list_of=True)
+
+	@property
+	def counterexamples(self):
+		return self._examples
+	@counterexamples.setter
+	def counterexamples(self, new_examples):
+		self._counterexamples = check_type_and_clean(new_examples, str, list_of=True)
 
 	@property
 	def notes(self):
 		return self._notes
-
 	@notes.setter
 	def notes(self, new_notes):
-		self._notes = new_notes
+		self._notes = check_type_and_clean(new_notes, str, list_of=True)
+
 	@property
 	def plural(self):
 		return self._plural
 	@plural.setter
 	def plural(self, new_plural):
-		self._plural=new_plural
+		clean_plural = check_type_and_clean(new_plural, str)
+		assert has_at_least_two_dunderscores(clean_plural)
+		self._plural = clean_plural
 
 	@property
 	def proofs(self):
 		return self._proofs
-
 	@proofs.setter
 	def proofs(self,new_proofs):
-		self._proofs=new_proofs
+		self._proofs = check_type_and_clean(new_proofs, str, list_of=True)
 
-	def append_proof(self, add_proof):
+	def append_proof(self, add_proof): # these need type checking too
 		self._proofs.append(add_proof)
 
 	def append_intuition(self, add_intuition):
@@ -206,36 +238,5 @@ class Node:
 		self._notes.append(add_note)
 
 	def clone(self):
-		clone = copy.deepcopy(self)
-		return clone
+		return copy.deepcopy(self)
 
-
-
-
-# we should implement this stuff below and then delete the string:
-"""
-	@definition.setter
-	def definition(self, definition):
-		if not definition has underlined word:
-			warn('No underlined word.')
-		else if not definition satisfies some definition specific thing:
-			warn('Doesn\'t have thing')
-		else:
-			self.__definition = definition
-
-	# other properties will follow the same model as above (but i won't bother until the above is tested and works nicely)
-
-	def intuition(self, intuition):
-		if intuition is not something bad about intuitions:
-			warn('bad')
-		else:
-			self.__intuition = intuition
-
-
-	# run all keys through lowercasation, and convert thm-->theorem, def-->definition, ex-->exercise, pf-->proof-->proofs, pl-->plural,
-	# general things for ALL properties: 1. not shorter than 15 characters 2. ends in period 3. starts with LaTeX or capital letter
-
-	# def examples # array of examples
-
-	# def counter_examples
-"""
