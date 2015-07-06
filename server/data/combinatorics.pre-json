@@ -615,10 +615,146 @@
 	"name": "Number of partitions of a natural number",
 	"type": "thm",
 	"weight": 5,
-	"content": "The number of partitions of a natural number $n$ is the coefficient of $x^n$ in $\\prod_{k=0}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
+	"content": "The number of partitions of a natural number $n$ is the coefficient of $x^n$ in $\\prod_{k=1}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
 	"intuition": "Remember that a partition of $n$ is a sum of natural numbers that add up to $n$.  The order of the numbers does not matter.  The given product can be expressed as a Maclaurin series of the form $a_0x^0 + a_1x^1 + a_2x^2 +++$.  Then $a_n$ is the number of ways to partition $n$.",
 	"proof": {
 		"type": "algebraic",
-		"content": "Given $\\prod_{k=0}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$, each factor $\\frac{1}{1-x^k}$ can be replaced with its generating function, $\\sum_{i=0}^{\\infty} x^ki$.\n\nThe result is a product of sums, which looks like $(x^0+x^1+x^2+x^3+++)(x^0+x^2+x^6+x^8+++)(x^0+x^3+x^6+x^9+++)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  The term chosen from the second factor represents the number of $2$s you are using the in the partition, and so forth.  For example, in the second factor, choosing $x^0$ means you are using no $2$s in the partition.  Choosing $x^2$ means you are using one $2$ in the partition.  Or choosing $x^4$ means you are using two $2$s in the partition.\n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$.",
+		"content": "Given $\\prod_{k=1}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$, each factor $\\frac{1}{1-x^k}$ can be replaced with its power series, $\\sum_{i=0}^{\\infty} x^ki$.\n\nThe result is a product of sums, which looks like $(x^0+x^1+x^2+x^3+++)(x^0+x^2+x^6+x^8+++)(x^0+x^3+x^6+x^9+++)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  The term chosen from the second factor represents the number of $2$s you are using the in the partition, and so forth.  For example, in the second factor, choosing $x^0$ means you are using no $2$s in the partition.  Choosing $x^2$ means you are using one $2$ in the partition.  Or choosing $x^4$ means you are using two $2$s in the partition.\n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$.",
 	}
 }
+
+{
+	"exercise": "Prove that $\\sum_{k=0}^{n} 2^k\\binom nk = 3^n$.",
+	"proof": {
+		"type": "algebraic",
+		"content": "$3^n = (2+1)^n$.  Using the binomial theorem, we know this is equal to $\\sum_{k=0}^{n} \\binom nk 2^k 1^{n-k}$ = $\\sum_{k=0}^{n} 2^k\\binom nk$.",
+	},
+}
+
+{
+	"thm": "The expected value for a geometric random variable with probability $p$ is $\\frac 1p$.",
+	"proof": {
+		"type": "algebraic",
+		"content": "The expected value is the sum of (the number of flips it takes to get success \\cdot probability it takes that many) from 0 to infinity.  rewrite those values in terms of q, then distribute and rewrite as two separate sums.  Two of the sums will cancel, with only one left.  The last sum is a power series, so its 1/(1-q).",
+	},
+}
+
+{
+	"exercise": "A $2\\times n$ board can be filled with $1\\times1$ tiles and $L$-shaped tiles (made from $3$ $1\\times1$ squares) <img>.  Let $(a_n)_{n=1}^{\\infty}$ be the sequence of the number of possible tilings.\n\nThe base cases for this sequence are [[$a_1=1, a_2=5, a_3=11$]].  A recurrence relation for this sequence is [[$a_n = a_{n-1} + 4a_{n-2} + 2a_{n-3}$]].",
+}
+
+{
+	"name": "Number of partitions of a natural number into odd parts",
+	"type": "exercise",
+	"weight": 3,
+	"content": "The number of partitions of a natural number $n$ into odd parts is the coefficient of $x^n$ in [[$\\prod_{k \\in \\mathbb{N}_\\text{odd}}\\left(\\frac{1}{1-x^k}\\right)$]] when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
+	"intuition": "This is just a variant of counting the number of ways to partition a natural number.  If you understand that proof, you can alter it to consider only odd parts.  That is, each part of the partition must be odd.",
+	"proof": {
+		"type": "algebraic",
+		"content": "Given $\\prod_{k \\in \\mathbb{N}_\\text{odd}}\\left(\\frac{1}{1-x^k}\\right)$, each factor $\\frac{1}{1-x^k}$ can be replaced with its power series, $\\sum_{i=0}^{\\infty} x^ki$.\n\nThe result is a product of sums, which looks like $(x^0+x^1+x^2+x^3+++)(x^0+x^3+x^6+x^9+++)(x^0+x^5+x^{10}+x^{15}+++)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  The term chosen from the second factor represents the number of $3$s you are using the in the partition, and so forth.  For example, in the second factor, choosing $x^0$ means you are using no $3$s in the partition.  Choosing $x^3$ means you are using one $3$ in the partition.  Or choosing $x^6$ means you are using two $3$s in the partition.  You can see that we are only using odd numbers in our partition.  \n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$ into odd parts, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$ into odd parts.",
+	}
+}
+
+{
+	"name": "Number of partitions of a natural number into distinct parts",
+	"type": "thm",
+	"weight": 3,
+	"content": "The number of partitions of a natural number $n$ into distinct parts is the coefficient of $x^n$ in $\\prod_{k=1}^{\\infty}\\left(1+x^k)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
+	"intuition": "The parts (numbers) must be distinct, so each number from $1$ to $n$ can either be in the sum or not, and the sum must of course add up to $n$.  No number can appear more than once in the sum.",
+	"proof": {
+		"type": "algebraic",
+		"content": "The generating function given, when written without product notation, looks like $(1+x^1)(1+x^2)(1+x^3)(1+x^4)\\cdots$ or $(x^0+x^1)(x^0+x^2)(x^0+x^3)(x^0+x^4)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  You can either have $0$ ones or $1$ one, but never more than that.  The term chosen from the second factor represents the number of $2$s you are using the in the partition, and so forth.  You can either have $0$ twos or $1$ two, but never more than that, guaranteeing distinctness of parts.  For example, in the fourth factor, choosing $x^0$ means you are using no $4$s in the partition.  Choosing $x^4$ means you are using one $4$ in the partition.\n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$ into distinct parts, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$ into distinct parts.",
+	}
+}
+
+{
+	"name": "Glaisher's Theorem for d=2",
+	"thm": "Given any natural number $n$, the number of partitions of $n$ into parts that are odd is equal to the number of partitions of $n$ into parts that are distinct.",
+	"example": "$5$ can be partitioned $7$ ways:
+	  1. $1+1+1+1+1$\n
+	  2. $1+1+1+2$\n
+	  3. $1+1+3$\n
+	  4. $1+2+2$\n
+	  5. $1+4$\n
+	  6. $2+3$\n
+	  7. $5$\n\n
+	  Numbers 5., 6., and 7. have distinct parts.  Numbers 1., 3., 7. have odd parts.  Both ways, there are exactly $3$ partitions that accomplish the goal.",
+	"proof": {
+		"type": "algebraic",
+		"content": "Let $a_n$ be the number of ways to partition $n$ into distinct parts.  The generating function for the sequence $(a_n)_{n=0}^{\\infty}$ is $f(x) = (1+x^1)(1+x^2)(1+x^3)(1+x^4)(1+x^5)\\cdots$.  This can be rewritten in a different form as follows:
+		$f(x) = (1+x^1)(1+x^2)(1+x^3)(1+x^4)(1+x^5)\\cdots$
+		$f(x) = \\left(\\frac{(1+x^1)(1-x^1)}{1-x^1}\\right)\\left(\\frac{(1+x^2)(1-x^2)}{1-x^2}\\right)\\left(\\frac{(1+x^3)(1-x^3)}{1-x^3}\\right)\\left(\\frac{(1+x^4)(1-x^4)}{1-x^4}\\right)\\left(\\frac{(1+x^5)(1-x^5)}{1-x^5}\\right)\\cdots$
+		$f(x) = \\left(\\frac{1-x^2}{1-x^1}\\right)\\left(\\frac{1-x^4}{1-x^2}\\right)\\left(\\frac{1-x^6}{1-x^3}\\right)\\left(\\frac{1-x^8}{1-x^4}\\right)\\left(\\frac{1-x^{10}}{1-x^5}\\right)\\cdots$
+		\n\nThe numerators are all the even powers of $x$, and the denominators are all the powers of $x$.  Since the product goes on forever, we cancel and are left with all the odd powers of $x$ in the denominator.\n\n
+		$f(x) = \\left(\\frac1{1-x}\\right)\\left(\\frac1{1-x^3}\\right)\\left(\\frac1{1-x^5}\\right)\\cdots$
+		$f(x) = \\left(\\frac1{1-x}\\right)\\left(\\frac1{1-x^3}\\right)\\left(\\frac1{1-x^5}\\right)\\cdots$
+		\n\nEach factor can be replaced with its power series representation:\n\n
+		$f(x) = (x^0+x^1+x^2+++)(x^0+x^3+x^6+++)(x^0+x^5+x^10+++)\\cdots$
+		\n\nThis is the generating function for the sequence $(a_n)_{n=0}^{\\infty}$, where $a_n$ is the number of ways to partition $n$ into odd parts.  We conclude that the number of ways to partition $n$ into distinct parts is equal to the number of ways to partition $n$ into odd parts, for all $n$.",
+	},
+}
+
+{
+	"name": "Solve Recurrences with Generating Functions",
+	"thm": "Given a sequence $(a_n)_{n=0}^{\\infty}$ defined by base cases and a linear homogeneous recurrence with any constant $a_n = \\sum_{k=0}^{n-1} c_{k}a_{k} + C$, we can find a closed form formula for $a_n$ by rewriting its generating function $\\sum_{n=0}^{\\infty} a_nx^n$ in terms of its recurrence $base cases + \\sum_{n=0}^{\\infty} \\left(\\sum_{k=0}^{n-1} c_{k}a_{k} + C\\right)x^n$ and making algebraic manipulations.",
+	"example": "Let $(a_n)_{n=0}^{\\infty} be defined by $a_0=1$, $a_1=4$, and $a_n = 3a_{n-1} - 2a_{n-2}$.  Then a closed formula for $a_n$ can be found by this method:\n\n
+	$f(x) = \\sum_{n=0}^{\\infty} a_nx^n$
+	$f(x) = 1+4x+\\sum_{n=2}^{\\infty} a_nx^n$
+	$f(x) = 1+4x +\\sum_{n=2}^{\\infty} (3a_{n-1}x^n-2a_{n-2}x^n)$
+	$f(x) = 1+4x + 3x\\left(\\sum_{n=2}^{\\infty} a_{n-1}x^{n-1}\\right) -2x^2\\left(\\sum_{n=2}^{\\infty}a_{n-2}x^{n-2}\\right)$
+	$f(x) = 1+4x + 3x\\left(\\sum_{n=1}^{\\infty} a_{n}x^{n}\\right) -2x^2\\left(\\sum_{n=0}^{\\infty}a_{n}x^{n}\\right)$
+	$f(x) = 1+4x + 3x\\left(\\left(\\sum_{n=0}^{\\infty} a_{n}x^{n}\\right) - a_0x^0\\right) -2x^2\\left(\\sum_{n=0}^{\\infty}a_{n}x^{n}\\right)$
+	$f(x) = 1+4x + 3x\\left(f(x) - 1\\right) -2x^2f(x)$
+	$f(x)(1-3x+2x^2) = 1 + 4x - 3x$
+	$f(x)(1-x)(1-2x) = 1 + x$
+	$f(x) = \\frac{1 + x}{(1-x)(1-2x)}$\n\n
+	Using the method of partial fractions, we can rewrite $f(x)$ as:\n\n
+	$f(x) = -2\\left(\\frac1{1-x}\\right) + 3\\left(\\frac1{1-2x}\\right)$\n\n
+	Each term can be written as a power series:\n\n
+	$f(x) = -2\\sum_{n=0}^{\\infty}x^n + 3\\sum_{n=0}^{\\infty}(2x)^n$
+	$f(x) = \\sum_{n=0}^{\\infty}\\left(-2+3\\cdot2^n\\right)x^n$\n\n
+	Finally, since $f(x)$ is the generating function of $(a_n)_{n=0}^{\\infty}$, we see that $a_n = (3\\cdot2^n-2)$.",
+	"proof": {
+		"type": "algebraic",
+		"content": "$\qquad
+\begin{align}
+f(x) &= \sum_{n=0}^{\infty} a_nx^n \\
+\\
+f(x) &= b\text{ base cases (0 through n-1)} + \sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k} + C\right)x^n \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k} + C\right)x^n\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^n + Cx^n\right)\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^n\right)\right) + \left(\sum_{n=b}^{\infty}\left(\sum_{k=1}^{b} Cx^n\right)\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^{n-k}x^k\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} \left(\sum_{n=b}^{\infty} c_{k}a_{n-k}x^{n-k}x^k\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_{k}x^k\left(\sum_{n=b}^{\infty} a_{n-k}x^{n-k}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left(\sum_{t=b-k}^{\infty} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left(\sum_{t=0}^{\infty} a_{t}x^{t} - \sum_{t=0}^{b-k-1} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left( f(x) - \sum_{t=0}^{b-k-1} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+\\
+f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k f(x)\right) - \left(\sum_{k=1}^{b} c_kx^k\sum_{t=0}^{b-k-1} a_{t}x^{t}\right) + \left(\sum_{n=b}^{\infty}bCx^n\right)
+\end{align}
+$
+
+From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written as a power series, and the terms $a_n$ of that power series are the terms $a_n$ of the original sequence.",
+	},
+}
+
+{
+	"exercise": "Prove that for any natural number $n$ greater than $2$, $\\sum_{k=2}^{n} \\frac1{\\sqrt{k}} \\leq 2\\sqrt{n} - 2$.",
+	"weight": 3,
+	"proof": {
+		"type": "calculus",
+		"content": "Basically you bound the sum by an integral from 1 to n, then evaluate the integral (do later)",
+	},
+}
+
+//we had a homework where we prove that \sqrt[n]{n} - 1 \\leq? \\ln(n) over n.  It may be nice to have those exercises here too

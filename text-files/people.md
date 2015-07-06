@@ -40,6 +40,10 @@ Neil Sloane?
 njasloane@gmail.com
 OEIS founder
 
+Steve Miller
+head of math department
+recommended by Timothy Naumovitz
+
 
 
 Comp Sci ppl
