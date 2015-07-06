@@ -1,5 +1,5 @@
 import pymongo
-from passlib.context import CryptContext
+# from passlib.context import CryptContext
 
 
 class Mongo:
@@ -41,27 +41,17 @@ class Mongo:
     def collection(self, new_collection):
         self._collection=new_collection
 
-    def single_insert(self, dic):
-        try:
-            self.address[self.database][self.collection].insert_one(dic)
-        except Exception as e:
-            print("Unexpected error: " + str(e))
+    def insert_single(self, dic):
+        self.address[self.database][self.collection].insert_one(dic)
 
-    def list_insert(self,list_of_dicts):
+    def insert_list(self,list_of_dicts):
         # Will complain if you attempt to insert duplicates
-        try:
-            self.address[self.database][self.collection].insert_many(list_of_dicts)
-        except Exception as e:
-            print("Unexpected error in list insert:" + str(type(e))+str(e))
+        self.address[self.database][self.collection].insert_many(list_of_dicts)
 
     def query(self,dict_fields):
-        try:
-            #Results will be returned as json
-            results= self.address[self.database][self.collection].find(dict_fields)
-            for x in results:
-                print(x)
-        except Exception as e:
-            print("Unexpected error in query:")
+        results = self.address[self.database][self.collection].find(dict_fields)
+        for x in results:
+            print(x)
 
     def delete(self,dict_fields):
 	# This will delete from all fields which match the parameter!!
@@ -73,51 +63,51 @@ class Mongo:
 
 
 #Handles interactions with "users" Collection, Database
-class Users(Mongo):
+# class Users(Mongo):
 
 
-    def __init__(self):
-        Mongo(self,"provemath","users")
-        self.pass_hash = CryptContext(schemes=["sha256_crypt", "md5_crypt", "des_crypt"])
+#     def __init__(self):
+#         Mongo(self,"provemath","users")
+#         self.pass_hash = CryptContext(schemes=["sha256_crypt", "md5_crypt", "des_crypt"])
 
-    def make_pw_hash(self,pw):
-        crypt=self.pass_hash
-        return crypt.encrypt(pw)
+#     def make_pw_hash(self,pw):
+#         crypt=self.pass_hash
+#         return crypt.encrypt(pw)
 
-    def add_user(self, username,password, email):
-        password_hash=self.make_pw_hash(password)
-        user={'_id':username, 'password':password_hash,'email':email }
+#     def add_user(self, username,password, email):
+#         password_hash=self.make_pw_hash(password)
+#         user={'_id':username, 'password':password_hash,'email':email }
 
-        try:
-            self.address[self.database][self.collection].insert(user)
+#         try:
+#             self.address[self.database][self.collection].insert(user)
 
-        except pymongo.errors.OperationFailure:
-            print("Mongo Error")
-            return False
+#         except pymongo.errors.OperationFailure:
+#             print("Mongo Error")
+#             return False
 
-        except pymongo.errors.DuplicateKeyError as e:
-            print ("Username is already taken")
-            return False
+#         except pymongo.errors.DuplicateKeyError as e:
+#             print ("Username is already taken")
+#             return False
 
-        return True
+#         return True
 
-    def validate_login(self,username, password):
-        query={'_id':username}
-        crypt=self.pass_hash
-        user=None
+#     def validate_login(self,username, password):
+#         query={'_id':username}
+#         crypt=self.pass_hash
+#         user=None
 
-        try:
-            user=self.address[self.database][self.collection].find_one(query)
-        except:
-            print("Unexpected Error")
+#         try:
+#             user=self.address[self.database][self.collection].find_one(query)
+#         except:
+#             print("Unexpected Error")
 
-        if user is None:
-            print("User or password not correct")
-            return None
+#         if user is None:
+#             print("User or password not correct")
+#             return None
 
-        if not crypt.verify(password,user['password']):
-            print("User or password not correct")
-            return None
+#         if not crypt.verify(password,user['password']):
+#             print("User or password not correct")
+#             return None
 
-        return user
+#         return user
 

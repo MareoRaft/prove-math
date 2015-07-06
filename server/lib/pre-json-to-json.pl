@@ -2,7 +2,7 @@
 # This perl script will use regex to convert .pre-json files to .json files
 ################################# IMPORTS #####################################
 use strict; use warnings;
-use JSONRegex;
+use lib::JSONRegex;
 
 ################################# HELPERS #####################################
 sub read_file{

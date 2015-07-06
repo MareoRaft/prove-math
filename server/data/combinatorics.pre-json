@@ -5,6 +5,7 @@
 {
 	"name": "Identical",
 	"type": "def",
+	"weight": 3,
 	"content": "A multiset of items are __identical__ if all the items are the same as each other.",
 	"note": "The word *indistinguishable* is a synonym for *identical*.",
 	"intuition": "Items are identical when they are exactly the same.  We are not able to tell them apart.  For example, ${c, c, c}$ is a set of identical letters, because $c=c=c$.  Moreover, the lists $1. c, 2. c, 3. c$ and $1. c, 2. c, 3. c$ are considered to be the same, because even though I reordered the $c$s, you could not tell the difference!  In combinatorics, the idea of things being *identical* is tied to the situations where *order does not matter*.",
@@ -13,6 +14,7 @@
 {
 	"name": "Distinct",
 	"type": "def",
+	"weight": 3,
 	"content": "A set of items are __distinct__ if no two items are identical to each other.",
 	"note": "The words *different* and *distinguishable* are synonyms to *distinct*.",
 }
@@ -21,7 +23,7 @@
 	"name": "Factorial",
 	"type": "def",
 	"weight": 4,
-	"content": "For any $n \\in \\bb{N}$, __$n$ factorial__, denoted $n!$, is $n(n-1)(n-2)\\ldots1$.",
+	"content": "For any $n \\in \\mathbb{N}$, __$n$ factorial__, denoted $n!$, is $n(n-1)(n-2)\\ldots1$.",
 	"intuition": "$n!$ is just a shorthand notation for $1 \\cdot 2 \\cdots n$, that is, multiplying the numbers from $1$ to $n$ together.",
 }
 
@@ -53,6 +55,7 @@
 {
 	"name": "Multinomial Coefficient",
 	"type": "def",
+	"weight": 4,
 	"content": "Given that $n_1 + n_2 + \\ldots + n_k = n$, then the __multinomial coefficient__, denoted $\\binom{n}{n_1, n_2, \\ldots, n_k}$, is $\\frac{n!}{n_1!n_2!\\ldots n_k!}$.",
 	"intuition": "The binomial coefficient $$, also denoted $$, is the number of ways to choose $$ from $n$ objects.  The multinomial coefficient $$ is the number of ways to choose $$ and $$ from $n$ objects.",
 	"example": "$6$ workers need to be split up so that $2$ go into each of the following departments: sales, finance, and management.  The number of ways to do this is $\\binom{6}{2,2,2} = \\frac{6!}{2!2!2!} = \\frac{6\\cdot5\\cdot4\\cdot3\\cdot2\\cdot1}{2\\cdot2\\cdot2} = 90$.",
@@ -266,8 +269,10 @@
 	"weight": 4,
 	"content": "The number of ways to partition natural number $a$ into $x$ (nonempty) __parts__, denoted $p_x(a)$, is the number of ways to write $a$ as the sum of exactly $x$ positive integers.  A formula for this is unknown!",
 	"note": "The order of the integers does not matter.",
-	"intuition": "Partitioning an integer is analagous to partitioning a set, except that with sets, the elements you choose to be in each part are distinct.  With integers, the elements are identical, so it only matters how many are in each part.",
-	"intuition": "Since different ordering of the same $x$ parts are considered only $1$ possibility, it is easiest to keep track by always listing the sums in lexographical order.  For example, the sum $2+1+5$ can be listed as $1+2+5$.",
+	"intuition": [
+		"Partitioning an integer is analagous to partitioning a set, except that with sets, the elements you choose to be in each part are distinct.  With integers, the elements are identical, so it only matters how many are in each part.",
+		"Since different ordering of the same $x$ parts are considered only $1$ possibility, it is easiest to keep track by always listing the sums in lexographical order.  For example, the sum $2+1+5$ can be listed as $1+2+5$.",
+	],
 	"example": [
 		"$p_2(5)$ is the number of ways to write $3$ as the sum of $2$ positive integers.  The possible ways are\n\n  1. $1+4$\n  2. $2+3$\n\nTherefore, $p_2(5) = 2$ ways.",
 		"$p_3(10)$ is the number of ways to write $10$ as the sum of $3$ positive integers.  The possible ways are\n\n  1. $1+1+8$\n  2. $1+2+7$\n  3. $1+3+6$\n  4. $1+4+5$\n  5. $2+2+6$\n  6. $2+3+5$\n  7. $2+4+4$\n  8. $3+3+4$\n\nTherefore, $p_3(10) = 8$ ways.",
@@ -353,6 +358,7 @@
 {
 	"name": "Stirling Numbers of the 2nd Kind",
 	"type": "definition",
+	"weight": 5,
 	"content": "A __Stirling Number of the 2nd kind__, denoted $\\bigcurly nk$, is the number of ways of partitioning a set of size $n$ into $k$ sets",
 	"note": "By the definition of *partition*, each of the $k$ sets must be nonempty.",
 }
@@ -360,6 +366,7 @@
 {
 	"name": "Stirling Identity",
 	"type": "thm",
+	"weight": 5,
 	"content": "Stirling Numbers of the 2nd kind can be computed using the equality $ \\stirling nk = \\frac{1}{k!} \\sum_{j=0}^{k} \\binom kj (k-j)^n (-1)^j $.",
 	"intuition": "Partitioning a set containing exactly $n$ (distinct) elements into $k$ (identical) nonempty subsets is the same thing as distributing $n$ distinct balls into $k$ identical boxes, where each box must contain at least $1$ ball.",
 }
@@ -367,6 +374,7 @@
 {
 	"name": "$a$ distinct balls in $x$ identical boxes, at least one each.",
 	"type": "thm",
+	"weight": 5,
 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $X$, is\n\n$\\stirling ax$.",
 	"intuition": "$a \\geq x$.  You have $a$ distinct balls, and you want to put them in $x$ identical boxes so that each box has at least $1$ ball.  The number of ways to do this is $\\stirling ax$.",
 }
@@ -374,6 +382,7 @@
 {
 	"name": "$a$ distinct balls in $x$ identical boxes.",
 	"type": "thm",
+	"weight": 5,
 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$, up to permutations of $X$, is $\\sum_{j=0}^{x} \\stirling aj$.",
 	"intuition": "You have $a$ distinct balls, and you want to put them in $x$ identical boxes.  The number of ways to do this is $\\sum_{j=0}^{x} \\stirling aj$.",
 	"proof": {
@@ -385,6 +394,7 @@
 {
 	"name": "$a$ distinct balls in $x$ distinct boxes, at least one each.",
 	"type": "thm",
+	"weight": 5,
 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$ is\n\n$x!\\stirling ax$.",
 	"intuition": "$a \\geq x$.  You have $a$ distinct balls, and you want to put them in $x$ distinct boxes so that each box has at least $1$ ball.  The number of ways to do this is $x!\\stirling ax$.",
 	"proof": {
@@ -396,6 +406,7 @@
 {
 	"name": "Bounds of Factorials",
 	"type": "thm",
+	"weight": 5,
 	"content": "$ 2^{n-1} \\leq n^{\\frac n2} \\leq e\\left(\\frac ne\\right)^n \\leq n! \\leq en\\left(\\frac ne\\right)^n \\leq \\left(\\frac n2\\right)^n \\leq n^n $",
 	"proofs": [
 		{
@@ -408,6 +419,7 @@
 {
 	"name": "Bounds of Chooses",
 	"type": "thm",
+	"weight": 5,
 	"content": "$ \\left(\\frac{n-k+1}{k}\\right)^k \\leq \\left(\\frac nk\\right)^k \\leq \\binom nk \\leq n^k $",
 	"proofs": [
 		{
@@ -428,6 +440,7 @@
 {
 	"name": "Discrete Probability Function",
 	"type": "def",
+	"weight": 3,
 	"content": "Let $U$ be the set of all possible outcomes.  A __discrete probability function__, $P:\\mathcal{P}(U) \\to [0,1]$, satisfies the conditions\n\n1. $P(U) = 1$\n  2. $P(A\\cup B) = $P(A) + P(B)$",
 	"intuition": "$P(A) is the probability that the actual outcome will be an element of $A$.",
 	"example": "We have a fair $6$-sided die.  When it is rolled, exactly one of the numbers faces upwards, and this is the outcome.  Therefore, the set of all possible outcomes, $U$, is ${1,2,3,4,5,6}$.\nBecause the die is fair, the probability of rolling a $1$ is $\\frac16$.  That is, $P({1}) = \\frac16$.  Similarly,\n\n$P({2}) = \\frac16$\n$P({3}) = \\frac16$\n$P({4}) = \\frac16$\n$P({5}) = \\frac16$\n$P({6}) = \\frac16$.\n\nWe also have, for example, that\n\n$P({}) = 0$\n$P({1,2}) = \\frac26$\n$P({2,5}) = \\dfrac26$\n$P({1,3,4}) = \\dfrac36$\n$P({1,2,3,4,5,6}) = 1$",
@@ -439,6 +452,7 @@
 {
 	"name": "Uniform Distribution",
 	"type": "def",
+	"weight": 3,
 	"content": "If we have a set $U$ of all possible outcomes, and every outcome has the same probability $p$ of occuring, then the probabilities form a __uniform distribution__ .  If we give each outcome a label $k$ and graph all the $(k, P(k))$ points on the $kP$-axis, the result is always a horizontal line.",
 	"intuition": "A uniform distribution is when there is an equal chance of getting each outcome.",
 	"example": "We flip a fair coin.  The possible outcomes are **heads** and **tails**.  The probability of getting **heads** is $50\%$.  The probability of getting **tails** is $50\%$.  The outcomes are uniformly distributed.",
@@ -450,6 +464,7 @@
 {
 	"name": "Probability of A given B",
 	"type": "def",
+	"weight": 4,
 	"content": "The Probability of $A$ given $B$, denoted $P(A|B)$, is $\\frac{P(A\\cap B)}{P(B)}$.",
 	"intuition": "Given that the outcome is in $B$, what is the probability that the outcome is in $A$?  That is $P(A|B)$.",
 }
@@ -457,6 +472,7 @@
 {
 	"name": "Independent events",
 	"type": "def",
+	"weight": 4,
 	"content": "Events $A$ and $B$ are __independent__ if $P(A\\cup B) = P(A)P(B)$.", // make equivalent definitions?
 	"content": "Events $A$ and $B$ are __independent__ if $P(A|B) = P(A)$.",
 	"content": "Events $A$ and $B$ are __independent__ if $P(B|A) = P(B)$.",
@@ -466,6 +482,7 @@
 {
 	"name": "Binomial Term",
 	"type": "thm",
+	"weight": 5,
 	"content": "If the probability of event $a$ occuring is $p$, and you repeat the experiment $n$ times, then the probability of event $a$ occuring exactly $k$ times is $\\binom nk p^k(1-p)^{n-k}$.",
 	"intuition": "You have a coin (not necessarily fair), and the probability of flipping heads is $p$.  If you flip the coin $n$ times, then the probability of getting exactly $k$ heads is $\\binom nk p^k(1-p)^{n-k}$.",
 }
@@ -473,6 +490,7 @@
 {
 	"name": "Binomial Distribution",
 	"type": "def",
+	"weight": 3,
 	"content": "An experiment has a fixed probability $p$ of being successful.  Given we repeat the experiment $n$ times, if we graph the $P(\\text{$a$ occurs exactly $k$ times})$ on the $kP$-axis, we obtain the __binomial distibution__, denoted $\\text{Bin}(n,p)$.",
 }
 
@@ -481,12 +499,14 @@
 {
 	"name": "Geometric Distribution",
 	"type": "def",
+	"weight": 3,
 	"content": "An experiment has a fixed probability $p$ of being successful.  The experiment is repeated until it is successful, and the number of times it was executed is $k$.  Each value of $k$ has a certain probability of occuring.  If we graph the $(k, P(k))$ points on the $kP$-axis, we obtain the __geometric distribution__, denoted $\\text{Geom}(p)$.",
 }
 
 {
 	"name": "Expected Value",
 	"type": "def",
+	"weight": 4,
 	"content": "The __expected value__ of $X$, denoted $\\mathbb{E}(X)$, is $\\sum_{v = possible values of X} v \\cdot P(X=v)$.",
 	"intuition": "$E(X)$ is sometimes denoted $E[X]$ or $E{x}$, but it is just a function nevertheless.",
 }
@@ -494,6 +514,7 @@
 {
 	"name": "Expected Values are Linear",
 	"type": "thm",
+	"weight": 3,
 	"content": "The expected value function is linear.  That is, $E[X_1+X_2] = E[X_1] + E[X_2]$.",
 	"intuition": "This is true *regardless* of the interdependence of the events causing various $X_1$ and $X_2$ values!",
 }
@@ -501,6 +522,7 @@
 {
 	"name": "Recurrence Relation",
 	"type": "def",
+	"weight": 3,
 	"content": "A __recurrence relation__ is an equation $a_n = f(a_{n-1},a_{n-2},,,a_0)$ that recursively defines a sequence or multidimensional array of values, after one or more initial terms are given: each further term of the sequence or array is defined as a function of the preceding terms.",
 	"example": "The Fibonacci numbers are defined like so:  The initial terms are $a_0=0$ and $a_1=1$.  All other terms are defined by the recurrence relation $a_n = a_{n-1}+a_{n-2}$.",
 	"example": "The Towers of Hanoi is a game where you must move $n$ disks from the left side <img> to the right side <img>.  You may move one disk at a time, and a disk can never be placed above a disk larger than itself.  When the tower is $n=1$ tall, it takes $a_1=1$ moves to move the stack.  When the tower is $n$ tall, it takes $a_n = 2a_{n-1}+1$ moves to move the stack, which is a recurrence relation.",
@@ -509,6 +531,7 @@
 {
 	"name": "Linear",
 	"type": "def",
+	"weight": 3,
 	"content": "Given any module $(X,+)$ over a ring $(C,+,\\cdot)$, a function $f$ is __linear__ if it satisfies the properties\n\n  1. $f(x_1+x_2) = f(x_1)+f(x_2)$ for all $x_1,x_2\\in X$\n  2. $f(cx) = cf(x) for all $c\\in C$ and $x\\in X$.",
 	"note": "It is equivalent to check the property $f(cx_1+x_2) = cf(x_1)+f(x_2)$ for all $c\\in C$ and $x\\in X$",
 	"intuition": "Without knowing what a module or ring is, you can think of $X$ as the domain of the function and $C$ as the set of constants you are allowed to multiply by.  Then all you need to do is check that the two properties are true.",
@@ -518,6 +541,7 @@
 {
 	"name": "Homogeneous",
 	"type": "def",
+	"weight": 2,
 	"content": "A function that satisfies $f(tx_1,,,tx_n) = t^kf(x_1,,,x_n)$ for all $t$ and a fixed $k$.",
 	"example": "The function $f(x) = 6x$ is homogeneous because $f(tx) = 6tx = t^16x = t^1f(x)$.",
 	"example": "The function $f(x,y) = 6x+13y$ is homogeneous because $f(tx) = 6tx+13ty = t^1(6x+13y) = t^1f(x,y)$.",
@@ -526,6 +550,7 @@
 {
 	"name": "Characteristic Equation Method",
 	"type": "thm",
+	"weight": 3,
 	"content": "When a recurrence is of the form $a_n = \\sum_{i=0}^{n-1} k_ia_i$, and the solutions to the equation $x^n = \\sum_{i=0}^{n-1} k_ix^i$ are $x_0,,,x_{n-1}$, then every expression of the form $\\sum_{i=0}^{n-1} c_ix_i^n$ is a solution to the recurrence.  The base cases that determine the specific sequence can be used to solve for the $c$s, giving a closed form formula for the specific sequence.",
 }
 
@@ -565,12 +590,14 @@
 {
 	"name": "Generating Function",
 	"type": "def",
+	"weight": 3,
 	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} a_nx^n$.",
 }
 
 {
 	"name": "$e^x$ Generating Function",
 	"type": "thm",
+	"weight": 3,
 	"content": "The generating function for $e^x$ is $\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}$.",
 	"proofs": [
 		{
@@ -587,6 +614,7 @@
 {
 	"name": "Number of partitions of a natural number",
 	"type": "thm",
+	"weight": 5,
 	"content": "The number of partitions of a natural number $n$ is the coefficient of $x^n$ in $\\prod_{k=0}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
 	"intuition": "Remember that a partition of $n$ is a sum of natural numbers that add up to $n$.  The order of the numbers does not matter.  The given product can be expressed as a Maclaurin series of the form $a_0x^0 + a_1x^1 + a_2x^2 +++$.  Then $a_n$ is the number of ways to partition $n$.",
 	"proof": {

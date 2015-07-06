@@ -58,6 +58,8 @@ def check_type_and_clean(value, value_type=str, list_of=False):
 		if type(value) is list:
 			for el in value:
 				assert type(el) is value_type
+		elif value is None:
+			value = []
 		else:
 			assert type(value) is value_type
 			value = [value]
@@ -102,8 +104,7 @@ class Node:
 			raise KeyError('Unexpected or redundant key "' + key + '" found in input dictionary.')
 
 	def as_json(self): # returns json version of self
-		return json.dumps(self.__dict__)
-		# if too simplistic, try this instead: https://github.com/jsonpickle/jsonpickle
+		return json.dumps(self.__dict__) # if too simplistic, we can use jsonpickle in the future: https://github.com/jsonpickle/jsonpickle
 
 	def __str__(self):
 		if self.type=="definition":
@@ -235,6 +236,8 @@ class Node:
 		return self._plural
 	@plural.setter
 	def plural(self, new_plural):
+		if new_plural is None:
+			return
 		clean_plural = check_type_and_clean(new_plural, str)
 		assert has_at_least_two_dunderscores(clean_plural)
 		self._plural = clean_plural
