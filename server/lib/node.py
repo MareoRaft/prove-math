@@ -62,10 +62,10 @@ def check_type_and_clean(value, value_type=str, list_of=False):
 		elif value is None:
 			value = []
 		else:
-			assert type(value) is value_type
+			assert (type(value) is value_type or type(value) is dict)
 			value = [value]
 	else:
-		assert type(value) is value_type
+		assert (type(value) is value_type or type(value) is dict)
 	return value
 
 def find_key(dic, keys):
