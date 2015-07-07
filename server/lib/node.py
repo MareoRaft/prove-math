@@ -16,7 +16,7 @@ import re
 import json
 
 # local:
-import lib.helper
+import helper
 
 ################################### HELPERS ###################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
@@ -39,7 +39,7 @@ def move_attribute(dic, aliases, strict=True):
 		return None
 
 def is_capitalized(value):
-	if re.match(r'[\$A-Z]', value): # starts with LaTeX or capital letter
+	if re.search(r'[\$A-Z]', value): # starts with LaTeX or capital letter
 		return True
 	return False
 
@@ -48,9 +48,10 @@ def is_content_clean(value):
 		for el in value:
 			assert is_content_clean(el)
 	if type(value) is str:
-		assert len(value) >= 15 # arbitary length to make sure person actually put some content in
-		assert value[-1] is '.' # make sure they end in period.  in future, support colon followed by a list without period?
-		assert is_capitalized(value)
+		assert len(value) >= 1 # arbitary length to make sure person actually put some content in
+		#assert value[-1] is '.' # make sure they end in period.  in future, support colon followed by a list without period?
+		#assert is_capitalized(value)
+		return True
 	return True
 
 def check_type_and_clean(value, value_type=str, list_of=False):
@@ -103,8 +104,9 @@ class Node:
 		for key in dic: # if one or more keys are still left in the dictionary...
 			raise KeyError('Unexpected or redundant key "' + key + '" found in input dictionary.')
 
+
 	def as_json(self): # returns json version of self
-		return json.dumps(self.__dict__) # if too simplistic, we can use jsonpickle in the future: https://github.com/jsonpickle/jsonpickle
+		return self.__dict__
 
 	def __str__(self):
 		if self.type=="definition":
@@ -137,15 +139,16 @@ class Node:
 			return False
 		elif self.description!=other.description:
 			return False
-		for x in self.intuition:
-			if x not in other.intuition:
+		for x in self.intuitions:
+			if x not in other.intuitions:
 				return False
 		for x in self.examples:
 			if x not in other.examples:
 				return False
-		for x in self.notes:
-			if x not in other.notes:
-				return False
+		#Matt Removed notes on last edit..
+                #for x in self.notes:
+		#	if x not in other.notes:
+		#		return False
 		return True
 
 	def clone(self):

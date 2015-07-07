@@ -1,39 +1,48 @@
 import sys
+import pytest
+from node import Node
 
-from lib.local.node import Node
+def test_theorem():
+    pre_node = {"name": "Pythagorean theorem", "type": "theorem", "weight": 1, "description": "When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2.", "intuition": "A simple explanation.", "examples": ["Example 1 is now long enough.", "Example 2 is now long."]}
+    node = Node(pre_node)
+    assert node.name=="Pythagorean theorem"
+    assert node.type=="theorem"
+    assert node.weight==1
+    assert node.description=="When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2."
+    assert node.examples== ["Example 1 is now long enough.", "Example 2 is now long."]
+    with pytest.raises(AttributeError) as e:
+        node.intuition=="A simple explanation"
+        node.fake_field
+        
 
-# def test_node_copy():
-#     sample_theorem = {
-#     	"name": "Pythagorean theorem",
-#     	"type": "theorem",
-#     	"weight": 1,
-#     	"description": "a^2b^2=c^2",
-#     	"intuition": "A simple explanation",
-#     	"examples": ["Example 1", "Example 2"]
-#     }
-#     a = Node(sample_theorem)
-#     b = a.clone()
-#     assert id(a) != id(b)
-#     assert a==b
-#     pass
 
-# def test_Theorem___init__():
-#     sample_theorem = {"name": "Pythagorean theorem", "type": "theorem", "weight": 1, "description": "a^2+b^2=c^2", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
 
-# def test_stuff():
-#     sample_definition = {"name": "triangle","plural":"triangles", "type": "definition", "weight": 1, "description": "3 sided polygon", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
-#     matt_example1=  {
-#             "name": "Choosy Identity",
-#             "weight": 3,
-#             "thm": "$ \\binom nk = \\binom{n}{n-k} $",
-#             "proofs": [
-#                 "Apply $\\binom nk = \\frac{n!}{k!(n-k)!} = \\frac{n!}{[n-(n-k)]!(n-k)!} = \\binom{n}{n-k} $",
-#                 {
-#                     "type": "combinatorial",
-#                     "content": "Left side: We have $n$ puppies.  We choose $k$ of them and color them blue.  We color the rest of them red.  Right side: We have $n$ puppies.  We choose $n-k$ of them and color them red.  We color the rest of them blue.",
-#                 },
-#             ],
-#         }
+def test_stuff():
+    sample_definition = {"name": "__Triangle__","plural":"__Triangles__", "type": "definition", "weight": 1, "description": "3 sided polygon", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
+    node=Node(sample_definition)
+    print(node.as_json)
+
+
+
+
+def test_node_copy():
+     sample_theorem = {
+     	"name": "Pythagorean theorem",
+     	"type": "theorem",
+     	"weight": 1,
+     	"description": "a^2b^2=c^2",
+     	"intuition": "A simple explanation",
+     	"examples": ["Example 1", "Example 2"]
+     }
+     a = Node(sample_theorem)
+     b = a.clone()
+     assert id(a) != id(b)
+     assert a==b
+     pass
+
+if __name__ == "__main__":
+     test_theorem()
+
 
 #     matt_example2=  {
 #             "weight": 4,
@@ -69,10 +78,4 @@ from lib.local.node import Node
 # for x in data_dictionary['nodes']:
 #   c = Node(x)
 #     print(c)
-
-
-def test___init__():
-    pre_node = {"name": "Pythagorean theorem", "type": "theorem", "weight": 1, "description": "When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2.", "intuition": "A simple explanation.", "examples": ["Example 1 is now long enough.", "Example 2 is now long."]}
-    node = Node(pre_node)
-    print(node.as_json)
 
