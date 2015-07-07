@@ -20,17 +20,18 @@ def test_theorem():
 
 
 def test_stuff():
-    sample_definition = {"name": "__Triangle__","plural":"__Triangles__", "type": "definition", "weight": 1, "description": "3 sided polygon", "intuition": "A simple explanation", "examples": ["Example 1", "Example 2"]}
+    sample_definition = {"name": "__Triangle__","plural":"__Triangles__", "type": "definition", "weight": 1, "description": "3 sided polygon", "intuition": "A simple explanation", "examples": ["Long Long Long Example 1", "text text text Example 2"]}
     node=Node(sample_definition)
-    assert node.name=="Pythagorean theorem"
-    assert node.type=="theorem"
+    assert node.name=="__Triangle__"
+    assert node.type=="definition"
     assert node.weight==1
-    assert node.description=="When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2."
-    assert node.examples== ["Example 1 is now long enough.", "Example 2 is now long."]
+    assert node.description=="3 sided polygon"
+    assert node.plural=="__Triangles__"
+    assert node.examples== ["Long Long Long Example 1", "text text text Example 2"]
     with pytest.raises(AttributeError) as e:
         node.intuition=="A simple explanation"
     with pytest.raises(AttributeError) as e:
-        node.plural==""
+         node.proofs==""
 
 
 
