@@ -757,4 +757,142 @@ From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written 
 	},
 }
 
-//we had a homework where we prove that \sqrt[n]{n} - 1 \\leq? \\ln(n) over n.  It may be nice to have those exercises here too
+{
+	"name": "Exponential Generating Function",
+	"weight": 4,
+	"type": "def",
+	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __exponential generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} \\frac{a_nx^n}{n!}$.",
+	"intuition": "This is the same as a generating function, except that each term is divided by $n!$.",
+}
+
+{
+	"name": "Product of Generating Functions",
+	"weight": 3,
+	"type": "thm",
+	"content": "Given two generating functions, $f$ generates $(a_n)_{n=0}^\\infty$ and $g$ generates $(b_n)_{n=0}^\\infty$, then the generating function $h = f \\cdot g$ of the sequence $(c_n)_{n=0}^\\infty$ has coefficients $c_n = \\sum_{k=0}^n a_kb_{n-k}$.",
+	"intuition": "",
+}
+
+{
+	"name": "Product of Exponential Generating Functions",
+	"weight": 3,
+	"type": "thm",
+	"content": "Given two exponential generating functions, $f$ generates $(a_n)_{n=0}^\\infty$ and $g$ generates $(b_n)_{n=0}^\\infty$, then $h = f \\cdot g$ is the generating function of the sequence $(c_n)_{n=0}^\\infty$, where $c_n = \\sum_{k=0}^n \\binom{n}{k} a_kb_{n-k}$.",
+	"example": "A sequence of length $n$ is composed of $0$s and $1$s.  There are $2^n$ ways to make the sequence.  Let $(c_n) = (2^n) from $0$ to $\\infty$ denote the number of ways to make a sequence of length $n$.  Let $(a_n)$ denote the number of ways to make a sequence of length $n$ using only $0$s.  That is, $(a_n) = (1) from $0$ to $\\infty$.  Similarly, let $(b_n)$ denote the number of ways to make a sequence of length $n$ using only $1$s.
+		\n\nIf the exponential generating functions for $(a_n)$, $(b_n)$, and $(c_n)$ are $f$, $g$, and $h$, respectively, then $h = f \\cdot g$.
+		\n\nThis means that if we didn't know the formula for $c_n$, we could have solved for it in this way:
+		\n\n$c_n$ = \\sum_{k=0}^n \\binom{n}{k} a_kb_{n-k} = \\sum_{k=0}^n \\binom{n}{k} = 2^n$.",
+	"example": "We want to make a sequence of length $n$ where each term is an $A$, $B$, or $C$.  Also, we need the total number of $A$s to be even and the total number of $B$s to be even.
+		\n\nLet $(a_n)_{n=0}^\\infty$ be given by $(0,1,0,1,0,1,,,)$ (that is, $a_n = 1+(-1)^n$) be the number of ways to fill a sequence of length $n$ with only $A$s, and there must be an even amount of $A$s.
+		\n\nLet $(b_n)_{n=0}^\\infty$ be given by $(0,1,0,1,0,1,,,)$ (same formula) be the number of ways to fill  a sequence of length $n$ with only $B$s, and there must be an even amount of $B$s.
+		\n\nLet $(c_n)_{n=0}^\\infty$ be given by $(1,1,1,1,1,1,,,)$ be the number of ways to fill  a sequence of length $n$ with only $C$s.
+		Let $f$, $g$, and $h$ be the exponential generating functions for $(a_n)$, $(b_n)$, and $(c_n)$, respectively.  Let $t = fgh$.
+		\n\nIt turns out that $f(x) = \\frac{e^x-e^{-x}}2$ and $g(x)$ is the same.  $h(x) = e^x$.  Finally, we compute $t(x) = f(x)g(x)h(x) = \\left(\\frac{e^x-e^{-x}}2\\right)\\left(\\frac{e^x-e^{-x}}2\\right)\\left(\\e^x\\right)$.  Simplifying, we have that $t(x) = \\frac14(e^{-x}+2e^x+e^{3x})$.  The coefficients of the power series for $t(x)$ is therefore $\\frac14\\left((-1)^n+2+3^n\\right)/n!$.  We conclude that the number of ways to make the original sequence of length $n$ at the beginning of this example is $\\frac14\\left(3^n+2+(-1)^n\\right)$.",
+}
+
+{
+	"weight": 3,
+	"type": "exercise",
+	"content": "The number of sequences of length $n$ that are composed of $0$s and $1$s, where the number of $1$s must be a multiple of $3$, is [[$needs to be solved still$]].  The answer is given as a function of $n$.",
+	"intuition": "[[We can represent this n that as a sequence.  Then create an exponential generating function for each and multiply them together to get the exponential generating function for the desired sequence.]]",
+}
+
+{
+	"name": "Deranged Sequence",
+	"weight": 3,
+	"type": "def",
+	"content": "A __deranged__ sequence is an ordering of ${1,2,3,,,n}$ where $a_i \\neq i$ for all $i$ in the sequence.",
+	"intuition": "If we took the *arranged* sequence $(1,2,3,,,n)$ and moved the terms around so that no term is left in its original location, the result would be a *deranged* sequence.",
+	"example": "$(2,4,1,3)$",
+	"example": "$(2,3,1)$",
+	"example": "$(3,1,2,6,4,5)$",
+	"counterexample": "$(3,2,1)$ is not deranged because $2$ is in its own position.",
+	"counterexample": "$(5,4,7,2,1,6,3)$",
+}
+
+{
+	"name": "Number of Deranged Sequences",
+	"weight": 4,
+	"type": "thm",
+	"content": "Let $d_n$ be the number of deranged sequences of length $n$.  Then a closed formula for $d_n$ is [[$d_n = n!\\sum_{k=0}^n \\frac{(-1)^k}{k!}$]].",
+	"proof": {
+		"type": ["algebraic", "combinatorial"],
+		"content": "$n!$ is the number of sequences of length $n$ whose terms are $1,2,,,n$ in any order.  For any of these sequences, some amount $k$ of the terms will satisfy $a_i=i$, and the remaining $n-k$ terms will form a derangement of length $n-k$.  For each $k$, there are $\\binom nk$ ways to have $k$ terms in place and then, given which terms are in place, $d_{n-k}$ derangements of the remaining terms.  Adding up these possibilities over all possible values of $k$, we get all possible sequences of length $n$:
+			\n\n
+			$n! = \sum_{k=0}^n \binom nk d_{n-k}$
+
+$n! = \sum_{k=0}^n \frac{n!}{k!(n-k)!} d_{n-k}$
+
+$1 = \sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}$
+
+Multiply both sides by $x^n$ and sum them from $n=0$ to $\infty$:
+
+$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}\right) x^n$
+
+$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!} \frac{d_{n-k}}{(n-k)!}\right) x^n$
+
+The right side is recognized as the product of two sums:
+
+$\sum_{n=0}^\infty x^n = \left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty \frac{d_{n}}{n!} x^n\right) $
+
+$\sum_{n=0}^\infty x^n = e^x \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+
+$e^{-x} \sum_{n=0}^\infty x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+
+$\left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty x^n\right) =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+
+On the left side we take the product of the two sums:
+
+$\sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!}\right) x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+
+Remove the outer sums and divide by $x^n$:
+
+$\sum_{k=0}^n \frac{1}{k!} =   \frac{d_{n}}{n!} $
+
+Solve for $d_n$:
+
+$d_n = n!\sum_{k=0}^n \frac{1}{k!}  $
+.
+
+
+		",
+	}
+}
+
+{
+	"name": "generating function practice",
+	"weight": 3,
+	"type": "exercise",
+	"content": "Let $f(x) = (1+x)^n$ for some fixed $n$ and let $g(x) = \\frac1{1-x}$.  When $k<n$, the coefficient of $x^k$ in $fg$ is [[$\\sum_{j=0}^k \\binom nj$]] (leave this in summation notation), and when $k\\geq n$, the coefficient is [[$2^n$]].",
+}
+
+{
+	"name": "generating function practice 2",
+	"weight": 3,
+	"type": "exercise",
+	"content": "Let $f(x) = e^x$ and $g(x) = \\frac1{1-2x}$.  The coefficient of $x^k$ in $fg$ is [[$\\sum_{j=0}^k 2^{k-j} \\frac{1}{k!}$]] (leave this in summation notation).",
+}
+
+{
+	"name": "generating function practice 3",
+	"weight": 2,
+	"type": "exercise",
+	"content": "Let $a_k$ be the number of ways to choose $k\\geq0$ balls from $n$ *identical* blue balls.  A formula for $a_k$ is [[$a_k = \begin{cases}
+    1,& \text{if } k\leq n\\
+    0,& \text{if } k > n\\
+\end{cases}$]].  Let $b_k$ be the number of ways to choose $k\\geq 0$ balls from $m$ identical red balls.  A formula for $b_k$ is [[the same formula as $a_k$, but with $m$ instead of $n$]].  The generating function $f$ for $(a_n)_{n=0}^\\infty$ is [[$\\sum_{k=0}^n x^k$]].  The generating function $g$ for $(b_n)_{n=0}^\\infty$ is [[the same formula as for $(a_n)$, but with $m$ instead of $n$]].  The product, $fg$, has coefficients $c_k$ given by the formula [[
+$c_k = \begin{cases}
+    k+1,& \text{if } k\leq \\min{n,m}\\
+    \\min{n,m}+1,& \text{if } \\min{n,m} < k \\leq max{n,m}\\
+    0,& \text{if } \\max{n,m} < k\\
+\end{cases}$
+]].  The product is the generating function for the situation [[where you want to know the number of ways to choose $k\\geq 0$ balls from $n$ blue and $m$ red balls.  It matters how many of each color you choose]].",
+}
+
+{
+	"name": "generating functions practice 4. delete gen fun prac names after hooking up edges",
+	"weight": 2,
+	"type": "exercise",
+	"content": "A store sells $a$ distinct $\$1$ lollipops (not $a$ *types* of lollipops, but literally a total of $a$ lollipops), $b$ distinct $\$2$ chocolate bars, and $c$ distinct $\$3$ gummy bear bags.  If you spend exactly $\$n$ on candy, then $s_n$ is the number of ways you could have achieved this.  The generating function for $(s_n)_{n=0}^\\infty$ is [[$\\left(\\binom a0 x^0 + \\binom a1 x^1 +++ \\binom aa x^a\\right)\\left(\\binom b0 x^0 + \\binom b1 x^2 +++ \\binom bb x^{2b}\\right)\\left(\\binom c0 x^0 + \\binom c1 x^3 +++ \\binom cc x^{3c}\\right)$ or $\\left(\\sum_{k=0}^a \\binom ak x^{1k}\\right)\\left(\\sum_{k=0}^b \\binom bk x^{2k}\\right)\\left(\\sum_{k=0}^c \\binom ck x^{3k}\\right)$]].  Any expression equivalent to this is acceptable.",
+	"intuition": "[[This is similar to partitioning the natural number $n$ into the sum of $1$s, $2$s, and $3$s.  The difference is that because all the items are *distinct*, we need to count the *number of ways* to choose $k$ of the $a$ lollipops, for example.  Therefore, the sum corresponding to the lollipops, for example, must include the $\\binom ak$ constants.]]",
+}
