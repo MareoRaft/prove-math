@@ -111,16 +111,18 @@ class Node:
 	def __str__(self):
 		if self.type=="definition":
 			msg = "(%s,%s,%s,%s,%d)\n" % (self.name, self.plural, self.type, self.description, self.weight)
-			#if self._intuition:
-			#	msg = msg + self._intuition + "\n"
+			if self._intuitions:
+				for intuition in self._intuitions:
+					msg = msg + self._intuitions + "\n"
 			for example in self._examples:
 				msg = msg + example + "\n"
 			#for single_note in self._notes:
 			#	msg=msg+ single_note+"\n"
 		else:
 			msg = "(%s,%s,%s,%d)\n" % (self.name,self.type,self.description,self.weight)
-			#if self._intuition:
-			#	msg = msg + self._intuition + "\n"
+			if self._intuitions:
+				for intuition in self._intuitions:
+					msg = msg + intuition + "\n"
 			for example in self._examples:
 				msg = msg + example + "\n"
 			#for single_note in self._notes:
