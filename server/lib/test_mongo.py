@@ -1,6 +1,9 @@
-from mongo import Mongo
+# system:
 import pytest
 import sys
+
+# locals:
+from lib.mongo import Mongo
 
 def test_Mongo_init():
     a=Mongo("test","people")
@@ -51,7 +54,7 @@ def test_Mongo_list_insert_then_query():
     results1=a.query({"name":"Rufus"})
     for x in results1:
         assert dic2==x
-    
+
 
 
 """
