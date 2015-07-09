@@ -20,6 +20,13 @@ thomas.gill@rutgers.edu
 Justine
 at math undergrad lounge
 
+Matthew
+mlb293@scarletmail.rutgers.edu
+comp sci student from combinatorics class
+
+Ali
+ali.haider.ismail@rutgers.edu
+
 
 professors
 ----------
