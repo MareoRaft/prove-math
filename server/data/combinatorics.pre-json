@@ -948,3 +948,100 @@ $c_k = \begin{cases}
 	"intuition": "When $n=2$, this theorem just says that $|A_1\\cup A_2| = |A_1|+|A_2|-|A_1\\cap A_2|$.  When $n=3$, this theorem says that $|A_1\\cup A_2\\cup A_3| = |A_1|+|A_2|+|A_3|-|A_1\\cap A_2|-|A_1\\cap A_3|-|A_2\\cap A_3|+|A_1\\cap A_2\\cap A_3|$.  As you can see there is a pattern where you add the individual sets, then subtract the intersections of $2$ sets, then add the intersections of $3$ sets, then subtract the intersections of $4$ sets, and so forth.",
 }
 
+{
+	"weight": 1,
+	"type": "exercise",
+	"content": "We have a standard deck of $52$ cards.  The number of $5$-card hands that contain either no face cards or all face cards is [[$\\binom{52-4\\cdot3}{5} + \\binom{4\\cdot3}{5}$ or $658800$]].  (A face card is a jack, queen, or king.)",
+}
+
+{
+	"weight": 1,
+	"type": "exercise",
+	"content": "We have a standard deck of $52$ cards.  The number of $5$-card hands that are full-houses is [[$(13\\text{ pick }2)4\\cdot4$ or $13\\cdot12\\cdot4\\cdot4$ or $2496$]].",
+}
+
+{
+	"weight": 1,
+	"type": "exercise",
+	"content": "The number of ways to deal out $52$ cards so that Zahlen gets $2$ cards, Xtehn gets $3$ cards, Vehro gets $5$ cards, Rohre gets $8$ cards, Qxhna gets $13$ cards, and John gets $21$ cards is [[$\\binom{52}{2,3,5,8,13,21}$ or $\\frac{52!}{2!3!5!8!13!21!}$ or $4366577259220841628892568640000$]].",
+	"intuition": "",
+}
+
+{
+	"weight": 2,
+	"type": "exercise",
+	"content": "$x_1$, $x_2$, and $x_3$ must be natural numbers, and $x_1<5$.  The number of solutions to $x_1+x_2+x_3=12$ is [[$\\binom{12+3-1}{3-1}-\\binom{(12-5)+3-1}{3-1}$ or $\\binom{14}{2}-\\binom{9}{2}$ or $55$]].",
+}
+
+{
+	"weight": 1,
+	"type": "exercise",
+	"content": "$x_1$, $x_2$, and $x_3$ must be prime numbers.  The number of solutions to $x_1+x_2+x_3=12$ is [[$3!+3$ or $9$]].",
+}
+
+{
+	"weight": 3,
+	"type": "exercise",
+	"content": "$x_1$, $x_2$, and $x_3$ must be natural numbers less than or equal to $6$.  The number of solutions to $x_1+x_2+x_3=12$ is [[$\\binom{3+3-1}{3-1}$ or $\\binom 52$ or $10$]].",
+	"proof": {
+		"type": "combinatorial",
+		"content": "Let $x_1=x_2=x_3=5$.  The sum $x_1+x_2+x_3$ is $15$.  Now count the number of ways to distribute three $-1$s among the $x$s.  There are $\\binom{3+3-1}{3-1}$ ways to do this.  The three $-1$s bring the sum down to $12$.",
+	},
+}
+
+{
+	"weight": 1,
+	"type": "exercise",
+	"content": "$3$ red balls and $4$ white balls are in an urn.  Balls are randomly removed from the urn one at a time until the urn is empty.  Let $E$ be the event where the first ball removed is red, and let $F$ be the event where the third ball removed is white.  Are $E$ and $F$ independent?  [[No]].",
+}
+
+{
+	"name": "expected value",
+	"weight": 2,
+	"type": "exercise",
+	"content": "$3$ red balls and $4$ white balls are in an urn.  Balls are randomly removed from the urn one at a time until the urn is empty.  $X$ is a random variable representing the number of balls drawn until a white ball is drawn (For example, if the first ball is red and the second is white, then $X=2$).  The expected value of $X$ is [[$\\frac85$ or $1.6$]].",
+}
+
+{
+	"weight": 3,
+	"type": "exercise",
+	"content": "$3$ red balls and $4$ white balls are in an urn.  Box $1$ and box $2$ are next to the urn.  One ball is randomly drawn from the urn and randomly placed into one of the boxes.  Another ball is randomly drawn from the urn and randomly placed into one of the boxes.  Given that box $1$ has at least $1$ white ball and no red balls, the probability that both balls drawn were white is [[$\\frac35$]].",
+}
+
+{
+	"weight": 3,
+	"type": "exercise",
+	"content": "A $3\\times n$ board of $1\\times1$ squares must be filled with $3\\times1$ tiles <img> and $L$-tiles <img>.  The $3\\times1$ tiles can only be oriented vertically, but the $L$-tiles can be oriented any way.  Let $a_n$ be the number of tilings for the board.  The base cases for $(a_n)_{n=0}^\\infty$ are [[$a_0=1$ and $a_1$=1.  Alternatively, we can omit $a_0$ from the sequence and use $a_1=1$ and $a_2=3$ as our base cases]].  A recurrence for the sequence is [[$a_n = a_{n-1}+2a_{n-2}]].  A closed form formula for $a_n$ is [[$a_n = \\frac13(-1)^n+\\frac23(2)^n$]].",
+}
+
+{
+	"weight": 3,
+	"type": "exercise",
+	"content": "Let $d_n$ represent the number of ways to make a list of $n$ letters using $A$s, $B$s, and $C$s so that the number of $A$s is even and there is at most $1$ $B$.  If $(a_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $A$s, then an exponential generating function for $(a_n)$ is [[$\\frac{e^x+e^{-x}}{2}$]].  If $(b_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $B$s, then an exponential generating function for $(b_n)$ is [[\\frac{1x^0}{0!}+\\frac{1x^1}{1!}]].  If $(c_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $C$s, then an exponential generating function for $(c_n)$ is [[$e^x$]].  A closed form formula for $d_n$ is [[$d_n = \begin{cases}
+    1,& \text{if } n=0\\
+    2,& \text{if } n=1\\
+    2^{n-1}+n2^{n-2},& \text{if } n>1\\
+\end{cases}$]].",
+}
+
+{
+	"weight": 3,
+	"type": "exercise",
+	"content": "Prove that $\\sum_{k=0}^n k\\binom nk = n2^{n-1}$.",
+	"proofs": [
+		{
+			"type": "combinatorial",
+			"content": "Something about choosing committees with a single chairperson.",
+		},
+		{
+			"type": "algebraic",
+			"content": "Take $(1+x)^n$ and set it equal to its expansion using the binomial theorem.  Then take the derivative of both sides with respect to $x$.  Finally, let $x=1$.",
+		},
+	],
+}
+
+{
+	"weight": 3,
+	"type": "exercise",
+	"content": "Let $(a_n)_{n=0}^\\infty$ be defined by the base case $a_0=4$ and the recurrence $a_n = 4a_{n-1}-3^{n+1}$.  If $a(x)$ is the generating function for $(a_n)$, then a closed form formula for $a(x)$ is [[$\\frac{4-21x}{(1-3x)(1-4x)}$ or $\\frac{9}{1-3x}-\\frac{5}{1-4x}$]].  A closed form formula for $a_n$ is [[$9\\cdot3^n-5\\cdot4^n$ or $3^{n+2}-5\\cdot4^n$]].",
+}
