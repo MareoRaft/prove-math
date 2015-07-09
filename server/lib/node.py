@@ -54,7 +54,7 @@ def is_content_clean(value):
 		return True
 	return True
 
-def check_type_and_clean(value, value_type=str, list_of=False):
+def check_type_and_clean(value, value_type, list_of=False):
 	if list_of:
 		if type(value) is list:
 			for el in value:
@@ -62,10 +62,10 @@ def check_type_and_clean(value, value_type=str, list_of=False):
 		elif value is None:
 			value = []
 		else:
-			assert (type(value) is value_type or type(value) is dict)
+			assert type(value) is value_type
 			value = [value]
 	else:
-		assert (type(value) is value_type or type(value) is dict)
+		assert type(value) is value_type
 	return value
 
 def find_key(dic, keys):
@@ -253,6 +253,6 @@ class Node:
 	@proofs.setter
 	def proofs(self,new_proofs):
 		assert is_content_clean(new_proofs)
-		self._proofs = check_type_and_clean(new_proofs, str, list_of=True)
+		self._proofs = check_type_and_clean(new_proofs, dict, list_of=True)
 	def append_proof(self, add_proof): # these need type checking too
 		self._proofs.append(add_proof)

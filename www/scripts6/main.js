@@ -76,6 +76,10 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 	}
 })
 
+// $.click("#my-button", function(){
+// 	ws.send($("#my-text-field").val())
+// })
+
 ws.onopen = function(){
 	ws.send("Hello, world")
 }
