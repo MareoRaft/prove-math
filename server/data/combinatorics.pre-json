@@ -896,3 +896,55 @@ $c_k = \begin{cases}
 	"content": "A store sells $a$ distinct $\$1$ lollipops (not $a$ *types* of lollipops, but literally a total of $a$ lollipops), $b$ distinct $\$2$ chocolate bars, and $c$ distinct $\$3$ gummy bear bags.  If you spend exactly $\$n$ on candy, then $s_n$ is the number of ways you could have achieved this.  The generating function for $(s_n)_{n=0}^\\infty$ is [[$\\left(\\binom a0 x^0 + \\binom a1 x^1 +++ \\binom aa x^a\\right)\\left(\\binom b0 x^0 + \\binom b1 x^2 +++ \\binom bb x^{2b}\\right)\\left(\\binom c0 x^0 + \\binom c1 x^3 +++ \\binom cc x^{3c}\\right)$ or $\\left(\\sum_{k=0}^a \\binom ak x^{1k}\\right)\\left(\\sum_{k=0}^b \\binom bk x^{2k}\\right)\\left(\\sum_{k=0}^c \\binom ck x^{3k}\\right)$]].  Any expression equivalent to this is acceptable.",
 	"intuition": "[[This is similar to partitioning the natural number $n$ into the sum of $1$s, $2$s, and $3$s.  The difference is that because all the items are *distinct*, we need to count the *number of ways* to choose $k$ of the $a$ lollipops, for example.  Therefore, the sum corresponding to the lollipops, for example, must include the $\\binom ak$ constants.]]",
 }
+
+{
+	"name": "gen function method for solving a recurrence",
+	"weight": 3,
+	"type": "exercise",
+	"content": "The sequence $(a_n)_{n=0}^\\infty$ is defined by $a_0=1$, $a_1=9$, and $a_n=6a_{n-1}-9a_{n-2}$ for all other terms.  Use the generating function $f(x) = \\sum_{n=0}^\\infty a_nx^n$ to solve for $a_n$ in closed form.  The closed form solution for $f(x)$ without a summation is [[$\\frac{1+3x}{(1-3x)^2}$]].  The closed form solution for $a_n$ is [[$3^n(2n+1)$]].",
+	"proof": {
+		"type": "algebraic",
+		"content": "f(x) = \\sum_{n=0}^\\infty a_nx^n.  pull out the first two terms and plug in base cases.  plug recursive formula into remaining sum.  distribute summation to two pieces.  for each piece, shift n so that it starts at 0, and pull out a term if necessary.  rewrite the sums as something times f(x).  Finally, isolate f(x) to get the closed form for f(x).\n\nf(x) can be rewritten as $\\frac{-1}{1-3x} + 2\\frac{1}{(1-3x)^2}$.  Each term can be written as a power series.  If you don't know the power series for the right term, you can write the power series for $\\frac{1}{1-3x}$ and square it.  Then solve for the coefficient of $x^n$ in the resulting product.  Finally, combine the coefficients so that f(x) is written as one big power series.  The coefficient for x^n is the closed formula for $a_n$.",
+	},
+}
+
+{
+	"name": "gen function method",
+	"weight": 3,
+	"type": "exercise",
+	"content": "The sequence $(a_n)_{n=0}^\\infty$ is defined by $a_0=1$, $a_1=1$, and $a_n=3a_{n-1}+4a_{n-2}+2^{n-2}$ for all other terms.  Use the generating function $f(x) = \\sum_{n=0}^\\infty a_nx^n$ for $(a_n)$.  The closed form formula for $f(x)$ without a summation is [[$\\frac{1-4x+5x^2}{(1+x)(1-2x)(1-4x)}$]].",
+	"proof": {
+		"type": "algebraic",
+		"content": "f(x) = \\sum_{n=0}^\\infty a_nx^n.  pull out the first two terms and plug in base cases.  plug recursive formula into remaining sum.  distribute summation to two pieces.  for each piece, shift n so that it starts at 0, and pull out a term if necessary.  rewrite the sums as something times f(x).  Finally, isolate f(x) to get the closed form for f(x).\n\nf(x) can be rewritten as $\\frac{-1}{1-3x} + 2\\frac{1}{(1-3x)^2}$.  Each term can be written as a power series.  If you don't know the power series for the right term, you can write the power series for $\\frac{1}{1-3x}$ and square it.  Then solve for the coefficient of $x^n$ in the resulting product.  Finally, combine the coefficients so that f(x) is written as one big power series.  The coefficient for x^n is the closed formula for $a_n$.",
+	},
+}
+
+{
+	"weight": 1,
+	"type": "exercise",
+	"content": "Let $a_n$ be the number of elements in ${0,1}^n$ that do *not* have a $1$ followed by a $0$.  $a_0$ is [[$1$]] and a recurrence for $a_n$ is [[$a_n = a_{n-1}+1$]].  A closed form formula for $a_n$ is [[$a_n = n+1$]].",
+	"intuition": "[[Firstly, the elements of ${0,1}^n$ are just sequences of length $n$ whose terms are $0$s and $1$s.  Since a $1$ cannot be followed by a $0$, then a $1$ must be followed by a $1$.  Therefore, once a $1$ appears in the sequence, then *all* the terms after it must be $1$s too!]]",
+	"example": "[[If $n=4$ for example, the sequences without a $1$ followed by a $0$ are $(0,0,0,0)$, $(0,0,0,1)$, $(0,0,1,1)$, $(0,1,1,1)$, and $(1,1,1,1)$.]]",
+}
+
+{
+	"weight": 2,
+	"type": "exercise",
+	"content": "Let $a_n$ be the number of elements in ${0,1}^n$ that do *not* contain the subsequence $(1,0,1)$.  $a_0$ is [[$1$]], $a_1$ is [[$2$]], $a_2$ is [[$4$]], and a recurrence for $a_n$ is [[$a_n = 2 - a_{n-2} + \\sum_{k=0}^{n-1} a_k$]].",
+	"intuition": "[[Firstly, the elements of ${0,1}^n$ are just sequences of length $n$ whose terms are $0$s and $1$s.]]",
+	"intuition": "[[To find a recurrence, we should look at the end of the sequence and do a case by case breakdown of what it can be.  If the last term is $0$, then there are $a_{n-1}$ ways to fill the other terms.]]  [[If the last term is $1$, then (if the second to last term is $0$...)]]",
+	"example": "[[If $n=4$ for example, the sequences without a $1$ followed by a $0$ are $(0,0,0,0)$, $(0,0,0,1)$, $(0,0,1,1)$, $(0,1,1,1)$, and $(1,1,1,1)$.]]",
+	"proof": {
+		"type": "combinatorial",
+		"content": "If the last term is $0$, then there are $a_{n-1}$ ways to fill the other terms.  If the last term is $1$, then (if the second to last term is $0$, then the third to last term must be $0$, and there are $a_{n-3}$ ways to fill the rest of the terms.  Alternatively, if the second to last term is $1$, then (if the third to last term is $0$, then the fourth to last term must be $0$, and there are $a_{n-4}$ ways to fill the rest of the terms.  Alternatively...and so forth).\n\nWe see a pattern, and continue all the way down to $a_0$, which corresponds to the sequence $(0,0,1,1,1,,,1)$.",
+	},
+}
+
+{
+	"name": "Inclusion-Exclusion Principle",
+	"weight": 5,
+	"type": "thm",
+	"content": "Given $n\\in\\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\\left|\\cup_{i=1}^{n} A_i\\right| = \\sum_{S\\subset [n]} (-1)^{|S|+1} \\left|\\cap_{j\\in S} A_j\\right|$.",
+	"intuition": "When $n=2$, this theorem just says that $|A_1\\cup A_2| = |A_1|+|A_2|-|A_1\\cap A_2|$.  When $n=3$, this theorem says that $|A_1\\cup A_2\\cup A_3| = |A_1|+|A_2|+|A_3|-|A_1\\cap A_2|-|A_1\\cap A_3|-|A_2\\cap A_3|+|A_1\\cap A_2\\cap A_3|$.  As you can see there is a pattern where you add the individual sets, then subtract the intersections of $2$ sets, then add the intersections of $3$ sets, then subtract the intersections of $4$ sets, and so forth.",
+}
+
