@@ -16,12 +16,9 @@ import re
 import json
 
 # local:
-import helper
+from lib import helper
 
 ################################### HELPERS ###################################
-if sys.version_info[0] < 3 or sys.version_info[1] < 4:
-	raise SystemExit('Please use Python version 3.4 or above')
-
 def to_bash():
 	# include commands here to be executed in bash
 	bash_out = subprocess.check_output('ls; cd; ls', shell=True)

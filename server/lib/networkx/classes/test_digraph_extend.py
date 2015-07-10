@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
-import sys
-if sys.version_info[0] < 3 or sys.version_info[1] < 4:
-	raise SystemExit('Please use Python version 3.4 or above')
+################################## IMPORTS ####################################
+import networkx as nx
+
+from lib.networkx.classes import digraph_extend
 
 #################################### MAIN #####################################
-import networkx as nx
-import digraph_extend
-
 def test_is_nonnull(): # this is here really to make sure DiGraph inherited is_nonnull from Graph
 	nn = nx.DiGraph()
 	nn.add_node('a')

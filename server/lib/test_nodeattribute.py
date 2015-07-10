@@ -2,7 +2,9 @@
 ################################## IMPORTS ####################################
 import sys
 
-from lib.local.nodeattribute import NodeAttribute
+from lib.nodeattribute import NodeAttribute
+
+import subprocess
 
 ################################## HELPERS ####################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
@@ -32,6 +34,7 @@ def test___str__():
 
 def test_as_html():
 	me = NodeAttribute({'thm': 'this is sparta'})
+	print(subprocess.check_output(['pwd']))
 	assert me.as_html() ==  'This is sparta'
 
 	me = NodeAttribute({'thm': '**bold**, __underline__, and *italics* and _italics_'})

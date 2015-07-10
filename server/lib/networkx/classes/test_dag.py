@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
-import sys
-if sys.version_info[0] < 3 or sys.version_info[1] < 4:
-	raise SystemExit('Please use Python version 3.4 or above')
+################################## IMPORTS ####################################
+import networkx as nx
+
+from lib.networkx.classes import dag
 
 #################################### MAIN #####################################
-import networkx as nx
-import dag
-
 def test_validate():
 	DAG = nx.DAG()
 	DAG.add_edges_from([

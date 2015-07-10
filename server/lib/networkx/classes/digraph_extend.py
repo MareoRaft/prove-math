@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
-import sys
-if sys.version_info[0] < 3 or sys.version_info[1] < 4:
-	raise SystemExit('Please use Python version 3.4 or above')
+################################## IMPORTS ####################################
+import networkx as nx
+
+from lib.networkx.classes import graph_extend
 
 ################################## HELPERS ####################################
 def create_s_pointing_to_source(DG, source):
@@ -30,10 +30,11 @@ def shortest_path_helper(DG, source, target):
 		return None
 
 #################################### MAIN #####################################
-import networkx as nx
-import graph_extend
+
 
 class _DiGraphExtended (nx.DiGraph):
+
+
 	def validate(self):
 		if not self.is_directed():
 			raise TypeError('is_source only accepts DiGraphs as input')

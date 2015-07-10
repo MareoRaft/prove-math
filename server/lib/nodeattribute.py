@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
-import sys
-if sys.version_info[0] < 3 or sys.version_info[1] < 4:
-	raise SystemExit('Please use Python version 3.4 or above')
+################################## IMPORTS ####################################
+import subprocess
+import re
 
 ################################## HELPERS ####################################
 #################################### MAIN #####################################
-import subprocess
-import re
 
 
 class NodeAttribute:
@@ -72,7 +69,10 @@ class NodeAttribute:
 		self._value = new_value
 
 	def as_html(self):
-		return subprocess.check_output(['lib/Markdown.pl', '<<<', '"', self.value, '"'])
+		# return subprocess.check_output(['lib/Markdown.pl', '<<<', '"', self.value, '"'])
+		# return subprocess.check_output(['lib/Markdown.pl', '<<<"' + self.value + '"'])
+		p = subprocess.Popen(['lib/Markdown.pl'])
+		return p.communicate(self.value)
 
 		# check out
 		# try:

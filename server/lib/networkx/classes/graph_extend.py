@@ -1,19 +1,19 @@
-#!/usr/bin/env python3
-import sys
-if sys.version_info[0] < 3 or sys.version_info[1] < 4:
-	raise SystemExit('Please use Python version 3.4 or above')
-
-################################## HELPERS ####################################
+################################## IMPORTS ####################################
 import time
 from warnings import warn
 
+import networkx as nx
+
+################################## HELPERS ####################################
 def string_unique():
 	return str(time.time())
 
 #################################### MAIN #####################################
-import networkx as nx
+
 
 class _GraphExtended (nx.Graph):
+
+
 	def is_nonnull(self):
 		return bool(self.nodes())
 
