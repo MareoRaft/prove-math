@@ -1,10 +1,10 @@
+#7/14 Need to fix dunderscore issue, printing of nodes,
 ##################################### TODO ####################################
 #Reg expressions for processing definition, name, etc..
 #Stricter Reg Expressions with failure at else
 
 # MathJax/Node.js, run bash commands from python script, export json
-# update __repr__ and __str__ to follow Python standard
-# To Do: Equality method, magic methods, people o-auth, login info
+# people o-auth, login info
 
 ################################### IMPORTS ###################################
 # standard library:
@@ -16,6 +16,7 @@ import re
 import json
 
 # local:
+#Written as from lib import helper
 from lib import helper
 
 ################################### HELPERS ###################################
@@ -71,9 +72,11 @@ def find_key(dic, keys):
 			return key
 	raise KeyError('Could not find any of the following keys in the Node input: ' + keys)
 
-def has_at_least_two_dunderscores(string):
+def dunderscore_count(string):
 	dunderscore_list = re.findall(r'__', string)
-	return len(dunderscore_list) >= 2
+	return len(dunderscore_list)
+
+
 
 #################################### MAIN #####################################
 
@@ -83,23 +86,23 @@ class Node:
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
-		self.name = move_attribute(dic, {'name'})
-		self.weight = move_attribute(dic, {'weight'})
-		self.type = move_attribute(dic, {'type'}, strict=False)
-		if self.type is None:
-			self.type = find_key(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
+		#self.type = move_attribute(dic, {'type'}, strict=False)
+		#if self.type is None:
+		#	self.type = find_key(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
 		self.description = move_attribute(
 			dic,
-			{'description', 'content', 'definition', 'def', 'defn', 'theorem', 'thm', 'exercise'}
+			{'description', 'content'}
 		)
+		self.weight = move_attribute(dic, {'weight'})
 		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
 		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
-		if self.type is 'theorem': # but this should be moved to Theorem class
-			self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
-		if self.type is 'definition': # but this should be moved to Definition class?
-			self.plural = move_attribute(dic, {'plural', 'pl'}, strict=False)
-		for key in dic: # if one or more keys are still left in the dictionary...
-			raise KeyError('Unexpected or redundant key "' + key + '" found in input dictionary.')
+		self.counterexamples=move_attribute(dic,{'counterexample','counterexamples'},strict=False)
+		self.notes=move_attribute(dic,{'note','notes'},strict=False)
+		if self.type is 'exercise':
+			self.name = move_attribute(dic, {'name'},strict=False)
+		else:
+			self.name = move_attribute(dic, {'name'})
+
 
 
 	def as_json(self): # returns json version of self
@@ -108,35 +111,46 @@ class Node:
 	def __str__(self):
 		if self.type=="definition":
 			msg = "(%s,%s,%s,%s,%d)\n" % (self.name, self.plural, self.type, self.description, self.weight)
-			if self._intuitions:
-				for intuition in self._intuitions:
-					msg = msg + self._intuitions + "\n"
-			for example in self._examples:
-				msg = msg + example + "\n"
-			#for single_note in self._notes:
-			#	msg=msg+ single_note+"\n"
+			if self.intuitions:
+				for intuition in self.intuitions:
+					msg = msg + intuition + "\n"
+			if self.examples:
+				for example in self.examples:
+					msg = msg + example + "\n"
+			if self.counterexamples:
+				for counter in self.counterexamples:
+					msg=msg+counter+"\n"
+			if self.notes:
+				for single_note in self.notes:
+					msg=msg+ single_note+"\n"
 		else:
 			msg = "(%s,%s,%s,%d)\n" % (self.name,self.type,self.description,self.weight)
-			if self._intuitions:
-				for intuition in self._intuitions:
+			if self.intuitions:
+				for intuition in self.intuitions:
 					msg = msg + intuition + "\n"
-			for example in self._examples:
-				msg = msg + example + "\n"
-			#for single_note in self._notes:
-			#	msg=msg+ single_note+"\n"
-			for single_proof in self._proofs:
-				for x in single_proof:
-					msg=msg+str(x)+": "+single_proof[x]+"\n"
+			if self.examples:
+				for example in self.examples:
+					msg = msg + example + "\n"
+			if self.counterexamples:
+				for counter in self.counterexamples:
+					msg=msg+counter+"\n"
+			if self.notes:
+				for single_note in self.notes:
+					msg=msg+ single_note+"\n"
+			if self.proofs:
+				for single_proof in self.proofs:
+					for x in single_proof:
+						msg=msg+str(x)+": "+single_proof[x]+"\n"
 		return msg
 
 	def __eq__(self,other):
-		if self.name!=other.name:
+		if self.name != other.name:
 			return False
-		elif self.type!=other.type:
+		elif self.type != other.type:
 			return False
-		elif self.weight!=other.weight:
+		elif self.weight != other.weight:
 			return False
-		elif self.description!=other.description:
+		elif self.description != other.description:
 			return False
 		for x in self.intuitions:
 			if x not in other.intuitions:
@@ -144,10 +158,9 @@ class Node:
 		for x in self.examples:
 			if x not in other.examples:
 				return False
-		#Matt Removed notes on last edit..
-                #for x in self.notes:
-		#	if x not in other.notes:
-		#		return False
+		for x in self.notes:
+			if x not in other.notes:
+				return False
 		return True
 
 	def clone(self):
@@ -159,6 +172,7 @@ class Node:
 	@name.setter
 	def name(self, new_name):
 		assert is_capitalized(new_name)
+		#assert dunderscore_count(new_name)==0;
 		self._name = check_type_and_clean(new_name, str)
 
 	@property
@@ -191,7 +205,10 @@ class Node:
 	@description.setter
 	def description(self, new_description):
 		clean_description = check_type_and_clean(new_description, str)
-		# assert has_at_least_two_dunderscores(clean_description) # need this assertion for definitions!!!!
+		if self.type=='definition':
+			assert dunderscore_count(clean_description) >=2 # need this assertion for definitions!!!!
+		else:
+			assert dunderscore_count(clean_description)==0
 		assert is_content_clean(clean_description)
 		self._description = clean_description
 
@@ -212,12 +229,13 @@ class Node:
 	def examples(self, new_examples):
 		assert is_content_clean(new_examples)
 		self._examples = check_type_and_clean(new_examples, str, list_of=True)
+	
 	def append_example(self, add_example):
 		self._examples.append(add_example)
 
 	@property
 	def counterexamples(self):
-		return self._examples
+		return self._counterexamples
 	@counterexamples.setter
 	def counterexamples(self, new_examples):
 		assert is_content_clean(new_examples)
@@ -230,26 +248,56 @@ class Node:
 	def notes(self, new_notes):
 		assert is_content_clean(new_notes)
 		self._notes = check_type_and_clean(new_notes, str, list_of=True)
+
 	def append_note(self, add_note):
 		self._notes.append(add_note)
 
+
+class Definition(Node):
+
+
+	def __init__(self,dic):
+		self.type = "definition"
+		super(Definition, self).__init__(dic)
+		self.plural = move_attribute(dic, {'plural', 'pl'}, strict=False)
+		
+	
 	@property
 	def plural(self):
 		return self._plural
+
 	@plural.setter
 	def plural(self, new_plural):
 		if new_plural is None:
-			return
-		clean_plural = check_type_and_clean(new_plural, str)
-		assert has_at_least_two_dunderscores(clean_plural)
-		self._plural = clean_plural
+			self._plural = None
+		else:
+			clean_plural = check_type_and_clean(new_plural, str)
+			assert dunderscore_count(clean_plural)>=2
+			self._plural = clean_plural
 
+
+class Theorem(Node):
+	def __init__(self, dic):
+		self.type = "theorem"
+		super(Theorem, self,).__init__(dic)
+		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
+		assert self.weight>=3
+	
 	@property
 	def proofs(self):
 		return self._proofs
+   	
 	@proofs.setter
 	def proofs(self,new_proofs):
 		assert is_content_clean(new_proofs)
 		self._proofs = check_type_and_clean(new_proofs, dict, list_of=True)
+   	
 	def append_proof(self, add_proof): # these need type checking too
 		self._proofs.append(add_proof)
+
+
+class Exercise(Node):
+	def __init__(self, dic):
+		self.type = "exercise"
+		super(Exercise, self).__init__(dic)
+		assert self.weight<=3
