@@ -4,22 +4,25 @@ from lib.node import Theorem
 from lib.node import Exercise
 from lib.node import Definition
 
-
-##########################INIT, SETTERS/GETTERS, ATTRIBUTE TESTS################
-
-def test_theorem_copy():
-     sample_theorem = {
+sample_theorem = {
      	"name": "Pythagorean theorem",
      	"weight": 8,
      	"description": "a^2b^2=c^2",
      	"intuition": "A simple explanation",
      	"examples": ["Example 1", "Example 2"]
      }
+
+
+##########################INIT, SETTERS/GETTERS, ATTRIBUTE TESTS################
+
+def test_theorem_copy():
+     global sample_theorem
      a = Theorem(sample_theorem)
      b = a.clone()
      assert id(a) != id(b)
      assert a==b
      pass
+
 
 
 def test_theorem_setter_getter():
@@ -85,12 +88,14 @@ def test_definition_bad_attributes():
 ############################ DUNDERSCORE, WEIGHT TESTS ##########################################
 
 def test_definition_dunderscore_exists_content():
-    sample_definition = {"name": "Triangle", "weight": 1, "description": "A __triangle__ is a 3 sided polygon.", "intuition": "A simple explanation", "examples": ["Long Long Long Example 1", "text text text Example 2"]}
+    sample_definition = {"name": "Triangle","plural":"__Triangles__", "weight": 1, "description": "A __triangle__ is a 3 sided polygon.", "intuition": "A simple explanation", "examples": ["Long Long Long Example 1", "text text text Example 2"]}
     node=Definition(sample_definition)
     with pytest.raises(AssertionError) as e:
         node.description="A triangle is a 3 sided polygon."
     with pytest.raises(AssertionError) as e:
         node.name="__DunderScore__"
+    with pytest.raises(AssertionError) as e:
+        node.plural="Triangles"
 
 def test_theorem_no_dunderscore():
     pre_node = {"name": "Pythagorean theorem", "weight": 6, "description": "When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2.", "intuition": "A simple explanation.", "examples": ["Example 1 is now long enough.", "Example 2 is now long."],"proof": {"type": "fake", "content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}}
