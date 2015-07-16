@@ -10,7 +10,7 @@ from tornado.web import StaticFileHandler
 from tornado.websocket import WebSocketHandler
 # other
 from tornado.web import Application
-from tornado.log import enable_pretty_logging
+#from tornado.log import enable_pretty_logging
 
 from lib import helper
 import json
@@ -88,7 +88,7 @@ def make_app():
 
 
 def main():
-	enable_pretty_logging()
+	#enable_pretty_logging()
 	application = make_app()
 	application.listen(80) # by listening on the http port (default for all browsers that i know of), user will not have to type "http://" or ":80" in the URL
 	# other stuff

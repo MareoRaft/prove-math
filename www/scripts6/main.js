@@ -50,7 +50,8 @@ require( [
 
 // websocket stuff!
 // var ws = ('WebSocket' in window)? new WebSocket("ws://54.174.141.44:7766/websocket"): undefined; // url to send websocket messages
-var ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined; // url to send websocket messages
+//var ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined; // url to send websocket messages
+var ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): undefined;
 if( !def(ws) ){
 	die('Your browser does not support websockets, which are essential for this program.')
 }

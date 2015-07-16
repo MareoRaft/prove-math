@@ -30,10 +30,45 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 
 	// websocket stuff!
 	// var ws = ('WebSocket' in window)? new WebSocket("ws://54.174.141.44:7766/websocket"): undefined; // url to send websocket messages
-	var ws = "WebSocket" in window ? new WebSocket("ws://provemath.org/websocket") : undefined; // url to send websocket messages
+	//var ws = "WebSocket" in window ? new WebSocket("ws://provemath.org/websocket") : undefined; // url to send websocket messages
+    var ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): undefined; 
+
 	if (!def(ws)) {
 		die("Your browser does not support websockets, which are essential for this program.");
 	}
+
+	ws.onopen = function () {
+		ws.send("Hello, world");
+	    ws.send('message from theo');
+	};
+	ws.onmessage = function (event) {
+		alert(event.data);
+		var unbundled = JSON.parse(event.data);
+		// if( typeof(json.message) !== 'undefined' ){
+		// 	$('#container').append( json.message+'".' + '<br /><br />' )
+		// }
+		// if( json.command=='loadprefs' ){
+		// 	loadPrefs(json.prefs)
+		// }
+		var graph = unbundled;
+		begin_node_stuff(graph);
+	};
+
+    
+function hello(){
+    var letsTry= JSON.stringify({"contents":"I want to send this over upon a click in a json file preferably"})
+    var contents = $('#cool').val()
+    ws.send(contents)
+}
+
+
+
+$('#test').click(hello)
+
+
+
+
+
 
 	$(".math").each(function () {
 		// this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
@@ -53,22 +88,6 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 			}
 		}
 	});
-
-	ws.onopen = function () {
-		ws.send("Hello, world");
-	};
-	ws.onmessage = function (event) {
-		alert(event.data);
-		var unbundled = JSON.parse(event.data);
-		// if( typeof(json.message) !== 'undefined' ){
-		// 	$('#container').append( json.message+'".' + '<br /><br />' )
-		// }
-		// if( json.command=='loadprefs' ){
-		// 	loadPrefs(json.prefs)
-		// }
-		var graph = unbundled;
-		begin_node_stuff(graph);
-	};
 
 	var a = ["hi", "there"];
 	check.array(a);
