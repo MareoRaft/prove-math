@@ -815,48 +815,54 @@ From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written 
 	"weight": 4,
 	"type": "thm",
 	"content": "Let $d_n$ be the number of deranged sequences of length $n$.  Then a closed formula for $d_n$ is [[$d_n = n!\\sum_{k=0}^n \\frac{(-1)^k}{k!}$]].",
-	"proof": {
-		"type": ["algebraic", "combinatorial"],
-		"content": "$n!$ is the number of sequences of length $n$ whose terms are $1,2,,,n$ in any order.  For any of these sequences, some amount $k$ of the terms will satisfy $a_i=i$, and the remaining $n-k$ terms will form a derangement of length $n-k$.  For each $k$, there are $\\binom nk$ ways to have $k$ terms in place and then, given which terms are in place, $d_{n-k}$ derangements of the remaining terms.  Adding up these possibilities over all possible values of $k$, we get all possible sequences of length $n$:
-			\n\n
-			$n! = \sum_{k=0}^n \binom nk d_{n-k}$
+	"proofs": [
+		{
+			"type": "combinatorial",
+			"content": "Use the inclusion-exclusion principal to find a formula (somebody please figure it out and post it! :)",
+		},
+		{
+			"type": ["algebraic", "combinatorial"],
+			"content": "$n!$ is the number of sequences of length $n$ whose terms are $1,2,,,n$ in any order.  For any of these sequences, some amount $k$ of the terms will satisfy $a_i=i$, and the remaining $n-k$ terms will form a derangement of length $n-k$.  For each $k$, there are $\\binom nk$ ways to have $k$ terms in place and then, given which terms are in place, $d_{n-k}$ derangements of the remaining terms.  Adding up these possibilities over all possible values of $k$, we get all possible sequences of length $n$:
+				\n\n
+				$n! = \sum_{k=0}^n \binom nk d_{n-k}$
 
-$n! = \sum_{k=0}^n \frac{n!}{k!(n-k)!} d_{n-k}$
+	$n! = \sum_{k=0}^n \frac{n!}{k!(n-k)!} d_{n-k}$
 
-$1 = \sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}$
+	$1 = \sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}$
 
-Multiply both sides by $x^n$ and sum them from $n=0$ to $\infty$:
+	Multiply both sides by $x^n$ and sum them from $n=0$ to $\infty$:
 
-$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}\right) x^n$
+	$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}\right) x^n$
 
-$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!} \frac{d_{n-k}}{(n-k)!}\right) x^n$
+	$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!} \frac{d_{n-k}}{(n-k)!}\right) x^n$
 
-The right side is recognized as the product of two sums:
+	The right side is recognized as the product of two sums:
 
-$\sum_{n=0}^\infty x^n = \left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty \frac{d_{n}}{n!} x^n\right) $
+	$\sum_{n=0}^\infty x^n = \left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty \frac{d_{n}}{n!} x^n\right) $
 
-$\sum_{n=0}^\infty x^n = e^x \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+	$\sum_{n=0}^\infty x^n = e^x \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
 
-$e^{-x} \sum_{n=0}^\infty x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+	$e^{-x} \sum_{n=0}^\infty x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
 
-$\left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty x^n\right) =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+	$\left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty x^n\right) =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
 
-On the left side we take the product of the two sums:
+	On the left side we take the product of the two sums:
 
-$\sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!}\right) x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+	$\sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!}\right) x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
 
-Remove the outer sums and divide by $x^n$:
+	Remove the outer sums and divide by $x^n$:
 
-$\sum_{k=0}^n \frac{1}{k!} =   \frac{d_{n}}{n!} $
+	$\sum_{k=0}^n \frac{1}{k!} =   \frac{d_{n}}{n!} $
 
-Solve for $d_n$:
+	Solve for $d_n$:
 
-$d_n = n!\sum_{k=0}^n \frac{1}{k!}  $
-.
+	$d_n = n!\sum_{k=0}^n \frac{1}{k!}  $
+	.
 
 
-		",
-	}
+			",
+		}
+	],
 }
 
 {
@@ -1061,5 +1067,26 @@ $c_k = \begin{cases}
 }
 
 // HW 11 below
+{// question 1
+	"name": "Inclusion-Exclusion", // connect to this
+	"weight": 1,
+	"type": "exercise",
+	"content": "The number of positive integers less than $1000$ that are not multiples of $5$, $6$, nor $8$, is [[$583$.  The function that finds the number of multiples of $x$ less than $1000$ is $m(x)=\floor{\frac{999}{x}}$.  Then the answer is equal to $m(1) - m(5)- m(6)- m(8)+m(5*6)+m(6*8)+m(8*5) - m(5*6*8)$]].",
+}
+
+{// question 2
+	"name": "Inclusion-Exclusion 2", // connect
+	"weight": 2,
+	"type": "exercise",
+	"content": "The number of ways to order the letters $A$ through $P$ such that we can*not* obtain any of the words $BAD$, $DEAF$, or $APE$ by crossing out some of the letters is [[$16!-\frac{16!}{3!}-\frac{16!}{4!}-\frac{16!}{3!}+0+0+\frac{n!3}{5!}-0$ or $\frac{13n!}{20}$ or $13599813427200$]].",
+}
+
+{// question 3 //connect to derangements!
+	"weight": 3,
+	"type": "exercise",
+	"content": "There are $2$ benches facing each other, each with $n$ seats.  The number of ways that $n$ couples can sit on the benches so that no two members of the same couple are seated opposite each other is [[$(n!)^2\sum_{k=0}^{n} \frac{(-1)^k}{k!}$]].",
+	"intuition": "[[If we fix the order of the people on one bench, then this becomes the number of derangements of the people on the other bench.  Alternatively, we could try using the inclusion-exclusion principle on the couples.]]",
+}
+
 
 // then it's graph theory until we reach pigeonhold princpal or posets...
