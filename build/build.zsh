@@ -25,6 +25,6 @@ echo 'done updating files on local machine' &&
 
 
 
-open -a 'Opera' www/index.html &&
+open http://localhost/index.html &&
 
 echo 'done.'

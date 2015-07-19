@@ -49,7 +49,6 @@ require( [
 ){
 
 // websocket stuff!
-// var ws = ('WebSocket' in window)? new WebSocket("ws://54.174.141.44:7766/websocket"): undefined; // url to send websocket messages
 //var ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined; // url to send websocket messages
 var ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): undefined;
 if( !def(ws) ){
@@ -77,15 +76,12 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 	}
 })
 
-// $.click("#my-button", function(){
-// 	ws.send($("#my-text-field").val())
-// })
-
 ws.onopen = function(){
 	ws.send("Hello, world")
 }
+var init = 0
 ws.onmessage = function(event){
-	alert(event.data)
+	// alert(event.data)
 	var unbundled = JSON.parse(event.data)
 	// if( typeof(json.message) !== 'undefined' ){
 	// 	$('#container').append( json.message+'".' + '<br /><br />' )
@@ -94,7 +90,10 @@ ws.onmessage = function(event){
 	// 	loadPrefs(json.prefs)
 	// }
 	var graph = unbundled
-	begin_node_stuff(graph)
+	if(!init){
+		init_node_stuff(graph)
+		init = 1
+	}
 
 }
 
@@ -166,13 +165,20 @@ var x = d3.scale.linear()
 	.range([0, width]) // minus a 10 pixel buffer?  we should really get the width of #chart !!!
 
 var links = svg.selectAll('.link'),
-	nodes = svg.selectAll('.node')
+	nodes = svg.selectAll('.node'),
+	texts = svg.selectAll('text')
 
 function tick(){
 	nodes
 		.attr({
 			cx: d => d.x,
 			cy: d => d.y,
+		})
+
+	texts
+		.attr({
+			x: d => d.x,
+			y: d => d.y,
 		})
 
 	links
@@ -184,11 +190,8 @@ function tick(){
 		})
 }
 
-function begin_node_stuff(graph) {
-// now that we get the data, do all the things that we can only do once the data comes:
-// pretend this works
-// d3.tsv("../data/mybargraph.tsv", d => +d.value, function(error, data){
-	// pretend data comes in as a json unwrapped into a js object
+function init_node_stuff(graph) {
+	// data comes in as a json unwrapped into a js object, lookin like this:
 	// var graph = {
 	// 	nodes: [
 	// 		{x: 40, y: 40}, // 0
@@ -221,19 +224,25 @@ function begin_node_stuff(graph) {
 		    .classed('node', true)
 	    	.attr({
 	    		r: 12,
-	    		fill: randColor, // these can be attributes or styles in SVG.  Both ways work.
 	    	})
-	    	// .classed('fixed', true)
-	    	// .on('dblclick', dblclick)
-	    	// .on('beginEvent', node => alert('beginEvent') )
-	    	// .on('animationend', node => alert('animationend') )
-	    	// .on('DOMContentLoaded', node => alert('DOMContentLoaded') )
-	    	// .on('drag', node => alert('drag') )
-	    	// .on('endEvent', node => alert('endEvent') )
-	    	// .on('readystatechange', node => alert('readystatechange') )
+	    	.style({
+	    		opacity: 0.3,
+    		})
 	    	.call(drag)
-	    	// .call( x => alert('running') )
-	    	// .call( node => d3.select(this).classed('fixed', node.fixed = true) )
+
+    texts = texts.data(graph.nodes)
+    	.enter().append('text')
+			.text("some string")
+	    	.attr({
+	    		x: d => d.x,
+	    		y: d => d.y,
+	    	})
+	    	.style({
+	    		'font-family': "sans-serif",
+	    		'font-size': "20px",
+	    		'text-anchor': "middle",
+	    		fill: "red"
+	    	})
 
 }
 

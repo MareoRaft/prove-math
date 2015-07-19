@@ -29,46 +29,11 @@ require.config({
 require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex", "mathjax", "profile"], function ($, _, d3, browser, check, katex, mathjax, undefined) {
 
 	// websocket stuff!
-	// var ws = ('WebSocket' in window)? new WebSocket("ws://54.174.141.44:7766/websocket"): undefined; // url to send websocket messages
-	//var ws = "WebSocket" in window ? new WebSocket("ws://provemath.org/websocket") : undefined; // url to send websocket messages
-    var ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): undefined; 
-
+	//var ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined; // url to send websocket messages
+	var ws = "WebSocket" in window ? new WebSocket("ws://localhost/websocket") : undefined;
 	if (!def(ws)) {
 		die("Your browser does not support websockets, which are essential for this program.");
 	}
-
-	ws.onopen = function () {
-		ws.send("Hello, world");
-	    ws.send('message from theo');
-	};
-	ws.onmessage = function (event) {
-		alert(event.data);
-		var unbundled = JSON.parse(event.data);
-		// if( typeof(json.message) !== 'undefined' ){
-		// 	$('#container').append( json.message+'".' + '<br /><br />' )
-		// }
-		// if( json.command=='loadprefs' ){
-		// 	loadPrefs(json.prefs)
-		// }
-		var graph = unbundled;
-		begin_node_stuff(graph);
-	};
-
-    
-function hello(){
-    var letsTry= JSON.stringify({"contents":"I want to send this over upon a click in a json file preferably"})
-    var contents = $('#cool').val()
-    ws.send(contents)
-}
-
-
-
-$('#test').click(hello)
-
-
-
-
-
 
 	$(".math").each(function () {
 		// this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
@@ -88,6 +53,26 @@ $('#test').click(hello)
 			}
 		}
 	});
+
+	ws.onopen = function () {
+		ws.send("Hello, world");
+	};
+	var init = 0;
+	ws.onmessage = function (event) {
+		// alert(event.data)
+		var unbundled = JSON.parse(event.data);
+		// if( typeof(json.message) !== 'undefined' ){
+		// 	$('#container').append( json.message+'".' + '<br /><br />' )
+		// }
+		// if( json.command=='loadprefs' ){
+		// 	loadPrefs(json.prefs)
+		// }
+		var graph = unbundled;
+		if (!init) {
+			init_node_stuff(graph);
+			init = 1;
+		}
+	};
 
 	var a = ["hi", "there"];
 	check.array(a);
@@ -143,7 +128,8 @@ $('#test').click(hello)
 	var x = d3.scale.linear().range([0, width]); // minus a 10 pixel buffer?  we should really get the width of #chart !!!
 
 	var links = svg.selectAll(".link"),
-	    nodes = svg.selectAll(".node");
+	    nodes = svg.selectAll(".node"),
+	    texts = svg.selectAll("text");
 
 	function tick() {
 		nodes.attr({
@@ -151,6 +137,14 @@ $('#test').click(hello)
 				return d.x;
 			},
 			cy: function (d) {
+				return d.y;
+			} });
+
+		texts.attr({
+			x: function (d) {
+				return d.x;
+			},
+			y: function (d) {
 				return d.y;
 			} });
 
@@ -169,11 +163,8 @@ $('#test').click(hello)
 			} });
 	}
 
-	function begin_node_stuff(graph) {
-		// now that we get the data, do all the things that we can only do once the data comes:
-		// pretend this works
-		// d3.tsv("../data/mybargraph.tsv", d => +d.value, function(error, data){
-		// pretend data comes in as a json unwrapped into a js object
+	function init_node_stuff(graph) {
+		// data comes in as a json unwrapped into a js object, lookin like this:
 		// var graph = {
 		// 	nodes: [
 		// 		{x: 40, y: 40}, // 0
@@ -197,22 +188,21 @@ $('#test').click(hello)
 		.enter().append("line").classed("link", true).attr("marker-end", "url(#arrow-head)"); // add in the marker-end defined above
 
 		nodes = nodes.data(graph.nodes).enter().append("circle").classed("node", true).attr({
-			r: 12,
-			fill: randColor })
-		// .classed('fixed', true)
-		// .on('dblclick', dblclick)
-		// .on('beginEvent', node => alert('beginEvent') )
-		// .on('animationend', node => alert('animationend') )
-		// .on('DOMContentLoaded', node => alert('DOMContentLoaded') )
-		// .on('drag', node => alert('drag') )
-		// .on('endEvent', node => alert('endEvent') )
-		// .on('readystatechange', node => alert('readystatechange') )
-		.call(drag)
-		// .call( x => alert('running') )
-		// .call( node => d3.select(this).classed('fixed', node.fixed = true) )
+			r: 12 }).style({
+			opacity: 0.3 }).call(drag);
 
-		;
+		texts = texts.data(graph.nodes).enter().append("text").text("some string").attr({
+			x: function (d) {
+				return d.x;
+			},
+			y: function (d) {
+				return d.y;
+			} }).style({
+			"font-family": "sans-serif",
+			"font-size": "20px",
+			"text-anchor": "middle",
+			fill: "red"
+		});
 	}
 }); // end require
-// these can be attributes or styles in SVG.  Both ways work.
 
