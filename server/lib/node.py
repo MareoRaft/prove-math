@@ -94,7 +94,7 @@ class Node:
 			dic,
 			{'description', 'content'}
 		)
-		self.weight = move_attribute(dic, {'weight'})
+		self.importance = move_attribute(dic, {'importance', 'weight'})
 		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
 		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
 		self.counterexamples=move_attribute(dic,{'counterexample','counterexamples','counter_example','counter_examples'},strict=False)
@@ -125,10 +125,10 @@ class Node:
 				msg=msg+ single_note+"\n"
 
 		if self.type=="definition":
-			first_part = "(%s,%s,%s,%s,%d)\n" % (self.name, self.plural, self.type, self.description, self.weight)
+			first_part = "(%s,%s,%s,%s,%d)\n" % (self.name, self.plural, self.type, self.description, self.importance)
 
 		else:
-			first_part = "(%s,%s,%s,%d)\n" % (self.name,self.type,self.description,self.weight)
+			first_part = "(%s,%s,%s,%d)\n" % (self.name,self.type,self.description,self.importance)
 			if self.proofs:
 				for single_proof in self.proofs:
 					for x in single_proof:
@@ -140,7 +140,7 @@ class Node:
 			return False
 		elif self.type != other.type:
 			return False
-		elif self.weight != other.weight:
+		elif self.importance != other.importance:
 			return False
 		elif self.description != other.description:
 			return False
@@ -166,10 +166,10 @@ class Node:
 		if new_name:
 			assert is_capitalized(new_name)
 			assert dunderscore_count(new_name)==0;
-			self._name = check_type_and_clean(new_name, str)	
+			self._name = check_type_and_clean(new_name, str)
 		else:
 			self._name= check_type_and_clean(new_name, type(None))
-			
+
 
 	@property
 	def type(self):
@@ -187,13 +187,13 @@ class Node:
 			raise ValueError("Node's 'type' attribute must be a 'definition' (or 'defn' or 'def'), a 'theorem' (or 'thm'), or an 'exercise'.\nYOUR TYPE WAS: " + clean_type)
 
 	@property
-	def weight(self):
-		return self._weight
-	@weight.setter
-	def weight(self, new_weight):
-		clean_weight = check_type_and_clean(new_weight, int) # but in the future we will accept decimals (floats) too!
-		assert clean_weight >= 1 and clean_weight <= 10
-		self._weight = clean_weight
+	def importance(self):
+		return self._importance
+	@importance.setter
+	def importance(self, new_importance):
+		clean_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
+		assert clean_importance >= 1 and clean_importance <= 10
+		self._importance = clean_importance
 
 	@property
 	def description(self):
@@ -282,8 +282,8 @@ class Definition(Node):
 		self.type = "definition"
 		super(Definition, self).__init__(dic)
 		self.plural = move_attribute(dic, {'plural', 'pl'}, strict=False)
-		
-	
+
+
 	@property
 	def plural(self):
 		return self._plural
@@ -303,28 +303,28 @@ class Theorem(Node):
 		self.type = "theorem"
 		super(Theorem, self,).__init__(dic)
 		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
-        
 
-	#Override the weight setter for specific Theorem weight
+
+	#Override the importance setter for specific Theorem importance
 	@property
-	def weight(self):
-		return self._weight
+	def importance(self):
+		return self._importance
 
-	@weight.setter
-	def weight(self, new_weight):
-		clean_weight = check_type_and_clean(new_weight, int) # but in the future we will accept decimals (floats) too!
-		assert clean_weight >= 3 and clean_weight <= 10
-		self._weight = clean_weight
+	@importance.setter
+	def importance(self, new_importance):
+		clean_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
+		assert clean_importance >= 3 and clean_importance <= 10
+		self._importance = clean_importance
 
 	@property
 	def proofs(self):
 		return self._proofs
-   	
+
 	@proofs.setter
 	def proofs(self,new_proofs):
 		assert is_content_clean(new_proofs)
 		self._proofs = check_type_and_clean(new_proofs, dict, list_of=True)
-   	
+
 	def append_proof(self, add_proof): # these need type checking too
 		self._proofs.append(add_proof)
 
@@ -334,22 +334,22 @@ class Exercise(Node):
 		self.type = "exercise"
 		super(Exercise, self).__init__(dic)
 		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
-		
-	@property
-	def weight(self):
-		return self._weight
 
-	@weight.setter
-	def weight(self, new_weight):
-		clean_weight = check_type_and_clean(new_weight, int)
-		assert clean_weight >= 1 and clean_weight <= 3
-		self._weight = clean_weight
+	@property
+	def importance(self):
+		return self._importance
+
+	@importance.setter
+	def importance(self, new_importance):
+		clean_importance = check_type_and_clean(new_importance, int)
+		assert clean_importance >= 1 and clean_importance <= 3
+		self._importance = clean_importance
 
 
 	@property
 	def proofs(self):
 	       	return self._proofs
-   	
+
 	@proofs.setter
 	def proofs(self,new_proofs):
 	       	assert is_content_clean(new_proofs)
