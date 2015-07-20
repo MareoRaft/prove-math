@@ -13,6 +13,10 @@ from tornado.web import Application
 #from tornado.log import enable_pretty_logging
 
 from lib import helper
+from lib.node import Theorem
+from lib.node import Definition
+from lib.node import Exercise
+from lib.mongo import  Mongo
 import json
 
 ################################# HELPERS #####################################
@@ -65,7 +69,23 @@ class SocketHandler (WebSocketHandler):
 		self.write_message(bundled)
 
 	def on_message(self, message):
+		a=Mongo("test","provemath")
 		print('got message: ' + message)
+		if message.startswith('{'):
+			x=json.loads(message)
+			empty_keys=[]
+			for key, value in x.items():
+				if value=="":
+					empty_keys.append(key)
+			for key in empty_keys:
+				del(x[key])
+			x['weight']=6
+			test_theorem=Theorem(x)
+			print(test_theorem.__dict__)
+			a.insert_single(test_theorem.__dict__)
+			
+		
+
 
 	def on_close(self):
 		print('websocket closed')
@@ -88,6 +108,7 @@ def make_app():
 
 
 def main():
+	
 	#enable_pretty_logging()
 	application = make_app()
 	application.listen(80) # by listening on the http port (default for all browsers that i know of), user will not have to type "http://" or ":80" in the URL

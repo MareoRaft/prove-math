@@ -99,6 +99,7 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
     function send_node_info(){
 	var name=$('#Name').val()
 	var plural=$('#Plural').val()
+	var content=$('#Content').val()
 	var proofs=$('#Proofs').val()
 	var examples=$('#Examples').val()
 	var counterexamples=$('#Counterexamples').val()
@@ -106,7 +107,7 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 	var notes=$('#Notes').val()
 	
 
-	ws.send(JSON.stringify({"name":name,"plural":plural, "proofs":proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
+	ws.send(JSON.stringify({"name":name,"plural":plural,"content":content, "proofs":proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
 
 
 }
