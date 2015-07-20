@@ -77,7 +77,7 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 })
 
 ws.onopen = function(){
-	ws.send("Hello, world")
+	ws.send("Hello, world, Remember to clear cache if needed!")
 }
 var init = 0
 ws.onmessage = function(event){
@@ -103,11 +103,33 @@ check.iterable(a)
 // check.array.of.string(a) // not yet working
 
 
-
+ $('#test').click(hello)
+ $('#Submit').click(send_node_info)
 
 $('section').click( function(){ alert('jquery') } ); // jquery is smart to team up with require and include .ready() builtin, so we no longer need that wrapper around everything
 
 // setup all the things we can do before actually getting the data:
+    function hello(){
+	var letsTry= JSON.stringify({"contents":"I want to send this over upon a click in a json file preferably"})
+    //var contents = $('#cool').val()
+    ws.send(letsTry)
+}
+
+    function send_node_info(){
+	var name=$('#Name').val()
+	var plural=$('#Plural').val()
+	var proofs=$('#Proofs').val()
+	var examples=$('#Examples').val()
+	var counterexamples=$('#Counterexamples').val()
+	var intuition=$('#Intuition').val()
+	var notes=$('#Notes').val()
+	
+
+	ws.send(JSON.stringify({"name":name,"plural":plural, "proofs":proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
+
+
+}
+
 
 function me(node){
 	alert('me!')
