@@ -97,22 +97,38 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 }
 
     function send_node_info(){
-	var name=$('#Name').val()
-	var plural=$('#Plural').val()
-	var content=$('#Content').val()
-	var proofs=$('#Proofs').val()
-	var examples=$('#Examples').val()
-	var counterexamples=$('#Counterexamples').val()
-	var intuition=$('#Intuition').val()
-	var notes=$('#Notes').val()
+	try{
+	    var name=$('#Name').val()
+	    var plural=$('#Plural').val()
+	    var content=$('#Content').val()
+	    var proofs=$('#Proofs').val()
+	    var examples=$('#Examples').val()
+	    var counterexamples=$('#Counterexamples').val()
+	    var intuition=$('#Intuition').val()
+	    var notes=$('#Notes').val()
 	
+	    var radios=document.getElementsByName('type');
+	    var type=check_radio_button(radios).value
+	
+	    ws.send(JSON.stringify({"name":name,"plural":plural,"content":content,"type":type, "proofs":proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
+	   }
+	catch(err){
+	    // Do Nothing...
+	}
 
-	ws.send(JSON.stringify({"name":name,"plural":plural,"content":content, "proofs":proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
-
+	
 
 }
 
-
+    function check_radio_button(radios){
+	for(var i=0;i<radios.length;i++){
+	    var current=radios[i]
+	    if(current.checked){
+		return current
+	    }
+	}
+	alert("Please choose a type!")
+}
 
 
 	function me(node) {

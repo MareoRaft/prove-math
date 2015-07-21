@@ -79,10 +79,15 @@ class SocketHandler (WebSocketHandler):
 					empty_keys.append(key)
 			for key in empty_keys:
 				del(x[key])
-			x['weight']=6
-			test_theorem=Theorem(x)
-			print(test_theorem.__dict__)
-			a.insert_single(test_theorem.__dict__)
+			x['importance']=6
+			if x['type']=='Definition':
+				new_node=Definition(x)
+			elif x['type']=='Theorem':
+				new_node=Theorem(x)
+			elif x['type']=='Exercise':
+				new_node==Exercise(x)
+			print(new_node.__dict__)
+			#a.insert_single(new_node.__dict__)
 			
 		
 
