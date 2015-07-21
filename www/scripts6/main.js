@@ -115,7 +115,6 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
     ws.send(letsTry)
 }
 
-
     function send_node_info(){
 	try{
 	    var name=$('#Name').val()
@@ -129,11 +128,16 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
 	
 	    var radios=document.getElementsByName('type');
 	    var type=check_radio_button(radios).value
-	
-	    ws.send(JSON.stringify({"name":name,"plural":plural,"content":content,"type":type, "proofs":proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
-	   }
+	    if(type=="Theorem"){
+	    var clean_proofs=JSON.parse(proofs)
+		}
+	    else{var clean_proofs=JSON.parse("{}")}
+	    ws.send(type)
+	    ws.send(JSON.stringify({"name":name,"plural":plural,"content":content,"type":type, "proofs":clean_proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
+	  }
 	catch(err){
-	    // Do Nothing...
+	    alert("There is an error")
+
 	}
 
 	
@@ -150,6 +154,10 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
 	alert("Please choose a type!")
 }
 
+
+
+
+ 
 
 function me(node){
 	alert('me!')

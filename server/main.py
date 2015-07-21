@@ -77,20 +77,28 @@ class SocketHandler (WebSocketHandler):
 			for key, value in x.items():
 				if value=="":
 					empty_keys.append(key)
+			
 			for key in empty_keys:
 				del(x[key])
-			x['importance']=6
+       			
 			if x['type']=='Definition':
+				x['importance']=6
 				new_node=Definition(x)
 			elif x['type']=='Theorem':
+				x['importance']=6
 				new_node=Theorem(x)
 			elif x['type']=='Exercise':
-				new_node==Exercise(x)
-			print(new_node.__dict__)
-			#a.insert_single(new_node.__dict__)
-			
-		
-
+				x['importance']=3
+				new_node=Exercise(x)
+			else:
+				return
+			print(new_node)
+			a.insert_single(new_node.__dict__)
+		# This can be placed in a try/exception block
+		# try:
+		#except Exception as e:
+		#	print("Unexpected error "+str(type(e)))
+		#	print(e)
 
 	def on_close(self):
 		print('websocket closed')
