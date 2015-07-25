@@ -21,7 +21,7 @@ svg {
 }
 
 svg .node {
-  // fill: steelblue;
+  fill: steelblue;
 }
 
 svg .link {
@@ -34,7 +34,7 @@ svg .arrow-head {
 }
 
 svg text {
-  fill: white;
-  font: 10px sans-serif;
-  text-anchor: end;
+  fill: purple;
+  font-family: sans-serif;
+  text-anchor: middle;
 }
