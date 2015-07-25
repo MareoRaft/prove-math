@@ -8,8 +8,9 @@ require.config({
 		jquery: "http://code.jquery.com/jquery-1.11.2.min", // and the .js is added like always by require
 		underscore: "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
 		// backbone: "https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min",
-		d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
-		d3: "d3-for-development",		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
+		// d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
+		d3: "d3-for-development",
+		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
 		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
 	},
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
@@ -31,7 +32,7 @@ require.config({
 require( [
 	"jquery",
 	"underscore",
-	"d3",
+	"d3-and-svg",
 	"browser-detect",
 	"check-types",
 	"katex",
@@ -40,7 +41,7 @@ require( [
 ], function(
 	$,
 	_,
-	d3,
+	d3_do,
 	browser,
 	check,
 	katex,
@@ -86,16 +87,10 @@ ws.onmessage = function(event){
 	processNewGraph(graph)
 }
 
-var a = ['hi', 'there']
-check.array(a)
-check.iterable(a)
-// check.array.of.string(a) // not yet working
 
+$('#test').click(hello)
+$('#Submit').click(send_node_info)
 
- $('#test').click(hello)
- $('#Submit').click(send_node_info)
-
-$('section').click( function(){ alert('jquery') } ); // jquery is smart to team up with require and include .ready() builtin, so we no longer need that wrapper around everything
 
 // setup all the things we can do before actually getting the data:
     function hello(){
@@ -104,7 +99,7 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
     ws.send(letsTry)
 }
 
-    function send_node_info(){
+function send_node_info(){
 	try{
 	    var name=$('#Name').val()
 	    var plural=$('#Plural').val()
@@ -118,22 +113,20 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
 	    var radios=document.getElementsByName('type');
 	    var type=check_radio_button(radios).value
 	    if(type=="Theorem"){
-	    var clean_proofs=JSON.parse(proofs)
+		    var clean_proofs=JSON.parse(proofs)
 		}
-	    else{var clean_proofs=JSON.parse("{}")}
+	    else{
+	    	var clean_proofs=JSON.parse("{}")
+		}
 	    ws.send(type)
 	    ws.send(JSON.stringify({"name":name,"plural":plural,"content":content,"type":type, "proofs":clean_proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
 	  }
 	catch(err){
 	    alert("There is an error")
-
 	}
-
-
-
 }
 
-    function check_radio_button(radios){
+function check_radio_button(radios){
 	for(var i=0;i<radios.length;i++){
 	    var current=radios[i]
 	    if(current.checked){
@@ -144,14 +137,6 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
 }
 
 
-
-
-
-
-function me(node){
-	alert('me!')
-	return true
-}
 
 function randColor(node){
 	return 'rgb('+node.x+', 0, 0)'
@@ -287,7 +272,7 @@ function init_node_stuff(graph) {
 
 
 
-//////////////// test d3 stuff ///////////////
+//////////////////////////// TEST D3 FUNCTIONALITY ////////////////////////////
 // 1. Add three nodes and three links.
 setTimeout(function() {
 	var new_graph = {

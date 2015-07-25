@@ -10,8 +10,9 @@ require.config({
 		jquery: "http://code.jquery.com/jquery-1.11.2.min", // and the .js is added like always by require
 		underscore: "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
 		// backbone: "https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min",
-		d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
-		d3: "d3-for-development", katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
+		// d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
+		d3: "d3-for-development",
+		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
 		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured" },
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
@@ -26,7 +27,7 @@ require.config({
 			}
 		} } });
 
-require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex", "mathjax", "profile"], function ($, _, d3, browser, check, katex, mathjax, undefined) {
+require(["jquery", "underscore", "d3-and-svg", "browser-detect", "check-types", "katex", "mathjax", "profile"], function ($, _, d3_do, browser, check, katex, mathjax, undefined) {
 
 	// websocket stuff!
 	//var ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined; // url to send websocket messages
@@ -64,17 +65,8 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 		processNewGraph(graph);
 	};
 
-	var a = ["hi", "there"];
-	check.array(a);
-	check.iterable(a);
-	// check.array.of.string(a) // not yet working
-
 	$("#test").click(hello);
 	$("#Submit").click(send_node_info);
-
-	$("section").click(function () {
-		alert("jquery");
-	}); // jquery is smart to team up with require and include .ready() builtin, so we no longer need that wrapper around everything
 
 	// setup all the things we can do before actually getting the data:
 	function hello() {
@@ -116,11 +108,6 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 			}
 		}
 		alert("Please choose a type!");
-	}
-
-	function me(node) {
-		alert("me!");
-		return true;
 	}
 
 	function randColor(node) {
@@ -238,7 +225,7 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 		});
 	}
 
-	//////////////// test d3 stuff ///////////////
+	//////////////////////////// TEST D3 FUNCTIONALITY ////////////////////////////
 	// 1. Add three nodes and three links.
 	setTimeout(function () {
 		var new_graph = {

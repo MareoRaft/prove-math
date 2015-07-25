@@ -15,6 +15,7 @@ fi
 
 # convert javascript 6 files to 5
 babel www/scripts6/lib/profile.js > www/scripts/lib/profile.js &&
+babel www/scripts6/lib/d3-and-svg.js > www/scripts/lib/d3-and-svg.js &&
 babel www/scripts6/main.js > www/scripts/main.js &&
 
 # optimize and minify
