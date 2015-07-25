@@ -11,7 +11,7 @@ require.config({
 		underscore: "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
 		// backbone: "https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min",
 		d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
-		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
+		d3: "d3-for-development", katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
 		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured" },
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
@@ -55,86 +55,68 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 	});
 
 	ws.onopen = function () {
-		ws.send("Hello World. You need to get rid of cache..");
+		ws.send("Hello, world, Remember to clear cache if needed!");
 	};
-	var init = 0;
 	ws.onmessage = function (event) {
-		// alert(event.data)
 		var unbundled = JSON.parse(event.data);
-		// if( typeof(json.message) !== 'undefined' ){
-		// 	$('#container').append( json.message+'".' + '<br /><br />' )
-		// }
-		// if( json.command=='loadprefs' ){
-		// 	loadPrefs(json.prefs)
-		// }
 		var graph = unbundled;
-		if (!init) {
-			init_node_stuff(graph);
-			init = 1;
-		}
+		alert("graph is: " + graph);
+		processNewGraph(graph);
 	};
 
 	var a = ["hi", "there"];
 	check.array(a);
 	check.iterable(a);
 	// check.array.of.string(a) // not yet working
-    $('#test').click(hello)
-    $('#Submit').click(send_node_info)
-    
 
-
+	$("#test").click(hello);
+	$("#Submit").click(send_node_info);
 
 	$("section").click(function () {
 		alert("jquery");
 	}); // jquery is smart to team up with require and include .ready() builtin, so we no longer need that wrapper around everything
 
 	// setup all the things we can do before actually getting the data:
+	function hello() {
+		var letsTry = JSON.stringify({ contents: "I want to send this over upon a click in a json file preferably" });
+		//var contents = $('#cool').val()
+		ws.send(letsTry);
+	}
 
-    function hello(){
-	var letsTry= JSON.stringify({"contents":"I want to send this over upon a click in a json file preferably"})
-    //var contents = $('#cool').val()
-    ws.send(letsTry)
-}
+	function send_node_info() {
+		try {
+			var name = $("#Name").val();
+			var plural = $("#Plural").val();
+			var content = $("#Content").val();
+			var proofs = $("#Proofs").val();
+			var examples = $("#Examples").val();
+			var counterexamples = $("#Counterexamples").val();
+			var intuition = $("#Intuition").val();
+			var notes = $("#Notes").val();
 
-    function send_node_info(){
-	try{
-	    var name=$('#Name').val()
-	    var plural=$('#Plural').val()
-	    var content=$('#Content').val()
-	    var proofs=$('#Proofs').val()
-	    var examples=$('#Examples').val()
-	    var counterexamples=$('#Counterexamples').val()
-	    var intuition=$('#Intuition').val()
-	    var notes=$('#Notes').val()
-	
-	    var radios=document.getElementsByName('type');
-	    var type=check_radio_button(radios).value
-	    if(type=="Theorem"){
-	    var clean_proofs=JSON.parse(proofs)
+			var radios = document.getElementsByName("type");
+			var type = check_radio_button(radios).value;
+			if (type == "Theorem") {
+				var clean_proofs = JSON.parse(proofs);
+			} else {
+				var clean_proofs = JSON.parse("{}");
+			}
+			ws.send(type);
+			ws.send(JSON.stringify({ name: name, plural: plural, content: content, type: type, proofs: clean_proofs, examples: examples, counterexamples: counterexamples, intuition: intuition, notes: notes }));
+		} catch (err) {
+			alert("There is an error");
 		}
-	    else{var clean_proofs=JSON.parse("{}")}
-	    ws.send(type)
-	    ws.send(JSON.stringify({"name":name,"plural":plural,"content":content,"type":type, "proofs":clean_proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
-	  }
-	catch(err){
-	    alert("There is an error")
-
 	}
 
-	
-
-}
-
-    function check_radio_button(radios){
-	for(var i=0;i<radios.length;i++){
-	    var current=radios[i]
-	    if(current.checked){
-		return current
-	    }
+	function check_radio_button(radios) {
+		for (var i = 0; i < radios.length; i++) {
+			var current = radios[i];
+			if (current.checked) {
+				return current;
+			}
+		}
+		alert("Please choose a type!");
 	}
-	alert("Please choose a type!")
-}
-
 
 	function me(node) {
 		alert("me!");
@@ -255,5 +237,32 @@ require(["jquery", "underscore", "d3", "browser-detect", "check-types", "katex",
 			fill: "red"
 		});
 	}
+
+	//////////////// test d3 stuff ///////////////
+	// 1. Add three nodes and three links.
+	setTimeout(function () {
+		var new_graph = {
+			nodes: [{ id: "a" }, { id: "b" }, { id: "c" }],
+			links: [{ source: "a", target: "b" }, { source: "a", target: "c" }, { source: "b", target: "c" }] };
+		processNewGraph(new_graph);
+	}, 0);
+
+	// 2. Remove node B and associated links.
+	setTimeout(function () {
+		// remove b
+		// remove a-b
+		// remove b-c
+		var new_graph = {
+			nodes: [{ id: "b", remove: true }] };
+		processNewGraph(new_graph);
+	}, 3000);
+
+	// // Add node B back.
+	setTimeout(function () {
+		var graph = {
+			nodes: [{ id: "b" }],
+			links: [{ source: "a", target: "b" }, { source: "b", target: "c" }] };
+		processNewGraph(graph);
+	}, 6000);
 }); // end require
 

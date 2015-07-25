@@ -9,7 +9,7 @@ require.config({
 		underscore: "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
 		// backbone: "https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min",
 		d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
-		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
+		d3: "d3-for-development",		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
 		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
 	},
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
@@ -79,22 +79,11 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 ws.onopen = function(){
 	ws.send("Hello, world, Remember to clear cache if needed!")
 }
-var init = 0
 ws.onmessage = function(event){
-	// alert(event.data)
 	var unbundled = JSON.parse(event.data)
-	// if( typeof(json.message) !== 'undefined' ){
-	// 	$('#container').append( json.message+'".' + '<br /><br />' )
-	// }
-	// if( json.command=='loadprefs' ){
-	// 	loadPrefs(json.prefs)
-	// }
 	var graph = unbundled
-	if(!init){
-		init_node_stuff(graph)
-		init = 1
-	}
-
+	alert('graph is: '+graph)
+	processNewGraph(graph)
 }
 
 var a = ['hi', 'there']
@@ -125,7 +114,7 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
 	    var counterexamples=$('#Counterexamples').val()
 	    var intuition=$('#Intuition').val()
 	    var notes=$('#Notes').val()
-	
+
 	    var radios=document.getElementsByName('type');
 	    var type=check_radio_button(radios).value
 	    if(type=="Theorem"){
@@ -140,7 +129,7 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
 
 	}
 
-	
+
 
 }
 
@@ -157,7 +146,7 @@ $('section').click( function(){ alert('jquery') } ); // jquery is smart to team 
 
 
 
- 
+
 
 function me(node){
 	alert('me!')
@@ -295,6 +284,54 @@ function init_node_stuff(graph) {
 	    	})
 
 }
+
+
+
+//////////////// test d3 stuff ///////////////
+// 1. Add three nodes and three links.
+setTimeout(function() {
+	var new_graph = {
+		"nodes": [
+			{id: "a"}, {id: "b"}, {id: "c"},
+		],
+		"links": [
+			{source: "a", target: "b"}, {source: "a", target: "c"}, {source: "b", target: "c"},
+		],
+	}
+	processNewGraph(new_graph)
+}, 0);
+
+// 2. Remove node B and associated links.
+setTimeout(function() {
+	// remove b
+	// remove a-b
+	// remove b-c
+	var new_graph = {
+		"nodes": [
+			{id: "b", remove: true},
+		],
+	}
+	processNewGraph(new_graph)
+}, 3000);
+
+// // Add node B back.
+setTimeout(function() {
+	var graph = {
+		nodes: [
+			{id: "b"},
+		],
+		links: [
+			{source: "a", target: "b"}, {source: "b", target: "c"},
+		],
+	}
+	processNewGraph(graph)
+}, 6000);
+
+
+
+
+
+
 
 
 

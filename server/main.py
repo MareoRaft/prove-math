@@ -65,8 +65,9 @@ class SocketHandler (WebSocketHandler):
 		# }
 		graph = helper.json_import('data/graph-test.json')
 		# do NetworkX things to the graph
-		bundled = json.dumps(graph) # for the future, the following may be faster: 1. simplejason or 2. cjson
-		self.write_message(bundled)
+		bundled_graph = json.dumps(graph) # for the future, the following may be faster: 1. simplejason or 2. cjson
+		self.write_message(bundled_graph)
+
 
 	def on_message(self, message):
 		a=Mongo("test","provemath")
@@ -77,10 +78,10 @@ class SocketHandler (WebSocketHandler):
 			for key, value in x.items():
 				if value=="":
 					empty_keys.append(key)
-			
+
 			for key in empty_keys:
 				del(x[key])
-       			
+
 			if x['type']=='Definition':
 				x['importance']=6
 				new_node=Definition(x)
@@ -121,7 +122,7 @@ def make_app():
 
 
 def main():
-	
+
 	#enable_pretty_logging()
 	application = make_app()
 	application.listen(80) # by listening on the http port (default for all browsers that i know of), user will not have to type "http://" or ":80" in the URL
