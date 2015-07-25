@@ -24,14 +24,14 @@ Matthew
 mlb293@scarletmail.rutgers.edu
 comp sci student from combinatorics class
 
-Ali
+Ali Ismail
 ali.haider.ismail@rutgers.edu
 
 
 professors
 ----------
 Kahn, Jeffry
-jkahn@math.rutgers.edu
+jkahn at math
 Hill 728
 (848) 445-6919
 does graph theory
@@ -39,7 +39,8 @@ does graph theory
 János Komlos
 does graph theory
 
-Doron Zeilberger
+Doron Zeilberger --> email sent --> is interested but not until his sabbatical ends Jan 23, 2016.
+zeilberg at math
 the math computers guy
 704
 
@@ -47,9 +48,20 @@ Neil Sloane?
 njasloane@gmail.com
 OEIS founder
 
-Steve Miller
+Steve Miller --> email sent --> said this should go through undergrad and not his grad department
+sdmiller at math
 head of math department
 recommended by Timothy Naumovitz
+
+Michael Saks --> email sent
+Head of Honors Track in math department
+
+Joseph Rosenstein --> email sent to jeanmarie mara
+high school math education
+
+Dr. Butler
+in advisory room (3rd floor)
+Mon-Fri 10-12
 
 
 
