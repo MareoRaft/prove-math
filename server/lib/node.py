@@ -266,7 +266,7 @@ class Node:
 		assert is_content_clean(new_notes)
 		cleaned_notes = check_type_and_clean(new_notes, str, list_of=True)
 		for x in cleaned_notes:
-			assert dunderscore_count(x)
+			assert dunderscore_count(x)==0
 		self._notes=cleaned_notes
 
 	def append_note(self, add_note):

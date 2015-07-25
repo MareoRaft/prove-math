@@ -2,7 +2,7 @@
 It's an add venture!
 The next generation of math education ;-)
 
-I think this will be very engaging for people interested in programming or math, since it poses a number of challenges.  Contributors *can* put this on their resume.  Students can do this as a 3 credit independent study, but you must let me know ahead of time.
+I think this will be very engaging for people interested in programming or math, since it poses a number of challenges.  Contributors *can* put this on their resume.  Students can do this as an independent study (if we get approval), but you must let me know ahead of time.
 
 
 Project description below!

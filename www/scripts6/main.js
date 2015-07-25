@@ -77,7 +77,7 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 })
 
 ws.onopen = function(){
-	ws.send("Hello, world")
+	ws.send("Hello, world, Remember to clear cache if needed!")
 }
 var init = 0
 ws.onmessage = function(event){
@@ -103,11 +103,61 @@ check.iterable(a)
 // check.array.of.string(a) // not yet working
 
 
-
+ $('#test').click(hello)
+ $('#Submit').click(send_node_info)
 
 $('section').click( function(){ alert('jquery') } ); // jquery is smart to team up with require and include .ready() builtin, so we no longer need that wrapper around everything
 
 // setup all the things we can do before actually getting the data:
+    function hello(){
+	var letsTry= JSON.stringify({"contents":"I want to send this over upon a click in a json file preferably"})
+    //var contents = $('#cool').val()
+    ws.send(letsTry)
+}
+
+    function send_node_info(){
+	try{
+	    var name=$('#Name').val()
+	    var plural=$('#Plural').val()
+	    var content=$('#Content').val()
+	    var proofs=$('#Proofs').val()
+	    var examples=$('#Examples').val()
+	    var counterexamples=$('#Counterexamples').val()
+	    var intuition=$('#Intuition').val()
+	    var notes=$('#Notes').val()
+	
+	    var radios=document.getElementsByName('type');
+	    var type=check_radio_button(radios).value
+	    if(type=="Theorem"){
+	    var clean_proofs=JSON.parse(proofs)
+		}
+	    else{var clean_proofs=JSON.parse("{}")}
+	    ws.send(type)
+	    ws.send(JSON.stringify({"name":name,"plural":plural,"content":content,"type":type, "proofs":clean_proofs,"examples":examples,"counterexamples":counterexamples,"intuition":intuition,"notes":notes}))
+	  }
+	catch(err){
+	    alert("There is an error")
+
+	}
+
+	
+
+}
+
+    function check_radio_button(radios){
+	for(var i=0;i<radios.length;i++){
+	    var current=radios[i]
+	    if(current.checked){
+		return current
+	    }
+	}
+	alert("Please choose a type!")
+}
+
+
+
+
+ 
 
 function me(node){
 	alert('me!')

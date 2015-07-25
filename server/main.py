@@ -13,6 +13,10 @@ from tornado.web import Application
 #from tornado.log import enable_pretty_logging
 
 from lib import helper
+from lib.node import Theorem
+from lib.node import Definition
+from lib.node import Exercise
+from lib.mongo import  Mongo
 import json
 
 ################################# HELPERS #####################################
@@ -65,7 +69,36 @@ class SocketHandler (WebSocketHandler):
 		self.write_message(bundled)
 
 	def on_message(self, message):
+		a=Mongo("test","provemath")
 		print('got message: ' + message)
+		if message.startswith('{'):
+			x=json.loads(message)
+			empty_keys=[]
+			for key, value in x.items():
+				if value=="":
+					empty_keys.append(key)
+			
+			for key in empty_keys:
+				del(x[key])
+       			
+			if x['type']=='Definition':
+				x['importance']=6
+				new_node=Definition(x)
+			elif x['type']=='Theorem':
+				x['importance']=6
+				new_node=Theorem(x)
+			elif x['type']=='Exercise':
+				x['importance']=3
+				new_node=Exercise(x)
+			else:
+				return
+			print(new_node)
+			a.insert_single(new_node.__dict__)
+		# This can be placed in a try/exception block
+		# try:
+		#except Exception as e:
+		#	print("Unexpected error "+str(type(e)))
+		#	print(e)
 
 	def on_close(self):
 		print('websocket closed')
@@ -88,6 +121,7 @@ def make_app():
 
 
 def main():
+	
 	#enable_pretty_logging()
 	application = make_app()
 	application.listen(80) # by listening on the http port (default for all browsers that i know of), user will not have to type "http://" or ":80" in the URL
