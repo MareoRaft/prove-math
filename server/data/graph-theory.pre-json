@@ -97,9 +97,8 @@
 
 
 {
-	"definition":"The __degree__ of a vertex $v$, denoted $d(v)$, is the number of edges incident to $v$, where loops are counted twice.",
-	"intuition":"For example, in the context of a graph $G = (V,E)$, this would refer to the number of edges *in $E$*.",
-	"definition":"Given a graph $G = (V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
+	"definition":"Given a multigraph $G = (V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
+	"intuition":"The degree of vertex $v$ is the number of edge ends that touch it.",
 }
 
 {
@@ -157,16 +156,28 @@
 }
 
 {
-	"definition":"Given a graph $G = (V,E)$, a trail or circuit in $G$ which uses all the edges in $E$ is called __Eulerian__.  This defines the terms __Eulerian trail__ and __Eulerian circuit__.",
-	"intuition":"nh",
+	"definition":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
+	"intuition":"",
 }
 
 {
-	"definition":"Given a graph $G = (V,E)$, a walk in $G$ which uses all the vertices in $V$ is called __Hamiltonian__.",
+	"name": "Eulerian Graph",
+	"def": "A multigraph is called __Eulerian__ if it contains an Eulerian circuit.",
+}
+
+{
+	"definition":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
 	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms __Hamiltonian path__ and __Hamiltonian cycle__.",
-	"note":"In older books, the term *Hamiltonian circuit* is used instead of *Hamiltonian cycle*.",
+	"note":"In older books, the term *Hamiltonian circuit* is used in place of *Hamiltonian cycle*.  So be careful!  When they say *circuit*, they may actually mean *cycle*.",
 	"intuition":"",
 }
+
+{
+	"name": "Hamiltonian Graph",
+	"type": "def",
+	"content": "A multigraph is called __Hamiltonian__ if it contains a Hamiltonian cycle.",
+}
+
 
 //insert combinatorixs class graph theory things here:
 {
@@ -299,8 +310,8 @@
 	"name": "Brook's theorem",
 	"weight": 8,
 	"type": "thm",
-	"content": "Consider any connected multigraph $G$.  If it is complete or an odd cycle, then $\chi(G) = \delta(G)+1$;  otherwise, $\chi(G) = \delta(G)$.",
-	"intuition": "Except for two special cases, the chromatic number of a connected graph is always equal to its maximum degree!",
+	"content": "Consider any connected multigraph $G$.  If it is complete or an odd cycle, then $\chi(G) = \delta(G)+1$;  otherwise, $\chi(G) \leq \delta(G)$.",
+	"intuition": "Except for two special cases, the chromatic number of a connected graph is at most its maximum degree!",
 }
 
 {
@@ -322,28 +333,45 @@
 	"intuition": "",
 }
 
-{
-	"name": "",
-	"weight": 4,
+{// maybe break this into two theorems, since that's traditional!!!!!
+	"name": "König's theorem",
+	"weight": 6,
 	"type": "thm",
-	"content": "Consider any multigraph $G$.  If $G$ is bipartite, then $\beta'(G) = \alpha(G)$; otherwise, $\beta'(G) \leq \alpha(G)$.",
+	"content": "Consider any multigraph $G$.  If $G$ is bipartite, then $\alpha'(G) = \beta(G)$; otherwise, $\alpha'(G) \leq \beta(G)$.",
+	"intuition": "In all multigraphs, the matching number is less than or equal to the vertex cover number.  Specifically in bigraphs, we are guaranteed equality.",
 }
 
 {
-	"name": "Gallai's Theorem 1",
+	"name": "Gallai's Vertex Theorem",
 	"weight": 6,
 	"type": "thm",
 	"content": "For any multigraph $G=(V,E)$, $\alpha(G)+\beta(G)=|V|$.",
-	"intuition": "The maximum independent set size plus the minimum vertex covering size equals the number of vertices.",
+	"intuition": "The maximum independent set size plus the minimum vertex cover size equals the number of vertices.",
+	"proof": {
+		"type": [],
+		"content": "There is a bijection between independent sets and vertex covers (needs proof).  In particular, every independent set $S\subset V$ bijects with the vertex cover $V\S$.  Therefore, the maximum independent set bijects with the minimum vertex cover.  We have proved the stronger statement that the maximum independent set unioned with the minimum vertex cover is equal to $V$.",
+	},
 }
 
 {
-	"name": "Gallai's Theorem 2",
+	"name": "Gallai's Edge Theorem",
 	"weight": 6,
 	"type": "thm",
 	"content": "For any multigraph $G=(V,E)$, $\alpha'(G)+\beta'(G)=|V|$.",
 	"intuition": "The matching number plus the minimum edge cover size equals the number of vertices.",
+	"proof": {
+		"type": [],
+		"content": "Every edge cover can be decomposed into a matching (which covers two vertices per edge) and the remaining 'leftover edges' (which cover one vertex per edge).  Therefore, an edge cover is minimized when its matching is maximized.  Consider the minimum edge cover and the maximum matching that it contains.  There are $|V|$ vertices in the graph.  $k$ of them are part of the maximum matching and $|V|-k$ of them are not.\n\n$k+(|V|-k) = |V|$\n\n$\frac k2+\left[\frac k2+(|V|-k)\right] = |V|$\n\n$\text{# matching edges}+\left[\text{# matching edges}+(\text{# leftover edges})\right] = |V|$\n\n$\alpha'(G)+\left[\beta'(G)\right] = |V|$",
+	},
 }
+
+{
+	"name": "Ore's Theorem",
+	"weight": 6,
+	"type": "thm",
+	"content": "If $G=(V,E)$ is a simple graph with finite $|V| \geq 3$ and for all $a,b \in V$, $d(a)+d(b) \geq |V|$, then $G$ has a Hamiltonian cycle.",
+}
+
 
 
 //HW 14
@@ -360,6 +388,14 @@
 	"content": "A tree $T$ has Pr\u{00fc}fer sequence $486834$.  The drawing of $T$ is [[<img>]].",
 }
 
+{
+	"name": "First Theorem of Graph Theory",
+	"weight": 3,
+	"type": "thm",
+	"content": "If $G=(V,E)$ is a multigraph, then $\sum_{v\in V} \text{deg}(v) = 2|E|$.",
+	"intuition": "The sum of the degrees of the vertices is equal to twice the number of edges.  This is because every edge has two endpoints, so it contributes $2$ to the total degree sum.",
+}
+
 { // 3
 	"name": "Tree Sum",
 	"weight": 5,
@@ -370,6 +406,202 @@
 		"content": "In any graph, the sum of the degrees of the vertices is equal to $2$ times the number of edges.\n\n$\sum_{i=0}^{n-1} id_i = 2|E|$\n\nSince $T$ is a tree, the number of edges is one less than the number of vertices.\n\n$\sum_{i=0}^{n-1} id_i = 2(n-1)$\n\n$\sum_{i=0}^{n-1} id_i = 2n-2$\n\n$\sum_{i=0}^{n-1} id_i = \left(2\sum_{i=0}^{n-1} d_i\right)-2$\n\nCombining the sums on the left side, we obtain the result.\n\n$\sum_{i=0}^{n-1} (i-2)d_i = -2$",
 	},
 }
+
+//quiz 3
+{// 1 abcd
+	"name": "Many questions",
+	"weight": 1,
+	"type": "exercise",
+	"content": "The graph $G$ is defined by the drawing <img1>.  The degree sequence of $G$ is [[$(1,2,2,2,2,3,3,3)$]].  $G$ <<is|is not>> bipartite.  One regular subgraph of $G$ (there are many correct answers) is [[<img2>]].  One spanning tree of $G$ (there are multiple correct answers) is [[<img3>]].",
+}
+
+{// 2 b
+	"weight": 1,
+	"exercise": "A tree $T$ has three vertices of degree $2$, five vertices of degree $3$, two vertices of degree $4$, and no vertices of degree $5$ or more.  The number of leaves that $T$ has is [[$11$]].",
+}
+
+{
+	"name": "Chord (graph theory)",
+	"weight": 1,
+	"type": "def",
+	"content": "A __chord__ of a cycle $C=(V,E)$ is an edge $h\not\in E$ such that $h\subset V$.",
+	"intuition": "A chord of a cycle is an edge whose endpoints are in the cycle, but the chord is not in the cycle itself.  The chord cuts through the inside of the cycle.",
+}
+
+{// 3
+	"weight": 3,
+	"exercise": "A simple graph $G$ has minimum degree $3$.  Prove that $G$ contains a cycle with a chord.",
+}
+
+//HW 15
+{//1a
+	"weight": 2,
+	"exercise": "An example of a simple graph $G$ where $\chi(G)>\omega(G)$ is...",
+	"example": "An odd cycle of size at least $5$.",
+}
+
+{//1b
+	"weight": 2,
+	"exercise": "An example of a simple graph $G$ where $\chi(G)\beta(G)\leq\omega(G)$ is...",
+	"example": "Any complete graph.",
+}
+
+{//1c
+	"weight": 2,
+	"exercise": "An example of a simple graph $G$ where $\chi(G)>2\delta(G)$ is...",
+	"example": "The trivial graph.",
+}
+
+{//1d
+	"weight": 2,
+	"exercise": "An example of a simple graph $G$ where $\delta(G)=2\chi(G)$ is...",
+	"example": "A star with $4$ leaves.",
+}
+
+{// 2
+	"weight": 2,
+	"exercise": "The chromatic number of the Peterson graph is [[$3$]].  The edge chromatic number of the Peterson graph is [[$4$]].",
+}
+
+{// 3 // dunno....
+	"weight": 2,
+	"weight": 99999,
+	"exercise": "Let $G$ be a simple forest with $k$ components.  The ",
+}
+//HW 16
+{//2 a
+	"weight": 2,
+	"exercise": "Let $G$ be a simple $r$-regular bipartite graph.  Prove that $G$ has a perfect matching.",
+}
+
+{//2 b
+	"weight": 2,
+	"exercise": "Let $G=(V,E)$ be a complete bipartite graph where both parts have the same size.  The number of perfect matchings that $G$ has is [[$\left(\frac V2\right)!$]].",
+}
+
+{// 3
+	"name": "",
+	"weight": 5,
+	"type": "thm",
+	"content": "If the multigraph $G$ has no isolated vertices, then $\alpha(G) \leq \beta'(G)$.",
+	"intuition": "In every multigraph without isolated vertices, the maximum independent vertex set has size less than or equal to a minimum edge cover.",
+	"proof": {
+		"type": ["combinatorial"],
+		"content": "Take a maximum independent set of vertices.  No pair of those vertices are adjacent, so no single edge can cover more than one of those vertices.  Therefore, it will take at least $\alpha(G)$ edges to cover those vertices.  Therefore, it will take at least $\alpha(G)$ edges to cover all vertices in the graph.",
+	},
+}
+// end of HW 16
+
+//quiz 4
+{
+	"weight": 1,
+	"exercise": "Let $G$ be the graph defined by <img4>.  $G$ <<is|[is not]>> Eulerian.",
+}
+
+{
+	"weight": 1,
+	"exercise": "Let $G$ be the graph defined by <img4>.  $G$ <<[is]|is not>> Hamiltonian.",
+}
+
+{
+	"weight": 1,
+	"exercise": "Let $G$ be the graph defined by <img4>.  The chromatic number of $G$ is [[$3$]].",
+}
+
+{
+	"weight": 1,
+	"exercise": "Let $G$ be the graph defined by <img4>.  The edge chromatic number of $G$ is [[$4$]].",
+}
+
+{//2
+	"name": "Pigeonhole principal 1",
+	"weight": 2,
+	"type": "exercise",
+	"content": "Let $S=[n]$.  Prove that if a number in $[n]$ is assigned to each subset of $S$, then there exists two subsets, $A \subset B$ such that $A$ and $B$ are assigned the same number.",
+	"note": "The number assigned to $A$, for example, need not be an element of $A$.  For example, it is legal to assign the number $3$ to the set ${1,2}$.",
+	"proof": {
+		"type": ["pigeonhole principal"],
+		"content": "${} \subset [1] \subset [2] \subset \subset \subset [n]$.  This is a linear order of $n+1$ subsets, and we only have $n$ numbers to assign to them.  By the pigeonhole principal, at least two of those subsets must share a label.  Thanks to the linear ordering with respect to containment, one of the two is a subset of the other.",
+	},
+}
+
+{// 3
+	"weight": 2,
+	"type": "exercise",
+	"content": "Let $G=(A,B,E)$ be a bipartite graph where $|A|=|B|$ and every vertex is in at least one cycle.  Then $G$ <<has|[does not necessarily have]>> a perfect matching.",// if G is connected, then will it have a perfect matching?  make a theorem out of it?
+	"proof": {
+		"type": "constructive",
+		"content": "The statement did not say that $G$ was connected.  Therefore, let $K_{2,3} = (L_1,R_1,E_1)$.  $K_{2,3}$ does *not* have a perfect matching.  Let $K_{3,2} = (L_2,R_2,E_2)$ have distinct vertices from $K_{2,3}$.  Finally, let $A=L_1\cup L_2$, $B=R_1\cup R_2$, and $E=E_1\cup E_2$.  The resulting graph $G=(A,B,E)$ does *not* have a perfect matching.",
+	},
+}
+
+{//4
+	"type": "thm",
+	"weight": 4,
+	"content": "Ramsey number $R(3,3)$ is $6$.",
+}
+//end of quiz 4
+
+//HW 17
+{
+	"weight": 1,// make this the default definition of cycle!
+	"exercise": "The number of Hamiltonian cycles in $C_n$, where cycles have no beginning nor end, is [[$1$]].",
+}
+
+{// similarly, remove direction from walks!!! so we have equivalence class of sequences
+	"weight": 2,
+	"exercise": "The number of Hamiltonian cycles in $K_n$, where cycles have no beginning nor end, is [[$\frac{n!}{2n}$ or $\frac{(n-1)!}{2}$]].",
+}
+
+{
+	"weight": 3,
+	"exercise": "The number of Hamiltonian cycles in $K_{n,n}$, where cycles have no beginning nor end, is [[$\frac{n!^2}{4n}$ or $\frac{n(n-1)}{4}$]].",
+}
+
+{
+	"weight": 3,
+	"exercise": "The number of Hamiltonian cycles in $W_n$, where cycles have no beginning nor end, is [[$n-1$ for all $n>2$]].",
+}
+
+{
+	"weight": 1,
+	"exercise": "For all $n$, the graph $C_n$ <<[is]|is not>> Eulerian and <<[is]|is not>> Hamiltonian.",
+}
+
+{
+	"weight": 1,
+	"exercise": "For all $n>2$, the graph $W_n$ <<is|[is not]>> Eulerian and <<[is]|is not>> Hamiltonian.",
+}
+
+{
+	"weight": 1,
+	"exercise": "The graph <img5> <<[is]|is not>> Eulerian and <<is|[is not]>> Hamiltonian.",
+}
+
+{
+	"weight": 1,
+	"exercise": "The graph <img6> <<is|[is not]>> Eulerian and <<is|[is not]>> Hamiltonian.",
+}
+
+{//3
+	"weight": 3,
+	"type": "exercise",
+	"content": "Let $G$ be a Hamiltonian graph of order $n$.  If we remove $k$ vertices from $G$, then the number of connected components of the remaining graph is [[$\begin{cases}1 & \text{if} k=0\n2 * \text{if} 0<k\leq \frac n2\nn-k & \text{if} \frac n2 < k \leq n\end{cases}$]].",
+}
+// end HW 17
+
+//HW 18
+{//1
+	"name": "pigeonhole principal 2",
+	"weight": 3,
+	"exercise": "Given any sequence of $n$ integers, there is a consecutive subsequence whose sum is a multiple of $n$.",
+	"proof": {
+		"type": "pigeonhole principal",
+		"content": "We have the sequence $(x_1,x_2,,,x_n)$ of integers.  Consider the consequtive sums $x_1$, $x_1+x_2$, $x_1+x_2+x_3$, , , $x_1+x_2+x_3+++x_n$.  We have $n$ consequtive sums $S_i$ for $1\leq i \leq n$.  Each sum is of the form $S_i = a_in+k_i$ for integers $a_i$ and $k_i$ such that $0\leq k_i<n$.\n\nIf $k_i=0$ for any of these sums, we have found a multiple of $n$.  Otherwise, there are $n$ sums and only $n-1$ possible values of $k$, in which case, by the pigeonhole principal, a pair of sums must share the same $k$.\n\nLet us call these two sums $S_{i_1}$ and $S_{i_2}$ where $i_1<i_2$.  It follows that $S_{i_2}-S_{i_1} = a_{i_2}n+k_{i_2} - a_{i_1}n+k_{i_1} = (a_{i_2}-a_{i_1})n$ since $k_{i_1} = k_{i_2}$.  This is a multiple of $n$!  Moreover, $S_{i_2}-S_{i_1}$ is a consecutive sum itself because $S_{i_2}-S_{i_1} = (x_1+x_2+++x_{i_2})-(x_1+x_2+++x_{i_1}) = x_{i_1+1}+++x_{i_2}$.",
+	},
+}
+
+//2 coming soon
 
 
 
@@ -493,8 +725,12 @@
 } // book uses different proof which i dont understand (gives overview)
 
 {
-	"def":"A __bigraph__ this needs to be finished",
-	"note":"*Bigraph* is short for *bipartite graph*",
+	"def":"A __bipartite graph__, denoted $G=(A,B,E)$, is a graph $G=(V,E)$ such that ${A,B}$ is a bipartition of $V$, and $(\forall e \in E) e\cap A \neq {}$ and $e\cap B \neq {}$.",
+	"note":"*Bigraph* is short for *bipartite graph*.",
+}
+
+{
+	"def":"A __$k$-partite graph__, denoted $G=(A_1,,,A_k,E)$, is a graph $G=(V,E)$ such that ${A_1,,,A_k}$ is a $k$-partition of $V$, and $(\forall e \in E)(\forall i \in [k]) e \not\subset A_i$.",
 }
 
 {
