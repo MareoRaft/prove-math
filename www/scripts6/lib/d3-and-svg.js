@@ -38,9 +38,24 @@ function findObjectById(array, id){
 function updateSVGNodeAndLinkPositions(){
 	svg.selectAll(".node")
 		.attr({
-			cx: d => d.x,
-			cy: d => d.y,
+			transform: d => "translate("+d.x+","+d.y+")",
 		})
+		// .attr({
+		// 	cx: d => d.x,
+		// 	cy: d => d.y,
+		// })
+		// .attr({
+		// 	x: d => d.x,
+		// 	y: d => d.y,
+		// })
+
+	// svg.selectAll(".node")
+	// 	.attr({
+	// 		dx: 0,
+	// 		dy: 0,
+	// 	})
+
+
 
 	svg.selectAll(".link")
 		.attr({
@@ -133,28 +148,21 @@ function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN wh
     link.exit().remove()
 
 	var node = svg.selectAll('.node').data(force.nodes(), d => d.id)
-	node.enter().append('circle')
-	    .classed('node', true)
-    	.attr({ // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
-    	// 	r: d => Math.sqrt(d.weight),
-	    	r: 12,
-    	})
-    	// .call(drag)
+		var nodeGroup = node.enter().append('g')
+			.classed('node', true)
+			.call(drag)
+			.on("dblclick", dblclick)
+		nodeGroup.append('circle')
+		    .classed('node-circle', true)
+	    	.attr({ // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
+	    	// 	r: d => Math.sqrt(d.weight),
+		    	r: 12,
+	    	})
+	    nodeGroup.append('text') // must appear ABOVE node
+		    .classed('node-text', true)
+			.text("some string")
     node.exit().remove()
 
-   //  texts = texts.data(graph.nodes) // we should make a g (group) and add both node and text to it together
-   //  	.enter().append('text')
-			// .text("some string")
-	  //   	.attr({
-	  //   		x: d => d.x,
-	  //   		y: d => d.y,
-	  //   	})
-	  //   	.style({
-	  //   		'font-family': "sans-serif",
-	  //   		'font-size': "20px",
-	  //   		'text-anchor': "middle",
-	  //   		fill: "red"
-	  //   	})
 
 }
 
@@ -163,6 +171,10 @@ function processNewGraph(new_graph) {
 	// x.domain([0, d3.max(_.pluck(nodes, 'x'))]) // not sure where in the flow this belongs...
 	updateSVGNodeAndLinkExistence(); // nodes and links variables are global
 	force.start()
+}
+
+return {
+	processNewGraph: processNewGraph,
 }
 
 

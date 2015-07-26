@@ -1,4 +1,3 @@
-// require and requirejs are two names for the same function.  when require gets {} input, it basically calls require.config for you
 require.config({
 	// by eliminating baseUrl, everything becomes relative, which is the convention that KaTeX files follow.
 	// in order for this to work, we CANT USE PATHS SHORTCUTS FOR directories either
@@ -55,27 +54,6 @@ var ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): und
 if( !def(ws) ){
 	die('Your browser does not support websockets, which are essential for this program.')
 }
-
-
-
-$(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
-	var texText = $(this).text();
-	var el = $(this).get(0);
-	var addDisplay = "";
-	if(el.tagName === "DIV"){
-		addDisplay = "\\displaystyle";
-	}
-	try{
-		katex.render(addDisplay+texText, el);
-	}
-	catch(err) {
-		if (err.__proto__ === katex.ParseError.prototype) {
-			$(this).html('$'+texText+'$')
-		} else {
-			$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
-		}
-	}
-})
 
 ws.onopen = function(){
 	ws.send("Hello, world, Remember to clear cache if needed!")
@@ -148,7 +126,25 @@ function check_radio_button(radios){
 
 
 
-
+/////////////////////////////////// MATHJAX ///////////////////////////////////
+$(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
+	var texText = $(this).text();
+	var el = $(this).get(0);
+	var addDisplay = "";
+	if(el.tagName === "DIV"){
+		addDisplay = "\\displaystyle";
+	}
+	try{
+		katex.render(addDisplay+texText, el);
+	}
+	catch(err) {
+		if (err.__proto__ === katex.ParseError.prototype) {
+			$(this).html('$'+texText+'$')
+		} else {
+			$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
+		}
+	}
+})
 
 
 //////////////////////////// TEST D3 FUNCTIONALITY ////////////////////////////
