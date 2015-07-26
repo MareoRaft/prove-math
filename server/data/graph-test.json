@@ -1,13 +1,9 @@
 {
 	"nodes": [
-		{"x": 40,  "y": 40},
-		{"x": 80,  "y": 80},
-		{"x": 160, "y": 160},
-		{"x": 0,   "y": 20}
+		{"x": 40,  "y": 40, "id": "al"},
+		{"x": 0,   "y": 20, "id": "matt"}
 	],
 	"links": [
-		{"source": 0, "target": 1, "fixed": true },
-		{"source": 2, "target": 3},
-		{"source": 3, "target": 1}
+		{"source": "al",		"target": "matt" },
 	]
 }
