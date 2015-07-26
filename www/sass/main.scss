@@ -18,24 +18,31 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #0a0; $green: $mediumgre
 //////////////////////////////////////// CSS ////////////////////////////////////////
 svg {
   border: green 1px solid;
+
+  .definition-circle {
+    fill: darkolivegreen;
+  }
+  .theorem-circle {
+    fill: steelblue;
+  }
+  .exercise-circle {
+    fill: $darkwhite;
+  }
+
+  .node-text {
+    @include font; // we won't need this if we end up overriding everything...
+    font-family: Helvetica, Tahoma, Arial, sans-serif;
+    text-anchor: middle;
+  }
+
+  .link {
+    stroke: gray;
+    stroke-width: 2px;
+  }
+
+  .arrow-head {
+    fill: gray;
+  }
 }
 
-svg .node-circle {
-  fill: steelblue;
-}
-
-svg .node-text {
-  fill: orange;
-  font-family: sans-serif;
-  text-anchor: middle;
-}
-
-svg .link {
-  stroke: gray;
-  stroke-width: 2px;
-}
-
-svg .arrow-head {
-  fill: gray;
-}
 

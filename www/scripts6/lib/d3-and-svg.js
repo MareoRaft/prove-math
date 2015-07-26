@@ -1,4 +1,4 @@
-define( ["jquery", "underscore", "d3", "check-types", "profile"], function($, _, d3, check, undefined) {
+define( ['jquery', 'underscore', 'd3', 'check-types', 'profile'], function($, _, d3, check, undefined) {
 
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
@@ -36,30 +36,14 @@ function findObjectById(array, id){
 }
 
 function updateSVGNodeAndLinkPositions(){
-	svg.selectAll(".node")
+	svg.selectAll('.node')
 		.attr({
-			transform: d => "translate("+d.x+","+d.y+")",
+			transform: d => 'translate('+d.x+','+d.y+')',
 		})
-		// .attr({
-		// 	cx: d => d.x,
-		// 	cy: d => d.y,
-		// })
-		// .attr({
-		// 	x: d => d.x,
-		// 	y: d => d.y,
-		// })
 
-	// svg.selectAll(".node")
-	// 	.attr({
-	// 		dx: 0,
-	// 		dy: 0,
-	// 	})
-
-
-
-	svg.selectAll(".link")
+	svg.selectAll('.link')
 		.attr({
-			x1: d => d.source.x, // d.source is an index, but somehow it knows to find the node of that index.
+			x1: d => d.source.x,
 			y1: d => d.source.y,
 			x2: d => d.target.x,
 			y2: d => d.target.y,
@@ -116,17 +100,15 @@ var x = d3.scale.linear()
 	.range([0, width]) // minus a 10 pixel buffer?  we should really get the width of #chart !!!
 
 function updateNodesAndLinks(new_graph) {
-	//if a node is marked 'remove', remove it from nodes and new_graph.nodes
+	//if a node is marked 'remove', remove it from nodes, new_graph.nodes, and links
 	for( let i = 0; i < new_graph.nodes.length; i++ ){
 		if( new_graph.nodes[i].remove ){
 			removeNodeById(new_graph.nodes[i].id)
-			removeLinksById(new_graph.nodes[i].id)
+			removeLinksById(new_graph.nodes[i].id) // we assume there are no links to a removed node in new_graph.links.  That is, we assume a good input.
 			new_graph.nodes.splice(i, 1)
 			i--
 		}
-		// if( id already exists ){
-		// 	die
-		// }
+		// if( id already exists )... // d3 won't duplicate an element, so we're ok here.  But a good input should probably not send over the same element again anyway...
 	}
 	nodes.pushArray(new_graph.nodes)
 	check.assert.array.of.object(nodes)
@@ -141,26 +123,28 @@ function updateNodesAndLinks(new_graph) {
 }
 
 function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN when new nodes come in
-    var link = svg.selectAll('.link').data(force.links(), d => d.source.id + '-' + d.target.id) // links before nodes so that lines in SVG appear *under* nodes
+    var link = svg.selectAll('.link').data(force.links(), d => d.source.id + '--->' + d.target.id) // links before nodes so that lines in SVG appear *under* nodes
     link.enter().append('line')
     	.classed('link', true)
     	.attr('marker-end', 'url(#arrow-head)') // add in the marker-end defined above
     link.exit().remove()
 
 	var node = svg.selectAll('.node').data(force.nodes(), d => d.id)
-		var nodeGroup = node.enter().append('g')
+		var node_group = node.enter().append('g')
 			.classed('node', true)
 			.call(drag)
-			.on("dblclick", dblclick)
-		nodeGroup.append('circle')
+			.on('dblclick', dblclick)
+		node_group.append('circle')
 		    .classed('node-circle', true)
+			.classed('definition-circle', d => d.type === 'definition')
+			.classed('theorem-circle', d => d.type === 'theorem')
+			.classed('exercise-circle', d => d.type === 'exercise')
 	    	.attr({ // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
-	    	// 	r: d => Math.sqrt(d.weight),
-		    	r: 12,
+	    		r: d => 6 * Math.sqrt(d.importance),
 	    	})
-	    nodeGroup.append('text') // must appear ABOVE node
+	    node_group.append('text') // must appear ABOVE node-circle
 		    .classed('node-text', true)
-			.text("some string")
+			.text(function(d){ if(d.type !== 'exercise') return d.name }) // exercise names should NOT appear
     node.exit().remove()
 
 

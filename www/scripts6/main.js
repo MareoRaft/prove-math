@@ -152,10 +152,12 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 setTimeout(function() {
 	var new_graph = {
 		"nodes": [
-			{id: "a"}, {id: "b"}, {id: "c"},
+			{id: "at", importance: 1, type: 'exercise', name: 'pigeonhole principal'},
+			{id: "b", importance: 8, type: "theorem", name: 'pigeonhole theorem'},
+			{id: "c", importance: 5, type: "definition", name: 'Bernoulli number'},
 		],
 		"links": [
-			{source: "a", target: "b"}, {source: "a", target: "c"}, {source: "b", target: "c"},
+			{source: "at", target: "b"}, {source: "at", target: "c"}, {source: "b", target: "c"},
 		],
 	}
 	d3AndSVG.processNewGraph(new_graph)
@@ -178,10 +180,10 @@ setTimeout(function() {
 setTimeout(function() {
 	var graph = {
 		nodes: [
-			{id: "b"},
+			{id: "b", importance: 4, type: "definition", name: 'sequence'},
 		],
 		links: [
-			{source: "a", target: "b"}, {source: "b", target: "c"},
+			{source: "at", target: "b"}, {source: "b", target: "c"},
 		],
 	}
 	d3AndSVG.processNewGraph(graph)
