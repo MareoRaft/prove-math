@@ -51,6 +51,15 @@ function updateSVGNodeAndLinkPositions(){
 		})
 }
 
+function dragstart(node) {
+	d3.select(this).classed('fixed', node.fixed = true)
+}
+
+function dblclick(node) {
+	d3.select(this).classed('fixed', node.fixed = false)
+}
+
+
 //////////////////////////////////// MAIN /////////////////////////////////////
 var width = $('body').width(),
 	height = $(window).height()
@@ -62,6 +71,9 @@ var force = d3.layout.force()
 	.charge(-200)
 	.linkDistance(40)
 	.on('tick', updateSVGNodeAndLinkPositions)
+
+var drag = force.drag()
+	.on('dragstart', dragstart);
 
 var svg = d3.select('body')
 	.append('svg')
@@ -129,6 +141,21 @@ function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN wh
     	})
     	// .call(drag)
     node.exit().remove()
+
+   //  texts = texts.data(graph.nodes) // we should make a g (group) and add both node and text to it together
+   //  	.enter().append('text')
+			// .text("some string")
+	  //   	.attr({
+	  //   		x: d => d.x,
+	  //   		y: d => d.y,
+	  //   	})
+	  //   	.style({
+	  //   		'font-family': "sans-serif",
+	  //   		'font-size': "20px",
+	  //   		'text-anchor': "middle",
+	  //   		fill: "red"
+	  //   	})
+
 }
 
 function processNewGraph(new_graph) {
