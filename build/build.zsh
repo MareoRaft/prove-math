@@ -18,6 +18,13 @@ babel www/scripts6/lib/profile.js > www/scripts/lib/profile.js &&
 babel www/scripts6/lib/d3-and-svg.js > www/scripts/lib/d3-and-svg.js &&
 babel www/scripts6/main.js > www/scripts/main.js &&
 
+# convert .scss files to main.css
+cd www
+compass compile
+# compass watch
+cd ..
+
+
 # optimize and minify
 # node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2 &&
 
