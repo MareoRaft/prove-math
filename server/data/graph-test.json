@@ -1,9 +1,20 @@
 {
-	"nodes": [
-		{"x": 40,  "y": 40, "id": "al"},
-		{"x": 0,   "y": 20, "id": "matt"}
-	],
-	"links": [
-		{"source": "al",		"target": "matt" },
-	]
+    "nodes": [
+        {
+            "x": 40,
+            "y": 40,
+            "id": "al"
+        },
+        {
+            "x": 0,
+            "y": 20,
+            "id": "matt"
+        }
+    ],
+    "links": [
+        {
+            "source": "al",
+            "target": "matt"
+        }
+    ]
 }
