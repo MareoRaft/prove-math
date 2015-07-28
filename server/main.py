@@ -80,16 +80,19 @@ class SocketHandler (WebSocketHandler):
 					empty_keys.append(key)
 
 			for key in empty_keys:
+				print(key)
 				del(x[key])
+			
+			if 'importance' in x.keys():
+				print(x['importance'])
+				x['importance']=int(x['importance'])
 
 			if x['type']=='Definition':
-				x['importance']=6
 				new_node=Definition(x)
 			elif x['type']=='Theorem':
-				x['importance']=6
+				
 				new_node=Theorem(x)
 			elif x['type']=='Exercise':
-				x['importance']=3
 				new_node=Exercise(x)
 			else:
 				return
