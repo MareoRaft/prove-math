@@ -61,7 +61,7 @@ ws.onopen = function(){
 ws.onmessage = function(event){
 	var unbundled = JSON.parse(event.data)
 	var graph = unbundled
-	alert('graph is: '+graph)
+	// alert('graph is: '+graph)
 	processNewGraph(graph)
 }
 
