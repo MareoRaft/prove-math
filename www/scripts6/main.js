@@ -84,8 +84,12 @@ function add_proof(){
     var selectedValue = proof_type.options[proof_type.selectedIndex].value;
     var proofs = $('#Proofs').val();
     ws.send(JSON.stringify({"type":"Type 1", "content":proofs}));
-    $('#inputList').append(JSON.stringify({"type":selectedValue, "content":proofs}));
-    alert("A Pause")
+    if(document.getElementById('inputList').innerHTML==""){
+       $('#inputList').append(JSON.stringify({"type":selectedValue, "content":proofs}));
+    }
+    else{
+    $('#inputList').append(","+JSON.stringify({"type":selectedValue, "content":proofs}));
+	}
 }
 
 function send_node_info(){
@@ -97,9 +101,10 @@ function send_node_info(){
 	    var counterexamples = $('#Counterexamples').val()
 	    var intuition = $('#Intuition').val()
 	    var notes = $('#Notes').val()
-
 	    var radios = document.getElementsByName('type');
-	    var type = check_radio_button(radios).value
+	    var type = check_radio_button(radios).value;
+	    var proofs="["+document.getElementById('inputList').innerHTML+"]";
+	    ws.send(proofs)
 	    if(type === "Theorem"){
 		    var clean_proofs = JSON.parse(proofs)
 		}
