@@ -326,11 +326,14 @@
 }
 
 {
-	"name": "", // Ask Ali if this theorem is true / what it means / the proof!
+	"name": "",
 	"weight": 5,
 	"type": "thm",
-	"content": "Given any multigraph $G$, $\chi(G) \leq 1 + \text{max induced subgraph H}(\delta(H))$.",
-	"intuition": "",
+	"content": "Given any finite multigraph $G$, $\chi(G) \leq 1 + \max_{\text{all induced subgraphs $H$ of $G$}}\{\delta(H)\}$.",
+	"proof": {
+		"type": "",
+		"content": "Take $G=(V,E)$.  Find a vertex of minimum degree.  Label it $v_0$ and remove it.  Repeat this process until we have the sequence $(v_0, v_1,,,v_{|V|})$.  Now re-build $G$ by adding the vertices in backwards, coloring each vertex as you add it.  Each vertex that you add in has $\delta(H)$ neighbors for some subgraph $H$ of $G$.  We need at most $\delta(H)+1$ colors to guarantee that the vertex is different than all its neighbors.  Therefore, the number of colors needed to color all of $G$ is at most $\delta(H)+1$ for the largest $\delta(H)$ we encounter.",
+	},
 }
 
 {// maybe break this into two theorems, since that's traditional!!!!!
@@ -528,7 +531,7 @@
 {// 3
 	"weight": 2,
 	"type": "exercise",
-	"content": "Let $G=(A,B,E)$ be a bipartite graph where $|A|=|B|$ and every vertex is in at least one cycle.  Then $G$ <<has|[does not necessarily have]>> a perfect matching.",// if G is connected, then will it have a perfect matching?  make a theorem out of it?
+	"content": "Let $G=(A,B,E)$ be a bipartite graph where $|A|=|B|$ and every vertex is in at least one cycle.  Then $G$ <<has|[does not necessarily have]>> a perfect matching.",
 	"proof": {
 		"type": "constructive",
 		"content": "The statement did not say that $G$ was connected.  Therefore, let $K_{2,3} = (L_1,R_1,E_1)$.  $K_{2,3}$ does *not* have a perfect matching.  Let $K_{3,2} = (L_2,R_2,E_2)$ have distinct vertices from $K_{2,3}$.  Finally, let $A=L_1\cup L_2$, $B=R_1\cup R_2$, and $E=E_1\cup E_2$.  The resulting graph $G=(A,B,E)$ does *not* have a perfect matching.",
@@ -539,6 +542,9 @@
 	"type": "thm",
 	"weight": 4,
 	"content": "Ramsey number $R(3,3)$ is $6$.",
+	"proof": {
+		"content": "Consider $K_5$ with the red-blue edge coloring that consists of one red $C_5$ and one blue $C_5$.  It has no red $C_3$ nor a blue $C_3$.  Therefore, $R(3,3) > 5$.\n\nNow consider $K_6$.  One vertex $v$ has $5$ incident edges.  At least $3$ of those edges must be the same color as each other.  Without loss of generality, let's say that at least $3$ of the edges are red.  Look at the $3$ vertices at the other end of those edges.  For each pair, they must be blue adjacent, because red adjacency would create a triangle with $v$.  But if each pair is blue adjacent, then we have a blue triangle among those $3$ vertices!  Therefore, $R(3,3) \leq 6$\n\nPutting both pieces together, we conclude that $R(3,3) = 6$.",
+	},
 }
 //end of quiz 4
 
@@ -601,8 +607,114 @@
 	},
 }
 
-//2 coming soon
+{// 2
+	"weight": 2,
+	"exercise": "For any $a,b \in N$, every graph $K_{a+b}$ with edges colored red and blue has a red path of length $a$ or a vertex incident to at least $b$ blue edges.",
+	"proof": {
+		"type": "pigeonhole principal",
+		"content": "Consider the longest red path.  If its length is greater than or equal to $a$, we are done.  If its length is less than $a$, then the number of vertices it has is less than $a+1$.  The number of vertices it has is less than or equal to $a$.  Then the number of vertices *not* in the path is greater than or equal to $b$.  Consider the end vertex $z$ of the path.  For each of the $b$ vertices not in the path, it must be adjacent to $z$ because the graph is complete, and the edge must be blue, because a red edge would make the path longer (contradicting the fact that it is the *longest* red path).  Therefore, $z$ is incident to at least $b$ blue edges.",
+	},
+}
 
+{// 3 a
+	"weight": 2,
+	"exercise": "There exists a red-blue edge coloring of $K_8$ that does not contain a red $K_4$ nor a blue $K_3$.  By definition, this means that the Ramsey number $R(4,3) > 8$.",
+	"proof": {
+		"type": "ramsey theory",
+		"content": "Arrange the $8$ vertices in an octagon.  Let's say that the \"length\" of an edge is the (minimum) number of edges around the perimeter of the octagon that it takes to get from the start vertex to the end vertex.  For example, the edge connecting vertices farthest away from each other has length $4$ (<img7>).\n\nWe want to avoid blue triangles.  Every triangle in the octagon is made from exactly $3$ edges, and the \"lengths\" of those edges add up to $8$.  If we look at the partitions of $8$, we see that every partition of $8$ must have a part that is $\leq 2$.\n\nTherefore, by coloring all edges with length $\leq 2$ red, we guarantee there are no blue triangles.\n\nAll remaining edges (edges of length $\geq 3$) are colored blue, and by a similar argument, because all $K_4$s must contain an edge of length $\geq 3$, there can be no red $K_4$s.\n\nThe graph looks like <img8>.",
+	},
+}
+
+{// 3b
+	"weight": 1,
+	"exercise": "We will prove that $R(4,3) \leq 10$ using a red-blue edge coloring.  First prove that given a complete graph, if a vertex has $6$ red incident edges, then there must be a red $K_4$ or a blue $K_3$.  Second, prove that if a complete graph has $4$ blue incident edges, then it must contain a red $K_4$ or a blue $K_3$.  Finally, use the pigeonhole principal to prove that $R(4,3) \leq 10$.",
+	"proof": {
+		"type": ["combinatorics", "ramsey theory"], // program should automatically change this to combinatorial
+		"content": "First, if a complete graph has $6$ red incident edges to $v$, then there are $6$ vertices at the end of those edges.  Because $R(3,3)=6$, we are guaranteed a red or blue triangle among those $6$ vertices.  If we have a red triangle, then when we consider $v$ with only red edges to the triangle, we find a red $K_4$.\n\nSecond, if the complete graph has a vertex $u$ with $4$ incident blue edges, then there are $4$ distinct vertices at the ends of those edges.  If any pair of those vertices is blue adjacent, then they create a blue triangle with $u$.  Otherwise, every pair is red adjacent, so the $4$ vertices create a red $K_4$.\n\nFinally, consider $K_{10}$ as a single vertex $s$ and its $9$ incident edges.  If at least $6$ of those edges are red, then by our first argument, we have a blue triangle or a red $K_4$.  Otherwise, at most $5$ of the incident edges are red, so at least $4$ of them are blue.  By our second argument, we again have a blue triangle or a red $K_4$.\n\nThis proves that $R(4,3) \leq 10$.",
+	},
+}
+
+{// 3c
+	"weight": 2,
+	"exercise": "Given that a red-blue edge coloring of $K_9$ has no blue $K_3$ nor a red $K_4$ only when every vertex has at most $3$ blue incident edges and at most $5$ red incident edges, prove that $K_9$ must have a blue $K_3$ or a red $K_4$.  This proves that $R(3,4) \leq 9$.",
+	"proof": {
+		"type": "ramsey theory",
+		"content": "Assume that $K_9$ has no blue $K_3$ nor a red $K_4$.  Then for every vertex $v$ in $K_9$, it has exactly $8$ incident edges, each of which is either red or blue.  If $v$ has at most $5$ red incident edges and at most $3$ blue incident edges, then $v$ has *exactly* $5$ red incident edges and $3$ blue incident edges.\n\nIf every vertex has exactly $5$ red incident edges, then the total number of red edges is $\frac{9 \cdot 5}2$, which is not a natural number.  The number of red edges must be a natural number, so this is a contradiction.  We conclude that our assumption was false, so we have proven that a red-blue edge coloring of $K_9$ *must* contain a blue $K_3$ or a red $K_4$.  Therefore, $R(3,4) \leq 9$.",
+	},
+}
+
+//3d
+{ // combine 3a and 3c together to prove that R(4,3)=9.  This is a THEOREM.  Let's change 3a and 3c slightly and make them lemmas....
+	"name": "R(4,3)=9",
+	"weight": 3,
+	"type": "thm",
+	"content": "The Ramsey number $R(4,3)$ is $9$.",
+	"intuition": "Every $K_9$ graph with a red-blue edge coloring must contain a red $K_4$ or a blue $K_3$.",
+}
+// end of HW 18
+
+{
+	"type": "def",
+	"content": "Given a partially ordered set $(P,<)$, two elements $a,b \in P$ are __comparable__ if $a < b$, $a=b$, or $a>b$.",
+}
+
+{
+	"type": "def",
+	"content": "Given a partially ordered set $(P,<)$, a __maximum__ element is an element $m \in P$ such that for all $p \in P$ that are comparable to $e$, $e \geq p$.",
+	"intuition": "Given a partially ordered set, if an element is greater than or equal to all elements it can be compared to, then it is a **maximum** element.",
+}
+
+{
+	"type": "def",
+	"content": "Given a partially ordered set $(P,<)$, a __minimum__ element is an element $m \in P$ such that for all $p \in P$ that are comparable to $e$, $e \leq p$.",
+	"intuition": "Given a partially ordered set, if an element is less than or equal to all elements it can be compared to, then it is a **minimum** element.",
+}
+
+{
+	"name": "covers (partial order)",
+	"weight": 4,
+	"type": "def",
+	"content": "Given a partial order $(P,<)$, an element $y \in P$ __covers__ $x \in P$ if $y>x$ and for all $p \in P$, we do not have $y>p>x$.",
+	"intuition": "$x$ **covers** $y$ is $x$ is the unique element greater than $y$.",
+}
+
+{
+	"weight": 4,
+	"type": "def",
+	"content": "Given a poset $(P,<)$, a __chain__ is a sequence of elements $p_0<p_1<<<$.",
+	"intuition": "A chain is a sequence of elements of $P$ that form a linear order under the same ordering $<$ as the poset.",
+}
+
+{
+	"type": "def",
+	"content": "Given a poset $(P,<)$, an __antichain__ is a subset $A$ such that for every pair $x,y \in A$, $x$ is incomparable to $y$.",
+	"intuition": "An **antichain** is a set of elements where no two are comparable to each other.",
+}
+
+{
+	"name": "Sperner's theorem",
+	"weight": 5,
+	"type": "thm",
+	"content": "The antichain of largest size in the boolean lattice $B_n$ has size $\binom{n}{\floor n2}$.",
+	"proof": [
+		{
+			"type": "",
+			"content": "Assume that the largest size antichain contains an element $e$ not in the middle layer(s) of $B_n$.  The layer of $e$ is $k$ for some $k<\floor{\frac n2}$.  There are $n-k$ options for adding another element to $e$, and $n-k > n-\floor{\frac n2} = \ceil{\frac n2}$, so there are at least $2$ options when $n \geq 2$.  Therefore, we can remove $e$ from the antichain and add in the $2$ options instead, creating a larger size antichain.  This contradicts the largest size of our antichain, so our assumption was false.  We conclude that a largest size antichain must have all its elements in the middle layer(s).\n\nThis concludes the proof for even $n$, but for odd $n$, we have two middle layers, and we must show that all the elements of the antichain reside in one of these layers.  I couldn't find an elegant solution in this scenario, so I will let somebody else finish this proof.",
+		},
+		{
+			"type": "",
+			"content": "The LYM inequality guarantees that for antichain $A$, where $a_k$ is the number of elements of $A$ of size $k$, we have $\sum_{k=0}^{n} \frac{a_k}{\binom nk} \leq 1$.  Since $\binom nk \leq \binom{n}{\floor{\frac n2}}$, we have that\n\n$\sum_{k=0}^{n} \frac{a_k}{\binom{n}{\floor{\frac n2}}} \leq 1$\n\n$\sum_{k=0}^{n} a_k \leq \binom{n}{\floor{\frac n2}}$\n\n$|A| \leq \binom{n}{\floor{\frac n2}}$.  Moreover, we can achieve the size $\binom{n}{\floor{\frac n2}}$ exactly by choosing one of the middle layer(s) of $B_n$.",
+		},
+	],
+}
+
+{
+	"name": "LYM inequality",
+	"full name": "Lubell–Yamamoto–Meshalkin inequality",
+	"weight": 3,
+	"type": "thm", // this lemma is used to prove Sperner's theorem
+	"content": "For any antichain $A$ in the boolean lattice $B_n$, let $a_k$ be the number of elements in $A$ of size $k$.  Then the inequality $\sum_{k=0}^{n} \frac{a_k}{\binom nk} \leq 1$ is true.",
+}
 
 
 
