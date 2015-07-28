@@ -67,14 +67,25 @@ ws.onmessage = function(event){
 
 
 $('#test').click(hello)
+$('#AddProof').click(add_proof)
 $('#Submit').click(send_node_info)
+
 
 
 // setup all the things we can do before actually getting the data:
     function hello(){
 	var letsTry = JSON.stringify({"contents":"I want to send this over upon a click in a json file preferably"})
     //var contents = $('#cool').val()
-    ws.send(letsTry)
+    ws.send("For my sanity")
+}
+
+function add_proof(){
+    var proof_type=document.getElementById("ProofType");
+    var selectedValue = proof_type.options[proof_type.selectedIndex].value;
+    var proofs = $('#Proofs').val();
+    ws.send(JSON.stringify({"type":"Type 1", "content":proofs}));
+    $('#inputList').append(JSON.stringify({"type":selectedValue, "content":proofs}));
+    alert("A Pause")
 }
 
 function send_node_info(){
@@ -82,7 +93,6 @@ function send_node_info(){
 	    var name = $('#Name').val()
 	    var plural = $('#Plural').val()
 	    var content = $('#Content').val()
-	    var proofs = $('#Proofs').val()
 	    var examples = $('#Examples').val()
 	    var counterexamples = $('#Counterexamples').val()
 	    var intuition = $('#Intuition').val()
