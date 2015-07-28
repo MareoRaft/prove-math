@@ -63,6 +63,10 @@ Dr. Butler
 in advisory room (3rd floor)
 Mon-Fri 10-12
 
+Tahvildar-Zadeh, Shadi Abdolre
+head of undergrad math.
+good idea to ask him.
+
 
 
 Comp Sci ppl

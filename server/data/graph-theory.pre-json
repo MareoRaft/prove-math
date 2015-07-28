@@ -716,6 +716,79 @@
 	"content": "For any antichain $A$ in the boolean lattice $B_n$, let $a_k$ be the number of elements in $A$ of size $k$.  Then the inequality $\sum_{k=0}^{n} \frac{a_k}{\binom nk} \leq 1$ is true.",
 }
 
+// HW 19
+{// 1
+	"weight": 1,
+	"type": "exercise",
+	"content": "Prove that for every arrangement of the vertex set $[24]$ in the cycle $C_{24}$, there exists $3$ consecutive numbers whose sum is at least $38$.",
+	"proof": {
+		"type": "probabilistic method",
+		"content": "Let $X$ be the random variable that represents the sum of $3$ consecutive numbers in the cycle.  If we let $X_1$ represent the first number, $X_2$ represent the second number, and $X_3$ represent the third number, then the expected value is:\n\n$E[X] = E[X_1+X_2+X_3]$\n\nDue to the linearity of expectation, we have that\n\n$E[X] = E[X_1]+E[X_2]+E[X_3]$\n\nThe expected value of the first number is $1P(1)+2P(2)+++24P(24) = 1\frac1{24}+2\frac1{24}+++24\frac1{24} = \frac{(24)(24+1)}{2}\frac1{24} = \frac{25}{2} = 12.5$.  The expected value of the second and third numbers is the same as the expected value of the first number.\n\n$E[X] = 12.5+12.5+12.5$\n\n$E[X] = 37.5$\n\nThe expected value of the sum of $3$ consecutive numbers is $37.5$.  Since such a sum must be an integer, there must be at least one sum that is at least $38$ in order to achieve that average of $37.5$.",
+	},
+}
+
+{// 2
+	"weight": 2,
+	"exercise": "Prove that for all $n$, $K_n$ has a red-blue edge coloring with an equal number of red and blue edges such that there are at least $\frac{n!}{2^{n-1}}$ blue Hamiltonian paths.",
+	"proof": {
+		"type": "probabilistic method",
+		"content": "The probability of any single edge being blue is $\frac12$.\n\nAlso, take note that $K_n$ has exactly $n!$ possible Hamiltonian paths.\n\nLet $X$ be the number of blue Hamiltonian paths.  Then the expected value of $X$ is\n\n$E[X] = E[X_1+X_2+++X_{n!}]$\n\nwhere $X_k$ is $1$ if Hamiltonian path $k$ is all blue, and $0$ otherwise.  Due to the linearity of expectation, we have that\n\n$E[X] = E[X_1]+E[X_2]+++E[X_{n!}]$\n\nLet's calculate $E[X_k]$.  Hamiltonian path $k$ has $n-1$ edges, each with a probability of $\frac12$ of being blue.  Therefore, we expect Hamiltonian path $k$ to be all blue at least $\left(\frac12\right)^{n-1}$ of the time.  That is, $E[X_k] = \left(\frac12\right)^{n-1}$.\n\nThis is true for any value of $k$ from $1$ to $n!$, so we have that\n\n$E[X] = \left(\frac12\right)^{n-1}+\left(\frac12\right)^{n-1}+++\left(\frac12\right)^{n-1}$\n\n$E[X] = n!\left(\frac12\right)^{n-1}\n\n$E[X] = \frac{n!}{2^{n-1}}$.\n\nBecause the expected value is this amount, there must be at least one equal red-blue edge coloring of $K_n$ that has at least $\frac{n!}{2^{n-1}}$ blue Hamiltonian paths.",
+	},
+}
+
+{// 3
+	"weight": 3,
+	"exercise": "We have an $n\times n$ matrix, and all the elements of the matrix are in $[n]$.  Furthermore, each of the elements of $[n]$ appears in the matrix $n$ times.  Prove that the matrix must have a row or column with at least $\sqrt{n}$ distinct entries.",
+	"proof": {
+		"type": "probabilistic method",
+		"content": "I don't have time to write this up so somebody should replace this with a full explanation.  Here is the outline...Pick a specific row or column. $X$ represents the number of distinct entries in it.  but $X$ = $X_1+++X_n$ where each $X_k$ is defined to be $1$ if $k$ appears in the row, and $0$ otherwise.  $E[X]$ equals the sum of $E[X_k]$ for $k$ is $1$ through $n$.  The worst case scenario for any $k$ appearing in any row is if all the $k$s are scrunched together in a little square with side length $\sqrt{n}$.  So the probability of $X_k$ being $1$ is at least $\frac{\sqrt{n}}{n}$.  Finally, compute the expected values and find that $E[X]$ is $\sqrt{n}$.",
+	},
+}
+// end of HW 19
+
+{
+	"weight": 1,
+	"type": "def",
+	"content": "In a game, a __P-position__ is a position where the previous player to move can win.",
+}
+
+{
+	"weight": 1,
+	"type": "def",
+	"content": "In a game, an __N-position__ is a position where the next player to move can win.",
+}
+
+{
+	"weight": 1,
+	"type": "def",
+	"content": "A game is __partial__ if there exists a position where the set of possible moves depends on the player whose turn it is.",
+}
+
+{
+	"weight": 1,
+	"type": "def",
+	"content": "A game is __impartial__ if it is not partial.",
+}
+
+{
+	"weight": 1,
+	"type": "def",
+	"content": "A game is __normal__ if the player who makes the last move wins.",
+}
+
+{
+	"weight": 1,
+	"type": "def",
+	"content": "A game is __misere__ if the player who makes the last move loses.",
+}
+
+{
+	"type": "def",
+	"content": "Given a game, the __Sprague-Grundy Function__ is a function $f:{\text{positions}}\to \mathbb{N}$.  Given the directed acyclic graph of positions, the Sprague-Grundy Function is recursively defined from the sinks as $f(v)$ equals the smallest natural number that is not in $\{f(t)|\text{t is a successor of v}\}$.",
+}
+
+
+
 
 
 //end of combinatorics stuff
