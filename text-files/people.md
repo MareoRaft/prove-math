@@ -24,7 +24,9 @@ Matthew
 mlb293@scarletmail.rutgers.edu
 comp sci student from combinatorics class
 
-Ali Ismail
+Ali Haider Ismail
+(609) 529-3265
+responds to texts, rarely responds to email
 ali.haider.ismail@rutgers.edu
 
 

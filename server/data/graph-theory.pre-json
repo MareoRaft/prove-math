@@ -310,9 +310,20 @@
 	"name": "Brook's theorem",
 	"weight": 8,
 	"type": "thm",
-	"content": "Consider any connected multigraph $G$.  If it is complete or an odd cycle, then $\chi(G) = \delta(G)+1$;  otherwise, $\chi(G) \leq \delta(G)$.",
-	"intuition": "Except for two special cases, the chromatic number of a connected graph is at most its maximum degree!",
+	"content": "Consider any multigraph $G$.  If it is complete or an odd cycle, then $\chi(G) = \Delta(G)+1$;  otherwise, $\chi(G) \leq \Delta(G)$.",
+	"intuition": "Except for two special cases, the chromatic number of a graph is at most its maximum degree!",
 }
+
+{
+	"name": "",
+	"weight": 7,
+	"type": "thm",
+	"content": "In every simple graph $G$, $\Delta(G) \leq \chi'(G) \leq \Delta(G)+1$.",
+	"intuition": "The minimum number of colors necessary to color the edges of a simple graph (with no two edges of the same color adjacent to each other) is less than or equal to the maximum degree of $G$ plus $1$.",
+}
+
+
+
 
 {
 	"name": "",
@@ -451,13 +462,13 @@
 
 {//1c
 	"weight": 2,
-	"exercise": "An example of a simple graph $G$ where $\chi(G)>2\delta(G)$ is...",
+	"exercise": "An example of a simple graph $G$ where $\chi(G)>2\Delta(G)$ is...",
 	"example": "The trivial graph.",
 }
 
 {//1d
 	"weight": 2,
-	"exercise": "An example of a simple graph $G$ where $\delta(G)=2\chi(G)$ is...",
+	"exercise": "An example of a simple graph $G$ where $\Delta(G)=2\chi(G)$ is...",
 	"example": "A star with $4$ leaves.",
 }
 
@@ -682,7 +693,7 @@
 	"weight": 4,
 	"type": "def",
 	"content": "Given a poset $(P,<)$, a __chain__ is a sequence of elements $p_0<p_1<<<$.",
-	"intuition": "A chain is a sequence of elements of $P$ that form a linear order under the same ordering $<$ as the poset.",
+	"intuition": "A chain is a sequence of elements of $P$ that form a linear order under the same ordering $<$ as the poset.  Be careful!  A chain need not be a sequence of successors.  It is okay to jump over elements.",
 }
 
 {
@@ -729,10 +740,10 @@
 
 {// 2
 	"weight": 2,
-	"exercise": "Prove that for all $n$, $K_n$ has a red-blue edge coloring with an equal number of red and blue edges such that there are at least $\frac{n!}{2^{n-1}}$ blue Hamiltonian paths.",
+	"exercise": "Prove that for all $n$, $K_n$ has a red-blue edge coloring with at most $\frac{n!}{2^{n-1}}$ monochromatic Hamiltonian paths.",
 	"proof": {
 		"type": "probabilistic method",
-		"content": "The probability of any single edge being blue is $\frac12$.\n\nAlso, take note that $K_n$ has exactly $n!$ possible Hamiltonian paths.\n\nLet $X$ be the number of blue Hamiltonian paths.  Then the expected value of $X$ is\n\n$E[X] = E[X_1+X_2+++X_{n!}]$\n\nwhere $X_k$ is $1$ if Hamiltonian path $k$ is all blue, and $0$ otherwise.  Due to the linearity of expectation, we have that\n\n$E[X] = E[X_1]+E[X_2]+++E[X_{n!}]$\n\nLet's calculate $E[X_k]$.  Hamiltonian path $k$ has $n-1$ edges, each with a probability of $\frac12$ of being blue.  Therefore, we expect Hamiltonian path $k$ to be all blue at least $\left(\frac12\right)^{n-1}$ of the time.  That is, $E[X_k] = \left(\frac12\right)^{n-1}$.\n\nThis is true for any value of $k$ from $1$ to $n!$, so we have that\n\n$E[X] = \left(\frac12\right)^{n-1}+\left(\frac12\right)^{n-1}+++\left(\frac12\right)^{n-1}$\n\n$E[X] = n!\left(\frac12\right)^{n-1}\n\n$E[X] = \frac{n!}{2^{n-1}}$.\n\nBecause the expected value is this amount, there must be at least one equal red-blue edge coloring of $K_n$ that has at least $\frac{n!}{2^{n-1}}$ blue Hamiltonian paths.",
+		"content": "The probability of any single edge being blue is $\frac12$.\n\nAlso, take note that $K_n$ has exactly $\frac{n!}{2}$ possible Hamiltonian paths.\n\nLet $X$ be the number of monochromatic Hamiltonian paths.  Then the expected value of $X$ is\n\n$E[X] = E[X_{1_r}+X_{1_b}+X_{2_r}+X_{2_b}+++X_{\frac{n!}{2}_r}+X_{\frac{n!}{2}_b}]$\n\nwhere $X_{k_b}$ is $1$ if Hamiltonian path $k$ is all blue, and $0$ otherwise.  Due to the linearity of expectation, we have that\n\n$E[X] = E[X_{1_r}]+E[X_{1_b}]+E[X_{2_r}]+E[X_{2_b}]+++E[X_{\frac{n!}{2}_r}]+E[X_{\frac{n!}{2}_b}]$\n\nLet's calculate $E[X_{k_b}]$.  Hamiltonian path $k$ has $n-1$ edges, each with a probability of $\frac12$ of being blue.  Therefore, we expect Hamiltonian path $k$ to be all blue at least $\left(\frac12\right)^{n-1}$ of the time.  That is, $E[X_k] = \left(\frac12\right)^{n-1}$.\n\nThis is true for every value of $k$ regardless of whether it is red or blue, so we have that\n\n$E[X] = n!E[X_{k_b}]$\n\n$E[X] = n!\left(\frac12\right)^{n-1}\n\n$E[X] = \frac{n!}{2^{n-1}}$.\n\nBecause the expected value is this amount, there must be at least one red-blue edge coloring of $K_n$ that has at most $\frac{n!}{2^{n-1}}$ monochromatic Hamiltonian paths.",
 	},
 }
 
@@ -787,6 +798,60 @@
 	"content": "Given a game, the __Sprague-Grundy Function__ is a function $f:{\text{positions}}\to \mathbb{N}$.  Given the directed acyclic graph of positions, the Sprague-Grundy Function is recursively defined from the sinks as $f(v)$ equals the smallest natural number that is not in $\{f(t)|\text{t is a successor of v}\}$.",
 }
 
+// HW 20
+{// 1 a
+	"weight": 1,
+	"type": "exercise",
+	"content": "Give examples of a poset whose longest chain is exactly twice the size of its largest antichain.",
+	"example": "<img9>",
+	"example": "<img10>",
+}
+
+{// 1 b
+	"weight": 1,
+	"type": "exercise",
+	"content": "Give examples of a poset with a maximum element but no minimum element.",
+	"counterexample": "$(\mathbb{N}, <)$ is incorrect because $0$ is a minimum element.  It is also incorrect because there is no maximum element.",
+}
+
+{// 1 c definition
+	"type": "def",
+	"content": "Given a poset $(P,<)$, a __rank function__ is a function $r:P\to\mathbb{N}$ such that\n\n  1. If $x$ is a successor of $y$, then $r(x) = r(y)+1$.\n  2. If $x>y$, then $r(x)>r(y)$.",
+	"note": "There are posets for which no rank function exists.",
+}
+
+{// 1 c
+	"weight": 1,
+	"type": "exercise",
+	"content": "Give examples of a poset that has no rank function.",
+	"example": "The poset <img11> has no rank function.  If there was a rank function, then the minimum element $a$ would get the minimum value.  WLOG, $r(a)=0$.  Both $b$ and $c$ are successors of the minimum element, so $r(b)=1$ and $r(c)=1$.  Element $c$ is a successor of $b$, so $r(c)=r(b)+1=1+1=2$.  The function $r$ assigns both $1$ and $2$ to $c$, which contradicts the definition of a function.  Therefore, no such rank function exists.",
+}
+
+{// 2 theorem
+	"name": "Dilworth's theorem",
+	"weight": 4,
+	"type": "thm",
+	"content": "For every poset $(P,<)$, the largest antichain has size equal to the minimum number of chains of all partitions of $P$ into chains.",
+	"intuition": "Take any poset $(P,<)$.  Look at every possible partition of $P$ where each part must be a chain.  Each partition has a certain number of chains, and we want the smallest possible number of chains.  It turns out that that number is equal to the size of the largest antichain of $(P,<)$.",
+}
+
+{// 2 a b
+	"weight": 1,
+	"type": "exercise",
+	"content": "Consider the boolean lattice $B_4$, and create the poset $(B_4,\subset)$ using strict set inclusion.  The size of a largest antichain is [[$6$]].  Find a partition of $B_4$ into $m$ (disjoint) chains, where $m$ is the minimum possible number of chains.  The value of $m$ is [[$6$]].  This is an example of [[Dilworth's]] theorem.",
+}
+
+{// 3 definition
+	"type": "def",
+	"content": "Given the boolean lattice $B_n$, the elements of $B_n$ with exactly $k$ elements form the set __level $k$__ of $B_n$.",
+}
+
+{// 3 theorem
+	"name": "Erdős–Ko–Rado theorem",
+	"weight": 4,
+	"type": "thm",
+	"content": "Let $k<\frac{n}{2}$ for $k,n \in \mathbb{N}$.  If $A$ is a set of subsets of $[n]$ such that each subset is of size $k$ and each pair of subsets intersects, then the maximum size of $A$ is $\binom{n-1}{k-1}$.",
+}
 
 
 
