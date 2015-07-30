@@ -83,12 +83,11 @@ function add_proof(){
     var proof_type=document.getElementById("ProofType");
     var selectedValue = proof_type.options[proof_type.selectedIndex].value;
     var proofs = $('#Proofs').val();
-    //ws.send(JSON.stringify({"type":"Type 1", "content":proofs}));
     if(document.getElementById('inputList').innerHTML==""){
-       $('#inputList').append(JSON.stringify({"type":selectedValue, "content":proofs}));
+		$('#inputList').append(JSON.stringify({"type": selectedValue, "content": proofs}));
     }
     else{
-    $('#inputList').append(","+JSON.stringify({"type":selectedValue, "content":proofs}));
+		$('#inputList').append(","+JSON.stringify({"type":selectedValue, "content":proofs}));
 	}
 }
 
@@ -101,11 +100,11 @@ function send_node_info(){
 	    var counterexamples = $('#Counterexamples').val()
 	    var intuition = $('#Intuition').val()
 	    var notes = $('#Notes').val()
-	    var importance=document.getElementById('Weight').value
+	    var importance = document.getElementById('Importance').value
 
 	    var radios = document.getElementsByName('type');
 	    var type = check_radio_button(radios).value;
-	    var proofs="["+document.getElementById('inputList').innerHTML+"]";
+	    var proofs = "["+document.getElementById('inputList').innerHTML+"]";
 
 	    ws.send(importance)
 	    if(type === "Theorem"){
@@ -121,7 +120,7 @@ function send_node_info(){
 	    	"content": content,
 	    	"type": type,
 	    	"proofs": clean_proofs,
-		"importance": importance,
+			"importance": importance,
 	    	"examples": examples,
 	    	"counterexamples": counterexamples,
 	    	"intuition": intuition,
