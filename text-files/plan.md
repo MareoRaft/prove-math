@@ -1,3 +1,9 @@
+1. Make sure JSON is failing when odd characters like ü appear.  Only alphabet characters, right??.  We could replace \w with a-zA-Z or something...
+
+
+---------------------
+
+
 1. Understand the proper way to add the functionalities we want to NetworkX.  Here is an idea:
 in a seperate file: have the "def: " methods listed that are new methods to add to a Graph.  The code cannot run on it's own.  We will also have one of these files for DiGraph, and possible something for a DAG...  Then whenever NetworkX is updated, the contents of these files will be combined into the Graph, DiGraph and other class definitions of NetworkX itself.
 
