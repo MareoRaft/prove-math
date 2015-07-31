@@ -74,23 +74,12 @@ class SocketHandler (WebSocketHandler):
 		print('got message: ' + message)
 		if message.startswith('{'):
 			x=json.loads(message)
-			empty_keys=[]
-			for key, value in x.items():
-				if value=="":
-					empty_keys.append(key)
-
-			for key in empty_keys:
-				print(key)
-				del(x[key])
-			
 			if 'importance' in x.keys():
-				print(x['importance'])
 				x['importance']=int(x['importance'])
 
 			if x['type']=='Definition':
 				new_node=Definition(x)
-			elif x['type']=='Theorem':
-				
+			elif x['type']=='Theorem':	
 				new_node=Theorem(x)
 			elif x['type']=='Exercise':
 				new_node=Exercise(x)

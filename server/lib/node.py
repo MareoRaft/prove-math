@@ -87,6 +87,14 @@ class Node:
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
+		empty_keys=[]
+		for key, value in dic.items():
+			if value=="":
+				empty_keys.append(key)
+
+		for key in empty_keys:
+			del(dic[key])
+
 		#self.type = move_attribute(dic, {'type'}, strict=False)
 		#if self.type is None:
 		#	self.type = find_key(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})

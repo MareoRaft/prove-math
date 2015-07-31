@@ -62,13 +62,14 @@ ws.onmessage = function(event){
 	var unbundled = JSON.parse(event.data)
 	var graph = unbundled
 	// alert('graph is: '+graph)
-	processNewGraph(graph)
+	//d3AndSVG.processNewGraph(graph)
 }
 
 
 $('#test').click(hello)
 $('#AddProof').click(add_proof)
 $('#Submit').click(send_node_info)
+
 
 
 
@@ -83,16 +84,17 @@ function add_proof(){
     var proof_type=document.getElementById("ProofType");
     var selectedValue = proof_type.options[proof_type.selectedIndex].value;
     var proofs = $('#Proofs').val();
-    if(document.getElementById('inputList').innerHTML==""){
-		$('#inputList').append(JSON.stringify({"type": selectedValue, "content": proofs}));
+    // To Fix so not to repeat if statement for comma
+    if(document.getElementById('inputList').innerHTML!==""){
+		$('#inputList').append(",");
     }
-    else{
-		$('#inputList').append(","+JSON.stringify({"type":selectedValue, "content":proofs}));
-	}
+
+    $('#inputList').append(JSON.stringify({"type":selectedValue, "content":proofs}));
 }
 
 function send_node_info(){
 	try{
+	    //To Fix
 	    var name = $('#Name').val()
 	    var plural = $('#Plural').val()
 	    var content = $('#Content').val()
