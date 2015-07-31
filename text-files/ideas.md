@@ -13,3 +13,4 @@ The quiz will REMEMBER what it has quizzed you on in the past, so that it can TA
 9. make SVG nodes refresh so that they are ontop of links again (maybe when making new links, refresh the sources and targets as opposed to refreshing ALL nodes)  use this if it helps: d3.selection.prototype.moveToFront = function() { return this.each(function() { this.parentNode.appendChild(this); }); }; And then you can say selection.moveToFront()
 source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
 10. we can give definitions WEIGHTS depending on how many things are dependent on them!  Or even better,  definitions can be given a weight based on how much of a payoff they are to YOU.  Maybe not.  That's what the cloud is supposed to do.  Okay, a static weight based on how many things use them.
+11. add some window.onerror thing to JS which will tell me which assertion failed in check-types

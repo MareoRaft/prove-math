@@ -968,10 +968,112 @@
 }
 // 7 b and c ommitted because seeing the solution is too easy (without using generating functions)
 
-{//8 a
-	"weight": ,
-	"exercise": "",
+{//8 a b c d
+	"weight": 3,
+	"exercise": "Josef and Doron play a game with two piles of chips.  They alternate taking turns, and each turn consists of taking a positive integer of chips from exactly one of the piles.  The player who takes the last remaining chip loses.  Let $a$ represent the number of chips in the first pile and $b$ represent the number of chips in the second pile.\n\n  The final P-position is [[$a=0$ and $b=1$, or vice versa.  The next player to play will lose]].  The N-positions immediately preceding this P-position are [[$a=0$ and $b>1$, or vice versa.  Also, $a\geq1$ and $b=1$, and vice versa.  In these positions, the next player to move can force the next position to be the final P-position]].  The only positions left are two-pile positions.\n\nThe position where $a=2$ and $b=2$ is a [[P-position because no matter how the player plays, they put the piles into one of the previously described N-positions]].\n\nAll remaining P-positions are when [[$a=b>1$.  When $a=b=2$, this is just the previously described P-position.  When $a=b>2$, any move will cause $a \neq b$ and $a,b>1$]].  All remaining N-positions are when [[$a \neq b$ and $a,b>1$.  The next player can always take chips away from the larger pile so that $a=b>1$ is the result (the previously described P-positions)]].",
 }
+
+{//9 a
+	"weight": 2,
+	"exercise": "Prove that for any $k,l \in \mathbb{N}$, the Ramsey number $R(k,l,2)$ is equal to $R(k,l)$.  Prove that $R(3,3,3) \leq 17$.",
+}
+
+{//10 a b c
+	"weight": 3,
+	"exercise": "Let $\Omega$ be a set.  For any $m \in \mathbb{N}^+$, let $A_1,A_2,,,A_m$ be subsets of $\Omega$ of size $n$.  If the elements of $\Omega$ are colored red or blue randomly (with equal probability), the probability that $A_1$ is monochromatic is [[$\left(\frac12\right)^{n-1}$ or $\frac1{2^{n-1}}$]].  The expected number of $A$s that are monochromatic is [[$m\left(\frac12\right)^{n-1}$ or $\frac{m}{2^{n-1}}$]].  Prove that if $m<2^{n-1}$, then there is a way to color the elements of $\Omega$ red and blue so that none of the $A$s is monochromatic.",
+}
+
+{//11 b thm
+	"weight": 4,
+	"thm": "$G$ is a connected cyclic multigraph.  No vertex induced subgraph of $G$ is isomorphic to <img19> or <img20>.  Then $G$ is Hamiltonian.",
+}
+// end of final
+
+//review for final
+{// 1 a
+	"weight": 1,
+	"exercise": "The Peterson graph has [[$12$]] cycles of length $5$.",
+}
+
+{// 1 b
+	"weight": 1,
+	"exercise": "The Peterson graph has [[$10$]] cycles of length $6$.",
+}
+
+{// 1 c
+	"weight": 2,
+	"exercise": "The Peterson graph has [[$240$]] Hamiltonian paths.",
+}
+
+{//2 b
+	"weight": 1,
+	"exercise": "The order of a $3$-dimensional hypercube is [[$2^3$ or $8$]].",
+}
+
+{//2 c
+	"weight": 2,
+	"exercise": "The size of a $4$-dimensional hypercube is [[$32$]].",
+}
+
+{//2 e thm
+	"weight": 3,
+	"thm": "For all $n \in \mathbb{N}$, the chromatic number of an $n$-dimensional hypercube is $2$.",
+}
+
+{//2 e thm
+	"weight": 3,
+	"thm": "The edge chromatic number of an $n$-dimensional hypercube is $n$.",
+}
+
+{// thm
+	"weight": 3,
+	"thm": "For all $n \in \mathbb{N}$, the $n$-dimensional hypercube is bipartite.",
+}
+
+{//2 g
+	"weight": 3,
+	"thm": "For all $n \in \mathbb{N}$, the $n$-dimensional hypercube is Hamiltonian.",
+}
+
+{//2 h thm
+	"weight": 3,
+	"thm": "For every $n\in\mathbb{N}$, the $n$-dimensional hypercube is Eulerian iff $n$ is even.",
+}
+
+{//3 thm
+	"weight": 3,
+	"thm": "For any $b\in\mathbb{N}$, the Ramsey number $R(b,b)$ is greater than $2^{\frac b2 - 1}$.",
+}
+
+{// 4
+	"weight": 1,
+	"exercise": "For any $k\in\mathbb{N}$, An upper bound for the Ramsey number $R(k,k)$ is [[$2^k$, but there are even better upper bounds]]!",
+}
+
+{//5 a
+	"weight": 1,
+	"exercise": "Give an example of a graph and a vertex cover that does *not* contain a minimum vertex cover.",
+	"example": "Consider any star $S_n$ for $n \geq 2$. The set containing all vertices except the center is a vertex cover.  It does not contain a minimum vertex cover, because there is only one minimum vertex cover, and it is the set containing the center.",
+}
+
+{//5 b
+	"weight": 2,
+	"exercise": "Give an example of a graph and a matching that is *not* a submatching of a maximum matching.",
+	"example": "Consider a path of odd length.  Label the edges with the positive integers from left to right.  The edges with odd labels form the only maximum matching.  The edges with even labels form a matching that is *not* contained in the maximum matching.",
+}
+
+{// 6 thm
+	"weight": 4,
+	"thm": "Every tree has at most $1$ perfect matching.",
+}
+
+{// 7
+	"weight": 3,
+	"exercise": "Give an example of a simple connected non-Hamiltonian graph that contains $2$ disjoint perfect matchings.",
+	"example": "The graph defined by <img21> is simple, connected, and has no Hamiltonian cycle.  It has a perfect matching defined by the bolded edges in <img22>, and another disjoint perfect matching defined by the bolded eges in <img23>.",
+}
+
+
 
 
 
@@ -1322,7 +1424,7 @@
 }
 
 {
-	"def":"A __star__ is a bigraph of the form $K_{1,t}.",
+	"def":"A __star__, denoted $S_t$, is a bigraph of the form $K_{1,t}.",
 	"note":"Under this definition, the trivial graph is not a star.",
 }
 
