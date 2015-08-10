@@ -1,0 +1,33 @@
+advice from Saks
+=====================
+
+show that we can write good proofs & defs:
+sample proofs
+sample defs
+
+math is already online.  what are we adding?
+structure
+
+easiest for project:
+linear algebra
+abstract algebra
+intro analysis
+
+for getting independent study:
+a prof. you already know well
+
+
+advice from advisor Dr. Butler
+==================================
+ask a professor that you already have aquiantance with:
+
+algebra profs:
+--------------
+Borisov
+Wyble
+Yi-Zhi Huang
+Retakh
+
+Analysis profs:
+---------------
+post doc who did Complex Analysis independent study?

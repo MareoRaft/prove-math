@@ -1,10 +1,11 @@
-#7/14 Need to fix dunderscore issue
 ##################################### TODO ####################################
 #Reg expressions for processing definition, name, etc..
 #Stricter Reg Expressions with failure at else
 
 # MathJax/Node.js, run bash commands from python script, export json
 # people o-auth, login info
+
+#7/14 Need to fix dunderscore issue
 
 ################################### IMPORTS ###################################
 # standard library:
@@ -19,7 +20,7 @@ import json
 #Written as from lib import helper
 from lib import helper
 
-################################### HELPERS ###################################
+############################### INTERNAL HELPERS ###############################
 def to_bash():
 	# include commands here to be executed in bash
 	bash_out = subprocess.check_output('ls; cd; ls', shell=True)
@@ -32,7 +33,7 @@ def move_attribute(dic, aliases, strict=True):
 			del dic[key]
 			return value
 	if strict:
-		raise KeyError('Could not find any of the following keys in the Node input: ' + str(aliases))
+		raise KeyError('Could not find any of the following keys: '+str(aliases)+' in the soon-to-be Node '+str(dic))
 	else:
 		return None
 
@@ -46,9 +47,8 @@ def is_content_clean(value):
 		for el in value:
 			assert is_content_clean(el)
 	if type(value) is str:
-		assert len(value) >= 1 # arbitary length to make sure person actually put some content in
-		#assert value[-1] is '.' # make sure they end in period.  in future, support colon followed by a list without period?
-		#assert is_capitalized(value)
+		assert len(value) >= 15 # arbitary length to make sure person actually put some content in
+		assert is_capitalized(value) # we need to move this ONLY to the things that need to be capitalized (for example, not names)
 		return True
 	return True
 
@@ -70,13 +70,33 @@ def find_key(dic, keys):
 	for key in dic:
 		if key in keys:
 			return key
-	raise KeyError('Could not find any of the following keys in the Node input: ' + keys)
+	raise KeyError('Could not find any of the following keys in the Node input: ' + str(keys))
 
 def dunderscore_count(string):
 	dunderscore_list = re.findall(r'__', string)
 	return len(dunderscore_list)
 
+############################### EXTERNAL HELPERS ###############################
+def create_appropriate_node(dic):
+	# for writers that use shortcut method, we must seek out the type:
+	if not 'type' in dic:
+		dic['type'] = find_key(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
+		dic['description'] = move_attribute(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
 
+	if dic['type'] in {'definition', 'defn', 'def'}:
+		return Definition(dic)
+	elif dic['type'] in {'theorem', 'thm'}:
+		return Theorem(dic)
+	elif dic['type'] == 'exercise':
+		return Exercise(dic)
+	else:
+		raise ValueError('Cannot detect type of node.  "type" key has value: ' + dic['type'])
+
+def find_node_from_id(nodes, ID):
+	for node in nodes:
+		if node._id == ID:
+			return node
+	raise Exception('Could node find node with ID: ' + ID + ' within the nodes: ' + nodes)
 
 
 #################################### MAIN #####################################
@@ -87,61 +107,27 @@ class Node:
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
-		empty_keys=[]
+		empty_keys = []
 		for key, value in dic.items():
-			if value=="":
+			if value == "":
 				empty_keys.append(key)
-
 		for key in empty_keys:
-			del(dic[key])
+			del dic[key]
 
-		#self.type = move_attribute(dic, {'type'}, strict=False)
-		#if self.type is None:
-		#	self.type = find_key(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
-		self.description = move_attribute(
-			dic,
-			{'description', 'content'}
-		)
-		self.importance = move_attribute(dic, {'importance', 'weight'})
+		self.description = move_attribute(dic, {'description', 'content'}, strict=True)
+		self.dependencies = move_attribute(dic, {'dependencies'}, strict=False)
+		self.importance = move_attribute(dic, {'importance', 'weight'}, strict=False)
 		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
 		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
-		self.counterexamples=move_attribute(dic,{'counterexample','counterexamples','counter_example','counter_examples'},strict=False)
-		self.notes=move_attribute(dic,{'note','notes'},strict=False)
-		if self.type is 'exercise':
-			self.name = move_attribute(dic, {'name'},strict=False)
-		else:
-			self.name = move_attribute(dic, {'name'})
-
-
+		self.counterexamples=move_attribute(dic, {'counterexample', 'counterexamples', 'counter example', 'counter examples'}, strict=False)
+		self.notes = move_attribute(dic, {'note', 'notes'}, strict=False)
+		self.name = move_attribute(dic, {'name'}, strict=False)
 
 	def as_json(self): # returns json version of self
-		return self.__dict__
+		return json.dumps(self.__dict__)
 
 	def __str__(self):
-		msg=""
-		if self.intuitions:
-			for intuition in self.intuitions:
-				msg = msg + intuition + "\n"
-		if self.examples:
-			for example in self.examples:
-				msg = msg + example + "\n"
-		if self.counterexamples:
-			for counter in self.counterexamples:
-				msg=msg+counter+"\n"
-		if self.notes:
-			for single_note in self.notes:
-				msg=msg+ single_note+"\n"
-
-		if self.type=="definition":
-			first_part = "(%s,%s,%s,%s,%d)\n" % (self.name, self.plural, self.type, self.description, self.importance)
-
-		else:
-			first_part = "(%s,%s,%s,%d)\n" % (self.name,self.type,self.description,self.importance)
-			if self.proofs:
-				for single_proof in self.proofs:
-					for x in single_proof:
-						msg=msg+str(x)+": "+single_proof[x]+"\n"
-		return first_part+msg
+		return str(self.__dict__)
 
 	def __eq__(self,other):
 		if self.name != other.name:
@@ -173,7 +159,7 @@ class Node:
 	def name(self, new_name):
 		if new_name:
 			assert is_capitalized(new_name)
-			assert dunderscore_count(new_name)==0;
+			assert dunderscore_count(new_name) == 0
 			self._name = check_type_and_clean(new_name, str)
 		else:
 			self._name= check_type_and_clean(new_name, type(None))
@@ -199,9 +185,17 @@ class Node:
 		return self._importance
 	@importance.setter
 	def importance(self, new_importance):
-		clean_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
-		assert clean_importance >= 1 and clean_importance <= 10
-		self._importance = clean_importance
+		if new_importance is not None:
+			new_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
+			assert new_importance >= 1 and new_importance <= 10
+		self._importance = new_importance
+
+	@property
+	def weight(self):
+		pass
+	@weight.setter
+	def weight(self, new_weight):
+		raise Exception('We are not using "weight" anymore.  We are using "importance".')
 
 	@property
 	def description(self):
@@ -209,10 +203,6 @@ class Node:
 	@description.setter
 	def description(self, new_description):
 		clean_description = check_type_and_clean(new_description, str)
-		if self.type=='definition':
-			assert dunderscore_count(clean_description) >=2 # need this assertion for definitions!!!!
-		else:
-			assert dunderscore_count(clean_description)==0
 		assert is_content_clean(clean_description)
 		self._description = clean_description
 
@@ -222,32 +212,31 @@ class Node:
 	@intuitions.setter
 	def intuitions(self, new_intuition):
 		assert is_content_clean(new_intuition)
-		cleaned_intuition = check_type_and_clean(new_intuition, str, list_of=True)
-		for x in cleaned_intuition:
-			assert dunderscore_count(x)==0
-		self._intuitions=cleaned_intuition
+		clean_intuitions = check_type_and_clean(new_intuition, str, list_of=True)
+		for x in clean_intuitions:
+			assert dunderscore_count(x) == 0
+		self._intuitions = clean_intuitions
 
-	def append_intuition(self, add_intuition):
-		assert is_content_clean(add_intuition)
-		assert dunderscore_count(add_intuition)==0
-		self._intuition.append(add_intuition)
+	@property
+	def dependencies(self):
+		return self._dependencies
+	@dependencies.setter
+	def dependencies(self, new_dependencies):
+		cleaned_dependencies = check_type_and_clean(new_dependencies, str, list_of=True)
+		for d in cleaned_dependencies:
+			assert dunderscore_count(d) == 0
+		self._dependencies = cleaned_dependencies
 
 	@property
 	def examples(self):
 		return self._examples
-
 	@examples.setter
 	def examples(self, new_examples):
 		assert is_content_clean(new_examples)
 		cleaned_examples = check_type_and_clean(new_examples, str, list_of=True)
 		for x in cleaned_examples:
-			assert dunderscore_count(x)==0
-		self._examples=cleaned_examples
-
-	def append_example(self, add_example):
-		assert is_content_clean(add_example)
-		assert dunderscore_count(add_example)==0
-		self._examples.append(add_example)
+			assert dunderscore_count(x) == 0
+		self._examples = cleaned_examples
 
 	@property
 	def counterexamples(self):
@@ -257,14 +246,8 @@ class Node:
 		assert is_content_clean(new_examples)
 		cleaned_counterexamples = check_type_and_clean(new_examples, str, list_of=True)
 		for x in cleaned_counterexamples:
-			assert dunderscore_count(x)==0
-		self._counterexamples=cleaned_counterexamples
-
-	def append_counterexample(self, add_counterexample):
-		assert is_content_clean(add_counterexample)
-		assert dunderscore_count(add_counterexample)==0
-		self._examples.append(add_counterexample)
-
+			assert dunderscore_count(x) == 0
+		self._counterexamples = cleaned_counterexamples
 
 	@property
 	def notes(self):
@@ -273,96 +256,103 @@ class Node:
 	def notes(self, new_notes):
 		assert is_content_clean(new_notes)
 		cleaned_notes = check_type_and_clean(new_notes, str, list_of=True)
-		for x in cleaned_notes:
-			assert dunderscore_count(x)==0
-		self._notes=cleaned_notes
-
-	def append_note(self, add_note):
-		assert is_content_clean(add_note)
-		assert dunderscore_count(add_note)==0
-		self._notes.append(add_note)
+		# notes may mention a synonym, so we will allow dunderscores (open to discussion)
+		self._notes = cleaned_notes
 
 
 class Definition(Node):
 
 
 	def __init__(self,dic):
+		super().__init__(dic)
 		self.type = "definition"
-		super(Definition, self).__init__(dic)
 		self.plural = move_attribute(dic, {'plural', 'pl'}, strict=False)
-
+		if self.importance is None:
+			self.importance = 4
+		assert dunderscore_count(self.description) >=2
 
 	@property
 	def plural(self):
 		return self._plural
-
 	@plural.setter
 	def plural(self, new_plural):
 		if new_plural is None:
 			self._plural = None
 		else:
 			clean_plural = check_type_and_clean(new_plural, str)
-			assert dunderscore_count(clean_plural)>=2
+			assert dunderscore_count(clean_plural) >= 2
 			self._plural = clean_plural
 
+	@Node.description.setter
+	def description(self, new_description):
+		assert dunderscore_count(new_description) >= 2
+		Node.description.fset(self, new_description)
 
-class Theorem(Node):
+
+class PreTheorem(Node):
+
+
 	def __init__(self, dic):
-		self.type = "theorem"
-		super(Theorem, self,).__init__(dic)
+		super().__init__(dic)
 		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
-
-
-	#Override the importance setter for specific Theorem importance
-	@property
-	def importance(self):
-		return self._importance
-
-	@importance.setter
-	def importance(self, new_importance):
-		clean_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
-		assert clean_importance >= 3 and clean_importance <= 10
-		self._importance = clean_importance
+		# theorems and exercises CANNOT have plurals: (but since we only created plural for Definitions, we shouldn't need this as long as there is a way to block undefined properties (see other Stack Overflow question))
+		if 'plural' in self.__dict__:
+			raise KeyError('Theorems cannot have plurals.')
 
 	@property
 	def proofs(self):
 		return self._proofs
-
 	@proofs.setter
-	def proofs(self,new_proofs):
-		assert is_content_clean(new_proofs)
-		self._proofs = check_type_and_clean(new_proofs, dict, list_of=True)
+	def proofs(self, new_proofs):
+		good_type_proofs = check_type_and_clean(new_proofs, dict, list_of=True)
+		assert is_content_clean(good_type_proofs)
+		for proof in good_type_proofs:
+			print('proof is '+str(proof))
+			proof['description'] = move_attribute(proof, {'description', 'content'}, strict=True)
+			assert dunderscore_count(proof['description']) == 0
+			assert 'type' in proof
+			proof['type'] = check_type_and_clean(proof['type'], str, list_of=True)
+		self._proofs = good_type_proofs
 
-	def append_proof(self, add_proof): # these need type checking too
-		self._proofs.append(add_proof)
+	@Node.description.setter
+	def description(self, new_description):
+		assert dunderscore_count(new_description) == 0
+		Node.description.fset(self, new_description)
 
 
-class Exercise(Node):
+class Theorem(PreTheorem):
+
+
 	def __init__(self, dic):
-		self.type = "exercise"
-		super(Exercise, self).__init__(dic)
-		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
+		super().__init__(dic)
+		self.type = "theorem"
+		if self.importance is None:
+			self.importance = 6
+		assert self.name is not None
 
-	@property
-	def importance(self):
-		return self._importance
-
-	@importance.setter
+	@PreTheorem.importance.setter
 	def importance(self, new_importance):
-		clean_importance = check_type_and_clean(new_importance, int)
-		assert clean_importance >= 1 and clean_importance <= 3
-		self._importance = clean_importance
+		assert new_importance is None or new_importance >= 3
+		PreTheorem.importance.fset(self, new_importance)
+
+	@PreTheorem.name.setter
+	def name(self, new_name):
+		assert new_name is not None
+		PreTheorem.name.fset(self, new_name)
 
 
-	@property
-	def proofs(self):
-	       	return self._proofs
+class Exercise(PreTheorem):
 
-	@proofs.setter
-	def proofs(self,new_proofs):
-	       	assert is_content_clean(new_proofs)
-	       	self._proofs = check_type_and_clean(new_proofs, dict, list_of=True)
-	def append_proof(self, add_proof): # these need type checking too
-		self._proofs.append(add_proof)
+
+	def __init__(self, dic):
+		super().__init__(dic)
+		self.type = "exercise"
+		if self.importance is None:
+			self.importance = 1
+
+	@PreTheorem.importance.setter
+	def importance(self, new_importance):
+		assert new_importance <= 3
+		PreTheorem.importance.fset(self, new_importance)
 
 

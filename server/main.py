@@ -13,11 +13,10 @@ from tornado.web import Application
 #from tornado.log import enable_pretty_logging
 
 from lib import helper
-from lib.node import Theorem
-from lib.node import Definition
-from lib.node import Exercise
-from lib.mongo import  Mongo
+from lib.mongo import Mongo
 import json
+import networkx as nx
+from lib.networkx.classes import dag
 
 ################################# HELPERS #####################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
@@ -70,23 +69,19 @@ class SocketHandler (WebSocketHandler):
 
 
 	def on_message(self, message):
-		a=Mongo("test","provemath")
 		print('got message: ' + message)
-		if message.startswith('{'):
-			x=json.loads(message)
-			if 'importance' in x.keys():
-				x['importance']=int(x['importance'])
-
-			if x['type']=='Definition':
-				new_node=Definition(x)
-			elif x['type']=='Theorem':	
-				new_node=Theorem(x)
-			elif x['type']=='Exercise':
-				new_node=Exercise(x)
-			else:
-				return
-			print(new_node)
-			a.insert_single(new_node.__dict__)
+		# ALL messages should come in as json strings
+		message = json.loads(message)
+		# ALL messages have a command that tells you what to do
+		# if the command is to add a new theorem, do it:
+		if message.command == 'new_node':
+			dic = message.dic
+			if 'importance' in dic.keys():
+				dic['importance'] = int(dic['importance'])
+			new_node = lib.node.create_appropriate_node(dic)
+			print('new node made.  looks like: '+new_node+'.  Now time to put it into the DB...')
+			global our_mongo
+			our_mongo.insert_single(new_node.__dict__)
 		# This can be placed in a try/exception block
 		# try:
 		#except Exception as e:
@@ -95,7 +90,6 @@ class SocketHandler (WebSocketHandler):
 
 	def on_close(self):
 		print('websocket closed')
-
 
 
 
@@ -113,13 +107,26 @@ def make_app():
 	)
 
 
-def main():
-
+def make_app_and_start_listening():
 	#enable_pretty_logging()
 	application = make_app()
 	application.listen(80) # by listening on the http port (default for all browsers that i know of), user will not have to type "http://" or ":80" in the URL
 	# other stuff
 	IOLoop.current().start()
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+	# 1. grab nodes from database
+	our_mongo = Mongo("provemath", "nodes")
+	all_nodes = our_mongo.query()
+	# 2. create a networkx graph with the info...
+	our_DAG = nx.DAG
+	our_DAG.add_nodes_from(all_nodes)
+	# ...which requires adding in the edges too!
+	for node in all_nodes:
+		for dependency_id in node.dependencies:
+			dependency = lib.node.find_node_from_id(all_nodes, dependency_id)
+			our_DAG.add_edge(dependency, node)
+
+	make_app_and_start_listening()
+
 

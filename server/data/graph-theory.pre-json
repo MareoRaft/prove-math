@@ -256,7 +256,7 @@
 
 //thms
 {
-	"nickname": "Kirchhoff's Theorem"
+	"nickname": "Kirchhoff's Theorem",
 	"name": "Kirchhoff's matrix tree theorem",
 	"weight": 6,
 	"thm": "The number of spanning trees of a graph is equal to any cofactor of the graph's laplacian.",
@@ -665,6 +665,7 @@
 // end of HW 18
 
 {
+	"name": "some name",
 	"type": "def",
 	"content": "Given a partially ordered set $(P,<)$, two elements $a,b \in P$ are __comparable__ if $a < b$, $a=b$, or $a>b$.",
 }
@@ -1222,7 +1223,7 @@
 }
 
 {
-	"G and H are tournaments on a vertex set V s.t. d_G+(v) = d_H+(v) for all v \in V iff there are a series of triangle direction switches from G to H.",
+	"thm": "Let $G$ and $H$ be tournaments on a vertex set $V$.  Then $d_G+(v) = d_H+(v)$ for all $v \in V$ iff there is a series of triangle direction switches that transforms $G$ to $H$.",
 } // pf algorithm, all vert right side.  pull 1 vert to left side at a time.  each time, fix the edges by letting 3rd vertex be on right side and not caring what happens there.  this works until only 1 vertex left on right.  at that point, all edges across already determined
 
 // come back to 1.4.35
@@ -1259,13 +1260,14 @@
 	"thm":"If a unipathic digraph $U=(V_U,E_U)$ is a subgraph of a transitive round-robin tournament $R=(V_R,E_R)$, then $| E_U |$ is at most $\dfrac{|V_R|^2}4$.",
 }// proven! given unipathic subset of trans tourn, take the leftmost source and it's child tree.  then take the next leftmost source and it's child tree, etc.  Come up w/ equation for upper bound of edges.  find max.
 
-{// 1.4.41
-	"thm":"", //ask komlos
-}// not proven yet! (and all below too)
+// FILL THIS STUFF IN SOME TIME EVENTUALLY:
+// {// 1.4.41
+// 	"thm":"", //ask komlos
+// }// not proven yet! (and all below too)
 
-{
-	1.4.42
-}
+// {
+// 	1.4.42
+// }
 
 // chapter 2
 {

@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+# type 'prove test_JSONRegex.pl' for convenient usage of this script in the command line
 ################################# IMPORTS #####################################
 use strict; use warnings;
 use JSONRegex;
@@ -57,8 +57,14 @@ my @chars = qw(' { p \\" 7 9 % @ ! ~ ` \\\\ \\n \\t \\u9753); # qw performs qq q
 	ok_all_match( \@chars, qr/^$JSONRegex::char$/, 'char' );
 my @nonchars = qw('' {} pp 17 堇 袈 \\ \\\\n \\u975 \\b \\w \\r " \\\\u9999);
 	ok_all_mismatch( \@nonchars, qr/^$JSONRegex::char$/, 'char' );
+my @chars_with_illegal_sloshes_allowed = qw(' { p \\" 7 9 % @ ! ~ ` \\\\ \\n \\t \\u \\i \\p \\y \\7 \\! \\$ \\* \\.);
+	ok_all_match( \@chars_with_illegal_sloshes_allowed, qr/^$JSONRegex::char_with_illegal_sloshes_allowed$/, 'char_with_illegal_sloshes_allowed' );
 
-my @prestrings = (@chars, concat_cartesian_product(\@chars, \@chars), qw[hello 918234 IGI(*&* (*&* 70\\u9988h], 'i have spaces', '');
+my @prestrings = (@chars, concat_cartesian_product(\@chars, \@chars), qw[hello 918234 IGI(*&* (*&* 70\\u9988h],
+	'i have spaces',
+	'',
+	'\\\\in',
+);
 my @strings = map { '"'.$_.'"' } @prestrings;
 	ok_all_match( \@strings, qr/^$JSONRegex::string$/, 'string' );
 my @prenonstrings = qw(\\u98 "); # there were some inconsistent things here: 堇 袈\\ \\b pop∢pop etc
@@ -99,13 +105,15 @@ my @nongobble_strings = (
 
 # non gobble_strings_no_braces ?
 
-my @lines_containing_comment = (
+my @lines_containing_comment_with_illegal_sloshes_allowed = (
 	'this //has',
 	'a // comment!',
 	'"918234 IGI(*&* (*&* 70\\u9988h" and "two" an// yo',
 	'// this is fully commented line',
+	'"i am a string with illedgal sloshes \\i yo" // i\'m a scomment',
+	'"i am a string with illedgal sloshes \\i yo" // i\'m a scomment"',
 );
-	ok_all_match( \@lines_containing_comment, qr/^$JSONRegex::line_containing_comment$/, 'line_containing_comment' );
+	ok_all_match( \@lines_containing_comment_with_illegal_sloshes_allowed, qr/^$JSONRegex::line_containing_comment_with_illegal_sloshes_allowed$/, 'line_containing_comment_with_illegal_sloshes_allowed' );
 my @nonlines_containing_comment = (
 	'this has',
 	'no comment!',
@@ -114,7 +122,7 @@ my @nonlines_containing_comment = (
 	'what " // do you want? "',
 	'what " // do you want? " ok?',
 );
-	ok_all_mismatch( \@nonlines_containing_comment, qr/^$JSONRegex::line_containing_comment$/, 'line_containing_comment' );
+	ok_all_mismatch( \@nonlines_containing_comment, qr/^$JSONRegex::line_containing_comment_with_illegal_sloshes_allowed$/, 'line_containing_comment_with_illegal_sloshes_allowed' );
 
 my @matched_braces = (
 	qw({} {{}} {{{}}} {{}{}} {{{}}{}} {{}{}{}} {{}{{}}{{{}}}{{}}{}}),
@@ -146,4 +154,5 @@ my @noncodes_with_trailing_comma = (
 
 
 
+note("Testing in Perl $]");
 done_testing;

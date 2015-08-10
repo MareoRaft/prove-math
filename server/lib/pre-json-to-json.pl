@@ -28,8 +28,8 @@ my $file_path = $ARGV[0] // die 'You must input a file path argument. For exampl
 if( $file_path !~ /\.pre-json$/ ){ die 'You must input a .pre-json file.' }
 my $input = read_file($file_path);
 
-# 1. All comments will be deleted
-$input =~ s|$JSONRegex::line_containing_comment|$+{PRECOMMENT}|mg;
+# 1. All comments will be deleted, (allowing illegal sloshes in strings)
+$input =~ s|$JSONRegex::line_containing_comment_with_illegal_sloshes_allowed|$+{PRECOMMENT}|mg;
 
 # 2. Look for illegal sloshes in strings: \ followed by anything other than \, ", n, or t
 while( $input =~ s/^($JSONRegex::gobble_mid_strings)$JSONRegex::illegal_slosh/$1\\\\/ ){}

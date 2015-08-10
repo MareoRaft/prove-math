@@ -44,16 +44,12 @@ class Mongo:
     def insert_single(self, dic):
         self.address[self.database][self.collection].insert_one(dic)
 
-    def insert_list(self,list_of_dicts):
+    def insert_list(self, list_of_dicts):
         # Will complain if you attempt to insert duplicates
         self.address[self.database][self.collection].insert_many(list_of_dicts)
 
-    def query(self,dict_fields):
+    def query(self, dict_fields=None):
         results = self.address[self.database][self.collection].find(dict_fields)
-        for x in results:
-            print(x)
-        return results
-            
 
     def delete(self,dict_fields):
 	# This will delete from all fields which match the parameter!!
