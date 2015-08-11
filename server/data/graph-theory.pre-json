@@ -66,9 +66,9 @@
 }
 
 {
-	"definition":"A __graph__ $G$ is a multigraph $G = (V,E)$ where $E$ is a set that contains no loops.",
+	"definition":"A __simple graph__ $G$ is a multigraph $G = (V,E)$ where $E$ is a set that contains no loops.",
 	"note":"Here, $E$ is a set, so multiple edges do not occur either.",
-	"note":"multigraphs are more general than graphs.",
+	"note":"Multigraphs are more general than simple graphs.",
 }
 
 {
@@ -157,7 +157,7 @@
 
 {
 	"definition":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
-	"intuition":"",
+	"intuition":"An Eulerian trail is a trail that uses all the edges in the graph exactly once.",
 }
 
 {
@@ -169,7 +169,7 @@
 	"definition":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
 	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms __Hamiltonian path__ and __Hamiltonian cycle__.",
 	"note":"In older books, the term *Hamiltonian circuit* is used in place of *Hamiltonian cycle*.  So be careful!  When they say *circuit*, they may actually mean *cycle*.",
-	"intuition":"",
+	"intuition":"A Hamiltonian cycle is a cycle that uses all the vertices in the graph exactly once.",
 }
 
 {
@@ -214,8 +214,8 @@
 	"type": "exercise",
 	"content": "Given the simple graph $G=(V,E)$, for every pair of vertices $a,b\in V$, $\text{deg}(a)+\text{deg}(b) \geq |V|-1.  Then $G$ is connected.",
 	"proof": {
-		"type": ["graph theoretic", "pigeonhole principal"],
-		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principal, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
+		"type": ["graph theoretic", "pigeonhole principle"],
+		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principle, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
 	},
 }
 
@@ -299,7 +299,7 @@
 }
 
 {
-	"name": "",
+	"name": "Clique coloring",
 	"weight": 3,
 	"type": "thm",
 	"content": "For any multigraph $G$, $\chi(G) \geq \omega(G)$.",
@@ -315,7 +315,7 @@
 }
 
 {
-	"name": "",
+	"name": "Vizing's theorem",
 	"weight": 7,
 	"type": "thm",
 	"content": "In every simple graph $G$, $\Delta(G) \leq \chi'(G) \leq \Delta(G)+1$.",
@@ -326,7 +326,7 @@
 
 
 {
-	"name": "",
+	"name": "Independence number and chromatic number",
 	"weight": 5,
 	"type": "thm",
 	"content": "For any multigraph $G=(V,E)$, $\chi(G)\alpha(G) \geq |V|$.",
@@ -337,7 +337,7 @@
 }
 
 {
-	"name": "",
+	"name": "Color backwards",
 	"weight": 5,
 	"type": "thm",
 	"content": "Given any finite multigraph $G$, $\chi(G) \leq 1 + \max_{\text{all induced subgraphs $H$ of $G$}}\{\delta(H)\}$.",
@@ -477,10 +477,9 @@
 	"exercise": "The chromatic number of the Peterson graph is [[$3$]].  The edge chromatic number of the Peterson graph is [[$4$]].",
 }
 
-{// 3 // dunno....
-	"weight": 2,
-	"weight": 99999,
-	"exercise": "Let $G$ be a simple forest with $k$ components.  The ",
+{// 3 // dunno....i have ommitted part b of this problem.  When Tim Naumovitz responds, i may add it back again.
+	"weight": 1,
+	"exercise": "Let $G$ be a simple forest with $k$ components.  Each component $H_i$ for $i\in[k]$, has the chromatic number $\chi(H_i)$.  The chromatic number of $G$ is [[$\chi(G) = \min_{i\in[k]}{\chi(H_i)}$]].",
 }
 //HW 16
 {//2 a
@@ -494,7 +493,7 @@
 }
 
 {// 3
-	"name": "",
+	"name": "Independence number <= edge cover number",
 	"weight": 5,
 	"type": "thm",
 	"content": "If the multigraph $G$ has no isolated vertices, then $\alpha(G) \leq \beta'(G)$.",
@@ -528,14 +527,14 @@
 }
 
 {//2
-	"name": "Pigeonhole principal 1",
+	"name": "Pigeonhole principle 1",
 	"weight": 2,
 	"type": "exercise",
 	"content": "Let $S=[n]$.  Prove that if a number in $[n]$ is assigned to each subset of $S$, then there exists two subsets, $A \subset B$ such that $A$ and $B$ are assigned the same number.",
 	"note": "The number assigned to $A$, for example, need not be an element of $A$.  For example, it is legal to assign the number $3$ to the set ${1,2}$.",
 	"proof": {
-		"type": ["pigeonhole principal"],
-		"content": "${} \subset [1] \subset [2] \subset \subset \subset [n]$.  This is a linear order of $n+1$ subsets, and we only have $n$ numbers to assign to them.  By the pigeonhole principal, at least two of those subsets must share a label.  Thanks to the linear ordering with respect to containment, one of the two is a subset of the other.",
+		"type": ["pigeonhole principle"],
+		"content": "${} \subset [1] \subset [2] \subset \subset \subset [n]$.  This is a linear order of $n+1$ subsets, and we only have $n$ numbers to assign to them.  By the pigeonhole principle, at least two of those subsets must share a label.  Thanks to the linear ordering with respect to containment, one of the two is a subset of the other.",
 	},
 }
 
@@ -550,10 +549,12 @@
 }
 
 {//4
+	"name": "Ramsey number R(3,3)",
 	"type": "thm",
 	"weight": 4,
-	"content": "Ramsey number $R(3,3)$ is $6$.",
+	"content": "The Ramsey number $R(3,3)$ is $6$.",
 	"proof": {
+		"type": "pigeonhole principle",
 		"content": "Consider $K_5$ with the red-blue edge coloring that consists of one red $C_5$ and one blue $C_5$.  It has no red $C_3$ nor a blue $C_3$.  Therefore, $R(3,3) > 5$.\n\nNow consider $K_6$.  One vertex $v$ has $5$ incident edges.  At least $3$ of those edges must be the same color as each other.  Without loss of generality, let's say that at least $3$ of the edges are red.  Look at the $3$ vertices at the other end of those edges.  For each pair, they must be blue adjacent, because red adjacency would create a triangle with $v$.  But if each pair is blue adjacent, then we have a blue triangle among those $3$ vertices!  Therefore, $R(3,3) \leq 6$\n\nPutting both pieces together, we conclude that $R(3,3) = 6$.",
 	},
 }
@@ -609,12 +610,12 @@
 
 //HW 18
 {//1
-	"name": "pigeonhole principal 2",
+	"name": "pigeonhole principle 2",
 	"weight": 3,
 	"exercise": "Given any sequence of $n$ integers, there is a consecutive subsequence whose sum is a multiple of $n$.",
 	"proof": {
-		"type": "pigeonhole principal",
-		"content": "We have the sequence $(x_1,x_2,,,x_n)$ of integers.  Consider the consequtive sums $x_1$, $x_1+x_2$, $x_1+x_2+x_3$, , , $x_1+x_2+x_3+++x_n$.  We have $n$ consequtive sums $S_i$ for $1\leq i \leq n$.  Each sum is of the form $S_i = a_in+k_i$ for integers $a_i$ and $k_i$ such that $0\leq k_i<n$.\n\nIf $k_i=0$ for any of these sums, we have found a multiple of $n$.  Otherwise, there are $n$ sums and only $n-1$ possible values of $k$, in which case, by the pigeonhole principal, a pair of sums must share the same $k$.\n\nLet us call these two sums $S_{i_1}$ and $S_{i_2}$ where $i_1<i_2$.  It follows that $S_{i_2}-S_{i_1} = a_{i_2}n+k_{i_2} - a_{i_1}n+k_{i_1} = (a_{i_2}-a_{i_1})n$ since $k_{i_1} = k_{i_2}$.  This is a multiple of $n$!  Moreover, $S_{i_2}-S_{i_1}$ is a consecutive sum itself because $S_{i_2}-S_{i_1} = (x_1+x_2+++x_{i_2})-(x_1+x_2+++x_{i_1}) = x_{i_1+1}+++x_{i_2}$.",
+		"type": "pigeonhole principle",
+		"content": "We have the sequence $(x_1,x_2,,,x_n)$ of integers.  Consider the consequtive sums $x_1$, $x_1+x_2$, $x_1+x_2+x_3$, , , $x_1+x_2+x_3+++x_n$.  We have $n$ consequtive sums $S_i$ for $1\leq i \leq n$.  Each sum is of the form $S_i = a_in+k_i$ for integers $a_i$ and $k_i$ such that $0\leq k_i<n$.\n\nIf $k_i=0$ for any of these sums, we have found a multiple of $n$.  Otherwise, there are $n$ sums and only $n-1$ possible values of $k$, in which case, by the pigeonhole principle, a pair of sums must share the same $k$.\n\nLet us call these two sums $S_{i_1}$ and $S_{i_2}$ where $i_1<i_2$.  It follows that $S_{i_2}-S_{i_1} = a_{i_2}n+k_{i_2} - a_{i_1}n+k_{i_1} = (a_{i_2}-a_{i_1})n$ since $k_{i_1} = k_{i_2}$.  This is a multiple of $n$!  Moreover, $S_{i_2}-S_{i_1}$ is a consecutive sum itself because $S_{i_2}-S_{i_1} = (x_1+x_2+++x_{i_2})-(x_1+x_2+++x_{i_1}) = x_{i_1+1}+++x_{i_2}$.",
 	},
 }
 
@@ -622,7 +623,7 @@
 	"weight": 2,
 	"exercise": "For any $a,b \in N$, every graph $K_{a+b}$ with edges colored red and blue has a red path of length $a$ or a vertex incident to at least $b$ blue edges.",
 	"proof": {
-		"type": "pigeonhole principal",
+		"type": "pigeonhole principle",
 		"content": "Consider the longest red path.  If its length is greater than or equal to $a$, we are done.  If its length is less than $a$, then the number of vertices it has is less than $a+1$.  The number of vertices it has is less than or equal to $a$.  Then the number of vertices *not* in the path is greater than or equal to $b$.  Consider the end vertex $z$ of the path.  For each of the $b$ vertices not in the path, it must be adjacent to $z$ because the graph is complete, and the edge must be blue, because a red edge would make the path longer (contradicting the fact that it is the *longest* red path).  Therefore, $z$ is incident to at least $b$ blue edges.",
 	},
 }
@@ -638,7 +639,7 @@
 
 {// 3b
 	"weight": 1,
-	"exercise": "We will prove that $R(4,3) \leq 10$ using a red-blue edge coloring.  First prove that given a complete graph, if a vertex has $6$ red incident edges, then there must be a red $K_4$ or a blue $K_3$.  Second, prove that if a complete graph has $4$ blue incident edges, then it must contain a red $K_4$ or a blue $K_3$.  Finally, use the pigeonhole principal to prove that $R(4,3) \leq 10$.",
+	"exercise": "We will prove that $R(4,3) \leq 10$ using a red-blue edge coloring.  First prove that given a complete graph, if a vertex has $6$ red incident edges, then there must be a red $K_4$ or a blue $K_3$.  Second, prove that if a complete graph has $4$ blue incident edges, then it must contain a red $K_4$ or a blue $K_3$.  Finally, use the pigeonhole principle to prove that $R(4,3) \leq 10$.",
 	"proof": {
 		"type": ["combinatorics", "ramsey theory"], // program should automatically change this to combinatorial
 		"content": "First, if a complete graph has $6$ red incident edges to $v$, then there are $6$ vertices at the end of those edges.  Because $R(3,3)=6$, we are guaranteed a red or blue triangle among those $6$ vertices.  If we have a red triangle, then when we consider $v$ with only red edges to the triangle, we find a red $K_4$.\n\nSecond, if the complete graph has a vertex $u$ with $4$ incident blue edges, then there are $4$ distinct vertices at the ends of those edges.  If any pair of those vertices is blue adjacent, then they create a blue triangle with $u$.  Otherwise, every pair is red adjacent, so the $4$ vertices create a red $K_4$.\n\nFinally, consider $K_{10}$ as a single vertex $s$ and its $9$ incident edges.  If at least $6$ of those edges are red, then by our first argument, we have a blue triangle or a red $K_4$.  Otherwise, at most $5$ of the incident edges are red, so at least $4$ of them are blue.  By our second argument, we again have a blue triangle or a red $K_4$.\n\nThis proves that $R(4,3) \leq 10$.",
@@ -665,7 +666,6 @@
 // end of HW 18
 
 {
-	"name": "some name",
 	"type": "def",
 	"content": "Given a partially ordered set $(P,<)$, two elements $a,b \in P$ are __comparable__ if $a < b$, $a=b$, or $a>b$.",
 }
@@ -804,8 +804,8 @@
 	"weight": 1,
 	"type": "exercise",
 	"content": "Give examples of a poset whose longest chain is exactly twice the size of its largest antichain.",
-	"example": "<img9>",
-	"example": "<img10>",
+	"example": "The poset defined by <img9> where $0<1$.  The longest chain has size $2$ and the largest antichain has size $1$.",
+	"example": "The poset defined by <img10> such that whenever two vertices are adjacent, the one with greater height is greater.  The longest chain has size $4$ and the largest antichain has size $2$.",
 }
 
 {// 1 b
@@ -944,7 +944,7 @@
 {//6 a // definition!
 	"name": "A-matching",
 	"weight": 2,
-	"definition": "Given a bigraph $G=(A,B,E)$, an __$A$-matching__ is a matching in $G$ that is an $A$ vertex cover.",
+	"definition": "Given a bigraph $G=(L,R,E)$, an __$L$-matching__ is a matching in $G$ that is an $L$ vertex cover.",
 }
 
 {//6 b // thm
@@ -959,6 +959,7 @@
 }
 
 {//6 c thm
+	"name": "Hall's (2,1)-matching theorem",
 	"weight": 3,
 	"thm": "Given a bigraph $G=(L,R,E)$ such that for every $X \subseteq L$, $|N(X)| \geq 2|X|$, then $G$ has a $(2,1)$-matching.",
 }
@@ -985,6 +986,7 @@
 }
 
 {//11 b thm
+	"name": "Hamiltonian has no lonely forks",
 	"weight": 4,
 	"thm": "$G$ is a connected cyclic multigraph.  No vertex induced subgraph of $G$ is isomorphic to <img19> or <img20>.  Then $G$ is Hamiltonian.",
 }
@@ -1017,31 +1019,37 @@
 }
 
 {//2 e thm
+	"name": "Chromatic number of hypercubes",
 	"weight": 3,
 	"thm": "For all $n \in \mathbb{N}$, the chromatic number of an $n$-dimensional hypercube is $2$.",
 }
 
 {//2 e thm
+	"name": "Edge chromatic number of hypercubes",
 	"weight": 3,
 	"thm": "The edge chromatic number of an $n$-dimensional hypercube is $n$.",
 }
 
 {// thm
+	"name": "Bipartite hypercubes",
 	"weight": 3,
 	"thm": "For all $n \in \mathbb{N}$, the $n$-dimensional hypercube is bipartite.",
 }
 
 {//2 g
+	"name": "Hamiltonian hypercubes",
 	"weight": 3,
 	"thm": "For all $n \in \mathbb{N}$, the $n$-dimensional hypercube is Hamiltonian.",
 }
 
 {//2 h thm
+	"name": "Eulerian even hypercubes",
 	"weight": 3,
 	"thm": "For every $n\in\mathbb{N}$, the $n$-dimensional hypercube is Eulerian iff $n$ is even.",
 }
 
 {//3 thm
+	"name": "Ramsey bound",
 	"weight": 3,
 	"thm": "For any $b\in\mathbb{N}$, the Ramsey number $R(b,b)$ is greater than $2^{\frac b2 - 1}$.",
 }
@@ -1064,6 +1072,7 @@
 }
 
 {// 6 thm
+	"name": "Perfect matchings on trees",
 	"weight": 4,
 	"thm": "Every tree has at most $1$ perfect matching.",
 }
@@ -1082,7 +1091,12 @@
 
 //end of combinatorics stuff
 {
+	"name": "Odd strolls and cycles",
 	"theorem":"Every odd stroll contains an odd cycle.",
+}
+
+{
+	"name": "Directed odd strolls and cycles",
 	"thm":"Every odd directed stroll contains an odd directed cycle.", // by the same proof
 }
 
@@ -1101,7 +1115,8 @@
 }
 
 {
-	"thm":"A digraph G=(V,E) is strongly connected iff for every bi-partition of V into S and T, there exists an edge from S to T.",
+	"name": "Strongly connected equivalence",
+	"thm":"A digraph $G=(V,E)$ is strongly connected iff for every bi-partition of $V$ into $S$ and $T$, there exists an edge from $S$ to $T$.",
 }
 
 {
@@ -1116,7 +1131,7 @@
 
 {
 	"def":"An __arc__ is an ordered pair of vertices, $(a,b)$.",
-	"note":"also called a *directed edge*.",
+	"note":"An arc is also called a *directed edge*.",
 }
 
 {
@@ -1135,7 +1150,7 @@
 }
 
 {//original
-	"ex":"A nonempty graph has at least $2$ maximal independent sets.",
+	"exercise": "A nonempty graph has at least [[$2$]] maximal independent sets.",
 }
 
 
@@ -1165,26 +1180,32 @@
 }
 
 {
-	"lemma":"A digraph which is a directed odd cycle has no kernel.",
+	"name": "",
+	"thm":"A digraph which is a directed odd cycle has no kernel.",
 }
 
 {
-	"lemma":"A digraph with no odd cycles has at least one kernel.", // prove this! // see thm 1.4.16
+	"name": "",
+	"thm":"A digraph with no odd cycles has at least one kernel.", // prove this! // see thm 1.4.16
 }
 
 {
-	"lemma":"A digraph with no even cycles has at most one kernel.", // prove this!
+	"name": "",
+	"thm":"A digraph with no even cycles has at most one kernel.", // prove this!
 }
 
 {
-	"lemma":"An acyclic digraph has a unique kernel.",
+	"name": "",
+	"thm":"An acyclic digraph has a unique kernel.",
 }
 
 { // oh no do all thrms need to say multigraph now!
-	"lemma":"Every connected multigraph can be oriented so that at most one vertex has odd outdegree.",
+	"name": "",
+	"thm":"Every connected multigraph can be oriented so that at most one vertex has odd outdegree.",
 }
 
 { // use above!
+	"name": "",
 	"thm":"A connected loopless multigraph with an even number of edges can be decomposed into paths of length 2.",
 }
 
@@ -1192,10 +1213,12 @@
 // (see 1.4.26 and then come back to all DeBruin things after it too.
 
 {
+	"name": "",
 	"thm:":"Given a multigraph with an odd cycle, if it has a strong orientation, then that orientation has an odd directed cycle.",
 }
 
 {
+	"name": "",
 	"thm":"The shortest Hamiltonian stroll of a digraph $D=(V,E)$ (if such a stroll exists), has a length of at most $\dfrac{(|V|+1)^2}4$ (for $n \geq 3$).",
 } // book uses different proof which i dont understand (gives overview)
 

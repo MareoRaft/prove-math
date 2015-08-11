@@ -76,6 +76,11 @@ def dunderscore_count(string):
 	dunderscore_list = re.findall(r'__', string)
 	return len(dunderscore_list)
 
+def get_contents_of_dunderscores(string):
+	list_contents = re.findall(r'(?<=__)[^_]*(?=__)', string) # we only want the first one, but contents is a list
+	assert list_contents != [] and list_contents[0] != ""
+	return list_contents[0]
+
 ############################### EXTERNAL HELPERS ###############################
 def create_appropriate_node(dic):
 	# for writers that use shortcut method, we must seek out the type:
@@ -104,6 +109,9 @@ def find_node_from_id(nodes, ID):
 
 class Node:
 
+
+	MIN_IMPORTANCE = 1
+	MAX_IMPORTANCE = 10
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
@@ -157,13 +165,11 @@ class Node:
 		return self._name
 	@name.setter
 	def name(self, new_name):
-		if new_name:
-			assert is_capitalized(new_name)
+		if new_name is not None:
 			assert dunderscore_count(new_name) == 0
 			self._name = check_type_and_clean(new_name, str)
 		else:
 			self._name= check_type_and_clean(new_name, type(None))
-
 
 	@property
 	def type(self):
@@ -187,7 +193,7 @@ class Node:
 	def importance(self, new_importance):
 		if new_importance is not None:
 			new_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
-			assert new_importance >= 1 and new_importance <= 10
+			assert new_importance >= self.MIN_IMPORTANCE and new_importance <= self.MAX_IMPORTANCE
 		self._importance = new_importance
 
 	@property
@@ -270,6 +276,8 @@ class Definition(Node):
 		if self.importance is None:
 			self.importance = 4
 		assert dunderscore_count(self.description) >=2
+		if self.name is None:
+			self.name = get_contents_of_dunderscores(self.description)
 
 	@property
 	def plural(self):
@@ -323,6 +331,8 @@ class PreTheorem(Node):
 class Theorem(PreTheorem):
 
 
+	MIN_IMPORTANCE = 3
+
 	def __init__(self, dic):
 		super().__init__(dic)
 		self.type = "theorem"
@@ -330,29 +340,21 @@ class Theorem(PreTheorem):
 			self.importance = 6
 		assert self.name is not None
 
-	@PreTheorem.importance.setter
-	def importance(self, new_importance):
-		assert new_importance is None or new_importance >= 3
-		PreTheorem.importance.fset(self, new_importance)
-
 	@PreTheorem.name.setter
 	def name(self, new_name):
 		assert new_name is not None
+		assert is_capitalized(new_name)
 		PreTheorem.name.fset(self, new_name)
 
 
 class Exercise(PreTheorem):
 
 
+	MAX_IMPORTANCE = 3
+
 	def __init__(self, dic):
 		super().__init__(dic)
 		self.type = "exercise"
 		if self.importance is None:
 			self.importance = 1
-
-	@PreTheorem.importance.setter
-	def importance(self, new_importance):
-		assert new_importance <= 3
-		PreTheorem.importance.fset(self, new_importance)
-
 

@@ -1,5 +1,6 @@
 import sys
 import pytest
+from lib.node import get_contents_of_dunderscores
 from lib.node import create_appropriate_node
 from lib.node import Definition
 from lib.node import Theorem
@@ -15,6 +16,17 @@ sample_theorem = {
 
 
 ##########################INIT, SETTERS/GETTERS, ATTRIBUTE TESTS################
+
+def test_get_contents_of_dunderscores():
+  with pytest.raises(AssertionError):
+    assert get_contents_of_dunderscores('hello ____')
+  with pytest.raises(AssertionError):
+    assert get_contents_of_dunderscores('hello there')
+  assert get_contents_of_dunderscores('hello __there__') == 'there'
+  assert get_contents_of_dunderscores('__there__, friend') == 'there'
+  assert get_contents_of_dunderscores('hello __there__, friend') == 'there'
+  assert get_contents_of_dunderscores('hello __there__, and __other') == 'there'
+  assert get_contents_of_dunderscores('hello __there__, and __other__.') == 'there'
 
 def test_theorem_copy():
   global sample_theorem
@@ -107,6 +119,41 @@ def test_exercise_adding_a_plural():
 
   with pytest.raises(AttributeError): # simple because the attribute doesn't exist
     node.plural == ""
+
+def test_definition_no_name():
+  pre_node = {
+    "type": "def",
+    "content": "Every pair of __empanadas__ of bla dee bla |V|-1.",
+  }
+  node = create_appropriate_node(pre_node)
+  assert node.name == "empanadas" # definitions take their names from the dunderscored term.
+
+def test_theorem_no_name():
+  pre_node = {
+    "type": "thm",
+    "content": "For every pair of bla dee bla |V|-1.  Then $G$ is connected.",
+  }
+  with pytest.raises(AssertionError): # because theorems must have names!
+    node = create_appropriate_node(pre_node)
+
+def test_exercise_no_name():
+  pre_node = {
+    "type": "exercise",
+    "content": "For every pair of vertices $a,b\in V$, $\text{deg}(a)+\text{deg}(b) \geq |V|-1.  Then $G$ is connected.",
+  }
+  node = create_appropriate_node(pre_node)
+  assert isinstance(node, Exercise)
+  assert node.name is None # exercises are allowed to not have names!
+  assert node.type == "exercise"
+
+def test_exercise_name_lowercase():
+  pre_node = {
+    "name": "pigeonhole principle 1",
+    "type": "exercise",
+    "content": "Given the simple graph $G=(V,E)$, bla blacted.",
+  }
+  node = create_appropriate_node(pre_node)
+  assert node.name == "pigeonhole principle 1" # exercises do NOT need capitalized names
 
 def test_definition_setters_getters():
   pre_node = {
