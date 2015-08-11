@@ -62,6 +62,11 @@ class SocketHandler (WebSocketHandler):
 		# 		{'source': 3, 'target': 1},
 		# 	],
 		# }
+
+
+		# graph appropriate subgraph from NewtorkX!
+
+
 		graph = helper.json_import('data/graph-test.json')
 		# do NetworkX things to the graph
 		bundled_graph = json.dumps(graph) # for the future, the following may be faster: 1. simplejason or 2. cjson

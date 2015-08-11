@@ -16,3 +16,4 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 11. add some window.onerror thing to JS which will tell me which assertion failed in check-types
 12. RESTRICTIONS.  thms written in generality, but then users apply restrictions.  For example, thrm is true for multigraphs, but user is only concerned with simple graphs.  With the restriction, the node will appear as a statement about simple graphs. (but implementing this would probably require thrms to be written in an unambiguous logical language.  that way, it is possible to parse the thrm and find the REQUIREMENTS and check each one against the RESTRICTION.  this is definitely worth doing, but will take a very long time to do!)
 13. optional setting --> see a definition when you hover over the node.
+14. use a class attribute max_importance and min_importance instead of overriding the setter in node.py
