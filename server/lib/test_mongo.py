@@ -55,13 +55,9 @@ def test_Mongo_list_insert_then_find():
     del dic2['_id']
     for x in results1:
         del x["_id"]
-        print(x)
-        print(dic1)
         assert dic1 == x
     results1 = a.find({"name":"Chef Eddie"})
     for x in results1:
-        print(x)
-        print(dic2)
         del x["_id"]
         assert dic2 == x
 

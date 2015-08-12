@@ -15,6 +15,7 @@ import subprocess
 import copy
 import re
 import json
+from string import punctuation
 
 # local:
 #Written as from lib import helper
@@ -168,8 +169,17 @@ class Node:
 		if new_name is not None:
 			assert dunderscore_count(new_name) == 0
 			self._name = check_type_and_clean(new_name, str)
+			self.id=self.name
 		else:
 			self._name= check_type_and_clean(new_name, type(None))
+			
+	@property
+	def id(self):
+		return self._id
+	
+	@id.setter
+	def id(self,new_id):
+		self._id=re.sub(r'[_\W]', ' ', new_id).lower().replace(" ","")
 
 	@property
 	def type(self):
@@ -357,4 +367,8 @@ class Exercise(PreTheorem):
 		self.type = "exercise"
 		if self.importance is None:
 			self.importance = 1
-
+	
+	@PreTheorem.description.setter
+	def description(self, new_description):
+		self.id=new_description
+		PreTheorem.description.fset(self,new_description)

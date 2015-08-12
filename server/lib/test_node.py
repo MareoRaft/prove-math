@@ -57,6 +57,7 @@ def test_theorem_setter_getter():
   assert node.intuitions == ["A simple explanation."]
   assert node.examples ==  ["Example 1 is now long enough.", "Example 2 is now long."]
   assert node.proofs ==  [{"type": ["fake"], "description": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}]
+  assert node.id=="pythagoreantheorem"
 
 def test_theorem_bad_attributes():
   pre_node = {
@@ -86,12 +87,11 @@ def test_exercise_setter_getter():
   }
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Exercise)
-
-  print(node)
   assert node.name == None
   assert node.type == "exercise"
   assert node.importance == 2
   assert node.description == "Three Four Five Triangle"
+  assert node.id=="threefourfivetriangle"
 
 def test_exercise_bad_attributes():
   pre_node = {
@@ -173,6 +173,7 @@ def test_definition_setters_getters():
   assert node.description == "A __triangle__ is a 3 sided polygon."
   assert node.plural == "__triangles__"
   assert node.examples == ["Long Long Long Example 1", "text text text Example 2"]
+  assert node.id=="customname"
 
 
 def test_definition_bad_attributes():
