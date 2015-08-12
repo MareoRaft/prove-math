@@ -25,12 +25,14 @@ def test_Mongo_equality():
 def test_Mongo_insert_then_find():
     #Mongodb must be running in background for this to work
     mongo = Mongo("test", "people")
-    dic = {"name": "Prof L", "company": "Rutgers", "interests": "Statistics"}
+    dic = {"name": "Darth Vader", "company": "Empire", "interests": "The Force"}
     mongo.insert_one(dic)
-    results = mongo.find({"company": "Rutgers"})
+    results = mongo.find({"company": "Empire"})
     # raise Exception('type of results is '+str(type(results)))
+    del dic['_id']
     for x in results:
-        assert dic == x
+        del x['_id']
+        assert dic==x
 
 def test_Mongo_insert_then_delete():
     #Mongodb must be running in background for this to work
@@ -44,15 +46,23 @@ def test_Mongo_insert_then_delete():
 def test_Mongo_list_insert_then_find():
     #Mongodb must be running in background for this to work
     a = Mongo("test","people")
-    dic1 = {"name": "Prof X", "company": "XMen", "interests": "Genetics"}
-    dic2 = {"name": "Rufus", "company": "Unemployed", "interests": "food"}
+    dic1 = {"name": "Ethan Hunt", "company": "IMF", "interests": "Epionage"}
+    dic2 = {"name": "Chef Eddie", "company": "Unemployed", "interests": "food"}
     x = [dic1,dic2]
     a.insert_many(x)
-    results1 = a.find({"name":"Prof X"})
+    results1 = a.find({"name":"Ethan Hunt"})
+    del dic1['_id']
+    del dic2['_id']
     for x in results1:
+        del x["_id"]
+        print(x)
+        print(dic1)
         assert dic1 == x
-    results1 = a.find({"name":"Rufus"})
+    results1 = a.find({"name":"Chef Eddie"})
     for x in results1:
+        print(x)
+        print(dic2)
+        del x["_id"]
         assert dic2 == x
 
 
