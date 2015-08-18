@@ -3,43 +3,36 @@
 // notes Tuesday, June 23, 2015
 
 {
-	"name": "Identical",
-	"type": "def",
 	"weight": 3,
-	"content": "A multiset of items are __identical__ if all the items are the same as each other.",
+	"def": "A multiset of items are __identical__ if all the items are the same as each other.",
 	"note": "The word *indistinguishable* is a synonym for *identical*.",
 	"intuition": "Items are identical when they are exactly the same.  We are not able to tell them apart.  For example, ${c, c, c}$ is a set of identical letters, because $c=c=c$.  Moreover, the lists $1. c, 2. c, 3. c$ and $1. c, 2. c, 3. c$ are considered to be the same, because even though I reordered the $c$s, you could not tell the difference!  In combinatorics, the idea of things being *identical* is tied to the situations where *order does not matter*.",
 }
 
 {
-	"name": "Distinct",
-	"type": "def",
 	"weight": 3,
-	"content": "A set of items are __distinct__ if no two items are identical to each other.",
+	"def": "A set of items are __distinct__ if no two items are identical to each other.",
 	"note": "The words *different* and *distinguishable* are synonyms to *distinct*.",
 }
 
 {
-	"name": "Factorial",
-	"type": "def",
+	"name": "factorial",
 	"weight": 4,
-	"content": "For any $n \\in \\mathbb{N}$, __$n$ factorial__, denoted $n!$, is $n(n-1)(n-2)\\ldots1$.",
+	"def": "For any $n \\in \\mathbb{N}$, __$n$ factorial__, denoted $n!$, is $n(n-1)(n-2)\\ldots1$.",
 	"intuition": "$n!$ is just a shorthand notation for $1 \\cdot 2 \\cdots n$, that is, multiplying the numbers from $1$ to $n$ together.",
 }
 
 {
 	"name": "Ordering $p$ distinct people",
-	"type": "thm",
 	"weight": 4,
-	"content": "Given a set $P$ of size $p$, then the number of bijective functions from $[p]$ to $P$ is $p!$.",
+	"thm": "Given a set $P$ of size $p$, then the number of bijective functions from $[p]$ to $P$ is $p!$.",
 	"intuition": "If you have $p$ different people, and you want to order them in a line, then there are exactly $p!$ ways to do this.",
 }
 
 {
 	"name": "Binomial Identity",
-	"type": "thm",
 	"weight": 3,
-	"content": "$ \\binom nk = \\binom{n}{n-k} $",
+	"thm": "$ \\binom nk = \\binom{n}{n-k} $",
 	"proofs": [
 		{
 			"type": "algebraic",
@@ -54,18 +47,16 @@
 
 {
 	"name": "Multinomial Coefficient",
-	"type": "def",
 	"weight": 4,
-	"content": "Given that $n_1 + n_2 + \\ldots + n_k = n$, then the __multinomial coefficient__, denoted $\\binom{n}{n_1, n_2, \\ldots, n_k}$, is $\\frac{n!}{n_1!n_2!\\ldots n_k!}$.",
+	"def": "Given that $n_1 + n_2 + \\ldots + n_k = n$, then the __multinomial coefficient__, denoted $\\binom{n}{n_1, n_2, \\ldots, n_k}$, is $\\frac{n!}{n_1!n_2!\\ldots n_k!}$.",
 	"intuition": "The binomial coefficient $$, also denoted $$, is the number of ways to choose $$ from $n$ objects.  The multinomial coefficient $$ is the number of ways to choose $$ and $$ from $n$ objects.",
 	"example": "$6$ workers need to be split up so that $2$ go into each of the following departments: sales, finance, and management.  The number of ways to do this is $\\binom{6}{2,2,2} = \\frac{6!}{2!2!2!} = \\frac{6\\cdot5\\cdot4\\cdot3\\cdot2\\cdot1}{2\\cdot2\\cdot2} = 90$.",
 }
 
 {
 	"name": "Chairperson Identity",
-	"type": "thm",
 	"weight": 4,
-	"content": "$ k \\binom nk = n \\binom{n-1}{k-1} $",
+	"thm": "$ k \\binom nk = n \\binom{n-1}{k-1} $",
 	"proofs": [
 		{
 			"type": "combinatorial", // a combinatorial proof means you count the same situation two different ways.
@@ -76,9 +67,8 @@
 
 {
 	"name": "Chairperson Identity Generalized",
-	"type": "thm",
 	"weight": 6,
-	"content": "$\\binom{a_1}{a_2}\\binom{a_2}{a_3}\\cdots\\binom{a_{n-1}}{a_n} = \\prod_{j=1}^{n} \\binom{a_1-a_{j+1}}{a_j-a_{j+1}}$ where $a_{n+1}=0$.",
+	"thm": "$\\binom{a_1}{a_2}\\binom{a_2}{a_3}\\cdots\\binom{a_{n-1}}{a_n} = \\prod_{j=1}^{n} \\binom{a_1-a_{j+1}}{a_j-a_{j+1}}$ where $a_{n+1}=0$.",
 	"proofs": [
 		{
 			"type": "combinatorial",
@@ -89,9 +79,8 @@
 
 {
 	"name": "Pascal's Identity",
-	"type": "thm",
 	"weight": 5,
-	"content": "$\\binom{n-1}{k-1} + \\binom{n-1}{k} = \\binom{n}{k}$",
+	"thm": "$\\binom{n-1}{k-1} + \\binom{n-1}{k} = \\binom{n}{k}$",
 	"proofs": [
 		{
 			"type": "combinatorial",
@@ -140,9 +129,8 @@
 
 {
 	"name": "Summation Formula 1",
-	"type": "thm",
 	"weight": 5,
-	"content": "$\\sum_{k=0}^{n} k = \\frac{n(n+1)}2 = \\binom{n+1}{2}$",
+	"thm": "$\\sum_{k=0}^{n} k = \\frac{n(n+1)}2 = \\binom{n+1}{2}$",
 	"proofs": [
 		{
 			"type": "geometric",
