@@ -66,29 +66,48 @@ def test_common_descendant_sources():
 	assert DAG.common_descendant_sources('A', 'B') == {'one', 'two'}
 	# assert DAG.common_descendant_sources({'A', 'one'}, 'B') == {'two'} # networkx won't accept nbunches :(
 
+def test_remove_redundant_edges():
+	DAG = nx.DAG()
+	DAG.add_edges_from([
+		['a', 'b'], ['b', 'c'],
+		['a', 'c'], # redundant!
+	])
+	DAG.remove_redundant_edges()
+	assert ('a', 'b') in DAG.edges()
+	assert ('b', 'c') in DAG.edges()
+	assert ('a', 'c') not in DAG.edges()
 
-class ref:
+	# take 2
+	DAG = nx.DAG()
+	DAG.add_edges_from([
+		['a', 'b'], ['b', 'c'], ['c', 'd'],
+		['a', 'd'], # redundant!
+	])
+	DAG.remove_redundant_edges()
+	assert {('a', 'b'), ('b', 'c'), ('c', 'd')} <= set(DAG.edges())
+	assert ('a', 'd') not in DAG.edges()
 
+	# take 3
+	DAG = nx.DAG()
+	DAG.add_edges_from([
+		('a', 'b'), ('b', 'd'),
+		('a', 'c'), ('c', 'd'),
+		('a', 'd'), # redundant!
+	])
+	DAG.remove_redundant_edges()
+	assert {('a', 'b'), ('b', 'd'), ('a', 'c'), ('c', 'd')} <= set(DAG.edges())
+	assert ('a', 'd') not in DAG.edges()
 
-	def __init__(self,obj):
-		self.obj = obj
-	def get(self):
-		return self.obj
-	def set(self,obj):
-		self.obj = obj
+	# take 4
+	DAG.add_edges_from((
+		('a', 'b'), ('b', 'c'), ('c', 'd'), 			('d', 'z'),
+								('c', 't'), ('t', 'y'), ('y', 'z'),
 
-def test_adding_dictionaries_as_nodes():
-	D = nx.DAG()
-	a = ref({'this': 1})
-	b = ref({'is': 2})
-	my_nodes = [
-		a,
-		b,
-	]
-	D.add_nodes_from(my_nodes)
-	assert set(D.nodes()) == set(my_nodes)
+		('a', 'd'), # redundant!
+		('c', 'y'),
+		('b', 'z'),
+	))
+	DAG.remove_redundant_edges()
+	assert {('a', 'b'), ('b', 'c'), ('c', 'd'), 			('d', 'z'),
+									('c', 't'), ('t', 'y'), ('y', 'z'),} == set(DAG.edges())
 
-	print('hi')
-	for node in D.nodes():
-		print(node.get())
-	print(D.edges())

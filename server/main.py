@@ -148,6 +148,7 @@ if __name__ == "__main__":
 	our_DAG = nx.DAG()
 	our_DAG.add_nodes_from([node['_id'] for node in all_nodes])
 	our_DAG.add_edges_from([(edge['source'], edge['target']) for edge in all_edges])
+	our_DAG.remove_redundant_edges()
 
 	# 3. launch!
 	make_app_and_start_listening()

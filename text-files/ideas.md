@@ -21,3 +21,4 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 17. use refs for a possible speed boost in the future (NetworkX holds refs. then we don't have to find nodes by id later on.  code: class ref:def __init__(self,obj):self.obj = objdef get(self):return self.objdef set(self,obj):self.obj = obj
 18. ways to optimize graph spacing: http://stackoverflow.com/questions/15076157/optimizing-charge-linkdistance-and-gravity-in-d3-force-directed-layouts
 19. about betweenness centrality: http://glowingpython.blogspot.com/2013/02/betweenness-centrality.html
+20. give nodes some approximate start position based on sourciness sinkiness.  This will order things nicer AND stop stuff from exploding on load

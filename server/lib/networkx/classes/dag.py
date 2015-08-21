@@ -36,4 +36,13 @@ class _DAG (nx.DiGraph):
 	def common_descendant_sources(self, nbunchA, nbunchB):
 		return self.subgraph(self.common_descendants(nbunchA, nbunchB)).sources()
 
+	def has_path(self, start, end):
+		return nx.has_path(self, start, end)
+
+	def remove_redundant_edges(self):
+		for edge in self.edges():
+			self.remove_edge(edge[0], edge[1])
+			if not self.has_path(edge[0], edge[1]):
+				self.add_edge(edge[0], edge[1])
+
 nx.DAG = _DAG
