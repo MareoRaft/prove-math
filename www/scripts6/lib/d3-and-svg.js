@@ -67,8 +67,10 @@ var force = d3.layout.force()
 	.nodes(nodes) // and when we push new nodes to nodes, things happen (i think)
 	.links(links)
 	.size([width, height])
-	.charge(-200)
-	.linkDistance(40)
+	.charge(-400) // all of these can be FUNCTIONS, which act on each node or link, depending on the property :)
+	// .linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
+	.linkStrength(0.2)
+	.gravity(0.05)
 	.on('tick', updateSVGNodeAndLinkPositions)
 
 var drag = force.drag()

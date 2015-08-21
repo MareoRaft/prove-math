@@ -19,3 +19,5 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 15. we need to learn how to migrate our mongo database.  In the future we will eventually have to move servers, and when we do, we don't want to be sitting there with an "unmovable" mongo database.
 16. Instead of writing in the dependencies ourselves, we want the program to search through the description and label each word as an ENGLISH word or a DEPENDENT word, then search through names and their plurals to populate the dependencies.
 17. use refs for a possible speed boost in the future (NetworkX holds refs. then we don't have to find nodes by id later on.  code: class ref:def __init__(self,obj):self.obj = objdef get(self):return self.objdef set(self,obj):self.obj = obj
+18. ways to optimize graph spacing: http://stackoverflow.com/questions/15076157/optimizing-charge-linkdistance-and-gravity-in-d3-force-directed-layouts
+19. about betweenness centrality: http://glowingpython.blogspot.com/2013/02/betweenness-centrality.html

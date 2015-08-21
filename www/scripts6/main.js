@@ -59,7 +59,6 @@ ws.onopen = function(){
 	ws.send("Hello, world, Remember to clear cache if needed!")
 }
 ws.onmessage = function(event){
-	alert('incoming message.')
 	var unbundled = JSON.parse(event.data)
 	var graph = unbundled
 	// for( var i=0; i < graph.nodes.length; i++){

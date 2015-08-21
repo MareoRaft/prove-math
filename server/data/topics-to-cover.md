@@ -1,13 +1,17 @@
+Ali
+-----
+  1. Abstr. Algebra (intro)
+
+
+Matt
+------
+  * Abstract Algebra (intro, abstr alg i, abstr alg ii)
+
 Tom
 -----
   1. Analysis (in the future we will "project" this to make RU advanced calculus by applying restrictions, then adding the extra theorems that come out of these restrictions.)
   * Logic (matt will get some notes)
   * Set Theory (ZFC)
-
-Matt
-------
-  1. combinatorics (summer course happening now)
-  * Abstract Algebra (intro, abstr alg i, abstr alg ii)
 
 
 Think about later
@@ -18,6 +22,7 @@ Think about later
 
 Done
 -----------------
+  * Combinatorics! (summer course finished)
   * Graph Theory (already done up to intro level) NEEDS SOME CLEANING UP:
 >  * separate compound node
 >  * are all Gallai thms there?  alpha + beta = |V| and alpha' + beta' = |V|

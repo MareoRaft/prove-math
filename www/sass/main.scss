@@ -25,13 +25,16 @@ svg {
   border: green 1px solid;
 
   .definition-circle {
-    fill: darkolivegreen;
+    fill: $green;
+    opacity: 0.4;
   }
   .theorem-circle {
     fill: steelblue;
+    opacity: 0.4;
   }
   .exercise-circle {
     fill: $darkwhite;
+    opacity: 0.4;
   }
 
   .node-text {
