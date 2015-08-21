@@ -19,1454 +19,1465 @@
 	"definition":"An __edge__ is a set ${a,b}$ where $a$ and $b$ are vertices.",
 	"note":"It is possible that $a=b$.",
 	"intuition":"Edges are usually drawn as a line or curve connecting two vertices.  In the case that $a=b$, the edge is drawn as a small loop that connects $a$ to itself.",
+	"dependencies": ["set", "vertex"],
 }
 
 {
 	"definition":"A __loop__ is an edge $e = {a,a} = {a}$.",
+	"dependencies": ["edge"],
 }
 
 {
 	"definition":"A __simple edge__ is an edge which is not a loop.",
+	"dependencies": ["edge", "loop"],
 }
 
 {
 	"definition":"The vertices $a$ and $b$ have __multiple edges__ if there are more than one edge ${a,b}$.",
 	"note":"$a$ and $b$ need not be distinct.",
+	"dependencies": ["edge"],
 }
 
 {
+	"name": "adjacent (vertices)",
 	"definition":"Vertices $a$ and $b$ are __adjacent__, denoted $a \sim b$, if there is an edge ${a,b}$.",
 //	"denotation":"$a \sim b$", // let's keep the denotations in the definitions
+	"dependencies": ["vertex", "edge"],
 }
 
 {
-	"definition":"An edge $e$ is __incident__ to a vertex $v$ iff $v \in $e$.",
+	"definition":"An edge $e$ and a vertex $v$ are __incident__ iff $v \in $e$.",
 	"intuition":"A loop is considered to be incident to its vertex at both ends.",
+	"dependencies": ["edge", "vertex"],
 }
 
 {
+	"name": "adjacent (edges)",
 	"def":"Two edges are __adjacent__ if there is a vertex that they are both incident to.",
+	"dependencies": ["edge", "vertex", "incident"],
 }
 
 {
+	"name": "on (edges on vertices)",
 	"definition":"A set of edges $E$ is __on__ a set of vertices $V$ iff every edge in $E$ is incident to only vertices in $V$.",
+	"dependencies": ["edge", "vertex", "set", "incident"],
 }
 
-{ // THIS IS THE GENERAL VERSION
-	"definition":"A __multigraph__ $G$ is an ordered pair $G = (V,E)$ where $V$ is a set of vertices and $E$ is a multiset of edges on $V$.",
-	"intuition":"$E$ is a multiset, so a pair of vertices could have more than one edge incident to them!  Also, there can be loops!",
-}
-
-{
-	"def":"Vertices $a$,$b$ have __multiple edges__ if there are more than one edge ${a,b}$.",
-}
-
-{
-	"def":"Vertex $a$,$b$ has __multiple loops__ if there are more than one edge ${a}$.",
-}
-
-{
-	"definition":"A __simple graph__ $G$ is a multigraph $G = (V,E)$ where $E$ is a set that contains no loops.",
-	"note":"Here, $E$ is a set, so multiple edges do not occur either.",
-	"note":"Multigraphs are more general than simple graphs.",
-}
-
-{
-	"def":"A __null__ multigraph is a multigraph with 0 vertices.",
-}
-
-{
-	"def":"A __non-null__ multigraph is a multigraph with more than 0 vertices.",
-}
-
-{
-	"def":"A __trivial__ multigraph is a multigraph with exactly 1 vertex.",
-}
-
-{
-	"def":"A __nontrivial__ multigraph is a multigraph with more than 1 vertex.",
-}
-
-{
-	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
-}
-
-{
-	"def":"An __nonempty__ multigraph is a multigraph with more than 0 edges.",
-}
-
-
-{
-	"definition":"Given a multigraph $G = (V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
-	"intuition":"The degree of vertex $v$ is the number of edge ends that touch it.",
-}
-
-{
-	"def":"The __minimum degree__ of a graph $G=(V,E)$ is the minimum of the degrees of the vertices in $V$.",
-	"den":"\delta(G)",
-}
-
-{
-	"def":"The __maximum degree__ of a graph $G=(V,E)$ is the maximum of the degrees of the vertices in $V$.",
-	"den":"\Delta(G)",
-}
-
-{
-	"definition":"A __walk__ is an alternating sequence of vertices and edges which starts and ends on a vertex, and satisfies the following condition:  For every edge ${a,b}$ in the sequence, the vertices adjacent to it in the sequence are $a$ and $b$.",
-	"intuition":"Pretend you are an ant on the graph.  You begin at a vertex.  You cross edge incident to you and arrive at the other side of that edge: another vertex.  You continue this process, going any way you please, and eventually stop at a vertex.",
-}
-
-{
-	"def":"A multiset of vertices and edges where *no edge is repeated* satisfies the __trail condition__.",
-	"definition":"A __trail__ is a walk that satisfies the trail condition.",
-}
-
-{
-	"def":"A multiset of vertices and edges where *no vertex is repeated* satisfies the __path condition__.",
-	"definition":"A __path__ is a trail that satisfies the path condition.",
-}
-
-{
-	"definition":"A walk which begins and ends on the same vertex is called __closed__.",
-}
-
-{ // these should be separate.
-	"definition":"A __stroll__ is a closed walk.",
-	"definition":"A __circuit__ is a closed trail.",
-	"definition":"A __cycle__ is a closed path.",
-	"note":"By convention, we do not think of the beginning vertex as occuring twice.  In particular, this means that a cycle is still a path by definition of a path.",
-	"note":"In older books, the term *circuit* actually refers to a *cycle*.  If you are using other resources, double check the definition of *circuit* to make sure you know what you are dealing with.",
-}
-
-{
-	"def":"The __length__ of a walk is the number of edges in the walk.",
-}
-
-{
-	"def":"An __$a$,$b$-walk__ is a walk with end vertices $a$ and $b$.",
-	"note":"This defines the terms __$a$,$b$-trail__ and __$a$,$b$-path__ too.",
-}
-
-{
-	"def":"Vertices $a$,$b$ have __multiple trails__ if there exists a class of $a$,$b$-trails (size at least 2) whose (internal) union satisfies the trail condition.",
-}
-
-{
-	"def":"Vertices $a$,$b$ have __multiple paths__ if there exists a class of $a$,$b$-paths (size at least 2) whose (internal) union satisfies the path condition.",
-}
-
-{
-	"definition":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
-	"intuition":"An Eulerian trail is a trail that uses all the edges in the graph exactly once.",
-}
-
-{
-	"name": "Eulerian Graph",
-	"def": "A multigraph is called __Eulerian__ if it contains an Eulerian circuit.",
-}
-
-{
-	"definition":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
-	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms __Hamiltonian path__ and __Hamiltonian cycle__.",
-	"note":"In older books, the term *Hamiltonian circuit* is used in place of *Hamiltonian cycle*.  So be careful!  When they say *circuit*, they may actually mean *cycle*.",
-	"intuition":"A Hamiltonian cycle is a cycle that uses all the vertices in the graph exactly once.",
-}
-
-{
-	"name": "Hamiltonian Graph",
-	"type": "def",
-	"content": "A multigraph is called __Hamiltonian__ if it contains a Hamiltonian cycle.",
-}
-
-
-//insert combinatorixs class graph theory things here:
-{
-	"name": "Connected",
-	"type": "definition",
-	"content": "A graph $G=(V,E)$ is __connected__ if for every $a,b\in V$, there is an $ab$-walk.",
-	"intuition": "All the vertices in the graph are tied to each other by edges.  We cannot pull the graph apart into pieces.",
-}
-
-{
-	"name": "Disconnected",
-	"type": "definition",
-	"content": "A graph is __disconnected__ if it is not connected.",
-	"intuition": "There are at least two components in the graph that are not connected to each other by any edges whatsoever.",
-}
-
-{
-	"name": "Complement",
-	"type": "def",
-	"content": "Given a graph $G=(V,E)$, the __complement__ of $G$ is $(V,E^C)$, where for each pair $a,b\in V$, ${a,b}\in E^C$ iff ${a,b}\not\in E$.",
-	"intuition": "To get a graph's complement, we invert its edges.  Every edge in the graph dissapears, and every missing edge appears.",
-}
-
-//HW 12
-{//1 a
-	"name": "Complement of Disconnected is Connected",
-	"weight": 3,
-	"type": "theorem",
-	"content": "If a graph is disconnected, then its complement is connected.",
-}
-
-{//1 b
-	"weight": 2,
-	"type": "exercise",
-	"content": "Given the simple graph $G=(V,E)$, for every pair of vertices $a,b\in V$, $\text{deg}(a)+\text{deg}(b) \geq |V|-1.  Then $G$ is connected.",
-	"proof": {
-		"type": ["graph theoretic", "pigeonhole principle"],
-		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principle, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
-	},
-}
-
-{//2
-	"weight": 1,
-	"type": "exercise",
-	"content": "The number of nonempty simple graphs on the vertex set $[4]$ is [[$2^\binom{4}{2}-1$ or $63$]].  The number of connected simple graphs on the vertex set $[4]$ is [[28? 39?]].",
-	"intuition": "The vertices are labelled $1$, $2$, $3$, and $4$.  Therefore the graph $([4], {{1,2}})$ is different from the graph $([4], {{2,3}})$.",
-}
-
-{
-	"name": "Diameters",
-	"weight": 2,
-	"type": "exercise",
-	"content": "Let $P$ be the longest path in a simple graph $G$.  Prove that if either endpoint of $P$ has degree greater than $1$, then $G$ has a cycle.  Prove that for any simple graph $H$ with minimum degree at least $2$, then $H$ is cyclic.",
-}
-
-//HW 13
-{// 1
-	"weight": 2,
-	"type": "exercise",
-	"content": "$G=(A\cup B,E)$ is a bipartite graph with parts $A$ and $B$.  The complement of $G$ is connected iff [[$G$ is not complete bipartite]].  Prove that if $G$ is regular, then $|A|=|B|$.",
-}
-
-{ // 2
-	"name": "Subtrees of a Cycle",
-	"weight": 2,
-	"type": "exercise",
-	"content": "Consider the cycle on $n$ vertices, $C_n$, with the labels $1, 2, 3,,, n$.  The number of (labeled) subtrees of $C_n$ is [[$n^\underline{2}$, or $n$ pick $2$, or $n(n-1)$.]].",
-	"intuition": "[[A subtree of a cycle is just a path.  We need only count the possible paths.]]",
-}
-
-{ // 3
-	"weight": 2,
-	"type": "exercise",
-	"content": "Let $G = ([n],E)$ be a graph with labeled vertices.  Let $m_i$ be the size of $G-i$.  The size of $G$ in terms of $n$ and the $m_i$s is [[$\frac{1}{n-2}\sum_{i=1}^{n} m_i$]].",
-}
-
-//thms
-{
-	"nickname": "Kirchhoff's Theorem",
-	"name": "Kirchhoff's matrix tree theorem",
-	"weight": 6,
-	"thm": "The number of spanning trees of a graph is equal to any cofactor of the graph's laplacian.",
-}
-
-{
-	"name": "Bipartite iff no odd cycles",
-	"weight": 3,
-	"type": "thm",
-	"content": "A graph is bipartite iff it has no odd cycles.",
-}
-
-{
-	"name": "Cayley's Theorem",
-	"weight": 5,
-	"type": "thm",
-	"content": "The number of trees with vertex set $[n]$ is $n^{n-2}$.",
-	"proof": {
-		"type": [],
-		"content": "There is a bijection between trees and Pr\u{00fc}fer sequences.  Trees with $n$ vertices has Pr\u{00fc}fer sequences of length $n-2$, and each entry can be any number from $1$ to $n$.  Therefore, there are $n^{n-2}$ possible Pr\u{00fc}fer sequences.",
-	},
-}
-
-{
-	"def": "A __clique__ is a set $S$ of vertices such that for every pair $a,b\in S$, $a~b$.",
-	"intuition": "A clique is a bunch of vertices where all edges between them are filled.  Everybody is adjacent to everybody.",
-}
-
-{
-	"name": "Clique Number",
-	"type": "def",
-	"content": "The __clique number__ of a graph $G$, denoted $\omega(G)$, is the number of vertices in a maximum clique in $G$.",
-	"intuition": "Find the largest clique in $G$.  The number of vertices in that clique is the clique number.",
-}
-
-{
-	"type": "def",
-	"content": "The __chromatic number__ of a graph $G$, denoted $\chi(G)$, is the minimum natural number $\chi$ such that $G$ is $\chi$-partite.",
-	"intuition": "The chromatic number of $G$ is the minimum number of colors needed to color the vertices of $G$ so that no two adjacent vertices are the same color.",
-}
-
-{
-	"name": "Clique coloring",
-	"weight": 3,
-	"type": "thm",
-	"content": "For any multigraph $G$, $\chi(G) \geq \omega(G)$.",
-	"intuition": "The number of colors needed for the vertices of $G$ is at least the size of the maximum clique in $G$.",
-}
-
-{
-	"name": "Brook's theorem",
-	"weight": 8,
-	"type": "thm",
-	"content": "Consider any multigraph $G$.  If it is complete or an odd cycle, then $\chi(G) = \Delta(G)+1$;  otherwise, $\chi(G) \leq \Delta(G)$.",
-	"intuition": "Except for two special cases, the chromatic number of a graph is at most its maximum degree!",
-}
-
-{
-	"name": "Vizing's theorem",
-	"weight": 7,
-	"type": "thm",
-	"content": "In every simple graph $G$, $\Delta(G) \leq \chi'(G) \leq \Delta(G)+1$.",
-	"intuition": "The minimum number of colors necessary to color the edges of a simple graph (with no two edges of the same color adjacent to each other) is less than or equal to the maximum degree of $G$ plus $1$.",
-}
-
-
-
-
-{
-	"name": "Independence number and chromatic number",
-	"weight": 5,
-	"type": "thm",
-	"content": "For any multigraph $G=(V,E)$, $\chi(G)\alpha(G) \geq |V|$.",
-	"proof": {
-		"type": [],
-		"content": "Color the $n$ vertices $\chi(G)$ colors.  Each color forms an independent set of size at most $\alpha(G)$  Therefore the sum over each color of the size of the color is at most $\chi(G)\alpha(G)$.  But the sum over each color of the size of the color is just $n$, so we have that $n \leq \chi(G)\alpha(G)$.",
-	},
-}
-
-{
-	"name": "Color backwards",
-	"weight": 5,
-	"type": "thm",
-	"content": "Given any finite multigraph $G$, $\chi(G) \leq 1 + \max_{\text{all induced subgraphs $H$ of $G$}}\{\delta(H)\}$.",
-	"proof": {
-		"type": "",
-		"content": "Take $G=(V,E)$.  Find a vertex of minimum degree.  Label it $v_0$ and remove it.  Repeat this process until we have the sequence $(v_0, v_1,,,v_{|V|})$.  Now re-build $G$ by adding the vertices in backwards, coloring each vertex as you add it.  Each vertex that you add in has $\delta(H)$ neighbors for some subgraph $H$ of $G$.  We need at most $\delta(H)+1$ colors to guarantee that the vertex is different than all its neighbors.  Therefore, the number of colors needed to color all of $G$ is at most $\delta(H)+1$ for the largest $\delta(H)$ we encounter.",
-	},
-}
-
-{// maybe break this into two theorems, since that's traditional!!!!!
-	"name": "König's theorem",
-	"weight": 6,
-	"type": "thm",
-	"content": "Consider any multigraph $G$.  If $G$ is bipartite, then $\alpha'(G) = \beta(G)$; otherwise, $\alpha'(G) \leq \beta(G)$.",
-	"intuition": "In all multigraphs, the matching number is less than or equal to the vertex cover number.  Specifically in bigraphs, we are guaranteed equality.",
-}
-
-{
-	"name": "Gallai's Vertex Theorem",
-	"weight": 6,
-	"type": "thm",
-	"content": "For any multigraph $G=(V,E)$, $\alpha(G)+\beta(G)=|V|$.",
-	"intuition": "The maximum independent set size plus the minimum vertex cover size equals the number of vertices.",
-	"proof": {
-		"type": [],
-		"content": "There is a bijection between independent sets and vertex covers (needs proof).  In particular, every independent set $S\subset V$ bijects with the vertex cover $V\S$.  Therefore, the maximum independent set bijects with the minimum vertex cover.  We have proved the stronger statement that the maximum independent set unioned with the minimum vertex cover is equal to $V$.",
-	},
-}
-
-{
-	"name": "Gallai's Edge Theorem",
-	"weight": 6,
-	"type": "thm",
-	"content": "For any multigraph $G=(V,E)$, $\alpha'(G)+\beta'(G)=|V|$.",
-	"intuition": "The matching number plus the minimum edge cover size equals the number of vertices.",
-	"proof": {
-		"type": [],
-		"content": "Every edge cover can be decomposed into a matching (which covers two vertices per edge) and the remaining 'leftover edges' (which cover one vertex per edge).  Therefore, an edge cover is minimized when its matching is maximized.  Consider the minimum edge cover and the maximum matching that it contains.  There are $|V|$ vertices in the graph.  $k$ of them are part of the maximum matching and $|V|-k$ of them are not.\n\n$k+(|V|-k) = |V|$\n\n$\frac k2+\left[\frac k2+(|V|-k)\right] = |V|$\n\n$\text{# matching edges}+\left[\text{# matching edges}+(\text{# leftover edges})\right] = |V|$\n\n$\alpha'(G)+\left[\beta'(G)\right] = |V|$",
-	},
-}
-
-{
-	"name": "Ore's Theorem",
-	"weight": 6,
-	"type": "thm",
-	"content": "If $G=(V,E)$ is a simple graph with finite $|V| \geq 3$ and for all $a,b \in V$, $d(a)+d(b) \geq |V|$, then $G$ has a Hamiltonian cycle.",
-}
-
-
-
-//HW 14
-{ // 1
-	"name": "Adjacency and Laplacian",
-	"weight": 1,
-	"type": "exercise",
-	"content": "The adjacency matrix for graph $G$ is $\begin{bmatrix}0 & 1 & 1 & 0\\\\1 & 0 & 1 & 1\\\\1 & 1 & 0 & 1\\\\0 & 1 & 1 & 0\end{bmatrix}$.  The drawing of $G$ is [[<img>]].  The laplacian of $G$ is [[$\begin{bmatrix}2 & -1 & -1 & 0\\\\-1 & 3 & -1 & -1\\\\-1 & -1 & 3 & -1\\\\0 & -1 & -1 & 2\end{bmatrix}$]].  The number of spanning trees of $G$ is [[$8$]].",
-}
-
-{// 2
-	"weight": 1,
-	"type": "exercise",
-	"content": "A tree $T$ has Pr\u{00fc}fer sequence $486834$.  The drawing of $T$ is [[<img>]].",
-}
-
-{
-	"name": "First Theorem of Graph Theory",
-	"weight": 3,
-	"type": "thm",
-	"content": "If $G=(V,E)$ is a multigraph, then $\sum_{v\in V} \text{deg}(v) = 2|E|$.",
-	"intuition": "The sum of the degrees of the vertices is equal to twice the number of edges.  This is because every edge has two endpoints, so it contributes $2$ to the total degree sum.",
-}
-
-{ // 3
-	"name": "Tree Sum",
-	"weight": 5,
-	"type": "thm",
-	"content": "Let $T$ be a tree with $n$ vertices.  Let $d_i$ be the number of vertices of degree $i$ in $T$.  Then $\sum_{i=0}^{n-1} (i-2)d_i = -2$.",
-	"proof": {
-		"type": "algebraic",
-		"content": "In any graph, the sum of the degrees of the vertices is equal to $2$ times the number of edges.\n\n$\sum_{i=0}^{n-1} id_i = 2|E|$\n\nSince $T$ is a tree, the number of edges is one less than the number of vertices.\n\n$\sum_{i=0}^{n-1} id_i = 2(n-1)$\n\n$\sum_{i=0}^{n-1} id_i = 2n-2$\n\n$\sum_{i=0}^{n-1} id_i = \left(2\sum_{i=0}^{n-1} d_i\right)-2$\n\nCombining the sums on the left side, we obtain the result.\n\n$\sum_{i=0}^{n-1} (i-2)d_i = -2$",
-	},
-}
-
-//quiz 3
-{// 1 abcd
-	"name": "Many questions",
-	"weight": 1,
-	"type": "exercise",
-	"content": "The graph $G$ is defined by the drawing <img1>.  The degree sequence of $G$ is [[$(1,2,2,2,2,3,3,3)$]].  $G$ <<is|is not>> bipartite.  One regular subgraph of $G$ (there are many correct answers) is [[<img2>]].  One spanning tree of $G$ (there are multiple correct answers) is [[<img3>]].",
-}
-
-{// 2 b
-	"weight": 1,
-	"exercise": "A tree $T$ has three vertices of degree $2$, five vertices of degree $3$, two vertices of degree $4$, and no vertices of degree $5$ or more.  The number of leaves that $T$ has is [[$11$]].",
-}
-
-{
-	"name": "Chord (graph theory)",
-	"weight": 1,
-	"type": "def",
-	"content": "A __chord__ of a cycle $C=(V,E)$ is an edge $h\not\in E$ such that $h\subset V$.",
-	"intuition": "A chord of a cycle is an edge whose endpoints are in the cycle, but the chord is not in the cycle itself.  The chord cuts through the inside of the cycle.",
-}
-
-{// 3
-	"weight": 3,
-	"exercise": "A simple graph $G$ has minimum degree $3$.  Prove that $G$ contains a cycle with a chord.",
-}
-
-//HW 15
-{//1a
-	"weight": 2,
-	"exercise": "An example of a simple graph $G$ where $\chi(G)>\omega(G)$ is...",
-	"example": "An odd cycle of size at least $5$.",
-}
-
-{//1b
-	"weight": 2,
-	"exercise": "An example of a simple graph $G$ where $\chi(G)\beta(G)\leq\omega(G)$ is...",
-	"example": "Any complete graph.",
-}
-
-{//1c
-	"weight": 2,
-	"exercise": "An example of a simple graph $G$ where $\chi(G)>2\Delta(G)$ is...",
-	"example": "The trivial graph.",
-}
-
-{//1d
-	"weight": 2,
-	"exercise": "An example of a simple graph $G$ where $\Delta(G)=2\chi(G)$ is...",
-	"example": "A star with $4$ leaves.",
-}
-
-{// 2
-	"weight": 2,
-	"exercise": "The chromatic number of the Peterson graph is [[$3$]].  The edge chromatic number of the Peterson graph is [[$4$]].",
-}
-
-{// 3 // dunno....i have ommitted part b of this problem.  When Tim Naumovitz responds, i may add it back again.
-	"weight": 1,
-	"exercise": "Let $G$ be a simple forest with $k$ components.  Each component $H_i$ for $i\in[k]$, has the chromatic number $\chi(H_i)$.  The chromatic number of $G$ is [[$\chi(G) = \min_{i\in[k]}{\chi(H_i)}$]].",
-}
-//HW 16
-{//2 a
-	"weight": 2,
-	"exercise": "Let $G$ be a simple $r$-regular bipartite graph.  Prove that $G$ has a perfect matching.",
-}
-
-{//2 b
-	"weight": 2,
-	"exercise": "Let $G=(V,E)$ be a complete bipartite graph where both parts have the same size.  The number of perfect matchings that $G$ has is [[$\left(\frac V2\right)!$]].",
-}
-
-{// 3
-	"name": "Independence number <= edge cover number",
-	"weight": 5,
-	"type": "thm",
-	"content": "If the multigraph $G$ has no isolated vertices, then $\alpha(G) \leq \beta'(G)$.",
-	"intuition": "In every multigraph without isolated vertices, the maximum independent vertex set has size less than or equal to a minimum edge cover.",
-	"proof": {
-		"type": ["combinatorial"],
-		"content": "Take a maximum independent set of vertices.  No pair of those vertices are adjacent, so no single edge can cover more than one of those vertices.  Therefore, it will take at least $\alpha(G)$ edges to cover those vertices.  Therefore, it will take at least $\alpha(G)$ edges to cover all vertices in the graph.",
-	},
-}
-// end of HW 16
-
-//quiz 4
-{
-	"weight": 1,
-	"exercise": "Let $G$ be the graph defined by <img4>.  $G$ <<is|[is not]>> Eulerian.",
-}
-
-{
-	"weight": 1,
-	"exercise": "Let $G$ be the graph defined by <img4>.  $G$ <<[is]|is not>> Hamiltonian.",
-}
-
-{
-	"weight": 1,
-	"exercise": "Let $G$ be the graph defined by <img4>.  The chromatic number of $G$ is [[$3$]].",
-}
-
-{
-	"weight": 1,
-	"exercise": "Let $G$ be the graph defined by <img4>.  The edge chromatic number of $G$ is [[$4$]].",
-}
-
-{//2
-	"name": "Pigeonhole principle 1",
-	"weight": 2,
-	"type": "exercise",
-	"content": "Let $S=[n]$.  Prove that if a number in $[n]$ is assigned to each subset of $S$, then there exists two subsets, $A \subset B$ such that $A$ and $B$ are assigned the same number.",
-	"note": "The number assigned to $A$, for example, need not be an element of $A$.  For example, it is legal to assign the number $3$ to the set ${1,2}$.",
-	"proof": {
-		"type": ["pigeonhole principle"],
-		"content": "${} \subset [1] \subset [2] \subset \subset \subset [n]$.  This is a linear order of $n+1$ subsets, and we only have $n$ numbers to assign to them.  By the pigeonhole principle, at least two of those subsets must share a label.  Thanks to the linear ordering with respect to containment, one of the two is a subset of the other.",
-	},
-}
-
-{// 3
-	"weight": 2,
-	"type": "exercise",
-	"content": "Let $G=(A,B,E)$ be a bipartite graph where $|A|=|B|$ and every vertex is in at least one cycle.  Then $G$ <<has|[does not necessarily have]>> a perfect matching.",
-	"proof": {
-		"type": "constructive",
-		"content": "The statement did not say that $G$ was connected.  Therefore, let $K_{2,3} = (L_1,R_1,E_1)$.  $K_{2,3}$ does *not* have a perfect matching.  Let $K_{3,2} = (L_2,R_2,E_2)$ have distinct vertices from $K_{2,3}$.  Finally, let $A=L_1\cup L_2$, $B=R_1\cup R_2$, and $E=E_1\cup E_2$.  The resulting graph $G=(A,B,E)$ does *not* have a perfect matching.",
-	},
-}
-
-{//4
-	"name": "Ramsey number R(3,3)",
-	"type": "thm",
-	"weight": 4,
-	"content": "The Ramsey number $R(3,3)$ is $6$.",
-	"proof": {
-		"type": "pigeonhole principle",
-		"content": "Consider $K_5$ with the red-blue edge coloring that consists of one red $C_5$ and one blue $C_5$.  It has no red $C_3$ nor a blue $C_3$.  Therefore, $R(3,3) > 5$.\n\nNow consider $K_6$.  One vertex $v$ has $5$ incident edges.  At least $3$ of those edges must be the same color as each other.  Without loss of generality, let's say that at least $3$ of the edges are red.  Look at the $3$ vertices at the other end of those edges.  For each pair, they must be blue adjacent, because red adjacency would create a triangle with $v$.  But if each pair is blue adjacent, then we have a blue triangle among those $3$ vertices!  Therefore, $R(3,3) \leq 6$\n\nPutting both pieces together, we conclude that $R(3,3) = 6$.",
-	},
-}
-//end of quiz 4
-
-//HW 17
-{
-	"weight": 1,// make this the default definition of cycle!
-	"exercise": "The number of Hamiltonian cycles in $C_n$, where cycles have no beginning nor end, is [[$1$]].",
-}
-
-{// similarly, remove direction from walks!!! so we have equivalence class of sequences
-	"weight": 2,
-	"exercise": "The number of Hamiltonian cycles in $K_n$, where cycles have no beginning nor end, is [[$\frac{n!}{2n}$ or $\frac{(n-1)!}{2}$]].",
-}
-
-{
-	"weight": 3,
-	"exercise": "The number of Hamiltonian cycles in $K_{n,n}$, where cycles have no beginning nor end, is [[$\frac{n!^2}{4n}$ or $\frac{n(n-1)}{4}$]].",
-}
-
-{
-	"weight": 3,
-	"exercise": "The number of Hamiltonian cycles in $W_n$, where cycles have no beginning nor end, is [[$n-1$ for all $n>2$]].",
-}
-
-{
-	"weight": 1,
-	"exercise": "For all $n$, the graph $C_n$ <<[is]|is not>> Eulerian and <<[is]|is not>> Hamiltonian.",
-}
-
-{
-	"weight": 1,
-	"exercise": "For all $n>2$, the graph $W_n$ <<is|[is not]>> Eulerian and <<[is]|is not>> Hamiltonian.",
-}
-
-{
-	"weight": 1,
-	"exercise": "The graph <img5> <<[is]|is not>> Eulerian and <<is|[is not]>> Hamiltonian.",
-}
-
-{
-	"weight": 1,
-	"exercise": "The graph <img6> <<is|[is not]>> Eulerian and <<is|[is not]>> Hamiltonian.",
-}
-
-{//3
-	"weight": 3,
-	"type": "exercise",
-	"content": "Let $G$ be a Hamiltonian graph of order $n$.  If we remove $k$ vertices from $G$, then the number of connected components of the remaining graph is [[$\begin{cases}1 & \text{if} k=0\n2 * \text{if} 0<k\leq \frac n2\nn-k & \text{if} \frac n2 < k \leq n\end{cases}$]].",
-}
-// end HW 17
-
-//HW 18
-{//1
-	"name": "pigeonhole principle 2",
-	"weight": 3,
-	"exercise": "Given any sequence of $n$ integers, there is a consecutive subsequence whose sum is a multiple of $n$.",
-	"proof": {
-		"type": "pigeonhole principle",
-		"content": "We have the sequence $(x_1,x_2,,,x_n)$ of integers.  Consider the consequtive sums $x_1$, $x_1+x_2$, $x_1+x_2+x_3$, , , $x_1+x_2+x_3+++x_n$.  We have $n$ consequtive sums $S_i$ for $1\leq i \leq n$.  Each sum is of the form $S_i = a_in+k_i$ for integers $a_i$ and $k_i$ such that $0\leq k_i<n$.\n\nIf $k_i=0$ for any of these sums, we have found a multiple of $n$.  Otherwise, there are $n$ sums and only $n-1$ possible values of $k$, in which case, by the pigeonhole principle, a pair of sums must share the same $k$.\n\nLet us call these two sums $S_{i_1}$ and $S_{i_2}$ where $i_1<i_2$.  It follows that $S_{i_2}-S_{i_1} = a_{i_2}n+k_{i_2} - a_{i_1}n+k_{i_1} = (a_{i_2}-a_{i_1})n$ since $k_{i_1} = k_{i_2}$.  This is a multiple of $n$!  Moreover, $S_{i_2}-S_{i_1}$ is a consecutive sum itself because $S_{i_2}-S_{i_1} = (x_1+x_2+++x_{i_2})-(x_1+x_2+++x_{i_1}) = x_{i_1+1}+++x_{i_2}$.",
-	},
-}
-
-{// 2
-	"weight": 2,
-	"exercise": "For any $a,b \in N$, every graph $K_{a+b}$ with edges colored red and blue has a red path of length $a$ or a vertex incident to at least $b$ blue edges.",
-	"proof": {
-		"type": "pigeonhole principle",
-		"content": "Consider the longest red path.  If its length is greater than or equal to $a$, we are done.  If its length is less than $a$, then the number of vertices it has is less than $a+1$.  The number of vertices it has is less than or equal to $a$.  Then the number of vertices *not* in the path is greater than or equal to $b$.  Consider the end vertex $z$ of the path.  For each of the $b$ vertices not in the path, it must be adjacent to $z$ because the graph is complete, and the edge must be blue, because a red edge would make the path longer (contradicting the fact that it is the *longest* red path).  Therefore, $z$ is incident to at least $b$ blue edges.",
-	},
-}
-
-{// 3 a
-	"weight": 2,
-	"exercise": "There exists a red-blue edge coloring of $K_8$ that does not contain a red $K_4$ nor a blue $K_3$.  By definition, this means that the Ramsey number $R(4,3) > 8$.",
-	"proof": {
-		"type": "ramsey theory",
-		"content": "Arrange the $8$ vertices in an octagon.  Let's say that the \"length\" of an edge is the (minimum) number of edges around the perimeter of the octagon that it takes to get from the start vertex to the end vertex.  For example, the edge connecting vertices farthest away from each other has length $4$ (<img7>).\n\nWe want to avoid blue triangles.  Every triangle in the octagon is made from exactly $3$ edges, and the \"lengths\" of those edges add up to $8$.  If we look at the partitions of $8$, we see that every partition of $8$ must have a part that is $\leq 2$.\n\nTherefore, by coloring all edges with length $\leq 2$ red, we guarantee there are no blue triangles.\n\nAll remaining edges (edges of length $\geq 3$) are colored blue, and by a similar argument, because all $K_4$s must contain an edge of length $\geq 3$, there can be no red $K_4$s.\n\nThe graph looks like <img8>.",
-	},
-}
-
-{// 3b
-	"weight": 1,
-	"exercise": "We will prove that $R(4,3) \leq 10$ using a red-blue edge coloring.  First prove that given a complete graph, if a vertex has $6$ red incident edges, then there must be a red $K_4$ or a blue $K_3$.  Second, prove that if a complete graph has $4$ blue incident edges, then it must contain a red $K_4$ or a blue $K_3$.  Finally, use the pigeonhole principle to prove that $R(4,3) \leq 10$.",
-	"proof": {
-		"type": ["combinatorics", "ramsey theory"], // program should automatically change this to combinatorial
-		"content": "First, if a complete graph has $6$ red incident edges to $v$, then there are $6$ vertices at the end of those edges.  Because $R(3,3)=6$, we are guaranteed a red or blue triangle among those $6$ vertices.  If we have a red triangle, then when we consider $v$ with only red edges to the triangle, we find a red $K_4$.\n\nSecond, if the complete graph has a vertex $u$ with $4$ incident blue edges, then there are $4$ distinct vertices at the ends of those edges.  If any pair of those vertices is blue adjacent, then they create a blue triangle with $u$.  Otherwise, every pair is red adjacent, so the $4$ vertices create a red $K_4$.\n\nFinally, consider $K_{10}$ as a single vertex $s$ and its $9$ incident edges.  If at least $6$ of those edges are red, then by our first argument, we have a blue triangle or a red $K_4$.  Otherwise, at most $5$ of the incident edges are red, so at least $4$ of them are blue.  By our second argument, we again have a blue triangle or a red $K_4$.\n\nThis proves that $R(4,3) \leq 10$.",
-	},
-}
-
-{// 3c
-	"weight": 2,
-	"exercise": "Given that a red-blue edge coloring of $K_9$ has no blue $K_3$ nor a red $K_4$ only when every vertex has at most $3$ blue incident edges and at most $5$ red incident edges, prove that $K_9$ must have a blue $K_3$ or a red $K_4$.  This proves that $R(3,4) \leq 9$.",
-	"proof": {
-		"type": "ramsey theory",
-		"content": "Assume that $K_9$ has no blue $K_3$ nor a red $K_4$.  Then for every vertex $v$ in $K_9$, it has exactly $8$ incident edges, each of which is either red or blue.  If $v$ has at most $5$ red incident edges and at most $3$ blue incident edges, then $v$ has *exactly* $5$ red incident edges and $3$ blue incident edges.\n\nIf every vertex has exactly $5$ red incident edges, then the total number of red edges is $\frac{9 \cdot 5}2$, which is not a natural number.  The number of red edges must be a natural number, so this is a contradiction.  We conclude that our assumption was false, so we have proven that a red-blue edge coloring of $K_9$ *must* contain a blue $K_3$ or a red $K_4$.  Therefore, $R(3,4) \leq 9$.",
-	},
-}
-
-//3d
-{ // combine 3a and 3c together to prove that R(4,3)=9.  This is a THEOREM.  Let's change 3a and 3c slightly and make them lemmas....
-	"name": "R(4,3)=9",
-	"weight": 3,
-	"type": "thm",
-	"content": "The Ramsey number $R(4,3)$ is $9$.",
-	"intuition": "Every $K_9$ graph with a red-blue edge coloring must contain a red $K_4$ or a blue $K_3$.",
-}
-// end of HW 18
-
-{
-	"type": "def",
-	"content": "Given a partially ordered set $(P,<)$, two elements $a,b \in P$ are __comparable__ if $a < b$, $a=b$, or $a>b$.",
-}
-
-{
-	"type": "def",
-	"content": "Given a partially ordered set $(P,<)$, a __maximum__ element is an element $m \in P$ such that for all $p \in P$ that are comparable to $e$, $e \geq p$.",
-	"intuition": "Given a partially ordered set, if an element is greater than or equal to all elements it can be compared to, then it is a **maximum** element.",
-}
-
-{
-	"type": "def",
-	"content": "Given a partially ordered set $(P,<)$, a __minimum__ element is an element $m \in P$ such that for all $p \in P$ that are comparable to $e$, $e \leq p$.",
-	"intuition": "Given a partially ordered set, if an element is less than or equal to all elements it can be compared to, then it is a **minimum** element.",
-}
-
-{
-	"name": "covers (partial order)",
-	"weight": 4,
-	"type": "def",
-	"content": "Given a partial order $(P,<)$, an element $y \in P$ __covers__ $x \in P$ if $y>x$ and for all $p \in P$, we do not have $y>p>x$.",
-	"intuition": "$x$ **covers** $y$ is $x$ is the unique element greater than $y$.",
-}
-
-{
-	"weight": 4,
-	"type": "def",
-	"content": "Given a poset $(P,<)$, a __chain__ is a sequence of elements $p_0<p_1<<<$.",
-	"intuition": "A chain is a sequence of elements of $P$ that form a linear order under the same ordering $<$ as the poset.  Be careful!  A chain need not be a sequence of successors.  It is okay to jump over elements.",
-}
-
-{
-	"type": "def",
-	"content": "Given a poset $(P,<)$, an __antichain__ is a subset $A$ such that for every pair $x,y \in A$, $x$ is incomparable to $y$.",
-	"intuition": "An **antichain** is a set of elements where no two are comparable to each other.",
-}
-
-{
-	"name": "Sperner's theorem",
-	"weight": 5,
-	"type": "thm",
-	"content": "The antichain of largest size in the boolean lattice $B_n$ has size $\binom{n}{\floor n2}$.",
-	"proof": [
-		{
-			"type": "",
-			"content": "Assume that the largest size antichain contains an element $e$ not in the middle layer(s) of $B_n$.  The layer of $e$ is $k$ for some $k<\floor{\frac n2}$.  There are $n-k$ options for adding another element to $e$, and $n-k > n-\floor{\frac n2} = \ceil{\frac n2}$, so there are at least $2$ options when $n \geq 2$.  Therefore, we can remove $e$ from the antichain and add in the $2$ options instead, creating a larger size antichain.  This contradicts the largest size of our antichain, so our assumption was false.  We conclude that a largest size antichain must have all its elements in the middle layer(s).\n\nThis concludes the proof for even $n$, but for odd $n$, we have two middle layers, and we must show that all the elements of the antichain reside in one of these layers.  I couldn't find an elegant solution in this scenario, so I will let somebody else finish this proof.",
-		},
-		{
-			"type": "",
-			"content": "The LYM inequality guarantees that for antichain $A$, where $a_k$ is the number of elements of $A$ of size $k$, we have $\sum_{k=0}^{n} \frac{a_k}{\binom nk} \leq 1$.  Since $\binom nk \leq \binom{n}{\floor{\frac n2}}$, we have that\n\n$\sum_{k=0}^{n} \frac{a_k}{\binom{n}{\floor{\frac n2}}} \leq 1$\n\n$\sum_{k=0}^{n} a_k \leq \binom{n}{\floor{\frac n2}}$\n\n$|A| \leq \binom{n}{\floor{\frac n2}}$.  Moreover, we can achieve the size $\binom{n}{\floor{\frac n2}}$ exactly by choosing one of the middle layer(s) of $B_n$.",
-		},
-	],
-}
-
-{
-	"name": "LYM inequality",
-	"full name": "Lubell–Yamamoto–Meshalkin inequality",
-	"weight": 3,
-	"type": "thm", // this lemma is used to prove Sperner's theorem
-	"content": "For any antichain $A$ in the boolean lattice $B_n$, let $a_k$ be the number of elements in $A$ of size $k$.  Then the inequality $\sum_{k=0}^{n} \frac{a_k}{\binom nk} \leq 1$ is true.",
-}
-
-// HW 19
-{// 1
-	"weight": 1,
-	"type": "exercise",
-	"content": "Prove that for every arrangement of the vertex set $[24]$ in the cycle $C_{24}$, there exists $3$ consecutive numbers whose sum is at least $38$.",
-	"proof": {
-		"type": "probabilistic method",
-		"content": "Let $X$ be the random variable that represents the sum of $3$ consecutive numbers in the cycle.  If we let $X_1$ represent the first number, $X_2$ represent the second number, and $X_3$ represent the third number, then the expected value is:\n\n$E[X] = E[X_1+X_2+X_3]$\n\nDue to the linearity of expectation, we have that\n\n$E[X] = E[X_1]+E[X_2]+E[X_3]$\n\nThe expected value of the first number is $1P(1)+2P(2)+++24P(24) = 1\frac1{24}+2\frac1{24}+++24\frac1{24} = \frac{(24)(24+1)}{2}\frac1{24} = \frac{25}{2} = 12.5$.  The expected value of the second and third numbers is the same as the expected value of the first number.\n\n$E[X] = 12.5+12.5+12.5$\n\n$E[X] = 37.5$\n\nThe expected value of the sum of $3$ consecutive numbers is $37.5$.  Since such a sum must be an integer, there must be at least one sum that is at least $38$ in order to achieve that average of $37.5$.",
-	},
-}
-
-{// 2
-	"weight": 2,
-	"exercise": "Prove that for all $n$, $K_n$ has a red-blue edge coloring with at most $\frac{n!}{2^{n-1}}$ monochromatic Hamiltonian paths.",
-	"proof": {
-		"type": "probabilistic method",
-		"content": "The probability of any single edge being blue is $\frac12$.\n\nAlso, take note that $K_n$ has exactly $\frac{n!}{2}$ possible Hamiltonian paths.\n\nLet $X$ be the number of monochromatic Hamiltonian paths.  Then the expected value of $X$ is\n\n$E[X] = E[X_{1_r}+X_{1_b}+X_{2_r}+X_{2_b}+++X_{\frac{n!}{2}_r}+X_{\frac{n!}{2}_b}]$\n\nwhere $X_{k_b}$ is $1$ if Hamiltonian path $k$ is all blue, and $0$ otherwise.  Due to the linearity of expectation, we have that\n\n$E[X] = E[X_{1_r}]+E[X_{1_b}]+E[X_{2_r}]+E[X_{2_b}]+++E[X_{\frac{n!}{2}_r}]+E[X_{\frac{n!}{2}_b}]$\n\nLet's calculate $E[X_{k_b}]$.  Hamiltonian path $k$ has $n-1$ edges, each with a probability of $\frac12$ of being blue.  Therefore, we expect Hamiltonian path $k$ to be all blue at least $\left(\frac12\right)^{n-1}$ of the time.  That is, $E[X_k] = \left(\frac12\right)^{n-1}$.\n\nThis is true for every value of $k$ regardless of whether it is red or blue, so we have that\n\n$E[X] = n!E[X_{k_b}]$\n\n$E[X] = n!\left(\frac12\right)^{n-1}\n\n$E[X] = \frac{n!}{2^{n-1}}$.\n\nBecause the expected value is this amount, there must be at least one red-blue edge coloring of $K_n$ that has at most $\frac{n!}{2^{n-1}}$ monochromatic Hamiltonian paths.",
-	},
-}
-
-{// 3
-	"weight": 3,
-	"exercise": "We have an $n\times n$ matrix, and all the elements of the matrix are in $[n]$.  Furthermore, each of the elements of $[n]$ appears in the matrix $n$ times.  Prove that the matrix must have a row or column with at least $\sqrt{n}$ distinct entries.",
-	"proof": {
-		"type": "probabilistic method",
-		"content": "I don't have time to write this up so somebody should replace this with a full explanation.  Here is the outline...Pick a specific row or column. $X$ represents the number of distinct entries in it.  but $X$ = $X_1+++X_n$ where each $X_k$ is defined to be $1$ if $k$ appears in the row, and $0$ otherwise.  $E[X]$ equals the sum of $E[X_k]$ for $k$ is $1$ through $n$.  The worst case scenario for any $k$ appearing in any row is if all the $k$s are scrunched together in a little square with side length $\sqrt{n}$.  So the probability of $X_k$ being $1$ is at least $\frac{\sqrt{n}}{n}$.  Finally, compute the expected values and find that $E[X]$ is $\sqrt{n}$.",
-	},
-}
-// end of HW 19
-
-{
-	"weight": 1,
-	"type": "def",
-	"content": "In a game, a __P-position__ is a position where the previous player to move can win.",
-}
-
-{
-	"weight": 1,
-	"type": "def",
-	"content": "In a game, an __N-position__ is a position where the next player to move can win.",
-}
-
-{
-	"weight": 1,
-	"type": "def",
-	"content": "A game is __partial__ if there exists a position where the set of possible moves depends on the player whose turn it is.",
-}
-
-{
-	"weight": 1,
-	"type": "def",
-	"content": "A game is __impartial__ if it is not partial.",
-}
-
-{
-	"weight": 1,
-	"type": "def",
-	"content": "A game is __normal__ if the player who makes the last move wins.",
-}
-
-{
-	"weight": 1,
-	"type": "def",
-	"content": "A game is __misere__ if the player who makes the last move loses.",
-}
-
-{
-	"type": "def",
-	"content": "Given a game, the __Sprague-Grundy Function__ is a function $f:{\text{positions}}\to \mathbb{N}$.  Given the directed acyclic graph of positions, the Sprague-Grundy Function is recursively defined from the sinks as $f(v)$ equals the smallest natural number that is not in $\{f(t)|\text{t is a successor of v}\}$.",
-}
-
-// HW 20
-{// 1 a
-	"weight": 1,
-	"type": "exercise",
-	"content": "Give examples of a poset whose longest chain is exactly twice the size of its largest antichain.",
-	"example": "The poset defined by <img9> where $0<1$.  The longest chain has size $2$ and the largest antichain has size $1$.",
-	"example": "The poset defined by <img10> such that whenever two vertices are adjacent, the one with greater height is greater.  The longest chain has size $4$ and the largest antichain has size $2$.",
-}
-
-{// 1 b
-	"weight": 1,
-	"type": "exercise",
-	"content": "Give examples of a poset with a maximum element but no minimum element.",
-	"counterexample": "$(\mathbb{N}, <)$ is incorrect because $0$ is a minimum element.  It is also incorrect because there is no maximum element.",
-}
-
-{// 1 c definition
-	"type": "def",
-	"content": "Given a poset $(P,<)$, a __rank function__ is a function $r:P\to\mathbb{N}$ such that\n\n  1. If $x$ is a successor of $y$, then $r(x) = r(y)+1$.\n  2. If $x>y$, then $r(x)>r(y)$.",
-	"note": "There are posets for which no rank function exists.",
-}
-
-{// 1 c
-	"weight": 1,
-	"type": "exercise",
-	"content": "Give examples of a poset that has no rank function.",
-	"example": "The poset <img11> has no rank function.  If there was a rank function, then the minimum element $a$ would get the minimum value.  WLOG, $r(a)=0$.  Both $b$ and $c$ are successors of the minimum element, so $r(b)=1$ and $r(c)=1$.  Element $c$ is a successor of $b$, so $r(c)=r(b)+1=1+1=2$.  The function $r$ assigns both $1$ and $2$ to $c$, which contradicts the definition of a function.  Therefore, no such rank function exists.",
-}
-
-{// 2 theorem
-	"name": "Dilworth's theorem",
-	"weight": 4,
-	"type": "thm",
-	"content": "For every poset $(P,<)$, the largest antichain has size equal to the minimum number of chains of all partitions of $P$ into chains.",
-	"intuition": "Take any poset $(P,<)$.  Look at every possible partition of $P$ where each part must be a chain.  Each partition has a certain number of chains, and we want the smallest possible number of chains.  It turns out that that number is equal to the size of the largest antichain of $(P,<)$.",
-}
-
-{// 2 a b
-	"weight": 1,
-	"type": "exercise",
-	"content": "Consider the boolean lattice $B_4$, and create the poset $(B_4,\subset)$ using strict set inclusion.  The size of a largest antichain is [[$6$]].  Find a partition of $B_4$ into $m$ (disjoint) chains, where $m$ is the minimum possible number of chains.  The value of $m$ is [[$6$]].  This is an example of [[Dilworth's]] theorem.",
-}
-
-{// 3 definition
-	"type": "def",
-	"content": "Given the boolean lattice $B_n$, the elements of $B_n$ with exactly $k$ elements form the set __level $k$__ of $B_n$.",
-}
-
-{// 3 theorem
-	"name": "Erdős–Ko–Rado theorem",
-	"weight": 4,
-	"type": "thm",
-	"content": "Let $k<\frac{n}{2}$ for $k,n \in \mathbb{N}$.  If $A$ is a set of subsets of $[n]$ such that each subset is of size $k$ and each pair of subsets intersects, then the maximum size of $A$ is $\binom{n-1}{k-1}$.",
-}
-
-//final
-{//1 a
-	"weight": 1,
-	"exercise": "Prove that a disconnected acyclic simple graph $G=(V,E)$ with $|E|=|V|-1$ cannot exist.",
-}
-
-{//1 b
-	"weight": 1,
-	"exercise": "Give an example of a simple graph that is $2$-regular and not Eulerian.",
-	"example": "One such graph is defined by [[<img12>]].",
-}
-
-{//1 c
-	"weight": 1,
-	"exercise": "Give an example of a simple bigraph $G$ that has $\chi'(G)>3$.",
-	"example": "One such graph is defined by [[<img13>]].",
-}
-
-{//1 d
-	"weight": 1,
-	"exercise": "Give an example of a simple graph $G$ where $\omega(G)=\alpha(G)$.",
-	"example": "One such graph is defined by [[<img14>]].",
-}
-
-{//1 e
-	"weight": 1,
-	"exercise": "Give an example of a simple forest $G$ with exactly $5$ components such that $\beta(G)=5$.",
-	"example": "One such graph is defined by [[<img15>]].",
-}
-
-{//1 f
-	"weight": 1,
-	"exercise": "Give an example of a simple graph $G$ such that $\chi(G)>\Delta(G)$.",
-	"example": "The graph defined by [[<img16>]] has $\chi(G)$ equal to [[$3$]] and $\Delta(G)$ equal to [[$2$]].",
-}
-
-{//1 h alternate (g was equiv to a theorem we already stated above)
-	"weight": 1,
-	"exercise": "Give an example of a simple graph $S=(V,E)$ such that $|V|=15$ and there are exactly $k+1$ vertices of degree $k$ for $k=0,1,2,3,4$.",
-	"example": "The graph defined by [[<img17>]] is a solution for $S$.",
-}
-
-{//1 h
-	"weight": 1,
-	"exercise": "Prove that a multigraph $M=(V,E)$ such that $|V|=15$ and there are exactly $k$ vertices of degree $k$ for $k=1,2,3,4,5$ cannot exist.",
-}
-
-{// 3 a
-	"weight": 1,
-	"exercise": "The Prüfer sequence of the tree defined by <img18> is [[$(3,5,3,1,1)$]].",
-}
-
-{// 3 b
-	"weight": 1,
-	"exercise": "The adjacency matrix of the graph defined by <img18> is\n\n[[$\begin{bmatrix}\n 0&0&1&0&0&1&1 \\\\\n0&0&1&0&0&0&0 \\\\\n 1&1&0&0&1&0&0 \\\\\n 0&0&0&0&1&0&0 \\\\\n 0&0&1&1&0&0&0 \\\\\n 1&0&0&0&0&0&0 \\\\\n 1&0&0&0&0&0&0 \\\\\n \end{bmatrix}$]]",
-}
-
-{// 3 c
-	"weight": 1,
-	"exercise": "The laplacian of the tree defined by <img18> is\n\n[[$\begin{bmatrix}\n 3&0&-1&0&0&-1&-1 \\\\\n0&1&-1&0&0&0&0 \\\\\n -1&-1&3&0&-1&0&0 \\\\\n 0&0&0&1&-1&0&0 \\\\\n 0&0&-1&-1&2&0&0 \\\\\n -1&0&0&0&0&1&0 \\\\\n -1&0&0&0&0&0&1 \\\\\n \end{bmatrix}$]]",
-}
-
-{//4 a
-	"weight": 2,
-	"exercise": "Prove that $\sum_{k=0}^{n} \frac{\binom nk}{1.5^k} \geq \left(\frac43\right)^n$ for all $n \in \mathbb{N}$.",
-}
-
-{//4 b
-	"weight": 1,
-	"exercise": "Prove that for all $n \in \mathbb{N}^+$, every subset of $[2n]$ of size $n+1$ contains a pair of consecutive integers.",
-}
-
-{// 5 a
-	"weight": 1,
-	"exercise": "Let $B_n$ be the boolean lattice for any $n \in \mathbb{N}$.  The number of maximal chains passing through vertex $[k]$ is [[$k!(n-k)!$]].",
-}
-
-{//5 b
-	"weight": 1,
-	"exercise": "Let $B_n$ be the boolean lattice for any $n \in \mathbb{N}$.  The number of vertices in $B_n$ whose set intersection with $[k]$ is the empty set is [[$2^(n-k)$]].",
-}
-
-{//5 c
-	"weight": 1,
-	"exercise": "Let $B_n$ be the boolean lattice for any $n \in \mathbb{N}$.  The number of vertices in $B_n$ that are incomparable to $[k]$ is [[$2^n-2^k-2^(n-k)+1$]].",
-}
-
-{//6 a // definition!
-	"name": "A-matching",
-	"weight": 2,
-	"definition": "Given a bigraph $G=(L,R,E)$, an __$L$-matching__ is a matching in $G$ that is an $L$ vertex cover.",
-}
-
-{//6 b // thm
-	"name": "Hall's marriage theorem",
-	"weight": 7,
-	"thm": "Let $S$ be a multifamily of finite sets.  If for every submultifamily $W$ of $S$, $|W| \leq \left|\cup_{A \in W} A\right|$, then $S$ has a system of distinct representatives.",
-}
-
-{// 6 c def
-	"weight": 1,
-	"def": "Given a bigraph $G=(L,R,E)$, a __$(2,1)$-matching__ is a subset of $F$ of $E$ where every vertex in $L$ is incident with exactly $2$ edges in $F$ and every vertex in $R$ is incident with at most $1$ edge in $F$.",
-}
-
-{//6 c thm
-	"name": "Hall's (2,1)-matching theorem",
-	"weight": 3,
-	"thm": "Given a bigraph $G=(L,R,E)$ such that for every $X \subseteq L$, $|N(X)| \geq 2|X|$, then $G$ has a $(2,1)$-matching.",
-}
-
-{//7 a
-	"weight": 1,
-	"exercise": "Consider a path of length $n$.  Let $a_n$ be the number of ways to color the edges red, green, or blue so that no two adjacent edges are the same color.  A recurrence for $a_n$ is [[$a_n = 3\left(\\sum_{k=1}^{n} (-1)^{k+1}a_{n-k}\right)$]].",
-}
-// 7 b and c ommitted because seeing the solution is too easy (without using generating functions)
-
-{//8 a b c d
-	"weight": 3,
-	"exercise": "Josef and Doron play a game with two piles of chips.  They alternate taking turns, and each turn consists of taking a positive integer of chips from exactly one of the piles.  The player who takes the last remaining chip loses.  Let $a$ represent the number of chips in the first pile and $b$ represent the number of chips in the second pile.\n\n  The final P-position is [[$a=0$ and $b=1$, or vice versa.  The next player to play will lose]].  The N-positions immediately preceding this P-position are [[$a=0$ and $b>1$, or vice versa.  Also, $a\geq1$ and $b=1$, and vice versa.  In these positions, the next player to move can force the next position to be the final P-position]].  The only positions left are two-pile positions.\n\nThe position where $a=2$ and $b=2$ is a [[P-position because no matter how the player plays, they put the piles into one of the previously described N-positions]].\n\nAll remaining P-positions are when [[$a=b>1$.  When $a=b=2$, this is just the previously described P-position.  When $a=b>2$, any move will cause $a \neq b$ and $a,b>1$]].  All remaining N-positions are when [[$a \neq b$ and $a,b>1$.  The next player can always take chips away from the larger pile so that $a=b>1$ is the result (the previously described P-positions)]].",
-}
-
-{//9 a
-	"weight": 2,
-	"exercise": "Prove that for any $k,l \in \mathbb{N}$, the Ramsey number $R(k,l,2)$ is equal to $R(k,l)$.  Prove that $R(3,3,3) \leq 17$.",
-}
-
-{//10 a b c
-	"weight": 3,
-	"exercise": "Let $\Omega$ be a set.  For any $m \in \mathbb{N}^+$, let $A_1,A_2,,,A_m$ be subsets of $\Omega$ of size $n$.  If the elements of $\Omega$ are colored red or blue randomly (with equal probability), the probability that $A_1$ is monochromatic is [[$\left(\frac12\right)^{n-1}$ or $\frac1{2^{n-1}}$]].  The expected number of $A$s that are monochromatic is [[$m\left(\frac12\right)^{n-1}$ or $\frac{m}{2^{n-1}}$]].  Prove that if $m<2^{n-1}$, then there is a way to color the elements of $\Omega$ red and blue so that none of the $A$s is monochromatic.",
-}
-
-{//11 b thm
-	"name": "Hamiltonian has no lonely forks",
-	"weight": 4,
-	"thm": "$G$ is a connected cyclic multigraph.  No vertex induced subgraph of $G$ is isomorphic to <img19> or <img20>.  Then $G$ is Hamiltonian.",
-}
-// end of final
-
-//review for final
-{// 1 a
-	"weight": 1,
-	"exercise": "The Peterson graph has [[$12$]] cycles of length $5$.",
-}
-
-{// 1 b
-	"weight": 1,
-	"exercise": "The Peterson graph has [[$10$]] cycles of length $6$.",
-}
-
-{// 1 c
-	"weight": 2,
-	"exercise": "The Peterson graph has [[$240$]] Hamiltonian paths.",
-}
-
-{//2 b
-	"weight": 1,
-	"exercise": "The order of a $3$-dimensional hypercube is [[$2^3$ or $8$]].",
-}
-
-{//2 c
-	"weight": 2,
-	"exercise": "The size of a $4$-dimensional hypercube is [[$32$]].",
-}
-
-{//2 e thm
-	"name": "Chromatic number of hypercubes",
-	"weight": 3,
-	"thm": "For all $n \in \mathbb{N}$, the chromatic number of an $n$-dimensional hypercube is $2$.",
-}
-
-{//2 e thm
-	"name": "Edge chromatic number of hypercubes",
-	"weight": 3,
-	"thm": "The edge chromatic number of an $n$-dimensional hypercube is $n$.",
-}
-
-{// thm
-	"name": "Bipartite hypercubes",
-	"weight": 3,
-	"thm": "For all $n \in \mathbb{N}$, the $n$-dimensional hypercube is bipartite.",
-}
-
-{//2 g
-	"name": "Hamiltonian hypercubes",
-	"weight": 3,
-	"thm": "For all $n \in \mathbb{N}$, the $n$-dimensional hypercube is Hamiltonian.",
-}
-
-{//2 h thm
-	"name": "Eulerian even hypercubes",
-	"weight": 3,
-	"thm": "For every $n\in\mathbb{N}$, the $n$-dimensional hypercube is Eulerian iff $n$ is even.",
-}
-
-{//3 thm
-	"name": "Ramsey bound",
-	"weight": 3,
-	"thm": "For any $b\in\mathbb{N}$, the Ramsey number $R(b,b)$ is greater than $2^{\frac b2 - 1}$.",
-}
-
-{// 4
-	"weight": 1,
-	"exercise": "For any $k\in\mathbb{N}$, An upper bound for the Ramsey number $R(k,k)$ is [[$2^k$, but there are even better upper bounds]]!",
-}
-
-{//5 a
-	"weight": 1,
-	"exercise": "Give an example of a graph and a vertex cover that does *not* contain a minimum vertex cover.",
-	"example": "Consider any star $S_n$ for $n \geq 2$. The set containing all vertices except the center is a vertex cover.  It does not contain a minimum vertex cover, because there is only one minimum vertex cover, and it is the set containing the center.",
-}
-
-{//5 b
-	"weight": 2,
-	"exercise": "Give an example of a graph and a matching that is *not* a submatching of a maximum matching.",
-	"example": "Consider a path of odd length.  Label the edges with the positive integers from left to right.  The edges with odd labels form the only maximum matching.  The edges with even labels form a matching that is *not* contained in the maximum matching.",
-}
-
-{// 6 thm
-	"name": "Perfect matchings on trees",
-	"weight": 4,
-	"thm": "Every tree has at most $1$ perfect matching.",
-}
-
-{// 7
-	"weight": 3,
-	"exercise": "Give an example of a simple connected non-Hamiltonian graph that contains $2$ disjoint perfect matchings.",
-	"example": "The graph defined by <img21> is simple, connected, and has no Hamiltonian cycle.  It has a perfect matching defined by the bolded edges in <img22>, and another disjoint perfect matching defined by the bolded eges in <img23>.",
-}
-
-
-
-
-
-
-
-//end of combinatorics stuff
-{
-	"name": "Odd strolls and cycles",
-	"theorem":"Every odd stroll contains an odd cycle.",
-}
-
-{
-	"name": "Directed odd strolls and cycles",
-	"thm":"Every odd directed stroll contains an odd directed cycle.", // by the same proof
-}
-
-{
-	"exercise":"Given a complete graph of order $n$, it has an orientation where d+(v)=d-(v) for all v iff $n$ is odd.",
-	"proof":"When n is odd, Kn has even regular degree.  Therefore, an Eulerian circuit exists.  Following the circuit in one direction yields the orientation.  Of course, when n is even, each vertex has an odd number of neighbors, so it's impossible.",
-}
-
-{
-	"def":"define a digraph!",
-	"note":"*Digraph* is short for *directed graph*.  We use digraphs so often that it is convenient to use the shorter term.",
-}
-
-{
-	"definition":"A digraph is __strongly connected__ if for every pair of (distinct) vertices u, v, there exists a directed path from u to v.",
-}
-
-{
-	"name": "Strongly connected equivalence",
-	"thm":"A digraph $G=(V,E)$ is strongly connected iff for every bi-partition of $V$ into $S$ and $T$, there exists an edge from $S$ to $T$.",
-}
-
-{
-	"definition":"A __component__ of a graph is a maximally connected subgraph.",
-	"note":"*Component* is short for *connected component*.",
-}
-
-{
-	"definition":"A __strong component__ of a graph is a maximally strongly connected subgraph.",
-	"note":"*Strong component* is short for *strongly connected component*.", // i don't know if i like this entire definition.  because it sounds like a component that is strongly connected.  but a strongly connected component is not necc a connectec component!
-}
-
-{
-	"def":"An __arc__ is an ordered pair of vertices, $(a,b)$.",
-	"note":"An arc is also called a *directed edge*.",
-}
-
-{
-	"def":"Given an arc $(a,b)$, $a$ is the __tail__.",
-	"note":"Also called the *initial vertex*.",
-}
-
-{
-	"def":"Given an arc $(a,b)$, $b$ is the __head__.",
-	"note":"Also called the *terminal vertex*.",
-}
-
-{
-	"def":"A set of vertices (or edges) is __independent__ if no pair of vertices (or edges) is adjacent.",
-	"note": "The term **matching** is a synonym for an independent edge set.",
-}
-
-{//original
-	"exercise": "A nonempty graph has at least [[$2$]] maximal independent sets.",
-}
-
-
-{
-	"definition":"A vertex $a$ __dominates__ a vertex $b$ if there is an arc $(a,b)$.",
-}
-
-{
-	"definition":"A vertex set $A$ __dominates__ a vertex set $B$ if for every $b \in B$, there exists an $a \in A$ such that $a$ dominates $b$.",
-}
-
-{ // or maybe we SHOULDNT union it with A!!!
-	"definition":"The __dominion__ of a vertex set $A$ is the union of $A$ and the largest set $B$ that $A$ dominates.",
-	"note":"The dominion of $x$ (WITHOUT x itself) is denoted $N+(x).", // another reason maybe we shouldn't include A
-}
-
-{
-	"definition":"Given a graph $G=(V,E)$, a set $T \sub V$ is __out-dominating__ if its dominion is $V$.",
-}
-
-{ // but now we need a version for digraphs!
-	"definition":"A __kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which is out-dominating.",
-}
-
-{
-	"def":"An __$n$-kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which when closed under domination $n$ times is $V$.",
-}
-
-{
-	"name": "",
-	"thm":"A digraph which is a directed odd cycle has no kernel.",
-}
-
-{
-	"name": "",
-	"thm":"A digraph with no odd cycles has at least one kernel.", // prove this! // see thm 1.4.16
-}
-
-{
-	"name": "",
-	"thm":"A digraph with no even cycles has at most one kernel.", // prove this!
-}
-
-{
-	"name": "",
-	"thm":"An acyclic digraph has a unique kernel.",
-}
-
-{ // oh no do all thrms need to say multigraph now!
-	"name": "",
-	"thm":"Every connected multigraph can be oriented so that at most one vertex has odd outdegree.",
-}
-
-{ // use above!
-	"name": "",
-	"thm":"A connected loopless multigraph with an even number of edges can be decomposed into paths of length 2.",
-}
-
-// De Bruijn cycle for binary words of length 4, avoiding 0101 and 1010. // ask Komlos
-// (see 1.4.26 and then come back to all DeBruin things after it too.
-
-{
-	"name": "",
-	"thm:":"Given a multigraph with an odd cycle, if it has a strong orientation, then that orientation has an odd directed cycle.",
-}
-
-{
-	"name": "",
-	"thm":"The shortest Hamiltonian stroll of a digraph $D=(V,E)$ (if such a stroll exists), has a length of at most $\dfrac{(|V|+1)^2}4$ (for $n \geq 3$).",
-} // book uses different proof which i dont understand (gives overview)
-
-{
-	"def":"A __bipartite graph__, denoted $G=(A,B,E)$, is a graph $G=(V,E)$ such that ${A,B}$ is a bipartition of $V$, and $(\forall e \in E) e\cap A \neq {}$ and $e\cap B \neq {}$.",
-	"note":"*Bigraph* is short for *bipartite graph*.",
-}
-
-{
-	"def":"A __$k$-partite graph__, denoted $G=(A_1,,,A_k,E)$, is a graph $G=(V,E)$ such that ${A_1,,,A_k}$ is a $k$-partition of $V$, and $(\forall e \in E)(\forall i \in [k]) e \not\subset A_i$.",
-}
-
-{
-	"def":"The set ${s,t}$ is __bigraphic__ if there exists a bigraph where the set of the degrees of vertices in partite set $A$ is $s$, and the set of the degrees of vertices in partite set $B$ is $t$.",
-}
-
-{
-	"thm":"${p,q}$ is bigraphic iff ${p\\\\largest element size \\Delta, q -- subtract 1 from \\Delta largest elements}$ is bigraphic.",
-} // this is obvious because we need only that there exists a bigraph.  delta vertices in q lost an edge.  for the largest vertex in q, subtract and edge and add it to the guy that lost an edge.
-
-// Bipartite 2-switch and 0,1-matrices with fixed row and column sums // what is this stuff??? // komlos
-
-{
-	"def":"A __round-robin tournament__ ...?", // shall we call it tournament or round-robin or round-robin tournament?  i feel like we need the last.
-}
-
-{
-	"thm": "Let $G$ and $H$ be tournaments on a vertex set $V$.  Then $d_G+(v) = d_H+(v)$ for all $v \in V$ iff there is a series of triangle direction switches that transforms $G$ to $H$.",
-} // pf algorithm, all vert right side.  pull 1 vert to left side at a time.  each time, fix the edges by letting 3rd vertex be on right side and not caring what happens there.  this works until only 1 vertex left on right.  at that point, all edges across already determined
-
-// come back to 1.4.35
-
-{
-	"def":"Vertex $a$ __virtually dominates__ vertex $b$ if $a$ dominates $b$ or $a$ dominates any $t$ who dominates $b$.",
-}
-
-{
-	"def":"Given a round-robin tournament $R=(V,E)$, a vertex $v \in V$ is a __king__ if it virtually dominates every vertex in $V$ besides itself.",
-}
-
-{
-	"thm":"Every non-null round-robin tournament has a king.",
-}
-
-{
-	"thm":"Let R be a round-robin tournament where every vertex is dominated by some vertex.  If $k \in V$ is a king, then R has another king in $N+(k)$. And another in N-(k)!  3 kings!", // the dominion of k
-}
-
-// ask komlos: who will be teaching combinatorics this summer?
-
-{
-	"thm":"Every loopless digraph has a 2-kernel.",
-	// proof 1, induction
-	// proof 2, put vertices in line, all up arrows make acyclic. take kernel.  all down arrows make acyclic.  take kernel of kernel.
-}
-
-{
-	"def":"A digraph is called __unipathic__ if for any two vertices $j$ and $k$, there is at most one (simple??) path from $j$ to $k$.",
-}// ask komlos
-
-{
-	"thm":"If a unipathic digraph $U=(V_U,E_U)$ is a subgraph of a transitive round-robin tournament $R=(V_R,E_R)$, then $| E_U |$ is at most $\dfrac{|V_R|^2}4$.",
-}// proven! given unipathic subset of trans tourn, take the leftmost source and it's child tree.  then take the next leftmost source and it's child tree, etc.  Come up w/ equation for upper bound of edges.  find max.
-
-// FILL THIS STUFF IN SOME TIME EVENTUALLY:
-// {// 1.4.41
-// 	"thm":"", //ask komlos
-// }// not proven yet! (and all below too)
-
-// {
-// 	1.4.42
+// { // THIS IS THE GENERAL VERSION
+// 	"definition":"A __multigraph__ $G$ is an ordered pair $G = (V,E)$ where $V$ is a set of vertices and $E$ is a multiset of edges on $V$.",
+// 	"intuition":"$E$ is a multiset, so a pair of vertices could have more than one edge incident to them!  Also, there can be loops!",
 // }
 
-// chapter 2
-{
-	"def": "A multigraph is __cyclic__ if it has a at least one cycle.",
-}
+// {
+// 	"def":"Vertices $a$,$b$ have __multiple edges__ if there are more than one edge ${a,b}$.",
+// }
 
-{
-	"def":"A multigraph is __acyclic__ if it is not cyclic.",
-	"intuition": "If it has no cycles.",
-}
+// {
+// 	"def":"Vertex $a$,$b$ has __multiple loops__ if there are more than one edge ${a}$.",
+// }
 
-{
-	"def":"A __forest__ is an acyclic graph.",
-}
+// {
+// 	"definition":"A __simple graph__ $G$ is a multigraph $G = (V,E)$ where $E$ is a set that contains no loops.",
+// 	"note":"Here, $E$ is a set, so multiple edges do not occur either.",
+// 	"note":"Multigraphs are more general than simple graphs.",
+// }
 
-{
-	"def":"A __tree__ is a connected forest.",
-	"intuition":"A forest is one or more trees.  That is, each component of a forest is a tree.",
-}
+// {
+// 	"def":"A __null__ multigraph is a multigraph with 0 vertices.",
+// }
 
-{
-	"thm":"Given any tree $T=(V,E)$ and vertices $a,b \in V$, there is a unique $a$,$b$-path.",
-}
+// {
+// 	"def":"A __non-null__ multigraph is a multigraph with more than 0 vertices.",
+// }
 
-{
-	"thm":"A multigraph is a tree iff it is loopless and has exactly one spanning tree.",
-}
+// {
+// 	"def":"A __trivial__ multigraph is a multigraph with exactly 1 vertex.",
+// }
 
-{
-	"def":"A __spanning tree__ of a multigraph $M=(V,E)$ is a subtree of $M$ of the form $T=(V,E_T)$.",
-	"intuition":"A spanning tree *spans* all the vertices $V$ of the multigraph $M$.",
-}
+// {
+// 	"def":"A __nontrivial__ multigraph is a multigraph with more than 1 vertex.",
+// }
 
-{
-	"thm":"Given a multigraph $G=(V,E)$, there is a bijection between the spanning trees $T=(V,E\A)$ and the sets $A \sub E$, which select exactly one edge from each cycle in $G$.",
-}
+// {
+// 	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
+// }
 
-{
-	"lemma":"If a multigraph $M=(V,E)$ satisfies $|E|<|V|$, then $M$ has a component which is a tree.",
-}
-
-{
-	"lemma":"A maximal subforest $F$ of a multigraph $M$ consists of a spanning tree in each component of $M$.",
-}
-
-{
-	"lemma":"Every tree $T=(V,E)$ satisfies $|E| + 1 = |V|$.",
-}
-
-{
-	"lemma":"Every tree $T=(V,E)$ with average degree $d$ has $|V| = \dfrac2{2-d}$.",
-}//2.1.6
-
-{//part a
-	"thm":"A graph is a forest iff every induced subgraph has a vertex of degree at most $1$.",
-}
-
-{//part b
-	"thm":"A graph is a forest iff every connected subgraph is an induced subgraph.",
-}
-
-{// part c
-	"thm":"The number of components of a forest $F=(V,E)$ is $|V|-|E|$.",
-}
-
-{
-	"ex":"If the acyclic graph $G=(V,E)$ satisfies $|E| = |V|-1$, then $G$ is connected.",
-}
+// {
+// 	"def":"An __nonempty__ multigraph is a multigraph with more than 0 edges.",
+// }
 
 
-//2.1.9 here
+// {
+// 	"definition":"Given a multigraph $G = (V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
+// 	"intuition":"The degree of vertex $v$ is the number of edge ends that touch it.",
+// }
 
-//2.1.10 here
+// {
+// 	"def":"The __minimum degree__ of a graph $G=(V,E)$ is the minimum of the degrees of the vertices in $V$.",
+// 	"den":"\delta(G)",
+// }
 
+// {
+// 	"def":"The __maximum degree__ of a graph $G=(V,E)$ is the maximum of the degrees of the vertices in $V$.",
+// 	"den":"\Delta(G)",
+// }
 
-{
-	"lemma":"Every multigraph $M=(V,E)$ has at least $|E|-|V|+1$ cycles.",
-}
+// {
+// 	"definition":"A __walk__ is an alternating sequence of vertices and edges which starts and ends on a vertex, and satisfies the following condition:  For every edge ${a,b}$ in the sequence, the vertices adjacent to it in the sequence are $a$ and $b$.",
+// 	"intuition":"Pretend you are an ant on the graph.  You begin at a vertex.  You cross edge incident to you and arrive at the other side of that edge: another vertex.  You continue this process, going any way you please, and eventually stop at a vertex.",
+// }
 
-{
-	"def":"The __distance__ between vertices $a$ and $b$ is the length of the shortest path connecting $a$ and $b$.  When there is no path connecting them, $a$ and $b$ have distance infinity.",
-}
+// {
+// 	"def":"A multiset of vertices and edges where *no edge is repeated* satisfies the __trail condition__.",
+// 	"definition":"A __trail__ is a walk that satisfies the trail condition.",
+// }
 
-{
-	"def":"The __eccentricity__ of a vertex $v$ is the maximum of the distances between $v$ and every other vertex.",
-}
+// {
+// 	"def":"A multiset of vertices and edges where *no vertex is repeated* satisfies the __path condition__.",
+// 	"definition":"A __path__ is a trail that satisfies the path condition.",
+// }
 
-{
-	"def":"A __central vertex__ is a vertex with minimum eccentricity.",
-}
+// {
+// 	"definition":"A walk which begins and ends on the same vertex is called __closed__.",
+// }
 
-{
-	"def":"The __center__ is the subgraph induced by the central vertices.",
-}
+// { // these should be separate.
+// 	"definition":"A __stroll__ is a closed walk.",
+// 	"definition":"A __circuit__ is a closed trail.",
+// 	"definition":"A __cycle__ is a closed path.",
+// 	"note":"By convention, we do not think of the beginning vertex as occuring twice.  In particular, this means that a cycle is still a path by definition of a path.",
+// 	"note":"In older books, the term *circuit* actually refers to a *cycle*.  If you are using other resources, double check the definition of *circuit* to make sure you know what you are dealing with.",
+// }
 
-{
-	"def":"The __radius__ is the eccentricity of a central vertex.",
-	// alt def
-}
+// {
+// 	"def":"The __length__ of a walk is the number of edges in the walk.",
+// }
 
-{
-	"def":"The __diameter__ is the maximum distance.",
-	// alt def
-}
+// {
+// 	"def":"An __$a$,$b$-walk__ is a walk with end vertices $a$ and $b$.",
+// 	"note":"This defines the terms __$a$,$b$-trail__ and __$a$,$b$-path__ too.",
+// }
 
-{
-	"Ex":"Find the diameter and radius of $K_{a,b}$.",
-}//2.1.12
+// {
+// 	"def":"Vertices $a$,$b$ have __multiple trails__ if there exists a class of $a$,$b$-trails (size at least 2) whose (internal) union satisfies the trail condition.",
+// }
 
-//2.1.11:
-{
-	"thm":"If $G$ is a graph with diameter $\geq 3$, then the diameter of $\overline G \leq 3$.",
-}
+// {
+// 	"def":"Vertices $a$,$b$ have __multiple paths__ if there exists a class of $a$,$b$-paths (size at least 2) whose (internal) union satisfies the path condition.",
+// }
 
-{
-	"thm":"The center of a tree is a vertex or an edge.",
-}
+// {
+// 	"definition":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
+// 	"intuition":"An Eulerian trail is a trail that uses all the edges in the graph exactly once.",
+// }
 
-// define Weiner index
+// {
+// 	"name": "Eulerian Graph",
+// 	"def": "A multigraph is called __Eulerian__ if it contains an Eulerian circuit.",
+// }
 
-{
-	"thm":"Among trees with $n$ vertices, the Weiner index is minimized uniquely when the tree is a star.",
-}
+// {
+// 	"definition":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
+// 	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms __Hamiltonian path__ and __Hamiltonian cycle__.",
+// 	"note":"In older books, the term *Hamiltonian circuit* is used in place of *Hamiltonian cycle*.  So be careful!  When they say *circuit*, they may actually mean *cycle*.",
+// 	"intuition":"A Hamiltonian cycle is a cycle that uses all the vertices in the graph exactly once.",
+// }
 
-{
-	"thm":"Among connected multigraphs of $n$ vertices, the Weiner index is maximized uniquely when the multigraph is a path.",
-}
-
-//stopped at 2.1.17
-
-
-{// \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
-// http://tex.stackexchange.com/questions/42271/floor-and-ceiling-functions
-	"ex":"Every graph of diameter $d$ has an independent set of vertices of size $\ceil{\dfrac{d+1}2}$.",
-}
-
-{
-	"ex":"What is the diameter and radius of an $n$-cube?",
-}
-
-{
-	"lem":"Every tree $T$ has at least $\Delta(T)$ leaves.",
-}
-
-{// 2.1.21
-	// If a simple n-vertex graph G has a decomposition into k spanning trees, and Delta(G) = delta(G) + 1, then
-	// 2k < n, and G has n − 2k vertices of degree 2k and 2k vertices of degree 2k − 1.
-} // unclear what decomposition means
-
-{
-	"ex":"A tree with degree list $k,k−1,...,2,1,1,...,1$ has $2 + k \choose 2$ vertices.",
-}
-
-{
-	"ex":"Given a tree $T=(V,E)$ and a $k \in \\bb{N}*$ such that every vertex has degree $1$ or $k$, prove that $|V|$ is $2$ more than a multiple of $k-1$.",
-}
-
-{
-	"def":"A __star__, denoted $S_t$, is a bigraph of the form $K_{1,t}.",
-	"note":"Under this definition, the trivial graph is not a star.",
-}
-
-{// orig
-	"ex":"A tree which is not a star has at least $3$ maximal independent sets.",
-}
-
-{
-	"ex":"Given the set of all trees of order $n$, the tree with the maximum number of independent sets is the star.",
-}
+// {
+// 	"name": "Hamiltonian Graph",
+// 	"type": "def",
+// 	"content": "A multigraph is called __Hamiltonian__ if it contains a Hamiltonian cycle.",
+// }
 
 
+// //insert combinatorixs class graph theory things here:
+// {
+// 	"name": "Connected",
+// 	"type": "definition",
+// 	"content": "A graph $G=(V,E)$ is __connected__ if for every $a,b\in V$, there is an $ab$-walk.",
+// 	"intuition": "All the vertices in the graph are tied to each other by edges.  We cannot pull the graph apart into pieces.",
+// }
+
+// {
+// 	"name": "Disconnected",
+// 	"type": "definition",
+// 	"content": "A graph is __disconnected__ if it is not connected.",
+// 	"intuition": "There are at least two components in the graph that are not connected to each other by any edges whatsoever.",
+// }
+
+// {
+// 	"name": "Complement",
+// 	"type": "def",
+// 	"content": "Given a graph $G=(V,E)$, the __complement__ of $G$ is $(V,E^C)$, where for each pair $a,b\in V$, ${a,b}\in E^C$ iff ${a,b}\not\in E$.",
+// 	"intuition": "To get a graph's complement, we invert its edges.  Every edge in the graph dissapears, and every missing edge appears.",
+// }
+
+// //HW 12
+// {//1 a
+// 	"name": "Complement of Disconnected is Connected",
+// 	"weight": 3,
+// 	"type": "theorem",
+// 	"content": "If a graph is disconnected, then its complement is connected.",
+// }
+
+// {//1 b
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "Given the simple graph $G=(V,E)$, for every pair of vertices $a,b\in V$, $\text{deg}(a)+\text{deg}(b) \geq |V|-1.  Then $G$ is connected.",
+// 	"proof": {
+// 		"type": ["graph theoretic", "pigeonhole principle"],
+// 		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principle, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
+// 	},
+// }
+
+// {//2
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "The number of nonempty simple graphs on the vertex set $[4]$ is [[$2^\binom{4}{2}-1$ or $63$]].  The number of connected simple graphs on the vertex set $[4]$ is [[28? 39?]].",
+// 	"intuition": "The vertices are labelled $1$, $2$, $3$, and $4$.  Therefore the graph $([4], {{1,2}})$ is different from the graph $([4], {{2,3}})$.",
+// }
+
+// {
+// 	"name": "Diameters",
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "Let $P$ be the longest path in a simple graph $G$.  Prove that if either endpoint of $P$ has degree greater than $1$, then $G$ has a cycle.  Prove that for any simple graph $H$ with minimum degree at least $2$, then $H$ is cyclic.",
+// }
+
+// //HW 13
+// {// 1
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "$G=(A\cup B,E)$ is a bipartite graph with parts $A$ and $B$.  The complement of $G$ is connected iff [[$G$ is not complete bipartite]].  Prove that if $G$ is regular, then $|A|=|B|$.",
+// }
+
+// { // 2
+// 	"name": "Subtrees of a Cycle",
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "Consider the cycle on $n$ vertices, $C_n$, with the labels $1, 2, 3,,, n$.  The number of (labeled) subtrees of $C_n$ is [[$n^\underline{2}$, or $n$ pick $2$, or $n(n-1)$.]].",
+// 	"intuition": "[[A subtree of a cycle is just a path.  We need only count the possible paths.]]",
+// }
+
+// { // 3
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "Let $G = ([n],E)$ be a graph with labeled vertices.  Let $m_i$ be the size of $G-i$.  The size of $G$ in terms of $n$ and the $m_i$s is [[$\frac{1}{n-2}\sum_{i=1}^{n} m_i$]].",
+// }
+
+// //thms
+// {
+// 	"nickname": "Kirchhoff's Theorem",
+// 	"name": "Kirchhoff's matrix tree theorem",
+// 	"weight": 6,
+// 	"thm": "The number of spanning trees of a graph is equal to any cofactor of the graph's laplacian.",
+// }
+
+// {
+// 	"name": "Bipartite iff no odd cycles",
+// 	"weight": 3,
+// 	"type": "thm",
+// 	"content": "A graph is bipartite iff it has no odd cycles.",
+// }
+
+// {
+// 	"name": "Cayley's Theorem",
+// 	"weight": 5,
+// 	"type": "thm",
+// 	"content": "The number of trees with vertex set $[n]$ is $n^{n-2}$.",
+// 	"proof": {
+// 		"type": [],
+// 		"content": "There is a bijection between trees and Pr\u{00fc}fer sequences.  Trees with $n$ vertices has Pr\u{00fc}fer sequences of length $n-2$, and each entry can be any number from $1$ to $n$.  Therefore, there are $n^{n-2}$ possible Pr\u{00fc}fer sequences.",
+// 	},
+// }
+
+// {
+// 	"def": "A __clique__ is a set $S$ of vertices such that for every pair $a,b\in S$, $a~b$.",
+// 	"intuition": "A clique is a bunch of vertices where all edges between them are filled.  Everybody is adjacent to everybody.",
+// }
+
+// {
+// 	"name": "Clique Number",
+// 	"type": "def",
+// 	"content": "The __clique number__ of a graph $G$, denoted $\omega(G)$, is the number of vertices in a maximum clique in $G$.",
+// 	"intuition": "Find the largest clique in $G$.  The number of vertices in that clique is the clique number.",
+// }
+
+// {
+// 	"type": "def",
+// 	"content": "The __chromatic number__ of a graph $G$, denoted $\chi(G)$, is the minimum natural number $\chi$ such that $G$ is $\chi$-partite.",
+// 	"intuition": "The chromatic number of $G$ is the minimum number of colors needed to color the vertices of $G$ so that no two adjacent vertices are the same color.",
+// }
+
+// {
+// 	"name": "Clique coloring",
+// 	"weight": 3,
+// 	"type": "thm",
+// 	"content": "For any multigraph $G$, $\chi(G) \geq \omega(G)$.",
+// 	"intuition": "The number of colors needed for the vertices of $G$ is at least the size of the maximum clique in $G$.",
+// }
+
+// {
+// 	"name": "Brook's theorem",
+// 	"weight": 8,
+// 	"type": "thm",
+// 	"content": "Consider any multigraph $G$.  If it is complete or an odd cycle, then $\chi(G) = \Delta(G)+1$;  otherwise, $\chi(G) \leq \Delta(G)$.",
+// 	"intuition": "Except for two special cases, the chromatic number of a graph is at most its maximum degree!",
+// }
+
+// {
+// 	"name": "Vizing's theorem",
+// 	"weight": 7,
+// 	"type": "thm",
+// 	"content": "In every simple graph $G$, $\Delta(G) \leq \chi'(G) \leq \Delta(G)+1$.",
+// 	"intuition": "The minimum number of colors necessary to color the edges of a simple graph (with no two edges of the same color adjacent to each other) is less than or equal to the maximum degree of $G$ plus $1$.",
+// }
 
 
 
 
-// start at 2.1.26
+// {
+// 	"name": "Independence number and chromatic number",
+// 	"weight": 5,
+// 	"type": "thm",
+// 	"content": "For any multigraph $G=(V,E)$, $\chi(G)\alpha(G) \geq |V|$.",
+// 	"proof": {
+// 		"type": [],
+// 		"content": "Color the $n$ vertices $\chi(G)$ colors.  Each color forms an independent set of size at most $\alpha(G)$  Therefore the sum over each color of the size of the color is at most $\chi(G)\alpha(G)$.  But the sum over each color of the size of the color is just $n$, so we have that $n \leq \chi(G)\alpha(G)$.",
+// 	},
+// }
+
+// {
+// 	"name": "Color backwards",
+// 	"weight": 5,
+// 	"type": "thm",
+// 	"content": "Given any finite multigraph $G$, $\chi(G) \leq 1 + \max_{\text{all induced subgraphs $H$ of $G$}}\{\delta(H)\}$.",
+// 	"proof": {
+// 		"type": "",
+// 		"content": "Take $G=(V,E)$.  Find a vertex of minimum degree.  Label it $v_0$ and remove it.  Repeat this process until we have the sequence $(v_0, v_1,,,v_{|V|})$.  Now re-build $G$ by adding the vertices in backwards, coloring each vertex as you add it.  Each vertex that you add in has $\delta(H)$ neighbors for some subgraph $H$ of $G$.  We need at most $\delta(H)+1$ colors to guarantee that the vertex is different than all its neighbors.  Therefore, the number of colors needed to color all of $G$ is at most $\delta(H)+1$ for the largest $\delta(H)$ we encounter.",
+// 	},
+// }
+
+// {// maybe break this into two theorems, since that's traditional!!!!!
+// 	"name": "König's theorem",
+// 	"weight": 6,
+// 	"type": "thm",
+// 	"content": "Consider any multigraph $G$.  If $G$ is bipartite, then $\alpha'(G) = \beta(G)$; otherwise, $\alpha'(G) \leq \beta(G)$.",
+// 	"intuition": "In all multigraphs, the matching number is less than or equal to the vertex cover number.  Specifically in bigraphs, we are guaranteed equality.",
+// }
+
+// {
+// 	"name": "Gallai's Vertex Theorem",
+// 	"weight": 6,
+// 	"type": "thm",
+// 	"content": "For any multigraph $G=(V,E)$, $\alpha(G)+\beta(G)=|V|$.",
+// 	"intuition": "The maximum independent set size plus the minimum vertex cover size equals the number of vertices.",
+// 	"proof": {
+// 		"type": [],
+// 		"content": "There is a bijection between independent sets and vertex covers (needs proof).  In particular, every independent set $S\subset V$ bijects with the vertex cover $V\S$.  Therefore, the maximum independent set bijects with the minimum vertex cover.  We have proved the stronger statement that the maximum independent set unioned with the minimum vertex cover is equal to $V$.",
+// 	},
+// }
+
+// {
+// 	"name": "Gallai's Edge Theorem",
+// 	"weight": 6,
+// 	"type": "thm",
+// 	"content": "For any multigraph $G=(V,E)$, $\alpha'(G)+\beta'(G)=|V|$.",
+// 	"intuition": "The matching number plus the minimum edge cover size equals the number of vertices.",
+// 	"proof": {
+// 		"type": [],
+// 		"content": "Every edge cover can be decomposed into a matching (which covers two vertices per edge) and the remaining 'leftover edges' (which cover one vertex per edge).  Therefore, an edge cover is minimized when its matching is maximized.  Consider the minimum edge cover and the maximum matching that it contains.  There are $|V|$ vertices in the graph.  $k$ of them are part of the maximum matching and $|V|-k$ of them are not.\n\n$k+(|V|-k) = |V|$\n\n$\frac k2+\left[\frac k2+(|V|-k)\right] = |V|$\n\n$\text{# matching edges}+\left[\text{# matching edges}+(\text{# leftover edges})\right] = |V|$\n\n$\alpha'(G)+\left[\beta'(G)\right] = |V|$",
+// 	},
+// }
+
+// {
+// 	"name": "Ore's Theorem",
+// 	"weight": 6,
+// 	"type": "thm",
+// 	"content": "If $G=(V,E)$ is a simple graph with finite $|V| \geq 3$ and for all $a,b \in V$, $d(a)+d(b) \geq |V|$, then $G$ has a Hamiltonian cycle.",
+// }
+
+
+
+// //HW 14
+// { // 1
+// 	"name": "Adjacency and Laplacian",
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "The adjacency matrix for graph $G$ is $\begin{bmatrix}0 & 1 & 1 & 0\\\\1 & 0 & 1 & 1\\\\1 & 1 & 0 & 1\\\\0 & 1 & 1 & 0\end{bmatrix}$.  The drawing of $G$ is [[<img>]].  The laplacian of $G$ is [[$\begin{bmatrix}2 & -1 & -1 & 0\\\\-1 & 3 & -1 & -1\\\\-1 & -1 & 3 & -1\\\\0 & -1 & -1 & 2\end{bmatrix}$]].  The number of spanning trees of $G$ is [[$8$]].",
+// }
+
+// {// 2
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "A tree $T$ has Pr\u{00fc}fer sequence $486834$.  The drawing of $T$ is [[<img>]].",
+// }
+
+// {
+// 	"name": "First Theorem of Graph Theory",
+// 	"weight": 3,
+// 	"type": "thm",
+// 	"content": "If $G=(V,E)$ is a multigraph, then $\sum_{v\in V} \text{deg}(v) = 2|E|$.",
+// 	"intuition": "The sum of the degrees of the vertices is equal to twice the number of edges.  This is because every edge has two endpoints, so it contributes $2$ to the total degree sum.",
+// }
+
+// { // 3
+// 	"name": "Tree Sum",
+// 	"weight": 5,
+// 	"type": "thm",
+// 	"content": "Let $T$ be a tree with $n$ vertices.  Let $d_i$ be the number of vertices of degree $i$ in $T$.  Then $\sum_{i=0}^{n-1} (i-2)d_i = -2$.",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "In any graph, the sum of the degrees of the vertices is equal to $2$ times the number of edges.\n\n$\sum_{i=0}^{n-1} id_i = 2|E|$\n\nSince $T$ is a tree, the number of edges is one less than the number of vertices.\n\n$\sum_{i=0}^{n-1} id_i = 2(n-1)$\n\n$\sum_{i=0}^{n-1} id_i = 2n-2$\n\n$\sum_{i=0}^{n-1} id_i = \left(2\sum_{i=0}^{n-1} d_i\right)-2$\n\nCombining the sums on the left side, we obtain the result.\n\n$\sum_{i=0}^{n-1} (i-2)d_i = -2$",
+// 	},
+// }
+
+// //quiz 3
+// {// 1 abcd
+// 	"name": "Many questions",
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "The graph $G$ is defined by the drawing <img1>.  The degree sequence of $G$ is [[$(1,2,2,2,2,3,3,3)$]].  $G$ <<is|is not>> bipartite.  One regular subgraph of $G$ (there are many correct answers) is [[<img2>]].  One spanning tree of $G$ (there are multiple correct answers) is [[<img3>]].",
+// }
+
+// {// 2 b
+// 	"weight": 1,
+// 	"exercise": "A tree $T$ has three vertices of degree $2$, five vertices of degree $3$, two vertices of degree $4$, and no vertices of degree $5$ or more.  The number of leaves that $T$ has is [[$11$]].",
+// }
+
+// {
+// 	"name": "Chord (graph theory)",
+// 	"weight": 1,
+// 	"type": "def",
+// 	"content": "A __chord__ of a cycle $C=(V,E)$ is an edge $h\not\in E$ such that $h\subset V$.",
+// 	"intuition": "A chord of a cycle is an edge whose endpoints are in the cycle, but the chord is not in the cycle itself.  The chord cuts through the inside of the cycle.",
+// }
+
+// {// 3
+// 	"weight": 3,
+// 	"exercise": "A simple graph $G$ has minimum degree $3$.  Prove that $G$ contains a cycle with a chord.",
+// }
+
+// //HW 15
+// {//1a
+// 	"weight": 2,
+// 	"exercise": "An example of a simple graph $G$ where $\chi(G)>\omega(G)$ is...",
+// 	"example": "An odd cycle of size at least $5$.",
+// }
+
+// {//1b
+// 	"weight": 2,
+// 	"exercise": "An example of a simple graph $G$ where $\chi(G)\beta(G)\leq\omega(G)$ is...",
+// 	"example": "Any complete graph.",
+// }
+
+// {//1c
+// 	"weight": 2,
+// 	"exercise": "An example of a simple graph $G$ where $\chi(G)>2\Delta(G)$ is...",
+// 	"example": "The trivial graph.",
+// }
+
+// {//1d
+// 	"weight": 2,
+// 	"exercise": "An example of a simple graph $G$ where $\Delta(G)=2\chi(G)$ is...",
+// 	"example": "A star with $4$ leaves.",
+// }
+
+// {// 2
+// 	"weight": 2,
+// 	"exercise": "The chromatic number of the Peterson graph is [[$3$]].  The edge chromatic number of the Peterson graph is [[$4$]].",
+// }
+
+// {// 3
+// 	"weight": 1,
+// 	"exercise": "Let $G$ be a simple forest with $k\in\mathbb{N}$ components.  The chromatic number of $G$ is [[$0$ when $G$ is null, $1$ when every component is trivial, and $2$ otherwise]].  The number of $2$-colorings of $G$ is [[$2^k$]].",
+// }
+// //HW 16
+// {//2 a
+// 	"weight": 2,
+// 	"exercise": "Let $G$ be a simple $r$-regular bipartite graph.  Prove that $G$ has a perfect matching.",
+// }
+
+// {//2 b
+// 	"weight": 2,
+// 	"exercise": "Let $G=(V,E)$ be a complete bipartite graph where both parts have the same size.  The number of perfect matchings that $G$ has is [[$\left(\frac V2\right)!$]].",
+// }
+
+// {// 3
+// 	"name": "Independence number <= edge cover number",
+// 	"weight": 5,
+// 	"type": "thm",
+// 	"content": "If the multigraph $G$ has no isolated vertices, then $\alpha(G) \leq \beta'(G)$.",
+// 	"intuition": "In every multigraph without isolated vertices, the maximum independent vertex set has size less than or equal to a minimum edge cover.",
+// 	"proof": {
+// 		"type": ["combinatorial"],
+// 		"content": "Take a maximum independent set of vertices.  No pair of those vertices are adjacent, so no single edge can cover more than one of those vertices.  Therefore, it will take at least $\alpha(G)$ edges to cover those vertices.  Therefore, it will take at least $\alpha(G)$ edges to cover all vertices in the graph.",
+// 	},
+// }
+// // end of HW 16
+
+// //quiz 4
+// {
+// 	"weight": 1,
+// 	"exercise": "Let $G$ be the graph defined by <img4>.  $G$ <<is|[is not]>> Eulerian.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"exercise": "Let $G$ be the graph defined by <img4>.  $G$ <<[is]|is not>> Hamiltonian.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"exercise": "Let $G$ be the graph defined by <img4>.  The chromatic number of $G$ is [[$3$]].",
+// }
+
+// {
+// 	"weight": 1,
+// 	"exercise": "Let $G$ be the graph defined by <img4>.  The edge chromatic number of $G$ is [[$4$]].",
+// }
+
+// {//2
+// 	"name": "Pigeonhole principle 1",
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "Let $S=[n]$.  Prove that if a number in $[n]$ is assigned to each subset of $S$, then there exists two subsets, $A \subset B$ such that $A$ and $B$ are assigned the same number.",
+// 	"note": "The number assigned to $A$, for example, need not be an element of $A$.  For example, it is legal to assign the number $3$ to the set ${1,2}$.",
+// 	"proof": {
+// 		"type": ["pigeonhole principle"],
+// 		"content": "${} \subset [1] \subset [2] \subset \subset \subset [n]$.  This is a linear order of $n+1$ subsets, and we only have $n$ numbers to assign to them.  By the pigeonhole principle, at least two of those subsets must share a label.  Thanks to the linear ordering with respect to containment, one of the two is a subset of the other.",
+// 	},
+// }
+
+// {// 3
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "Let $G=(A,B,E)$ be a bipartite graph where $|A|=|B|$ and every vertex is in at least one cycle.  Then $G$ <<has|[does not necessarily have]>> a perfect matching.",
+// 	"proof": {
+// 		"type": "constructive",
+// 		"content": "The statement did not say that $G$ was connected.  Therefore, let $K_{2,3} = (L_1,R_1,E_1)$.  $K_{2,3}$ does *not* have a perfect matching.  Let $K_{3,2} = (L_2,R_2,E_2)$ have distinct vertices from $K_{2,3}$.  Finally, let $A=L_1\cup L_2$, $B=R_1\cup R_2$, and $E=E_1\cup E_2$.  The resulting graph $G=(A,B,E)$ does *not* have a perfect matching.",
+// 	},
+// }
+
+// {//4
+// 	"name": "Ramsey number R(3,3)",
+// 	"type": "thm",
+// 	"weight": 4,
+// 	"content": "The Ramsey number $R(3,3)$ is $6$.",
+// 	"proof": {
+// 		"type": "pigeonhole principle",
+// 		"content": "Consider $K_5$ with the red-blue edge coloring that consists of one red $C_5$ and one blue $C_5$.  It has no red $C_3$ nor a blue $C_3$.  Therefore, $R(3,3) > 5$.\n\nNow consider $K_6$.  One vertex $v$ has $5$ incident edges.  At least $3$ of those edges must be the same color as each other.  Without loss of generality, let's say that at least $3$ of the edges are red.  Look at the $3$ vertices at the other end of those edges.  For each pair, they must be blue adjacent, because red adjacency would create a triangle with $v$.  But if each pair is blue adjacent, then we have a blue triangle among those $3$ vertices!  Therefore, $R(3,3) \leq 6$\n\nPutting both pieces together, we conclude that $R(3,3) = 6$.",
+// 	},
+// }
+// //end of quiz 4
+
+// //HW 17
+// {
+// 	"weight": 1,// make this the default definition of cycle!
+// 	"exercise": "The number of Hamiltonian cycles in $C_n$, where cycles have no beginning nor end, is [[$1$]].",
+// }
+
+// {// similarly, remove direction from walks!!! so we have equivalence class of sequences
+// 	"weight": 2,
+// 	"exercise": "The number of Hamiltonian cycles in $K_n$, where cycles have no beginning nor end, is [[$\frac{n!}{2n}$ or $\frac{(n-1)!}{2}$]].",
+// }
+
+// {
+// 	"weight": 3,
+// 	"exercise": "The number of Hamiltonian cycles in $K_{n,n}$, where cycles have no beginning nor end, is [[$\frac{n!^2}{4n}$ or $\frac{n(n-1)}{4}$]].",
+// }
+
+// {
+// 	"weight": 3,
+// 	"exercise": "The number of Hamiltonian cycles in $W_n$, where cycles have no beginning nor end, is [[$n-1$ for all $n>2$]].",
+// }
+
+// {
+// 	"weight": 1,
+// 	"exercise": "For all $n$, the graph $C_n$ <<[is]|is not>> Eulerian and <<[is]|is not>> Hamiltonian.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"exercise": "For all $n>2$, the graph $W_n$ <<is|[is not]>> Eulerian and <<[is]|is not>> Hamiltonian.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"exercise": "The graph <img5> <<[is]|is not>> Eulerian and <<is|[is not]>> Hamiltonian.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"exercise": "The graph <img6> <<is|[is not]>> Eulerian and <<is|[is not]>> Hamiltonian.",
+// }
+
+// {//3
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "Let $G$ be a Hamiltonian graph of order $n$.  If we remove $k$ vertices from $G$, then the number of connected components of the remaining graph is [[$\begin{cases}1 & \text{if} k=0\n2 * \text{if} 0<k\leq \frac n2\nn-k & \text{if} \frac n2 < k \leq n\end{cases}$]].",
+// }
+// // end HW 17
+
+// //HW 18
+// {//1
+// 	"name": "pigeonhole principle 2",
+// 	"weight": 3,
+// 	"exercise": "Given any sequence of $n$ integers, there is a consecutive subsequence whose sum is a multiple of $n$.",
+// 	"proof": {
+// 		"type": "pigeonhole principle",
+// 		"content": "We have the sequence $(x_1,x_2,,,x_n)$ of integers.  Consider the consequtive sums $x_1$, $x_1+x_2$, $x_1+x_2+x_3$, , , $x_1+x_2+x_3+++x_n$.  We have $n$ consequtive sums $S_i$ for $1\leq i \leq n$.  Each sum is of the form $S_i = a_in+k_i$ for integers $a_i$ and $k_i$ such that $0\leq k_i<n$.\n\nIf $k_i=0$ for any of these sums, we have found a multiple of $n$.  Otherwise, there are $n$ sums and only $n-1$ possible values of $k$, in which case, by the pigeonhole principle, a pair of sums must share the same $k$.\n\nLet us call these two sums $S_{i_1}$ and $S_{i_2}$ where $i_1<i_2$.  It follows that $S_{i_2}-S_{i_1} = a_{i_2}n+k_{i_2} - a_{i_1}n+k_{i_1} = (a_{i_2}-a_{i_1})n$ since $k_{i_1} = k_{i_2}$.  This is a multiple of $n$!  Moreover, $S_{i_2}-S_{i_1}$ is a consecutive sum itself because $S_{i_2}-S_{i_1} = (x_1+x_2+++x_{i_2})-(x_1+x_2+++x_{i_1}) = x_{i_1+1}+++x_{i_2}$.",
+// 	},
+// }
+
+// {// 2
+// 	"weight": 2,
+// 	"exercise": "For any $a,b \in N$, every graph $K_{a+b}$ with edges colored red and blue has a red path of length $a$ or a vertex incident to at least $b$ blue edges.",
+// 	"proof": {
+// 		"type": "pigeonhole principle",
+// 		"content": "Consider the longest red path.  If its length is greater than or equal to $a$, we are done.  If its length is less than $a$, then the number of vertices it has is less than $a+1$.  The number of vertices it has is less than or equal to $a$.  Then the number of vertices *not* in the path is greater than or equal to $b$.  Consider the end vertex $z$ of the path.  For each of the $b$ vertices not in the path, it must be adjacent to $z$ because the graph is complete, and the edge must be blue, because a red edge would make the path longer (contradicting the fact that it is the *longest* red path).  Therefore, $z$ is incident to at least $b$ blue edges.",
+// 	},
+// }
+
+// {// 3 a
+// 	"weight": 2,
+// 	"exercise": "There exists a red-blue edge coloring of $K_8$ that does not contain a red $K_4$ nor a blue $K_3$.  By definition, this means that the Ramsey number $R(4,3) > 8$.",
+// 	"proof": {
+// 		"type": "ramsey theory",
+// 		"content": "Arrange the $8$ vertices in an octagon.  Let's say that the \"length\" of an edge is the (minimum) number of edges around the perimeter of the octagon that it takes to get from the start vertex to the end vertex.  For example, the edge connecting vertices farthest away from each other has length $4$ (<img7>).\n\nWe want to avoid blue triangles.  Every triangle in the octagon is made from exactly $3$ edges, and the \"lengths\" of those edges add up to $8$.  If we look at the partitions of $8$, we see that every partition of $8$ must have a part that is $\leq 2$.\n\nTherefore, by coloring all edges with length $\leq 2$ red, we guarantee there are no blue triangles.\n\nAll remaining edges (edges of length $\geq 3$) are colored blue, and by a similar argument, because all $K_4$s must contain an edge of length $\geq 3$, there can be no red $K_4$s.\n\nThe graph looks like <img8>.",
+// 	},
+// }
+
+// {// 3b
+// 	"weight": 1,
+// 	"exercise": "We will prove that $R(4,3) \leq 10$ using a red-blue edge coloring.  First prove that given a complete graph, if a vertex has $6$ red incident edges, then there must be a red $K_4$ or a blue $K_3$.  Second, prove that if a complete graph has $4$ blue incident edges, then it must contain a red $K_4$ or a blue $K_3$.  Finally, use the pigeonhole principle to prove that $R(4,3) \leq 10$.",
+// 	"proof": {
+// 		"type": ["combinatorics", "ramsey theory"], // program should automatically change this to combinatorial
+// 		"content": "First, if a complete graph has $6$ red incident edges to $v$, then there are $6$ vertices at the end of those edges.  Because $R(3,3)=6$, we are guaranteed a red or blue triangle among those $6$ vertices.  If we have a red triangle, then when we consider $v$ with only red edges to the triangle, we find a red $K_4$.\n\nSecond, if the complete graph has a vertex $u$ with $4$ incident blue edges, then there are $4$ distinct vertices at the ends of those edges.  If any pair of those vertices is blue adjacent, then they create a blue triangle with $u$.  Otherwise, every pair is red adjacent, so the $4$ vertices create a red $K_4$.\n\nFinally, consider $K_{10}$ as a single vertex $s$ and its $9$ incident edges.  If at least $6$ of those edges are red, then by our first argument, we have a blue triangle or a red $K_4$.  Otherwise, at most $5$ of the incident edges are red, so at least $4$ of them are blue.  By our second argument, we again have a blue triangle or a red $K_4$.\n\nThis proves that $R(4,3) \leq 10$.",
+// 	},
+// }
+
+// {// 3c
+// 	"weight": 2,
+// 	"exercise": "Given that a red-blue edge coloring of $K_9$ has no blue $K_3$ nor a red $K_4$ only when every vertex has at most $3$ blue incident edges and at most $5$ red incident edges, prove that $K_9$ must have a blue $K_3$ or a red $K_4$.  This proves that $R(3,4) \leq 9$.",
+// 	"proof": {
+// 		"type": "ramsey theory",
+// 		"content": "Assume that $K_9$ has no blue $K_3$ nor a red $K_4$.  Then for every vertex $v$ in $K_9$, it has exactly $8$ incident edges, each of which is either red or blue.  If $v$ has at most $5$ red incident edges and at most $3$ blue incident edges, then $v$ has *exactly* $5$ red incident edges and $3$ blue incident edges.\n\nIf every vertex has exactly $5$ red incident edges, then the total number of red edges is $\frac{9 \cdot 5}2$, which is not a natural number.  The number of red edges must be a natural number, so this is a contradiction.  We conclude that our assumption was false, so we have proven that a red-blue edge coloring of $K_9$ *must* contain a blue $K_3$ or a red $K_4$.  Therefore, $R(3,4) \leq 9$.",
+// 	},
+// }
+
+// //3d
+// { // combine 3a and 3c together to prove that R(4,3)=9.  This is a THEOREM.  Let's change 3a and 3c slightly and make them lemmas....
+// 	"name": "R(4,3)=9",
+// 	"weight": 3,
+// 	"type": "thm",
+// 	"content": "The Ramsey number $R(4,3)$ is $9$.",
+// 	"intuition": "Every $K_9$ graph with a red-blue edge coloring must contain a red $K_4$ or a blue $K_3$.",
+// }
+// // end of HW 18
+
+// {
+// 	"type": "def",
+// 	"content": "Given a partially ordered set $(P,<)$, two elements $a,b \in P$ are __comparable__ if $a < b$, $a=b$, or $a>b$.",
+// }
+
+// {
+// 	"type": "def",
+// 	"content": "Given a partially ordered set $(P,<)$, a __maximum__ element is an element $m \in P$ such that for all $p \in P$ that are comparable to $e$, $e \geq p$.",
+// 	"intuition": "Given a partially ordered set, if an element is greater than or equal to all elements it can be compared to, then it is a **maximum** element.",
+// }
+
+// {
+// 	"type": "def",
+// 	"content": "Given a partially ordered set $(P,<)$, a __minimum__ element is an element $m \in P$ such that for all $p \in P$ that are comparable to $e$, $e \leq p$.",
+// 	"intuition": "Given a partially ordered set, if an element is less than or equal to all elements it can be compared to, then it is a **minimum** element.",
+// }
+
+// {
+// 	"name": "covers (partial order)",
+// 	"weight": 4,
+// 	"type": "def",
+// 	"content": "Given a partial order $(P,<)$, an element $y \in P$ __covers__ $x \in P$ if $y>x$ and for all $p \in P$, we do not have $y>p>x$.",
+// 	"intuition": "$x$ **covers** $y$ is $x$ is the unique element greater than $y$.",
+// }
+
+// {
+// 	"weight": 4,
+// 	"type": "def",
+// 	"content": "Given a poset $(P,<)$, a __chain__ is a sequence of elements $p_0<p_1<<<$.",
+// 	"intuition": "A chain is a sequence of elements of $P$ that form a linear order under the same ordering $<$ as the poset.  Be careful!  A chain need not be a sequence of successors.  It is okay to jump over elements.",
+// }
+
+// {
+// 	"type": "def",
+// 	"content": "Given a poset $(P,<)$, an __antichain__ is a subset $A$ such that for every pair $x,y \in A$, $x$ is incomparable to $y$.",
+// 	"intuition": "An **antichain** is a set of elements where no two are comparable to each other.",
+// }
+
+// {
+// 	"name": "Sperner's theorem",
+// 	"weight": 5,
+// 	"type": "thm",
+// 	"content": "The antichain of largest size in the boolean lattice $B_n$ has size $\binom{n}{\floor n2}$.",
+// 	"proof": [
+// 		{
+// 			"type": "",
+// 			"content": "Assume that the largest size antichain contains an element $e$ not in the middle layer(s) of $B_n$.  The layer of $e$ is $k$ for some $k<\floor{\frac n2}$.  There are $n-k$ options for adding another element to $e$, and $n-k > n-\floor{\frac n2} = \ceil{\frac n2}$, so there are at least $2$ options when $n \geq 2$.  Therefore, we can remove $e$ from the antichain and add in the $2$ options instead, creating a larger size antichain.  This contradicts the largest size of our antichain, so our assumption was false.  We conclude that a largest size antichain must have all its elements in the middle layer(s).\n\nThis concludes the proof for even $n$, but for odd $n$, we have two middle layers, and we must show that all the elements of the antichain reside in one of these layers.  I couldn't find an elegant solution in this scenario, so I will let somebody else finish this proof.",
+// 		},
+// 		{
+// 			"type": "",
+// 			"content": "The LYM inequality guarantees that for antichain $A$, where $a_k$ is the number of elements of $A$ of size $k$, we have $\sum_{k=0}^{n} \frac{a_k}{\binom nk} \leq 1$.  Since $\binom nk \leq \binom{n}{\floor{\frac n2}}$, we have that\n\n$\sum_{k=0}^{n} \frac{a_k}{\binom{n}{\floor{\frac n2}}} \leq 1$\n\n$\sum_{k=0}^{n} a_k \leq \binom{n}{\floor{\frac n2}}$\n\n$|A| \leq \binom{n}{\floor{\frac n2}}$.  Moreover, we can achieve the size $\binom{n}{\floor{\frac n2}}$ exactly by choosing one of the middle layer(s) of $B_n$.",
+// 		},
+// 	],
+// }
+
+// {
+// 	"name": "LYM inequality",
+// 	"full name": "Lubell–Yamamoto–Meshalkin inequality",
+// 	"weight": 3,
+// 	"type": "thm", // this lemma is used to prove Sperner's theorem
+// 	"content": "For any antichain $A$ in the boolean lattice $B_n$, let $a_k$ be the number of elements in $A$ of size $k$.  Then the inequality $\sum_{k=0}^{n} \frac{a_k}{\binom nk} \leq 1$ is true.",
+// }
+
+// // HW 19
+// {// 1
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "Prove that for every arrangement of the vertex set $[24]$ in the cycle $C_{24}$, there exists $3$ consecutive numbers whose sum is at least $38$.",
+// 	"proof": {
+// 		"type": "probabilistic method",
+// 		"content": "Let $X$ be the random variable that represents the sum of $3$ consecutive numbers in the cycle.  If we let $X_1$ represent the first number, $X_2$ represent the second number, and $X_3$ represent the third number, then the expected value is:\n\n$E[X] = E[X_1+X_2+X_3]$\n\nDue to the linearity of expectation, we have that\n\n$E[X] = E[X_1]+E[X_2]+E[X_3]$\n\nThe expected value of the first number is $1P(1)+2P(2)+++24P(24) = 1\frac1{24}+2\frac1{24}+++24\frac1{24} = \frac{(24)(24+1)}{2}\frac1{24} = \frac{25}{2} = 12.5$.  The expected value of the second and third numbers is the same as the expected value of the first number.\n\n$E[X] = 12.5+12.5+12.5$\n\n$E[X] = 37.5$\n\nThe expected value of the sum of $3$ consecutive numbers is $37.5$.  Since such a sum must be an integer, there must be at least one sum that is at least $38$ in order to achieve that average of $37.5$.",
+// 	},
+// }
+
+// {// 2
+// 	"weight": 2,
+// 	"exercise": "Prove that for all $n$, $K_n$ has a red-blue edge coloring with at most $\frac{n!}{2^{n-1}}$ monochromatic Hamiltonian paths.",
+// 	"proof": {
+// 		"type": "probabilistic method",
+// 		"content": "The probability of any single edge being blue is $\frac12$.\n\nAlso, take note that $K_n$ has exactly $\frac{n!}{2}$ possible Hamiltonian paths.\n\nLet $X$ be the number of monochromatic Hamiltonian paths.  Then the expected value of $X$ is\n\n$E[X] = E[X_{1_r}+X_{1_b}+X_{2_r}+X_{2_b}+++X_{\frac{n!}{2}_r}+X_{\frac{n!}{2}_b}]$\n\nwhere $X_{k_b}$ is $1$ if Hamiltonian path $k$ is all blue, and $0$ otherwise.  Due to the linearity of expectation, we have that\n\n$E[X] = E[X_{1_r}]+E[X_{1_b}]+E[X_{2_r}]+E[X_{2_b}]+++E[X_{\frac{n!}{2}_r}]+E[X_{\frac{n!}{2}_b}]$\n\nLet's calculate $E[X_{k_b}]$.  Hamiltonian path $k$ has $n-1$ edges, each with a probability of $\frac12$ of being blue.  Therefore, we expect Hamiltonian path $k$ to be all blue at least $\left(\frac12\right)^{n-1}$ of the time.  That is, $E[X_k] = \left(\frac12\right)^{n-1}$.\n\nThis is true for every value of $k$ regardless of whether it is red or blue, so we have that\n\n$E[X] = n!E[X_{k_b}]$\n\n$E[X] = n!\left(\frac12\right)^{n-1}\n\n$E[X] = \frac{n!}{2^{n-1}}$.\n\nBecause the expected value is this amount, there must be at least one red-blue edge coloring of $K_n$ that has at most $\frac{n!}{2^{n-1}}$ monochromatic Hamiltonian paths.",
+// 	},
+// }
+
+// {// 3
+// 	"weight": 3,
+// 	"exercise": "We have an $n\times n$ matrix, and all the elements of the matrix are in $[n]$.  Furthermore, each of the elements of $[n]$ appears in the matrix $n$ times.  Prove that the matrix must have a row or column with at least $\sqrt{n}$ distinct entries.",
+// 	"proof": {
+// 		"type": "probabilistic method",
+// 		"content": "I don't have time to write this up so somebody should replace this with a full explanation.  Here is the outline...Pick a specific row or column. $X$ represents the number of distinct entries in it.  but $X$ = $X_1+++X_n$ where each $X_k$ is defined to be $1$ if $k$ appears in the row, and $0$ otherwise.  $E[X]$ equals the sum of $E[X_k]$ for $k$ is $1$ through $n$.  The worst case scenario for any $k$ appearing in any row is if all the $k$s are scrunched together in a little square with side length $\sqrt{n}$.  So the probability of $X_k$ being $1$ is at least $\frac{\sqrt{n}}{n}$.  Finally, compute the expected values and find that $E[X]$ is $\sqrt{n}$.",
+// 	},
+// }
+// // end of HW 19
+
+// {
+// 	"weight": 1,
+// 	"type": "def",
+// 	"content": "In a game, a __P-position__ is a position where the previous player to move can win.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "def",
+// 	"content": "In a game, an __N-position__ is a position where the next player to move can win.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "def",
+// 	"content": "A game is __partial__ if there exists a position where the set of possible moves depends on the player whose turn it is.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "def",
+// 	"content": "A game is __impartial__ if it is not partial.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "def",
+// 	"content": "A game is __normal__ if the player who makes the last move wins.",
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "def",
+// 	"content": "A game is __misere__ if the player who makes the last move loses.",
+// }
+
+// {
+// 	"type": "def",
+// 	"content": "Given a game, the __Sprague-Grundy Function__ is a function $f:{\text{positions}}\to \mathbb{N}$.  Given the directed acyclic graph of positions, the Sprague-Grundy Function is recursively defined from the sinks as $f(v)$ equals the smallest natural number that is not in $\{f(t)|\text{t is a successor of v}\}$.",
+// }
+
+// // HW 20
+// {// 1 a
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "Give examples of a poset whose longest chain is exactly twice the size of its largest antichain.",
+// 	"example": "The poset defined by <img9> where $0<1$.  The longest chain has size $2$ and the largest antichain has size $1$.",
+// 	"example": "The poset defined by <img10> such that whenever two vertices are adjacent, the one with greater height is greater.  The longest chain has size $4$ and the largest antichain has size $2$.",
+// }
+
+// {// 1 b
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "Give examples of a poset with a maximum element but no minimum element.",
+// 	"counterexample": "$(\mathbb{N}, <)$ is incorrect because $0$ is a minimum element.  It is also incorrect because there is no maximum element.",
+// }
+
+// {// 1 c definition
+// 	"type": "def",
+// 	"content": "Given a poset $(P,<)$, a __rank function__ is a function $r:P\to\mathbb{N}$ such that\n\n  1. If $x$ is a successor of $y$, then $r(x) = r(y)+1$.\n  2. If $x>y$, then $r(x)>r(y)$.",
+// 	"note": "There are posets for which no rank function exists.",
+// }
+
+// {// 1 c
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "Give examples of a poset that has no rank function.",
+// 	"example": "The poset <img11> has no rank function.  If there was a rank function, then the minimum element $a$ would get the minimum value.  WLOG, $r(a)=0$.  Both $b$ and $c$ are successors of the minimum element, so $r(b)=1$ and $r(c)=1$.  Element $c$ is a successor of $b$, so $r(c)=r(b)+1=1+1=2$.  The function $r$ assigns both $1$ and $2$ to $c$, which contradicts the definition of a function.  Therefore, no such rank function exists.",
+// }
+
+// {// 2 theorem
+// 	"name": "Dilworth's theorem",
+// 	"weight": 4,
+// 	"type": "thm",
+// 	"content": "For every poset $(P,<)$, the largest antichain has size equal to the minimum number of chains of all partitions of $P$ into chains.",
+// 	"intuition": "Take any poset $(P,<)$.  Look at every possible partition of $P$ where each part must be a chain.  Each partition has a certain number of chains, and we want the smallest possible number of chains.  It turns out that that number is equal to the size of the largest antichain of $(P,<)$.",
+// }
+
+// {// 2 a b
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "Consider the boolean lattice $B_4$, and create the poset $(B_4,\subset)$ using strict set inclusion.  The size of a largest antichain is [[$6$]].  Find a partition of $B_4$ into $m$ (disjoint) chains, where $m$ is the minimum possible number of chains.  The value of $m$ is [[$6$]].  This is an example of [[Dilworth's]] theorem.",
+// }
+
+// {// 3 definition
+// 	"type": "def",
+// 	"content": "Given the boolean lattice $B_n$, the elements of $B_n$ with exactly $k$ elements form the set __level $k$__ of $B_n$.",
+// }
+
+// {// 3 theorem
+// 	"name": "Erdős–Ko–Rado theorem",
+// 	"weight": 4,
+// 	"type": "thm",
+// 	"content": "Let $k<\frac{n}{2}$ for $k,n \in \mathbb{N}$.  If $A$ is a set of subsets of $[n]$ such that each subset is of size $k$ and each pair of subsets intersects, then the maximum size of $A$ is $\binom{n-1}{k-1}$.",
+// }
+
+// //final
+// {//1 a
+// 	"weight": 1,
+// 	"exercise": "Prove that a disconnected acyclic simple graph $G=(V,E)$ with $|E|=|V|-1$ cannot exist.",
+// }
+
+// {//1 b
+// 	"weight": 1,
+// 	"exercise": "Give an example of a simple graph that is $2$-regular and not Eulerian.",
+// 	"example": "One such graph is defined by [[<img12>]].",
+// }
+
+// {//1 c
+// 	"weight": 1,
+// 	"exercise": "Give an example of a simple bigraph $G$ that has $\chi'(G)>3$.",
+// 	"example": "One such graph is defined by [[<img13>]].",
+// }
+
+// {//1 d
+// 	"weight": 1,
+// 	"exercise": "Give an example of a simple graph $G$ where $\omega(G)=\alpha(G)$.",
+// 	"example": "One such graph is defined by [[<img14>]].",
+// }
+
+// {//1 e
+// 	"weight": 1,
+// 	"exercise": "Give an example of a simple forest $G$ with exactly $5$ components such that $\beta(G)=5$.",
+// 	"example": "One such graph is defined by [[<img15>]].",
+// }
+
+// {//1 f
+// 	"weight": 1,
+// 	"exercise": "Give an example of a simple graph $G$ such that $\chi(G)>\Delta(G)$.",
+// 	"example": "The graph defined by [[<img16>]] has $\chi(G)$ equal to [[$3$]] and $\Delta(G)$ equal to [[$2$]].",
+// }
+
+// {//1 h alternate (g was equiv to a theorem we already stated above)
+// 	"weight": 1,
+// 	"exercise": "Give an example of a simple graph $S=(V,E)$ such that $|V|=15$ and there are exactly $k+1$ vertices of degree $k$ for $k=0,1,2,3,4$.",
+// 	"example": "The graph defined by [[<img17>]] is a solution for $S$.",
+// }
+
+// {//1 h
+// 	"weight": 1,
+// 	"exercise": "Prove that a multigraph $M=(V,E)$ such that $|V|=15$ and there are exactly $k$ vertices of degree $k$ for $k=1,2,3,4,5$ cannot exist.",
+// }
+
+// {// 3 a
+// 	"weight": 1,
+// 	"exercise": "The Prüfer sequence of the tree defined by <img18> is [[$(3,5,3,1,1)$]].",
+// }
+
+// {// 3 b
+// 	"weight": 1,
+// 	"exercise": "The adjacency matrix of the graph defined by <img18> is\n\n[[$\begin{bmatrix}\n 0&0&1&0&0&1&1 \\\\\n0&0&1&0&0&0&0 \\\\\n 1&1&0&0&1&0&0 \\\\\n 0&0&0&0&1&0&0 \\\\\n 0&0&1&1&0&0&0 \\\\\n 1&0&0&0&0&0&0 \\\\\n 1&0&0&0&0&0&0 \\\\\n \end{bmatrix}$]]",
+// }
+
+// {// 3 c
+// 	"weight": 1,
+// 	"exercise": "The laplacian of the tree defined by <img18> is\n\n[[$\begin{bmatrix}\n 3&0&-1&0&0&-1&-1 \\\\\n0&1&-1&0&0&0&0 \\\\\n -1&-1&3&0&-1&0&0 \\\\\n 0&0&0&1&-1&0&0 \\\\\n 0&0&-1&-1&2&0&0 \\\\\n -1&0&0&0&0&1&0 \\\\\n -1&0&0&0&0&0&1 \\\\\n \end{bmatrix}$]]",
+// }
+
+// {//4 a
+// 	"weight": 2,
+// 	"exercise": "Prove that $\sum_{k=0}^{n} \frac{\binom nk}{1.5^k} \geq \left(\frac43\right)^n$ for all $n \in \mathbb{N}$.",
+// }
+
+// {//4 b
+// 	"weight": 1,
+// 	"exercise": "Prove that for all $n \in \mathbb{N}^+$, every subset of $[2n]$ of size $n+1$ contains a pair of consecutive integers.",
+// }
+
+// {// 5 a
+// 	"weight": 1,
+// 	"exercise": "Let $B_n$ be the boolean lattice for any $n \in \mathbb{N}$.  The number of maximal chains passing through vertex $[k]$ is [[$k!(n-k)!$]].",
+// }
+
+// {//5 b
+// 	"weight": 1,
+// 	"exercise": "Let $B_n$ be the boolean lattice for any $n \in \mathbb{N}$.  The number of vertices in $B_n$ whose set intersection with $[k]$ is the empty set is [[$2^(n-k)$]].",
+// }
+
+// {//5 c
+// 	"weight": 1,
+// 	"exercise": "Let $B_n$ be the boolean lattice for any $n \in \mathbb{N}$.  The number of vertices in $B_n$ that are incomparable to $[k]$ is [[$2^n-2^k-2^(n-k)+1$]].",
+// }
+
+// {//6 a // definition!
+// 	"name": "A-matching",
+// 	"weight": 2,
+// 	"definition": "Given a bigraph $G=(L,R,E)$, an __$L$-matching__ is a matching in $G$ that is an $L$ vertex cover.",
+// }
+
+// {//6 b // thm
+// 	"name": "Hall's marriage theorem",
+// 	"weight": 7,
+// 	"thm": "Let $S$ be a multifamily of finite sets.  If for every submultifamily $W$ of $S$, $|W| \leq \left|\cup_{A \in W} A\right|$, then $S$ has a system of distinct representatives.",
+// }
+
+// {// 6 c def
+// 	"weight": 1,
+// 	"def": "Given a bigraph $G=(L,R,E)$, a __$(2,1)$-matching__ is a subset of $F$ of $E$ where every vertex in $L$ is incident with exactly $2$ edges in $F$ and every vertex in $R$ is incident with at most $1$ edge in $F$.",
+// }
+
+// {//6 c thm
+// 	"name": "Hall's (2,1)-matching theorem",
+// 	"weight": 3,
+// 	"thm": "Given a bigraph $G=(L,R,E)$ such that for every $X \subseteq L$, $|N(X)| \geq 2|X|$, then $G$ has a $(2,1)$-matching.",
+// }
+
+// {//7 a
+// 	"weight": 1,
+// 	"exercise": "Consider a path of length $n$.  Let $a_n$ be the number of ways to color the edges red, green, or blue so that no two adjacent edges are the same color.  A recurrence for $a_n$ is [[$a_n = 3\left(\\sum_{k=1}^{n} (-1)^{k+1}a_{n-k}\right)$]].",
+// }
+// // 7 b and c ommitted because seeing the solution is too easy (without using generating functions)
+
+// {//8 a b c d
+// 	"weight": 3,
+// 	"exercise": "Josef and Doron play a game with two piles of chips.  They alternate taking turns, and each turn consists of taking a positive integer of chips from exactly one of the piles.  The player who takes the last remaining chip loses.  Let $a$ represent the number of chips in the first pile and $b$ represent the number of chips in the second pile.\n\n  The final P-position is [[$a=0$ and $b=1$, or vice versa.  The next player to play will lose]].  The N-positions immediately preceding this P-position are [[$a=0$ and $b>1$, or vice versa.  Also, $a\geq1$ and $b=1$, and vice versa.  In these positions, the next player to move can force the next position to be the final P-position]].  The only positions left are two-pile positions.\n\nThe position where $a=2$ and $b=2$ is a [[P-position because no matter how the player plays, they put the piles into one of the previously described N-positions]].\n\nAll remaining P-positions are when [[$a=b>1$.  When $a=b=2$, this is just the previously described P-position.  When $a=b>2$, any move will cause $a \neq b$ and $a,b>1$]].  All remaining N-positions are when [[$a \neq b$ and $a,b>1$.  The next player can always take chips away from the larger pile so that $a=b>1$ is the result (the previously described P-positions)]].",
+// }
+
+// {//9 a
+// 	"weight": 2,
+// 	"exercise": "Prove that for any $k,l \in \mathbb{N}$, the Ramsey number $R(k,l,2)$ is equal to $R(k,l)$.  Prove that $R(3,3,3) \leq 17$.",
+// }
+
+// {//10 a b c
+// 	"weight": 3,
+// 	"exercise": "Let $\Omega$ be a set.  For any $m \in \mathbb{N}^+$, let $A_1,A_2,,,A_m$ be subsets of $\Omega$ of size $n$.  If the elements of $\Omega$ are colored red or blue randomly (with equal probability), the probability that $A_1$ is monochromatic is [[$\left(\frac12\right)^{n-1}$ or $\frac1{2^{n-1}}$]].  The expected number of $A$s that are monochromatic is [[$m\left(\frac12\right)^{n-1}$ or $\frac{m}{2^{n-1}}$]].  Prove that if $m<2^{n-1}$, then there is a way to color the elements of $\Omega$ red and blue so that none of the $A$s is monochromatic.",
+// }
+
+// {//11 b thm
+// 	"name": "Hamiltonian has no lonely forks",
+// 	"weight": 4,
+// 	"thm": "$G$ is a connected cyclic multigraph.  No vertex induced subgraph of $G$ is isomorphic to <img19> or <img20>.  Then $G$ is Hamiltonian.",
+// }
+// // end of final
+
+// //review for final
+// {// 1 a
+// 	"weight": 1,
+// 	"exercise": "The Peterson graph has [[$12$]] cycles of length $5$.",
+// }
+
+// {// 1 b
+// 	"weight": 1,
+// 	"exercise": "The Peterson graph has [[$10$]] cycles of length $6$.",
+// }
+
+// {// 1 c
+// 	"weight": 2,
+// 	"exercise": "The Peterson graph has [[$240$]] Hamiltonian paths.",
+// }
+
+// {//2 b
+// 	"weight": 1,
+// 	"exercise": "The order of a $3$-dimensional hypercube is [[$2^3$ or $8$]].",
+// }
+
+// {//2 c
+// 	"weight": 2,
+// 	"exercise": "The size of a $4$-dimensional hypercube is [[$32$]].",
+// }
+
+// {//2 e thm
+// 	"name": "Chromatic number of hypercubes",
+// 	"weight": 3,
+// 	"thm": "For all $n \in \mathbb{N}$, the chromatic number of an $n$-dimensional hypercube is $2$.",
+// }
+
+// {//2 e thm
+// 	"name": "Edge chromatic number of hypercubes",
+// 	"weight": 3,
+// 	"thm": "The edge chromatic number of an $n$-dimensional hypercube is $n$.",
+// }
+
+// {// thm
+// 	"name": "Bipartite hypercubes",
+// 	"weight": 3,
+// 	"thm": "For all $n \in \mathbb{N}$, the $n$-dimensional hypercube is bipartite.",
+// }
+
+// {//2 g
+// 	"name": "Hamiltonian hypercubes",
+// 	"weight": 3,
+// 	"thm": "For all $n \in \mathbb{N}$, the $n$-dimensional hypercube is Hamiltonian.",
+// }
+
+// {//2 h thm
+// 	"name": "Eulerian even hypercubes",
+// 	"weight": 3,
+// 	"thm": "For every $n\in\mathbb{N}$, the $n$-dimensional hypercube is Eulerian iff $n$ is even.",
+// }
+
+// {//3 thm
+// 	"name": "Ramsey bound",
+// 	"weight": 3,
+// 	"thm": "For any $b\in\mathbb{N}$, the Ramsey number $R(b,b)$ is greater than $2^{\frac b2 - 1}$.",
+// }
+
+// {// 4
+// 	"weight": 1,
+// 	"exercise": "For any $k\in\mathbb{N}$, An upper bound for the Ramsey number $R(k,k)$ is [[$2^k$, but there are even better upper bounds]]!",
+// }
+
+// {//5 a
+// 	"weight": 1,
+// 	"exercise": "Give an example of a graph and a vertex cover that does *not* contain a minimum vertex cover.",
+// 	"example": "Consider any star $S_n$ for $n \geq 2$. The set containing all vertices except the center is a vertex cover.  It does not contain a minimum vertex cover, because there is only one minimum vertex cover, and it is the set containing the center.",
+// }
+
+// {//5 b
+// 	"weight": 2,
+// 	"exercise": "Give an example of a graph and a matching that is *not* a submatching of a maximum matching.",
+// 	"example": "Consider a path of odd length.  Label the edges with the positive integers from left to right.  The edges with odd labels form the only maximum matching.  The edges with even labels form a matching that is *not* contained in the maximum matching.",
+// }
+
+// {// 6 thm
+// 	"name": "Perfect matchings on trees",
+// 	"weight": 4,
+// 	"thm": "Every tree has at most $1$ perfect matching.",
+// }
+
+// {// 7
+// 	"weight": 3,
+// 	"exercise": "Give an example of a simple connected non-Hamiltonian graph that contains $2$ disjoint perfect matchings.",
+// 	"example": "The graph defined by <img21> is simple, connected, and has no Hamiltonian cycle.  It has a perfect matching defined by the bolded edges in <img22>, and another disjoint perfect matching defined by the bolded eges in <img23>.",
+// }
+
+
+
+
+
+
+
+// //end of combinatorics stuff
+// {
+// 	"name": "Odd strolls and cycles",
+// 	"theorem":"Every odd stroll contains an odd cycle.",
+// }
+
+// {
+// 	"name": "Directed odd strolls and cycles",
+// 	"thm":"Every odd directed stroll contains an odd directed cycle.", // by the same proof
+// }
+
+// {
+// 	"exercise":"Given a complete graph of order $n$, it has an orientation where d+(v)=d-(v) for all v iff $n$ is odd.",
+// 	"proof":"When n is odd, Kn has even regular degree.  Therefore, an Eulerian circuit exists.  Following the circuit in one direction yields the orientation.  Of course, when n is even, each vertex has an odd number of neighbors, so it's impossible.",
+// }
+
+// {
+// 	"def":"define a digraph!",
+// 	"note":"*Digraph* is short for *directed graph*.  We use digraphs so often that it is convenient to use the shorter term.",
+// }
+
+// {
+// 	"definition":"A digraph is __strongly connected__ if for every pair of (distinct) vertices u, v, there exists a directed path from u to v.",
+// }
+
+// {
+// 	"name": "Strongly connected equivalence",
+// 	"thm":"A digraph $G=(V,E)$ is strongly connected iff for every bi-partition of $V$ into $S$ and $T$, there exists an edge from $S$ to $T$.",
+// }
+
+// {
+// 	"definition":"A __component__ of a graph is a maximally connected subgraph.",
+// 	"note":"*Component* is short for *connected component*.",
+// }
+
+// {
+// 	"definition":"A __strong component__ of a graph is a maximally strongly connected subgraph.",
+// 	"note":"*Strong component* is short for *strongly connected component*.", // i don't know if i like this entire definition.  because it sounds like a component that is strongly connected.  but a strongly connected component is not necc a connectec component!
+// }
+
+// {
+// 	"def":"An __arc__ is an ordered pair of vertices, $(a,b)$.",
+// 	"note":"An arc is also called a *directed edge*.",
+// }
+
+// {
+// 	"def":"Given an arc $(a,b)$, $a$ is the __tail__.",
+// 	"note":"Also called the *initial vertex*.",
+// }
+
+// {
+// 	"def":"Given an arc $(a,b)$, $b$ is the __head__.",
+// 	"note":"Also called the *terminal vertex*.",
+// }
+
+// {
+// 	"def":"A set of vertices (or edges) is __independent__ if no pair of vertices (or edges) is adjacent.",
+// 	"note": "The term **matching** is a synonym for an independent edge set.",
+// }
+
+// {//original
+// 	"exercise": "A nonempty graph has at least [[$2$]] maximal independent sets.",
+// }
+
+
+// {
+// 	"definition":"A vertex $a$ __dominates__ a vertex $b$ if there is an arc $(a,b)$.",
+// }
+
+// {
+// 	"definition":"A vertex set $A$ __dominates__ a vertex set $B$ if for every $b \in B$, there exists an $a \in A$ such that $a$ dominates $b$.",
+// }
+
+// { // or maybe we SHOULDNT union it with A!!!
+// 	"definition":"The __dominion__ of a vertex set $A$ is the union of $A$ and the largest set $B$ that $A$ dominates.",
+// 	"note":"The dominion of $x$ (WITHOUT x itself) is denoted $N+(x).", // another reason maybe we shouldn't include A
+// }
+
+// {
+// 	"definition":"Given a graph $G=(V,E)$, a set $T \sub V$ is __out-dominating__ if its dominion is $V$.",
+// }
+
+// { // but now we need a version for digraphs!
+// 	"definition":"A __kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which is out-dominating.",
+// }
+
+// {
+// 	"def":"An __$n$-kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which when closed under domination $n$ times is $V$.",
+// }
+
+// {
+// 	"name": "",
+// 	"thm":"A digraph which is a directed odd cycle has no kernel.",
+// }
+
+// {
+// 	"name": "",
+// 	"thm":"A digraph with no odd cycles has at least one kernel.", // prove this! // see thm 1.4.16
+// }
+
+// {
+// 	"name": "",
+// 	"thm":"A digraph with no even cycles has at most one kernel.", // prove this!
+// }
+
+// {
+// 	"name": "",
+// 	"thm":"An acyclic digraph has a unique kernel.",
+// }
+
+// { // oh no do all thrms need to say multigraph now!
+// 	"name": "",
+// 	"thm":"Every connected multigraph can be oriented so that at most one vertex has odd outdegree.",
+// }
+
+// { // use above!
+// 	"name": "",
+// 	"thm":"A connected loopless multigraph with an even number of edges can be decomposed into paths of length 2.",
+// }
+
+// // De Bruijn cycle for binary words of length 4, avoiding 0101 and 1010. // ask Komlos
+// // (see 1.4.26 and then come back to all DeBruin things after it too.
+
+// {
+// 	"name": "",
+// 	"thm:":"Given a multigraph with an odd cycle, if it has a strong orientation, then that orientation has an odd directed cycle.",
+// }
+
+// {
+// 	"name": "",
+// 	"thm":"The shortest Hamiltonian stroll of a digraph $D=(V,E)$ (if such a stroll exists), has a length of at most $\dfrac{(|V|+1)^2}4$ (for $n \geq 3$).",
+// } // book uses different proof which i dont understand (gives overview)
+
+// {
+// 	"def":"A __bipartite graph__, denoted $G=(A,B,E)$, is a graph $G=(V,E)$ such that ${A,B}$ is a bipartition of $V$, and $(\forall e \in E) e\cap A \neq {}$ and $e\cap B \neq {}$.",
+// 	"note":"*Bigraph* is short for *bipartite graph*.",
+// }
+
+// {
+// 	"def":"A __$k$-partite graph__, denoted $G=(A_1,,,A_k,E)$, is a graph $G=(V,E)$ such that ${A_1,,,A_k}$ is a $k$-partition of $V$, and $(\forall e \in E)(\forall i \in [k]) e \not\subset A_i$.",
+// }
+
+// {
+// 	"def":"The set ${s,t}$ is __bigraphic__ if there exists a bigraph where the set of the degrees of vertices in partite set $A$ is $s$, and the set of the degrees of vertices in partite set $B$ is $t$.",
+// }
+
+// {
+// 	"thm":"${p,q}$ is bigraphic iff ${p\\\\largest element size \\Delta, q -- subtract 1 from \\Delta largest elements}$ is bigraphic.",
+// } // this is obvious because we need only that there exists a bigraph.  delta vertices in q lost an edge.  for the largest vertex in q, subtract and edge and add it to the guy that lost an edge.
+
+// // Bipartite 2-switch and 0,1-matrices with fixed row and column sums // what is this stuff??? // komlos
+
+// {
+// 	"def":"A __round-robin tournament__ ...?", // shall we call it tournament or round-robin or round-robin tournament?  i feel like we need the last.
+// }
+
+// {
+// 	"thm": "Let $G$ and $H$ be tournaments on a vertex set $V$.  Then $d_G+(v) = d_H+(v)$ for all $v \in V$ iff there is a series of triangle direction switches that transforms $G$ to $H$.",
+// } // pf algorithm, all vert right side.  pull 1 vert to left side at a time.  each time, fix the edges by letting 3rd vertex be on right side and not caring what happens there.  this works until only 1 vertex left on right.  at that point, all edges across already determined
+
+// // come back to 1.4.35
+
+// {
+// 	"def":"Vertex $a$ __virtually dominates__ vertex $b$ if $a$ dominates $b$ or $a$ dominates any $t$ who dominates $b$.",
+// }
+
+// {
+// 	"def":"Given a round-robin tournament $R=(V,E)$, a vertex $v \in V$ is a __king__ if it virtually dominates every vertex in $V$ besides itself.",
+// }
+
+// {
+// 	"thm":"Every non-null round-robin tournament has a king.",
+// }
+
+// {
+// 	"thm":"Let R be a round-robin tournament where every vertex is dominated by some vertex.  If $k \in V$ is a king, then R has another king in $N+(k)$. And another in N-(k)!  3 kings!", // the dominion of k
+// }
+
+// // ask komlos: who will be teaching combinatorics this summer?
+
+// {
+// 	"thm":"Every loopless digraph has a 2-kernel.",
+// 	// proof 1, induction
+// 	// proof 2, put vertices in line, all up arrows make acyclic. take kernel.  all down arrows make acyclic.  take kernel of kernel.
+// }
+
+// {
+// 	"def":"A digraph is called __unipathic__ if for any two vertices $j$ and $k$, there is at most one (simple??) path from $j$ to $k$.",
+// }// ask komlos
+
+// {
+// 	"thm":"If a unipathic digraph $U=(V_U,E_U)$ is a subgraph of a transitive round-robin tournament $R=(V_R,E_R)$, then $| E_U |$ is at most $\dfrac{|V_R|^2}4$.",
+// }// proven! given unipathic subset of trans tourn, take the leftmost source and it's child tree.  then take the next leftmost source and it's child tree, etc.  Come up w/ equation for upper bound of edges.  find max.
+
+// // FILL THIS STUFF IN SOME TIME EVENTUALLY:
+// // {// 1.4.41
+// // 	"thm":"", //ask komlos
+// // }// not proven yet! (and all below too)
+
+// // {
+// // 	1.4.42
+// // }
+
+// // chapter 2
+// {
+// 	"def": "A multigraph is __cyclic__ if it has a at least one cycle.",
+// }
+
+// {
+// 	"def":"A multigraph is __acyclic__ if it is not cyclic.",
+// 	"intuition": "If it has no cycles.",
+// }
+
+// {
+// 	"def":"A __forest__ is an acyclic graph.",
+// }
+
+// {
+// 	"def":"A __tree__ is a connected forest.",
+// 	"intuition":"A forest is one or more trees.  That is, each component of a forest is a tree.",
+// }
+
+// {
+// 	"thm":"Given any tree $T=(V,E)$ and vertices $a,b \in V$, there is a unique $a$,$b$-path.",
+// }
+
+// {
+// 	"thm":"A multigraph is a tree iff it is loopless and has exactly one spanning tree.",
+// }
+
+// {
+// 	"def":"A __spanning tree__ of a multigraph $M=(V,E)$ is a subtree of $M$ of the form $T=(V,E_T)$.",
+// 	"intuition":"A spanning tree *spans* all the vertices $V$ of the multigraph $M$.",
+// }
+
+// {
+// 	"thm":"Given a multigraph $G=(V,E)$, there is a bijection between the spanning trees $T=(V,E\A)$ and the sets $A \sub E$, which select exactly one edge from each cycle in $G$.",
+// }
+
+// {
+// 	"lemma":"If a multigraph $M=(V,E)$ satisfies $|E|<|V|$, then $M$ has a component which is a tree.",
+// }
+
+// {
+// 	"lemma":"A maximal subforest $F$ of a multigraph $M$ consists of a spanning tree in each component of $M$.",
+// }
+
+// {
+// 	"lemma":"Every tree $T=(V,E)$ satisfies $|E| + 1 = |V|$.",
+// }
+
+// {
+// 	"lemma":"Every tree $T=(V,E)$ with average degree $d$ has $|V| = \dfrac2{2-d}$.",
+// }//2.1.6
+
+// {//part a
+// 	"thm":"A graph is a forest iff every induced subgraph has a vertex of degree at most $1$.",
+// }
+
+// {//part b
+// 	"thm":"A graph is a forest iff every connected subgraph is an induced subgraph.",
+// }
+
+// {// part c
+// 	"thm":"The number of components of a forest $F=(V,E)$ is $|V|-|E|$.",
+// }
+
+// {
+// 	"ex":"If the acyclic graph $G=(V,E)$ satisfies $|E| = |V|-1$, then $G$ is connected.",
+// }
+
+
+// //2.1.9 here
+
+// //2.1.10 here
+
+
+// {
+// 	"lemma":"Every multigraph $M=(V,E)$ has at least $|E|-|V|+1$ cycles.",
+// }
+
+// {
+// 	"def":"The __distance__ between vertices $a$ and $b$ is the length of the shortest path connecting $a$ and $b$.  When there is no path connecting them, $a$ and $b$ have distance infinity.",
+// }
+
+// {
+// 	"def":"The __eccentricity__ of a vertex $v$ is the maximum of the distances between $v$ and every other vertex.",
+// }
+
+// {
+// 	"def":"A __central vertex__ is a vertex with minimum eccentricity.",
+// }
+
+// {
+// 	"def":"The __center__ is the subgraph induced by the central vertices.",
+// }
+
+// {
+// 	"def":"The __radius__ is the eccentricity of a central vertex.",
+// 	// alt def
+// }
+
+// {
+// 	"def":"The __diameter__ is the maximum distance.",
+// 	// alt def
+// }
+
+// {
+// 	"Ex":"Find the diameter and radius of $K_{a,b}$.",
+// }//2.1.12
+
+// //2.1.11:
+// {
+// 	"thm":"If $G$ is a graph with diameter $\geq 3$, then the diameter of $\overline G \leq 3$.",
+// }
+
+// {
+// 	"thm":"The center of a tree is a vertex or an edge.",
+// }
+
+// // define Weiner index
+
+// {
+// 	"thm":"Among trees with $n$ vertices, the Weiner index is minimized uniquely when the tree is a star.",
+// }
+
+// {
+// 	"thm":"Among connected multigraphs of $n$ vertices, the Weiner index is maximized uniquely when the multigraph is a path.",
+// }
+
+// //stopped at 2.1.17
+
+
+// {// \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+// // http://tex.stackexchange.com/questions/42271/floor-and-ceiling-functions
+// 	"ex":"Every graph of diameter $d$ has an independent set of vertices of size $\ceil{\dfrac{d+1}2}$.",
+// }
+
+// {
+// 	"ex":"What is the diameter and radius of an $n$-cube?",
+// }
+
+// {
+// 	"lem":"Every tree $T$ has at least $\Delta(T)$ leaves.",
+// }
+
+// {// 2.1.21
+// 	// If a simple n-vertex graph G has a decomposition into k spanning trees, and Delta(G) = delta(G) + 1, then
+// 	// 2k < n, and G has n − 2k vertices of degree 2k and 2k vertices of degree 2k − 1.
+// } // unclear what decomposition means
+
+// {
+// 	"ex":"A tree with degree list $k,k−1,...,2,1,1,...,1$ has $2 + k \choose 2$ vertices.",
+// }
+
+// {
+// 	"ex":"Given a tree $T=(V,E)$ and a $k \in \\bb{N}*$ such that every vertex has degree $1$ or $k$, prove that $|V|$ is $2$ more than a multiple of $k-1$.",
+// }
+
+// {
+// 	"def":"A __star__, denoted $S_t$, is a bigraph of the form $K_{1,t}.",
+// 	"note":"Under this definition, the trivial graph is not a star.",
+// }
+
+// {// orig
+// 	"ex":"A tree which is not a star has at least $3$ maximal independent sets.",
+// }
+
+// {
+// 	"ex":"Given the set of all trees of order $n$, the tree with the maximum number of independent sets is the star.",
+// }
+
+
+
+
+
+
+// // start at 2.1.26
 
 
 

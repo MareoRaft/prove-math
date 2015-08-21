@@ -4,7 +4,6 @@ The quiz and the program itself may have some sort of positive feedback feature 
 
 The quiz will REMEMBER what it has quizzed you on in the past, so that it can TARGET the things you may be forgetting, and leave alone the things you have recently visited!
 2. the ability for users to find other users who have similar skills or "complementing" skills (for the purpose of collaboration).
-3. Oauth accounts (FB, google+, etc)
 4. API for people to request nodes in the form of json dictionaries
 5. Zero is a natural number
 6. Analysis and real analysis are separate topics that may be linked at some point
@@ -17,3 +16,6 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 12. RESTRICTIONS.  thms written in generality, but then users apply restrictions.  For example, thrm is true for multigraphs, but user is only concerned with simple graphs.  With the restriction, the node will appear as a statement about simple graphs. (but implementing this would probably require thrms to be written in an unambiguous logical language.  that way, it is possible to parse the thrm and find the REQUIREMENTS and check each one against the RESTRICTION.  this is definitely worth doing, but will take a very long time to do!)
 13. optional setting --> see a definition when you hover over the node.
 14. use a class attribute max_importance and min_importance instead of overriding the setter in node.py
+15. we need to learn how to migrate our mongo database.  In the future we will eventually have to move servers, and when we do, we don't want to be sitting there with an "unmovable" mongo database.
+16. Instead of writing in the dependencies ourselves, we want the program to search through the description and label each word as an ENGLISH word or a DEPENDENT word, then search through names and their plurals to populate the dependencies.
+17. use refs for a possible speed boost in the future (NetworkX holds refs. then we don't have to find nodes by id later on.  code: class ref:def __init__(self,obj):self.obj = objdef get(self):return self.objdef set(self,obj):self.obj = obj

@@ -59,10 +59,13 @@ ws.onopen = function(){
 	ws.send("Hello, world, Remember to clear cache if needed!")
 }
 ws.onmessage = function(event){
+	alert('incoming message.')
 	var unbundled = JSON.parse(event.data)
 	var graph = unbundled
-	// alert('graph is: '+graph)
-	//d3AndSVG.processNewGraph(graph)
+	// for( var i=0; i < graph.nodes.length; i++){
+	// 	alert(graph.nodes[i])
+	// }
+	d3AndSVG.processNewGraph(graph)
 }
 
 
@@ -74,7 +77,7 @@ $('#Submit').click(send_node_info)
 
 
 // setup all the things we can do before actually getting the data:
-    function hello(){
+function hello(){
 	var letsTry = JSON.stringify({"contents":"I want to send this over upon a click in a json file preferably"})
     //var contents = $('#cool').val()
     ws.send("For my sanity")
@@ -172,9 +175,9 @@ $(".math").each(function(){ // this is set up as client-side rendering.  see #us
 setTimeout(function() {
 	var new_graph = {
 		"nodes": [
-			{id: "at", importance: 1, type: 'exercise', name: 'pigeonhole principal'},
-			{id: "b", importance: 8, type: "theorem", name: 'pigeonhole theorem'},
-			{id: "c", importance: 5, type: "definition", name: 'Bernoulli number'},
+			{_id: "at", _importance: 1, _type: 'exercise', _name: 'pigeonhole principal'},
+			{_id: "b", _importance: 8, _type: "theorem", _name: 'pigeonhole theorem'},
+			{_id: "c", _importance: 5, _type: "definition", _name: 'Bernoulli number'},
 		],
 		"links": [
 			{source: "at", target: "b"}, {source: "at", target: "c"}, {source: "b", target: "c"},
@@ -190,7 +193,7 @@ setTimeout(function() {
 	// remove b-c
 	var new_graph = {
 		"nodes": [
-			{id: "b", remove: true},
+			{_id: "b", remove: true},
 		],
 	}
 	d3AndSVG.processNewGraph(new_graph)
@@ -200,7 +203,7 @@ setTimeout(function() {
 setTimeout(function() {
 	var graph = {
 		nodes: [
-			{id: "b", importance: 4, type: "definition", name: 'sequence'},
+			{_id: "b", _importance: 4, _type: "definition", _name: 'sequence'},
 		],
 		links: [
 			{source: "at", target: "b"}, {source: "b", target: "c"},
@@ -208,9 +211,6 @@ setTimeout(function() {
 	}
 	d3AndSVG.processNewGraph(graph)
 }, 6000);
-
-
-
 
 
 

@@ -66,3 +66,29 @@ def test_common_descendant_sources():
 	assert DAG.common_descendant_sources('A', 'B') == {'one', 'two'}
 	# assert DAG.common_descendant_sources({'A', 'one'}, 'B') == {'two'} # networkx won't accept nbunches :(
 
+
+class ref:
+
+
+	def __init__(self,obj):
+		self.obj = obj
+	def get(self):
+		return self.obj
+	def set(self,obj):
+		self.obj = obj
+
+def test_adding_dictionaries_as_nodes():
+	D = nx.DAG()
+	a = ref({'this': 1})
+	b = ref({'is': 2})
+	my_nodes = [
+		a,
+		b,
+	]
+	D.add_nodes_from(my_nodes)
+	assert set(D.nodes()) == set(my_nodes)
+
+	print('hi')
+	for node in D.nodes():
+		print(node.get())
+	print(D.edges())

@@ -82,6 +82,9 @@ def get_contents_of_dunderscores(string):
 	assert list_contents != [] and list_contents[0] != ""
 	return list_contents[0]
 
+def reduce_string(string):
+	return re.sub(r'[_\W]', '', string).lower()
+
 ############################### EXTERNAL HELPERS ###############################
 def create_appropriate_node(dic):
 	# for writers that use shortcut method, we must seek out the type:
@@ -98,11 +101,11 @@ def create_appropriate_node(dic):
 	else:
 		raise ValueError('Cannot detect type of node.  "type" key has value: ' + dic['type'])
 
-def find_node_from_id(nodes, ID):
-	for node in nodes:
-		if node._id == ID:
+def find_node_from_id(list_of_nodes, ID):
+	for node in list_of_nodes:
+		if node.id == ID:
 			return node
-	raise Exception('Could node find node with ID: ' + ID + ' within the nodes: ' + nodes)
+	warn('Could node find node with ID "' + ID + '" within list_of_nodes.')
 
 
 #################################### MAIN #####################################
@@ -113,6 +116,7 @@ class Node:
 
 	MIN_IMPORTANCE = 1
 	MAX_IMPORTANCE = 10
+	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', '_importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes']
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
@@ -128,9 +132,29 @@ class Node:
 		self.importance = move_attribute(dic, {'importance', 'weight'}, strict=False)
 		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
 		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
-		self.counterexamples=move_attribute(dic, {'counterexample', 'counterexamples', 'counter example', 'counter examples'}, strict=False)
+		self.counterexamples = move_attribute(dic, {'counterexample', 'counterexamples', 'counter example', 'counter examples'}, strict=False)
 		self.notes = move_attribute(dic, {'note', 'notes'}, strict=False)
 		self.name = move_attribute(dic, {'name'}, strict=False)
+
+	# def __getattr__(self, name):
+	# 	if name not in self.ALLOWED_ATTRIBUTES:
+	# 		raise AttributeError('Attribute "'+name+'" not allowed')
+	# 	else:
+	# 		return self.__dict__[name]
+
+	# def __setattr__(self, name, value):
+	# 	# if name not in (self.ALLOWED_ATTRIBUTES or ['_'+a for a in self.ALLOWED_ATTRIBUTES]):
+	# 	if name not in self.ALLOWED_ATTRIBUTES:
+	# 		raise AttributeError('Attribute "'+name+'" not allowed')
+	# 	else:
+	# 		self.__dict__[name] = value
+
+	@property
+	def weight(self): # delete this if we get above to work
+		pass
+	@weight.setter
+	def weight(self, new_weight):
+		raise Exception('We are not using "weight" anymore.  We are using "importance".')
 
 	def as_json(self): # returns json version of self
 		return json.dumps(self.__dict__)
@@ -138,48 +162,30 @@ class Node:
 	def __str__(self):
 		return str(self.__dict__)
 
-	def __eq__(self,other):
-		if self.name != other.name:
-			return False
-		elif self.type != other.type:
-			return False
-		elif self.importance != other.importance:
-			return False
-		elif self.description != other.description:
-			return False
-		for x in self.intuitions:
-			if x not in other.intuitions:
-				return False
-		for x in self.examples:
-			if x not in other.examples:
-				return False
-		for x in self.notes:
-			if x not in other.notes:
-				return False
-		return True
-
 	def clone(self):
 		return copy.deepcopy(self)
 
 	@property
 	def name(self):
-		return self._name
+		if '_name' in self.__dict__:
+			return self._name
+		else:
+			return None
 	@name.setter
 	def name(self, new_name):
 		if new_name is not None:
 			assert dunderscore_count(new_name) == 0
 			self._name = check_type_and_clean(new_name, str)
-			self.id=self.name
+			self.id = self.name
 		else:
 			self._name= check_type_and_clean(new_name, type(None))
-			
+
 	@property
 	def id(self):
 		return self._id
-	
 	@id.setter
-	def id(self,new_id):
-		self._id=re.sub(r'[_\W]', ' ', new_id).lower().replace(" ","")
+	def id(self, new_id_before_reduction):
+		self._id = reduce_string(new_id_before_reduction)
 
 	@property
 	def type(self):
@@ -205,13 +211,6 @@ class Node:
 			new_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
 			assert new_importance >= self.MIN_IMPORTANCE and new_importance <= self.MAX_IMPORTANCE
 		self._importance = new_importance
-
-	@property
-	def weight(self):
-		pass
-	@weight.setter
-	def weight(self, new_weight):
-		raise Exception('We are not using "weight" anymore.  We are using "importance".')
 
 	@property
 	def description(self):
@@ -242,6 +241,10 @@ class Node:
 		for d in cleaned_dependencies:
 			assert dunderscore_count(d) == 0
 		self._dependencies = cleaned_dependencies
+
+	@property
+	def dependency_ids(self):
+		return [reduce_string(x) for x in self.dependencies]
 
 	@property
 	def examples(self):
@@ -279,6 +282,8 @@ class Node:
 class Definition(Node):
 
 
+	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'plural']
+
 	def __init__(self,dic):
 		super().__init__(dic)
 		self.type = "definition"
@@ -309,6 +314,8 @@ class Definition(Node):
 
 class PreTheorem(Node):
 
+
+	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'proofs']
 
 	def __init__(self, dic):
 		super().__init__(dic)
@@ -342,6 +349,8 @@ class Theorem(PreTheorem):
 
 
 	MIN_IMPORTANCE = 3
+	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'proofs']
+
 
 	def __init__(self, dic):
 		super().__init__(dic)
@@ -361,14 +370,16 @@ class Exercise(PreTheorem):
 
 
 	MAX_IMPORTANCE = 3
+	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'proofs']
 
 	def __init__(self, dic):
 		super().__init__(dic)
 		self.type = "exercise"
 		if self.importance is None:
 			self.importance = 1
-	
+
 	@PreTheorem.description.setter
 	def description(self, new_description):
-		self.id=new_description
-		PreTheorem.description.fset(self,new_description)
+		PreTheorem.description.fset(self, new_description)
+		if self.name is None:
+			self.id = self.description
