@@ -63,7 +63,7 @@ function dblclick(node) {
 var width = $('body').width(),
 	height = $(window).height()
 
-var force = d3.layout.force()
+var force = d3.layout.force() // see https://github.com/mbostock/d3/wiki/Force-Layout for options
 	.nodes(nodes) // and when we push new nodes to nodes, things happen (i think)
 	.links(links)
 	.size([width, height])

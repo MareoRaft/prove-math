@@ -152,7 +152,5 @@ my @noncodes_with_trailing_comma = (
 );
 	ok_all_mismatch( \@noncodes_with_trailing_comma, qr/^$JSONRegex::code_with_trailing_comma$/, 'code_with_trailing_comma' );
 
-
-
 note("Testing in Perl $]");
 done_testing;

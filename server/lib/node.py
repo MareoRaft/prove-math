@@ -362,7 +362,6 @@ class Theorem(PreTheorem):
 	@PreTheorem.name.setter
 	def name(self, new_name):
 		assert new_name is not None
-		assert is_capitalized(new_name)
 		PreTheorem.name.fset(self, new_name)
 
 

@@ -22,3 +22,8 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 18. ways to optimize graph spacing: http://stackoverflow.com/questions/15076157/optimizing-charge-linkdistance-and-gravity-in-d3-force-directed-layouts
 19. about betweenness centrality: http://glowingpython.blogspot.com/2013/02/betweenness-centrality.html
 20. give nodes some approximate start position based on sourciness sinkiness.  This will order things nicer AND stop stuff from exploding on load
+21. ADD support for Ali's "intuition" within proofs.
+22. add support for expandable bubbles within proofs.
+23. How do we tell users "check out this chapter of this book" to learn more about a theorem or to get exercises for the theorem.
+24. create preview to convert Markdown + LaTeX dropin so we can see stuff.
+25. implememt nicknames

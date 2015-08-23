@@ -36,19 +36,23 @@ while( $input =~ s/^($JSONRegex::gobble_mid_strings)$JSONRegex::illegal_slosh/$1
 # for n and t, we have to be smarter, so we interpret a lowecase letter as a latex command.  An actual newline followed by a lowercase letter could not be correct.  It is incorrect grammar.
 $input =~ s/(?<!\\)\\(?=[nt][a-z])/\\\\/g;
 
-# 3. Commas will be added to the end of all top-level dics
+# 3. Look for newlines within strings, replace them with \n
+# 3.5 Look for tabs within strings, replace them with \t
+while( $input =~ s/^($JSONRegex::gobble_mid_strings)(?:(\n)|(\t))/ "$1\\" . "n" x!! $2 . "t" x!! $3 /e ){}
+
+# 4. Commas will be added to the end of all top-level dics
 $input =~ s/$JSONRegex::matched_braces/$&,/g; # this would naturally pick only the top-level dics
 
-# 4. Everything will be wrapped in a large array
+# 5. Everything will be wrapped in a large array
 $input = "[\n\n$input\n\n]";
 
-# 5. Everything will be wrapped in a dictionary with key "nodes"
+# 6. Everything will be wrapped in a dictionary with key "nodes"
 $input = qq({\n"nodes":\n\n$input\n\n});
 
-# 6. Objects/Arrays where the last member/element is followed by a comma will have the comma deleted
+# 7. Objects/Arrays where the last member/element is followed by a comma will have the comma deleted
 while( $input =~ s/$JSONRegex::code_with_trailing_comma/$+{PRETRAILINGCOMMA}$+{POSTTRAILINGCOMMA}/ ){} # i think gobble and nibble will have the same performance in this situation
 
-# 7. Write a file with the same name, but ending in .json
+# 8. Write a file with the same name, but ending in .json
 $file_path =~ s/\.pre-json$/.json/;
 write_file($file_path, $input);
 
