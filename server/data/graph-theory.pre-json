@@ -28,20 +28,15 @@
 }
 
 {
-	"definition":"A __simple edge__ is an edge which is not a loop.",
+	"name": "simple (edge)",
+	"definition":"An edge is __simple__ if it is not a loop.",
 	"dependencies": ["edge", "loop"],
-}
-
-{
-	"definition":"The vertices $a$ and $b$ have __multiple edges__ if there are more than one edge ${a,b}$.",
-	"note":"$a$ and $b$ need not be distinct.",
-	"dependencies": ["edge"],
 }
 
 {
 	"name": "adjacent (vertices)",
 	"definition":"Vertices $a$ and $b$ are __adjacent__, denoted $a \sim b$, if there is an edge ${a,b}$.",
-//	"denotation":"$a \sim b$", // let's keep the denotations in the definitions
+	// "denotation":"$a \sim b$", // let's keep the denotations in the definitions
 	"dependencies": ["vertex", "edge"],
 }
 
@@ -63,122 +58,183 @@
 	"dependencies": ["edge", "vertex", "set", "incident"],
 }
 
-// { // THIS IS THE GENERAL VERSION
-// 	"definition":"A __multigraph__ $G$ is an ordered pair $G = (V,E)$ where $V$ is a set of vertices and $E$ is a multiset of edges on $V$.",
-// 	"intuition":"$E$ is a multiset, so a pair of vertices could have more than one edge incident to them!  Also, there can be loops!",
-// }
+{ // THIS IS THE GENERAL VERSION
+	"definition":"A __multigraph__ is an ordered pair $(V,E)$ where $V$ is a set of vertices and $E$ is a multiset of edges on $V$.",
+	"intuition":"$E$ is a multiset, so a pair of vertices could have more than one edge incident to them!  Also, there can be loops!",
+	"dependencies":["ordered pair", "multiset", "on (edges on vertices)"],
+}
 
-// {
-// 	"def":"Vertices $a$,$b$ have __multiple edges__ if there are more than one edge ${a,b}$.",
-// }
+{
+	"name":"multiple (edges)",
+	"definition":"The vertices $a$ and $b$ have __multiple__ edges if there is more than one edge ${a,b}$.",
+	"note":"$a$ and $b$ need not be distinct.",
+	"dependencies": ["edge", "vertex"],
+}
 
-// {
-// 	"def":"Vertex $a$,$b$ has __multiple loops__ if there are more than one edge ${a}$.",
-// }
+{
+	"name":"multiple (loops)",
+	"def":"Vertex $a$ has __multiple__ loops if there is more than one loop ${a}$.",
+	"dependencies":["vertex", "loop"],
+}
 
-// {
-// 	"definition":"A __simple graph__ $G$ is a multigraph $G = (V,E)$ where $E$ is a set that contains no loops.",
-// 	"note":"Here, $E$ is a set, so multiple edges do not occur either.",
-// 	"note":"Multigraphs are more general than simple graphs.",
-// }
+{
+	"name": "simple (graph)",
+	"definition":"A multigraph $G = (V,E)$ is __simple__ if $E$ is a set that contains no loops.",
+	"note":"Here, $E$ is a set, so multiple edges do not occur either.",
+	"note":"Multigraphs are more general than simple graphs.",
+	"note":"Instead of saying 'simple multigraph', we say 'simple graph' because there is no nature of 'multipleness' in the graph.",
+	"dependencies":["multigraph", "loop"],
+}
 
-// {
-// 	"def":"A __null__ multigraph is a multigraph with 0 vertices.",
-// }
+{
+	"name": "null (multigraph)",
+	"def":"The __null__ multigraph is the multigraph with 0 vertices.",
+	"dependencies":["multigraph"],
+}
 
-// {
-// 	"def":"A __non-null__ multigraph is a multigraph with more than 0 vertices.",
-// }
+{
+	"name": "non-null (multigraph)",
+	"def":"A __non-null__ multigraph is a multigraph that is not null.",
+	"dependencies":["null (multigraph)"],
+}
 
-// {
-// 	"def":"A __trivial__ multigraph is a multigraph with exactly 1 vertex.",
-// }
+{
+	"name": "trivial (multigraph)",
+	"def":"A __trivial__ multigraph is a multigraph with exactly 1 vertex.",
+	"dependencies":["multigraph"],
+}
 
-// {
-// 	"def":"A __nontrivial__ multigraph is a multigraph with more than 1 vertex.",
-// }
+{
+	"name": "nontrivial (multigraph)",
+	"def":"A __nontrivial__ multigraph is a multigraph with more than 1 vertex.",
+	"note":"This is different from being not trivial, since is discludes the null graph.",
+	"dependencies":["multigraph"],
+}
 
-// {
-// 	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
-// }
+{
+	"name": "empty (multigraph)",
+	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
+	"dependencies":["multigraph"],
+}
 
-// {
-// 	"def":"An __nonempty__ multigraph is a multigraph with more than 0 edges.",
-// }
+{
+	"name": "nonempty (multigraph)",
+	"def":"A multigraph is __nonempty__ if it is not empty.",
+	"dependencies":["empty (multigraph)"],
+}
 
+{
+	"name": "degree (vertex)",
+	"definition":"Given a multigraph $G = (V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
+	"intuition":"The degree of vertex $v$ is the number of edge ends that touch it.",
+	"dependencies":["vertex", "incident", "loop"],
+}
 
-// {
-// 	"definition":"Given a multigraph $G = (V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
-// 	"intuition":"The degree of vertex $v$ is the number of edge ends that touch it.",
-// }
+{
+	"def":"The __minimum degree__ of a graph $G=(V,E)$ is the minimum of the degrees of the vertices in $V$.",
+	"den":"$\delta(G)$",
+	"dependencies":["degree (vertex)", "minimum"],
+}
 
-// {
-// 	"def":"The __minimum degree__ of a graph $G=(V,E)$ is the minimum of the degrees of the vertices in $V$.",
-// 	"den":"\delta(G)",
-// }
+{
+	"def":"The __maximum degree__ of a graph $G=(V,E)$ is the maximum of the degrees of the vertices in $V$.",
+	"den":"$\Delta(G)$",
+	"dependencies":["degree (vertex)", "maximum"],
+}
 
-// {
-// 	"def":"The __maximum degree__ of a graph $G=(V,E)$ is the maximum of the degrees of the vertices in $V$.",
-// 	"den":"\Delta(G)",
-// }
+{
+	"definition":"A __walk__ is an alternating sequence of vertices and edges which starts and ends on a vertex, and satisfies the following condition:  For every edge ${a,b}$ in the sequence, the vertices adjacent to it in the sequence are $a$ and $b$.",
+	"intuition":"Pretend you are an ant on the graph.  You begin at a vertex.  You cross edge incident to you and arrive at the other side of that edge: another vertex.  You continue this process, going any way you please, and eventually stop at a vertex.",
+	"dependencies":["sequence", "vertex", "edge"],
+}
 
-// {
-// 	"definition":"A __walk__ is an alternating sequence of vertices and edges which starts and ends on a vertex, and satisfies the following condition:  For every edge ${a,b}$ in the sequence, the vertices adjacent to it in the sequence are $a$ and $b$.",
-// 	"intuition":"Pretend you are an ant on the graph.  You begin at a vertex.  You cross edge incident to you and arrive at the other side of that edge: another vertex.  You continue this process, going any way you please, and eventually stop at a vertex.",
-// }
+{
+	"def":"A multiset of vertices and edges where *no edge is repeated* satisfies the __trail condition__.",
+	"dependencies":["multiset", "edge"],
+}
 
-// {
-// 	"def":"A multiset of vertices and edges where *no edge is repeated* satisfies the __trail condition__.",
-// 	"definition":"A __trail__ is a walk that satisfies the trail condition.",
-// }
+{
+	"definition":"A __trail__ is a walk that satisfies the trail condition.",
+	"dependencies":["walk", "trail condition"],
+}
 
-// {
-// 	"def":"A multiset of vertices and edges where *no vertex is repeated* satisfies the __path condition__.",
-// 	"definition":"A __path__ is a trail that satisfies the path condition.",
-// }
+{
+	"def":"A multiset of vertices and edges where *no vertex is repeated* satisfies the __path condition__.",
+	"dependencies":["multiset", "edge"],
+}
 
-// {
-// 	"definition":"A walk which begins and ends on the same vertex is called __closed__.",
-// }
+{
+	"definition":"A __path__ is a trail that satisfies the path condition.",
+	"dependencies":["trail", "path condition"],
+}
 
-// { // these should be separate.
-// 	"definition":"A __stroll__ is a closed walk.",
-// 	"definition":"A __circuit__ is a closed trail.",
-// 	"definition":"A __cycle__ is a closed path.",
-// 	"note":"By convention, we do not think of the beginning vertex as occuring twice.  In particular, this means that a cycle is still a path by definition of a path.",
-// 	"note":"In older books, the term *circuit* actually refers to a *cycle*.  If you are using other resources, double check the definition of *circuit* to make sure you know what you are dealing with.",
-// }
+{
+	"name": "closed (walk)",
+	"definition":"A walk is __closed__ if it begins and ends on the same vertex.", // but then how do we not repeat it.  we have to create an equivalence class so that there is no "start" or "end"
+	"dependencies":["walk"],
+}
 
-// {
-// 	"def":"The __length__ of a walk is the number of edges in the walk.",
-// }
+{
+	"def":"A walk's __end vertices__ are its first and last term.",
+	"dependencies":["walk", "sequence", "term (sequence)"],
+}
 
-// {
-// 	"def":"An __$a$,$b$-walk__ is a walk with end vertices $a$ and $b$.",
-// 	"note":"This defines the terms __$a$,$b$-trail__ and __$a$,$b$-path__ too.",
-// }
+{ // these should be separate.
+	"definition":"A __stroll__ is a closed walk.",
+	"dependencies":["closed (walk)"],
+}
 
-// {
-// 	"def":"Vertices $a$,$b$ have __multiple trails__ if there exists a class of $a$,$b$-trails (size at least 2) whose (internal) union satisfies the trail condition.",
-// }
+{
+	"definition":"A __circuit__ is a closed trail.",
+	"dependencies":["closed (walk)", "trail"],
+}
 
-// {
-// 	"def":"Vertices $a$,$b$ have __multiple paths__ if there exists a class of $a$,$b$-paths (size at least 2) whose (internal) union satisfies the path condition.",
-// }
+{
+	"definition":"A __cycle__ is a closed path.",
+	"dependencies":["closed (walk)", "path"],
+	"note":"By convention, we do not think of the beginning vertex as occuring twice.  In particular, this means that a cycle is still a path by definition of a path.", // what do we do here?
+	"note":"In older books, the term *circuit* actually refers to a *cycle*.  If you are using other resources, double check the definition of *circuit* to make sure you know what you are dealing with.",
+}
 
-// {
-// 	"definition":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
-// 	"intuition":"An Eulerian trail is a trail that uses all the edges in the graph exactly once.",
-// }
+{
+	"def":"The __length__ of a walk is the number of edges in the walk.",
+	"dependencies":["walk"],
+}
 
-// {
-// 	"name": "Eulerian Graph",
-// 	"def": "A multigraph is called __Eulerian__ if it contains an Eulerian circuit.",
-// }
+{
+	"def":"An __$a$,$b$-walk__ is a walk with end vertices $a$ and $b$.",
+	"note":"This defines the terms $a$,$b$-trail and $a$,$b$-path too.",
+	"dependencies":["walk", "end vertices"],
+}
+
+{
+	"name": "multiple (trails)",
+	"def":"Vertices $a$,$b$ have __multiple__ trails if there exists a class of $a$,$b$-trails (size at least 2) whose (internal) union satisfies the trail condition.",
+	"dependencies":["trail", "union", "class"],
+}
+
+{
+	"name": "multiple (paths)",
+	"def":"Vertices $a$,$b$ have __multiple__ paths if there exists a class of $a$,$b$-paths (size at least 2) whose (internal) union satisfies the path condition.",
+	"dependencies":["path", "union", "class"],
+}
+
+{
+	"name":"Eulerian (trail)",
+	"definition":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
+	"intuition":"An Eulerian trail is a trail that uses all the edges in the graph exactly once.",
+	"dependencies":["multigraph"],
+}
+
+{
+	"name": "Eulerian (graph)",
+	"def": "A multigraph is called __Eulerian__ if it contains an Eulerian circuit.",
+	"dependencies":["multigraph", "Eulerian (trail)", "circuit"],
+}
 
 // {
 // 	"definition":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
-// 	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms __Hamiltonian path__ and __Hamiltonian cycle__.",
+// 	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms **Hamiltonian path** and **Hamiltonian cycle**.",
 // 	"note":"In older books, the term *Hamiltonian circuit* is used in place of *Hamiltonian cycle*.  So be careful!  When they say *circuit*, they may actually mean *cycle*.",
 // 	"intuition":"A Hamiltonian cycle is a cycle that uses all the vertices in the graph exactly once.",
 // }

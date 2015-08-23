@@ -23,14 +23,14 @@
 }
 
 {
-	"name": "Ordering $p$ distinct people",
+	"name": "ordering $p$ distinct people",
 	"weight": 4,
 	"thm": "Given a set $P$ of size $p$, then the number of bijective functions from $[p]$ to $P$ is $p!$.",
 	"intuition": "If you have $p$ different people, and you want to order them in a line, then there are exactly $p!$ ways to do this.",
 }
 
 {
-	"name": "Binomial Identity",
+	"name": "binomial identity",
 	"weight": 3,
 	"thm": "$ \\binom nk = \\binom{n}{n-k} $",
 	"proofs": [
@@ -46,7 +46,7 @@
 }
 
 {
-	"name": "Multinomial Coefficient",
+	"name": "multinomial coefficient",
 	"weight": 4,
 	"def": "Given that $n_1 + n_2 + \\ldots + n_k = n$, then the __multinomial coefficient__, denoted $\\binom{n}{n_1, n_2, \\ldots, n_k}$, is $\\frac{n!}{n_1!n_2!\\ldots n_k!}$.",
 	"intuition": "The binomial coefficient $$, also denoted $$, is the number of ways to choose $$ from $n$ objects.  The multinomial coefficient $$ is the number of ways to choose $$ and $$ from $n$ objects.",
@@ -54,7 +54,7 @@
 }
 
 {
-	"name": "Chairperson Identity",
+	"name": "chairperson identity",
 	"weight": 4,
 	"thm": "$ k \\binom nk = n \\binom{n-1}{k-1} $",
 	"proofs": [
@@ -66,7 +66,7 @@
 }
 
 {
-	"name": "Chairperson Identity Generalized",
+	"name": "chairperson identity generalized",
 	"weight": 6,
 	"thm": "$\\binom{a_1}{a_2}\\binom{a_2}{a_3}\\cdots\\binom{a_{n-1}}{a_n} = \\prod_{j=1}^{n} \\binom{a_1-a_{j+1}}{a_j-a_{j+1}}$ where $a_{n+1}=0$.",
 	"proofs": [
@@ -78,7 +78,7 @@
 }
 
 {
-	"name": "Pascal's Identity",
+	"name": "Pascal's identity",
 	"weight": 5,
 	"thm": "$\\binom{n-1}{k-1} + \\binom{n-1}{k} = \\binom{n}{k}$",
 	"proofs": [
@@ -87,14 +87,14 @@
 			"content": "Right side: You have $n$ people and you choose $k$ of them.  Left side: One of the people is yourself.  $\\binom{n-1}{k-1}$ is the number of choices that include yourself (Because you are already included, there are $n-1$ people remaining and you choose $k-1$ of them).  $\\binom{n-1}{k}$ is the number of choices that do *not* include yourself (Because there you are not included, there are only $n-1$ people to choose from, and you must choose $k$ of them).",
 		},
 		{
-			"type": "pascal lattice",
+			"type": "Pascal lattice",
 			"content": "Right side: Choose the point $P$ on the Pascal lattice path grid corresponding to $\\binom nk$.  That is, all paths to it have length $n$, and $k$ of the segments move rightwards.  Left side: We see that every path to $P$ must either travel through the point immediately above and to the left of $P$, which has $\\binom{n-1}{k-1}$ paths leading to it; xor through the point immediately above and to the right of $P$, which has $\\binom{n-1}{k}$ paths leading to it.",
 		},
 	],
 }
 
 {
-	"name": "Powerset Identity", // this is a more specific version of the Binomial Theorem!
+	"name": "powerset identity", // this is a more specific version of the Binomial Theorem!
 	"type": "thm",
 	"weight": 4,
 	"content": "$\\sum_{k=0}^{n} \\binom nk = 2^n$",
@@ -105,7 +105,7 @@
 }
 
 {
-	"name": "Binomial Theorem",
+	"name": "binomial theorem",
 	"type": "thm",
 	"weight": 5,
 	"content": "$(a+b)^n = \\sum_{k=0}^{n} \\binom nk a^k b^{n-k}$",
@@ -117,7 +117,7 @@
 }
 
 {
-	"name": "Alternating Binomial",
+	"name": "alternating binomial",
 	"type": "thm",
 	"weight": 4,
 	"content": "Given any finite set, the number of odd sized subsets is equal to the number of even sized subsets.  Algebraically, $0 = \\sum_{k=0}^{n} \\binom nk (-1)^k$.",
@@ -128,7 +128,7 @@
 }
 
 {
-	"name": "Summation Formula 1",
+	"name": "summation formula 1",
 	"weight": 5,
 	"thm": "$\\sum_{k=0}^{n} k = \\frac{n(n+1)}2 = \\binom{n+1}{2}$",
 	"proofs": [
@@ -144,7 +144,7 @@
 }
 
 {
-	"name": "Summation Identity",
+	"name": "summation identity",
 	"type": "thm",
 	"weight": 7,
 	"content": "$\\sum_{i=k}^{n} \\binom ik = \\binom{n+1}{k+1}$",
@@ -157,7 +157,7 @@
 }
 
 {
-	"name": "Summation Formula 2",
+	"name": "summation formula 2",
 	"type": "thm",
 	"weight": 5,
 	"content": "$\\sum_{k=0}^{n} k^2 = \\frac{n(n+1)(2n+1)}6 $",
@@ -174,7 +174,7 @@
 }
 
 {
-	"name": "Middle Element Breakdown",
+	"name": "middle element breakdown",
 	"type": "thm",
 	"weight": 3,
 	"content": "$\\binom n3 = \\sum_{k=1}{n} (k-1)(n-k)$",
@@ -185,23 +185,23 @@
 }
 
 {
-	"name": "Rectangle Lattice Paths",
+	"name": "rectangle lattice paths",
 	"type": "thm",
 	"weight": 5,
 	"content": "$\\binom{a+b}{r} = \\sum_{k=0}{r} \\binom ak \\binom{b}{r-k}$",
 	"proof": {
-		"type": "pascal lattice",
+		"type": "Pascal lattice",
 		"content": "draw the rectangle lattice.  draw a horizontal line at height min(a,b). sum over each point on the line that the paths might go through.",
 	},
 }
 
 {
-	"name": "Square Lattice Paths",
+	"name": "square lattice paths",
 	"type": "thm",
 	"weight": 4,
 	"content": "$\\binom{2a}{a} = \\sum_{k=0}^{a} \\binom ak ^2 $",
 	"proof": {
-		"type": "pascal lattice",
+		"type": "Pascal lattice",
 		"content": "This is just a more specific version of Rectangle Lattice Paths.  Set $a=b$, and use the Choosy Identity to simplify.",
 	},
 }
@@ -243,7 +243,7 @@
 }
 
 {
-	"name": "Partition of a natural number",
+	"name": "partition of a natural number",
 	"weight": 4,
 	"def": "A __partition__ of a natural number $n$ is a multiset of positive integers that add up to $n$.  Each element of the multiset is called a __part__ of the partition.",
 	"note": "Because the integers that add up to $n$ must be positive, $0$ is not used in partitions.",
@@ -252,7 +252,7 @@
 }
 
 {
-	"name": "Partition natural number $a$ into $x$ parts",
+	"name": "partition natural number $a$ into $x$ parts",
 	"type": "def",
 	"weight": 4,
 	"content": "The number of ways to partition natural number $a$ into $x$ (nonempty) __parts__, denoted $p_x(a)$, is the number of ways to write $a$ as the sum of exactly $x$ positive integers.  A formula for this is unknown!",
@@ -292,7 +292,7 @@
 }
 
 {
-	"name": "$x$ Pick $a$",
+	"name": "$x$ pick $a$",
 	"type": "thm",
 	"weight": 4,
 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of injective functions from $A$ to $X$ is\n\n$x^\\underline{a}$.",
@@ -317,7 +317,7 @@
 }
 
 {
-	"name": "Giving $a$ identical parachutes to $x$ distinct skydivers, at most one each",
+	"name": "giving $a$ identical parachutes to $x$ distinct skydivers, at most one each",
 	"type": "thm",
 	"weight": 4,
 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of injective functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{x}{a}$.",
@@ -329,7 +329,7 @@
 }
 
 {
-	"name": "Giving $a$ identical parachutes to $x$ distinct skydivers, at least one each",
+	"name": "giving $a$ identical parachutes to $x$ distinct skydivers, at least one each",
 	"type": "thm",
 	"weight": 4,
 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{a-1}{a-x}$.",
@@ -344,7 +344,7 @@
 // \usepackage{amsmath}% http://ctan.org/pkg/amsmath
 // \DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}}
 {
-	"name": "Stirling Numbers of the 2nd Kind",
+	"name": "Stirling numbers of the 2nd kind",
 	"type": "definition",
 	"weight": 5,
 	"content": "A __Stirling Number of the 2nd kind__, denoted $\\bigcurly nk$, is the number of ways of partitioning a set of size $n$ into $k$ sets",
@@ -352,7 +352,7 @@
 }
 
 {
-	"name": "Stirling Identity",
+	"name": "Stirling identity",
 	"type": "thm",
 	"weight": 5,
 	"content": "Stirling Numbers of the 2nd kind can be computed using the equality $ \\stirling nk = \\frac{1}{k!} \\sum_{j=0}^{k} \\binom kj (k-j)^n (-1)^j $.",
@@ -392,7 +392,7 @@
 }
 
 {
-	"name": "Bounds of Factorials",
+	"name": "bounds of factorials",
 	"type": "thm",
 	"weight": 5,
 	"content": "$ 2^{n-1} \\leq n^{\\frac n2} \\leq e\\left(\\frac ne\\right)^n \\leq n! \\leq en\\left(\\frac ne\\right)^n \\leq \\left(\\frac n2\\right)^n \\leq n^n $",
@@ -405,7 +405,7 @@
 }
 
 {
-	"name": "Bounds of Chooses",
+	"name": "bounds of chooses",
 	"type": "thm",
 	"weight": 5,
 	"content": "$ \\left(\\frac{n-k+1}{k}\\right)^k \\leq \\left(\\frac nk\\right)^k \\leq \\binom nk \\leq n^k $",
@@ -426,7 +426,7 @@
 //  E subset of F
 //  P(E) <= P(F)
 {
-	"name": "Discrete Probability Function",
+	"name": "discrete probability function",
 	"type": "def",
 	"weight": 3,
 	"content": "Let $U$ be the set of all possible outcomes.  A __discrete probability function__, $P:\\mathcal{P}(U) \\to [0,1]$, satisfies the conditions\n\n1. $P(U) = 1$\n  2. $P(A\\cup B) = $P(A) + P(B)$",
@@ -438,7 +438,7 @@
 // uniform distribution
 // every outcome equally likely
 {
-	"name": "Uniform Distribution",
+	"name": "uniform distribution",
 	"type": "def",
 	"weight": 3,
 	"content": "If we have a set $U$ of all possible outcomes, and every outcome has the same probability $p$ of occuring, then the probabilities form a __uniform distribution__ .  If we give each outcome a label $k$ and graph all the $(k, P(k))$ points on the $kP$-axis, the result is always a horizontal line.",
@@ -450,15 +450,15 @@
 
 
 {
-	"name": "Probability of A given B",
+	"name": "probability of a given b",
 	"type": "def",
 	"weight": 4,
-	"content": "The Probability of $A$ given $B$, denoted $P(A|B)$, is $\\frac{P(A\\cap B)}{P(B)}$.",
+	"content": "The __probability of $A$ given $B$__, denoted $P(A|B)$, is $\\frac{P(A\\cap B)}{P(B)}$.",
 	"intuition": "Given that the outcome is in $B$, what is the probability that the outcome is in $A$?  That is $P(A|B)$.",
 }
 
 {
-	"name": "Independent events",
+	"name": "independent events",
 	"type": "def",
 	"weight": 4,
 	"content": "Events $A$ and $B$ are __independent__ if $P(A\\cup B) = P(A)P(B)$.", // make equivalent definitions?
@@ -468,7 +468,7 @@
 }
 
 {
-	"name": "Binomial Term",
+	"name": "binomial term",
 	"type": "thm",
 	"weight": 5,
 	"content": "If the probability of event $a$ occuring is $p$, and you repeat the experiment $n$ times, then the probability of event $a$ occuring exactly $k$ times is $\\binom nk p^k(1-p)^{n-k}$.",
@@ -476,7 +476,7 @@
 }
 
 {
-	"name": "Binomial Distribution",
+	"name": "binomial distribution",
 	"type": "def",
 	"weight": 3,
 	"content": "An experiment has a fixed probability $p$ of being successful.  Given we repeat the experiment $n$ times, if we graph the $P(\\text{$a$ occurs exactly $k$ times})$ on the $kP$-axis, we obtain the __binomial distibution__, denoted $\\text{Bin}(n,p)$.",
@@ -485,14 +485,13 @@
 // thm: the binomial distibution approaches the normal distribution as n approaches infinity?
 
 {
-	"name": "Geometric Distribution",
+	"name": "geometric distribution",
 	"type": "def",
 	"weight": 3,
 	"content": "An experiment has a fixed probability $p$ of being successful.  The experiment is repeated until it is successful, and the number of times it was executed is $k$.  Each value of $k$ has a certain probability of occuring.  If we graph the $(k, P(k))$ points on the $kP$-axis, we obtain the __geometric distribution__, denoted $\\text{Geom}(p)$.",
 }
 
 {
-	"name": "Expected Value",
 	"type": "def",
 	"weight": 4,
 	"content": "The __expected value__ of $X$, denoted $\\mathbb{E}(X)$, is $\\sum_{v = possible values of X} v \\cdot P(X=v)$.",
@@ -500,7 +499,7 @@
 }
 
 {
-	"name": "Expected Values are Linear",
+	"name": "expected values are linear",
 	"type": "thm",
 	"weight": 3,
 	"content": "The expected value function is linear.  That is, $E[X_1+X_2] = E[X_1] + E[X_2]$.",
@@ -508,7 +507,7 @@
 }
 
 {
-	"name": "Recurrence Relation",
+	"name": "recurrence relation",
 	"type": "def",
 	"weight": 3,
 	"content": "A __recurrence relation__ is an equation $a_n = f(a_{n-1},a_{n-2},,,a_0)$ that recursively defines a sequence or multidimensional array of values, after one or more initial terms are given: each further term of the sequence or array is defined as a function of the preceding terms.",
@@ -517,7 +516,7 @@
 }
 
 {
-	"name": "Linear",
+	"name": "linear",
 	"type": "def",
 	"weight": 3,
 	"content": "Given any module $(X,+)$ over a ring $(C,+,\\cdot)$, a function $f$ is __linear__ if it satisfies the properties\n\n  1. $f(x_1+x_2) = f(x_1)+f(x_2)$ for all $x_1,x_2\\in X$\n  2. $f(cx) = cf(x) for all $c\\in C$ and $x\\in X$.",
@@ -527,23 +526,22 @@
 }
 
 {
-	"name": "Homogeneous",
 	"type": "def",
 	"weight": 2,
-	"content": "A function that satisfies $f(tx_1,,,tx_n) = t^kf(x_1,,,x_n)$ for all $t$ and a fixed $k$.",
+	"content": "A function $f$ is __homogeneous__ if there exists a $k$ such that for all $t$, $f(tx_1,,,tx_n) = t^kf(x_1,,,x_n)$.",
 	"example": "The function $f(x) = 6x$ is homogeneous because $f(tx) = 6tx = t^16x = t^1f(x)$.",
 	"example": "The function $f(x,y) = 6x+13y$ is homogeneous because $f(tx) = 6tx+13ty = t^1(6x+13y) = t^1f(x,y)$.",
 }
 
 {
-	"name": "Characteristic Equation Method",
+	"name": "characteristic equation method",
 	"type": "thm",
 	"weight": 3,
 	"content": "When a recurrence is of the form $a_n = \\sum_{i=0}^{n-1} k_ia_i$, and the solutions to the equation $x^n = \\sum_{i=0}^{n-1} k_ix^i$ are $x_0,,,x_{n-1}$, then every expression of the form $\\sum_{i=0}^{n-1} c_ix_i^n$ is a solution to the recurrence.  The base cases that determine the specific sequence can be used to solve for the $c$s, giving a closed form formula for the specific sequence.",
 }
 
 {
-	"name": "No Consecutive Heads Recurrence",
+	"name": "no consecutive heads recurrence",
 	"type": "exercise",
 	"weight": 2,
 	"content": "Given $n$ consecutive coin flips, let $a_n$ be the number of outcomes that do *not* have consecutive heads.  The base cases for this sequence are [[$a_1 = 2$ and $a_2 = 3$]].  The recurrence relation for this sequence is [[$a_n = a_{n-1}+a_{n-2}$]].",
@@ -554,7 +552,7 @@
 }
 
 {
-	"name": "No Consecutive 1s Recurrence",
+	"name": "no consecutive 1s recurrence",
 	"type": "exercise",
 	"weight": 1,
 	"content": "Given a line of length $n$ of letters from ${J,K,L}$.  Let $a_n$ be the number of possible lines that do *not* have consecutive $J$s.  The base cases for this sequence are [[$a_1 = 3$ and $a_2 = 8$]].  The recurrence relation for this sequence is [[$a_n = 2a_{n-1}+2a_{n-2}$]].",
@@ -565,7 +563,7 @@
 }
 
 {
-	"name": "Filling a 3xn square grid with 1x1 and 2x2 tiles",
+	"name": "filling a 3xn square grid with 1x1 and 2x2 tiles",
 	"type": "exercise",
 	"weight": 1,
 	"content": "Given a $3\\times n$ grid of $1\\times1$ squares, we want to fill it with $1\\times1$ and $2\\times2$ tiles.  Let $a_n$ be the number of ways to do this.  The base cases for this sequence are [[$a_1 = 1$ and $a_2 = 3$]].  The recurrence relation for this sequence is [[$a_n = 2a_{n-1}+2a_{n-2}$]].",
@@ -576,14 +574,14 @@
 }
 
 {
-	"name": "Generating Function",
+	"name": "generating function",
 	"type": "def",
 	"weight": 3,
 	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} a_nx^n$.",
 }
 
 {
-	"name": "$e^x$ Generating Function",
+	"name": "$e^x$ generating function",
 	"type": "thm",
 	"weight": 3,
 	"content": "The generating function for $e^x$ is $\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}$.",
@@ -600,7 +598,7 @@
 }
 
 {
-	"name": "Number of partitions of a natural number",
+	"name": "number of partitions of a natural number",
 	"type": "thm",
 	"weight": 5,
 	"content": "The number of partitions of a natural number $n$ is the coefficient of $x^n$ in $\\prod_{k=1}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
@@ -620,6 +618,7 @@
 }
 
 {
+	"name": "expected value of geometric variable",
 	"thm": "The expected value for a geometric random variable with probability $p$ is $\\frac 1p$.",
 	"proof": {
 		"type": "algebraic",
@@ -632,7 +631,7 @@
 }
 
 {
-	"name": "Number of partitions of a natural number into odd parts",
+	"name": "number of partitions of a natural number into odd parts",
 	"type": "exercise",
 	"weight": 3,
 	"content": "The number of partitions of a natural number $n$ into odd parts is the coefficient of $x^n$ in [[$\\prod_{k \\in \\mathbb{N}_\\text{odd}}\\left(\\frac{1}{1-x^k}\\right)$]] when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
@@ -644,7 +643,7 @@
 }
 
 {
-	"name": "Number of partitions of a natural number into distinct parts",
+	"name": "number of partitions of a natural number into distinct parts",
 	"type": "thm",
 	"weight": 3,
 	"content": "The number of partitions of a natural number $n$ into distinct parts is the coefficient of $x^n$ in $\\prod_{k=1}^{\\infty}\\left(1+x^k)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
@@ -656,7 +655,7 @@
 }
 
 {
-	"name": "Glaisher's Theorem for d=2",
+	"name": "Glaisher's theorem for d=2",
 	"thm": "Given any natural number $n$, the number of partitions of $n$ into parts that are odd is equal to the number of partitions of $n$ into parts that are distinct.",
 	"example": "$5$ can be partitioned $7$ ways:
 	  1. $1+1+1+1+1$\n
@@ -683,7 +682,7 @@
 }
 
 {
-	"name": "Solve Recurrences with Generating Functions",
+	"name": "solve recurrences with generating functions",
 	"thm": "Given a sequence $(a_n)_{n=0}^{\\infty}$ defined by base cases and a linear homogeneous recurrence with any constant $a_n = \\sum_{k=0}^{n-1} c_{k}a_{k} + C$, we can find a closed form formula for $a_n$ by rewriting its generating function $\\sum_{n=0}^{\\infty} a_nx^n$ in terms of its recurrence $base cases + \\sum_{n=0}^{\\infty} \\left(\\sum_{k=0}^{n-1} c_{k}a_{k} + C\\right)x^n$ and making algebraic manipulations.",
 	"example": "Let $(a_n)_{n=0}^{\\infty} be defined by $a_0=1$, $a_1=4$, and $a_n = 3a_{n-1} - 2a_{n-2}$.  Then a closed formula for $a_n$ can be found by this method:\n\n
 	$f(x) = \\sum_{n=0}^{\\infty} a_nx^n$
@@ -746,7 +745,7 @@ From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written 
 }
 
 {
-	"name": "Exponential Generating Function",
+	"name": "exponential generating function",
 	"weight": 4,
 	"type": "def",
 	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __exponential generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} \\frac{a_nx^n}{n!}$.",
@@ -754,7 +753,7 @@ From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written 
 }
 
 {
-	"name": "Product of Generating Functions",
+	"name": "product of generating functions",
 	"weight": 3,
 	"type": "thm",
 	"content": "Given two generating functions, $f$ generates $(a_n)_{n=0}^\\infty$ and $g$ generates $(b_n)_{n=0}^\\infty$, then the generating function $h = f \\cdot g$ of the sequence $(c_n)_{n=0}^\\infty$ has coefficients $c_n = \\sum_{k=0}^n a_kb_{n-k}$.",
@@ -762,7 +761,7 @@ From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written 
 }
 
 {
-	"name": "Product of Exponential Generating Functions",
+	"name": "product of exponential generating functions",
 	"weight": 3,
 	"type": "thm",
 	"content": "Given two exponential generating functions, $f$ generates $(a_n)_{n=0}^\\infty$ and $g$ generates $(b_n)_{n=0}^\\infty$, then $h = f \\cdot g$ is the generating function of the sequence $(c_n)_{n=0}^\\infty$, where $c_n = \\sum_{k=0}^n \\binom{n}{k} a_kb_{n-k}$.",
@@ -786,7 +785,7 @@ From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written 
 }
 
 {
-	"name": "Deranged Sequence",
+	"name": "deranged sequence",
 	"weight": 3,
 	"type": "def",
 	"content": "A __deranged__ sequence is an ordering of ${1,2,3,,,n}$ where $a_i \\neq i$ for all $i$ in the sequence.",
@@ -799,7 +798,7 @@ From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written 
 }
 
 {
-	"name": "Number of Deranged Sequences",
+	"name": "number of deranged sequences",
 	"weight": 4,
 	"type": "thm",
 	"content": "Let $d_n$ be the number of deranged sequences of length $n$.  Then a closed formula for $d_n$ is [[$d_n = n!\\sum_{k=0}^n \\frac{(-1)^k}{k!}$]].",
@@ -935,7 +934,7 @@ $c_k = \begin{cases}
 } // end of HW 9
 
 {
-	"name": "Inclusion-Exclusion Principle",
+	"name": "inclusion-exclusion principle",
 	"weight": 5,
 	"type": "thm",
 	"content": "Given $n\\in\\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\\left|\\cup_{i=1}^{n} A_i\\right| = \\sum_{S\\subset [n]} (-1)^{|S|+1} \\left|\\cap_{j\\in S} A_j\\right|$.",
@@ -990,7 +989,7 @@ $c_k = \begin{cases}
 }
 
 {
-	"name": "expected value",
+	"name": "expected value 1",
 	"weight": 2,
 	"type": "exercise",
 	"content": "$3$ red balls and $4$ white balls are in an urn.  Balls are randomly removed from the urn one at a time until the urn is empty.  $X$ is a random variable representing the number of balls drawn until a white ball is drawn (For example, if the first ball is red and the second is white, then $X=2$).  The expected value of $X$ is [[$\\frac85$ or $1.6$]].",
@@ -1056,14 +1055,14 @@ $c_k = \begin{cases}
 
 // HW 11 below
 {// question 1
-	"name": "Inclusion-Exclusion", // connect to this
+	"name": "inclusion-exclusion", // connect to this
 	"weight": 1,
 	"type": "exercise",
 	"content": "The number of positive integers less than $1000$ that are not multiples of $5$, $6$, nor $8$, is [[$583$.  The function that finds the number of multiples of $x$ less than $1000$ is $m(x)=\floor{\frac{999}{x}}$.  Then the answer is equal to $m(1) - m(5)- m(6)- m(8)+m(5*6)+m(6*8)+m(8*5) - m(5*6*8)$]].",
 }
 
 {// question 2
-	"name": "Inclusion-Exclusion 2", // connect
+	"name": "inclusion-exclusion 2", // connect
 	"weight": 2,
 	"type": "exercise",
 	"content": "The number of ways to order the letters $A$ through $P$ such that we can*not* obtain any of the words $BAD$, $DEAF$, or $APE$ by crossing out some of the letters is [[$16!-\frac{16!}{3!}-\frac{16!}{4!}-\frac{16!}{3!}+0+0+\frac{n!3}{5!}-0$ or $\frac{13n!}{20}$ or $13599813427200$]].",
