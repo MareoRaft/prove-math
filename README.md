@@ -1,4 +1,4 @@
-# prove-math
+# provemath.org
 It's an add venture!
 The next generation of math education ;-)
 
