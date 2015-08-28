@@ -8,6 +8,7 @@ import pdb
 from tornado.ioloop import IOLoop
 from tornado.web import url # constructs a URLSpec for you
 # handlers
+from tornado.web import RedirectHandler
 from tornado.web import RequestHandler
 from tornado.web import StaticFileHandler
 from tornado.websocket import WebSocketHandler
@@ -121,11 +122,12 @@ class StaticCachelessFileHandler(StaticFileHandler):
 def make_app():
 	return Application(
 		[
-			url('/', BaseHandler, { "var":"nothing" }, name="root"), # this is for the root! :)
-			url(r'/here(\d)', BaseHandler, { "var":"tar" }, name = "here"), # regex quote!
-			url('/form', FormHandler, { "var":"initialize this!" }, name = "forlorn"),
+			# url('/', RedirectHandler, { "url": "http://provemath.org/index.html" }, name = "rootme"),
+			url('/', RedirectHandler, { "url": "index.html" }, name = "rootme"),
+			url(r'/here(\d)', BaseHandler, { "var": "tar" }, name = "here"), # regex quote!
+			url('/form', FormHandler, { "var": "initialize this!" }, name = "forlorn"),
 			url('/websocket', SocketHandler),
-			url('/(.*)', StaticCachelessFileHandler, { "path":"../www/" }), # captures anything at all, and serves it as a static file. simple!
+			url('/(.*)', StaticCachelessFileHandler, { "path": "../www/" }), # captures anything at all, and serves it as a static file. simple!
 		],
 		# settings:
 		debug = True,
@@ -148,7 +150,13 @@ if __name__ == "__main__":
 	our_DAG = nx.DAG()
 	our_DAG.add_nodes_from([node['_id'] for node in all_nodes])
 	our_DAG.add_edges_from([(edge['source'], edge['target']) for edge in all_edges])
-	our_DAG.remove_redundant_edges()
+	print('The nodes are:')
+	print(our_DAG.nodes())
+	print()
+	print('The edges are:')
+	print(our_DAG.edges())
+	print()
+	# our_DAG.remove_redundant_edges()
 
 	# 3. launch!
 	make_app_and_start_listening()
