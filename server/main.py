@@ -122,7 +122,6 @@ class StaticCachelessFileHandler(StaticFileHandler):
 def make_app():
 	return Application(
 		[
-			# url('/', RedirectHandler, { "url": "http://provemath.org/index.html" }, name = "rootme"),
 			url('/', RedirectHandler, { "url": "index.html" }, name = "rootme"),
 			url(r'/here(\d)', BaseHandler, { "var": "tar" }, name = "here"), # regex quote!
 			url('/form', FormHandler, { "var": "initialize this!" }, name = "forlorn"),

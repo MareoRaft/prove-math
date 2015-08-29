@@ -131,6 +131,14 @@ def test_definition_no_name():
   node = create_appropriate_node(pre_node)
   assert node.name == "empanadas" # definitions take their names from the dunderscored term.
 
+def test_definition_negation():
+  pre_node = {
+    "def": "A __pheonix__ is a lovely bird.",
+    "negation": "__nonpheonix__",
+  }
+  node = create_appropriate_node(pre_node)
+  assert node.negation == "__nonpheonix__"
+
 def test_theorem_no_name():
   pre_node = {
     "type": "thm",

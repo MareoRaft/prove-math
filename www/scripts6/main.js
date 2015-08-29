@@ -19,7 +19,10 @@ require.config({
 			exports: "MathJax",
 			init: function (){
 				MathJax.Hub.Config({
-					tex2jax: {inlineMath: [['$','$']]},
+					tex2jax: {
+						inlineMath: [['$','$'], ['\\(','\\)']],
+						processEscapes: true, // this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
+					},
 				});
 				MathJax.Hub.Startup.onload();
 				return MathJax;

@@ -6,6 +6,21 @@
 
 
 {
+	"def":"A __multiset__ is a collection of elements where order does not matter, but elements can appear more than once.",
+	"example":"The multiset ${a,b,b}$ contains the element $a$ once and the element $b$ twice.",
+	"example":"The multiset ${x,t,t,w}$ is equal to the multiset ${t,x,w,t}$.",
+	"example":"The *multiset* ${f,g}$ is equal to the *set* ${f,g}$.",
+	"counterexample":"The sequence $(x,y,z)$ is not a multiset because it imposes an order on its elements.",
+}
+
+{ // this should be given a concrete definition through the axioms in the future
+	"def":"A __set__ is a collection of distinct elements where order does not matter.",
+	"example":"The set ${a,b}$ is equal to the set ${b,a}$.",
+	"example":"The *set* ${t,t}$ is equal to the set ${t}$.  That is, because sets must have distinct elements, the notation ${t,t}$ is considered to be a *redundant* listing of $t$.",
+	"counterexample":"The *multiset* ${t,t}$ is not a set.  Since there are two $t$s in the multiset, the elements are not distinct, and therefore it cannot be a set.",
+}
+
+{
 	"def":"An occurence of a property is __unique__ if the property occurs exactly $1$ time.",
 }
 
@@ -16,14 +31,15 @@
 }
 
 {
-	"definition":"An __edge__ is a set ${a,b}$ where $a$ and $b$ are vertices.",
+	"definition":"An __edge__ is a multiset ${a,b}$ where $a$ and $b$ are vertices.",
 	"note":"It is possible that $a=b$.",
 	"intuition":"Edges are usually drawn as a line or curve connecting two vertices.  In the case that $a=b$, the edge is drawn as a small loop that connects $a$ to itself.",
-	"dependencies": ["set", "vertex"],
+	"dependencies": ["multiset", "vertex"],
 }
 
 {
-	"definition":"A __loop__ is an edge $e = {a,a} = {a}$.",
+	"definition":"A __loop__ is an edge ${a,a}$ for any vertex $a$.",
+	"intuition":"A **loop** is an edge that connects a vertex to itself.",
 	"dependencies": ["edge"],
 }
 
@@ -90,13 +106,14 @@
 	"name": "null (multigraph)",
 	"def":"The __null__ multigraph is the multigraph with 0 vertices.",
 	"dependencies":["multigraph"],
+	"negation": "non-null",
 }
 
-{
-	"name": "non-null (multigraph)",
-	"def":"A __non-null__ multigraph is a multigraph that is not null.",
-	"dependencies":["null (multigraph)"],
-}
+// {
+// 	"name": "non-null (multigraph)",
+// 	"def":"A __non-null__ multigraph is a multigraph that is not null.",
+// 	"dependencies":["null (multigraph)"],
+// }
 
 {
 	"name": "trivial (multigraph)",
@@ -115,17 +132,19 @@
 	"name": "empty (multigraph)",
 	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
 	"dependencies":["multigraph"],
+	"negation": "nonempty",
 }
 
-{
-	"name": "nonempty (multigraph)",
-	"def":"A multigraph is __nonempty__ if it is not empty.",
-	"dependencies":["empty (multigraph)"],
-}
+// {
+// 	"name": "nonempty (multigraph)",
+// 	"def":"A multigraph is __nonempty__ if it is not empty.",
+// 	"dependencies":["empty (multigraph)"],
+// }
 
 {
 	"name": "degree (vertex)",
-	"definition":"Given a multigraph $G = (V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
+	"definition":"Given a multigraph $(V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the multiplicity of $v$ in the union of $E$.",
+	// alternatively, we can say that its the: number of edges in $E$ incident to $v$, where loops are counted twice.
 	"intuition":"The degree of vertex $v$ is the number of edge ends that touch it.",
 	"dependencies":["vertex", "incident", "loop"],
 }
@@ -232,66 +251,85 @@
 	"dependencies":["multigraph", "Eulerian (trail)", "circuit"],
 }
 
+{
+	"name": "Hamiltonian (walk)",
+	"definition":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
+	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms **Hamiltonian path** and **Hamiltonian cycle**.",
+	"note":"In older books, the term *Hamiltonian circuit* is used in place of *Hamiltonian cycle*.  So be careful!  When they say *circuit*, they may actually mean *cycle*.",
+	"intuition":"A Hamiltonian cycle is a cycle that uses all the vertices in the graph exactly once.",
+	"dependencies":["multigraph", "stroll"],
+}
+
+{
+	"name": "Hamiltonian (graph)",
+	"type": "def",
+	"content": "A multigraph is called __Hamiltonian__ if it contains a Hamiltonian cycle.",
+	"dependencies":["multigraph", "Hamiltonian walk", "cycle"],
+}
+
+
+//insert combinatorixs class graph theory things here:
+{
+	"name":"connected (vertices)",
+	"def":"Given a multigraph $G=(V,E)$, vertices $a,b\in V$ are __connected__ if there is an $ab$-walk in $G$.",
+	"dependencies":["walk"],
+	"negation": "disconnected (vertices)",
+}
+
 // {
-// 	"definition":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
-// 	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms **Hamiltonian path** and **Hamiltonian cycle**.",
-// 	"note":"In older books, the term *Hamiltonian circuit* is used in place of *Hamiltonian cycle*.  So be careful!  When they say *circuit*, they may actually mean *cycle*.",
-// 	"intuition":"A Hamiltonian cycle is a cycle that uses all the vertices in the graph exactly once.",
+// 	"name":"disconnected (vertices)",
+// 	"def":"Given a multigraph $(V,E)$, vertices $a,b\in V$ are __disconnected__ if they are not connected.",
+// 	"dependencies":["connected vertices"],
 // }
 
-// {
-// 	"name": "Hamiltonian Graph",
-// 	"type": "def",
-// 	"content": "A multigraph is called __Hamiltonian__ if it contains a Hamiltonian cycle.",
-// }
-
-
-// //insert combinatorixs class graph theory things here:
-// {
-// 	"name": "Connected",
-// 	"type": "definition",
-// 	"content": "A graph $G=(V,E)$ is __connected__ if for every $a,b\in V$, there is an $ab$-walk.",
-// 	"intuition": "All the vertices in the graph are tied to each other by edges.  We cannot pull the graph apart into pieces.",
-// }
+{
+	"name":"connected (graph)",
+	"def": "A multigraph $(V,E)$ is __connected__ if for every $a,b\in V$, $a$ is connected to $b$.",
+	"intuition": "All the vertices in the graph are tied to each other by edges.  We cannot pull the graph apart into pieces.",
+	"dependencies":["connected vertices"],
+	"negation": "disconnected (graph)",
+}
 
 // {
-// 	"name": "Disconnected",
-// 	"type": "definition",
-// 	"content": "A graph is __disconnected__ if it is not connected.",
+// 	"def": "A multigraph is __disconnected__ if it is not connected.",
 // 	"intuition": "There are at least two components in the graph that are not connected to each other by any edges whatsoever.",
+// 	"dependencies":["connected graph"],
 // }
 
-// {
-// 	"name": "Complement",
-// 	"type": "def",
-// 	"content": "Given a graph $G=(V,E)$, the __complement__ of $G$ is $(V,E^C)$, where for each pair $a,b\in V$, ${a,b}\in E^C$ iff ${a,b}\not\in E$.",
-// 	"intuition": "To get a graph's complement, we invert its edges.  Every edge in the graph dissapears, and every missing edge appears.",
-// }
+{
+	"name": "complement",
+	"type": "def",
+	"content": "Given a simple graph $G=(V,E)$, the __complement__ of $G$ is $(V,E^C)$, where for each pair $a,b\in V$, ${a,b}\in E^C$ iff ${a,b}\not\in E$.",
+	"intuition": "To get a graph's complement, we invert its edges.  Every edge in the graph dissapears, and every missing edge appears.",
+	"dependencies":["multigraph", "simple (graph)", "edge", "vertex"],
+}
 
-// //HW 12
-// {//1 a
-// 	"name": "Complement of Disconnected is Connected",
-// 	"weight": 3,
-// 	"type": "theorem",
-// 	"content": "If a graph is disconnected, then its complement is connected.",
-// }
+//HW 12
+{//1 a
+	"name": "complement of disconnected is connected",
+	"weight": 3,
+	"type": "theorem",
+	"content": "If a multigraph is disconnected, then its complement is connected.",
+	"dependencies":["connected"],
+}
 
-// {//1 b
-// 	"weight": 2,
-// 	"type": "exercise",
-// 	"content": "Given the simple graph $G=(V,E)$, for every pair of vertices $a,b\in V$, $\text{deg}(a)+\text{deg}(b) \geq |V|-1.  Then $G$ is connected.",
-// 	"proof": {
-// 		"type": ["graph theoretic", "pigeonhole principle"],
-// 		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principle, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
-// 	},
-// }
+{//1 b
+	"weight": 2,
+	"exercise": "Given the simple graph $G=(V,E)$, for every pair of vertices $a,b\in V$, $\text{deg}(a)+\text{deg}(b) \geq |V|-1.  Then $G$ is connected.",
+	"proof": {
+		"type": ["graph theoretic", "pigeonhole principle"],
+		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principle, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
+	},
+	"dependencies":["simple (graph)", "vertex", "connected"],
+}
 
-// {//2
-// 	"weight": 1,
-// 	"type": "exercise",
-// 	"content": "The number of nonempty simple graphs on the vertex set $[4]$ is [[$2^\binom{4}{2}-1$ or $63$]].  The number of connected simple graphs on the vertex set $[4]$ is [[28? 39?]].",
-// 	"intuition": "The vertices are labelled $1$, $2$, $3$, and $4$.  Therefore the graph $([4], {{1,2}})$ is different from the graph $([4], {{2,3}})$.",
-// }
+{//2
+	"weight": 1,
+	"type": "exercise",
+	"content": "The number of nonempty simple graphs on the vertex set $[4]$ is [[$2^\binom{4}{2}-1$ or $63$]].  The number of connected simple graphs on the vertex set $[4]$ is [[28? 39?]].",
+	"intuition": "The vertices are labelled $1$, $2$, $3$, and $4$.  Therefore the graph $([4], {{1,2}})$ is different from the graph $([4], {{2,3}})$.",
+	"dependencies":["simple graph", "nonempty", "vertex", "connected"],
+}
 
 // {
 // 	"name": "Diameters",

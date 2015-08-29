@@ -1,11 +1,7 @@
 ##################################### TODO ####################################
 #Reg expressions for processing definition, name, etc..
-#Stricter Reg Expressions with failure at else
 
 # MathJax/Node.js, run bash commands from python script, export json
-# people o-auth, login info
-
-#7/14 Need to fix dunderscore issue
 
 ################################### IMPORTS ###################################
 # standard library:
@@ -288,6 +284,7 @@ class Definition(Node):
 		super().__init__(dic)
 		self.type = "definition"
 		self.plural = move_attribute(dic, {'plural', 'pl'}, strict=False)
+		self.negation = move_attribute(dic, {'negation'}, strict=False)
 		if self.importance is None:
 			self.importance = 4
 		assert dunderscore_count(self.description) >=2
@@ -305,6 +302,18 @@ class Definition(Node):
 			clean_plural = check_type_and_clean(new_plural, str)
 			assert dunderscore_count(clean_plural) >= 2
 			self._plural = clean_plural
+
+	@property
+	def negation(self):
+		return self._negation
+	@negation.setter
+	def negation(self, new_negation):
+		if new_negation is None:
+			self._negation = None
+		else:
+			clean_negation = check_type_and_clean(new_negation, str)
+			assert dunderscore_count(clean_negation) >= 2
+			self._negation = clean_negation
 
 	@Node.description.setter
 	def description(self, new_description):
