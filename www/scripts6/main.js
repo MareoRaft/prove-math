@@ -32,18 +32,18 @@ require.config({
 });
 
 require( [
+	"data",
 	"jquery",
 	"underscore",
-	"d3-and-svg",
 	"browser-detect",
 	"check-types",
 	"katex",
 	"mathjax",
 	"profile",
 ], function(
+	data,
 	$,
 	_,
-	d3AndSVG,
 	browser,
 	check,
 	katex,
@@ -67,7 +67,7 @@ ws.onmessage = function(event){
 	// for( var i=0; i < graph.nodes.length; i++){
 	// 	alert(graph.nodes[i])
 	// }
-	d3AndSVG.processNewGraph(graph)
+	data.updateNodesAndLinks(graph)
 }
 
 
@@ -150,7 +150,6 @@ function check_radio_button(radios){
 }
 
 
-
 /////////////////////////////////// MATHJAX ///////////////////////////////////
 $(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
 	var texText = $(this).text();
@@ -185,7 +184,7 @@ setTimeout(function() {
 			{source: "at", target: "b"}, {source: "at", target: "c"}, {source: "b", target: "c"},
 		],
 	}
-	d3AndSVG.processNewGraph(new_graph)
+	data.updateNodesAndLinks(new_graph)
 }, 0);
 
 // 2. Remove node B and associated links.
@@ -198,8 +197,11 @@ setTimeout(function() {
 			{_id: "b", remove: true},
 		],
 	}
-	d3AndSVG.processNewGraph(new_graph)
+	data.updateNodesAndLinks(new_graph)
+	data.removeOneContextFromNames()
+
 }, 3000);
+
 
 // // Add node B back.
 setTimeout(function() {
@@ -211,10 +213,9 @@ setTimeout(function() {
 			{source: "at", target: "b"}, {source: "b", target: "c"},
 		],
 	}
-	d3AndSVG.processNewGraph(graph)
+	data.updateNodesAndLinks(graph)
+	data.showFullContextInNames()
 }, 6000);
-
-
 
 
 

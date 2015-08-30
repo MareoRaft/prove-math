@@ -25,18 +25,13 @@ from lib.networkx.classes import dag
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
 
-def find_dict_from_id(list_of_dics, ID):
-	for dic in list_of_dics:
-		if dic['_id'] == ID:
-			return dic
-	# if the id doesn't exist, make a fake node...
-	warn('Could node find dict with ID "' + ID + '" within list_of_dics.')
-	return {"_id": ID, "empty": True, "_importance": 4}
-
 
 ################################## MAIN #######################################
 
+
 class BaseHandler (RequestHandler):
+
+
 	def initialize(self, var):
 		#init stuff!
 		print( var )
@@ -44,7 +39,10 @@ class BaseHandler (RequestHandler):
 	def get(self, num):
 		self.write("this is "+num+"!")
 
+
 class FormHandler (BaseHandler):
+
+
 	def get(self):
 		# / is relative
 		self.write("""	<form action='/form' method='post'>
@@ -55,6 +53,22 @@ class FormHandler (BaseHandler):
 	def post(self):
 		invar = self.get_body_argument("thisistheonlyinput")
 		print( "going to post the input!"+invar )
+
+
+class JSONHandler (BaseHandler):
+
+
+	def get(self):
+		# get appropriate subgraph from NewtorkX!
+		global all_nodes
+		global our_DAG
+		json_graph = our_DAG.as_complete_json(all_nodes)
+
+		# send to the user!
+		self.write(json_graph)
+
+
+
 
 # The WebSocket protocol is still in development. This module currently implements the "hixie-76" and "hybi-10" versions of the protocol. See this browser compatibility table on Wikipedia: http://en.wikipedia.org/wiki/WebSockets#Browser_support
 class SocketHandler (WebSocketHandler):
@@ -78,13 +92,10 @@ class SocketHandler (WebSocketHandler):
 		# get appropriate subgraph from NewtorkX!
 		global all_nodes
 		global our_DAG
-		graph = dict()
-		graph['nodes'] = [find_dict_from_id(all_nodes, dict_id) for dict_id in our_DAG.nodes()]
-		graph['links'] = [{'source': source, 'target': target} for (source, target) in our_DAG.edges()]
+		json_graph = our_DAG.as_complete_json(all_nodes)
 
 		# send to the user!
-		bundled_graph = json.dumps(graph) # for the future, the following may be faster: 1. simplejason or 2. cjson
-		self.write_message(bundled_graph)
+		self.write_message(json_graph)
 
 
 	def on_message(self, message):
@@ -126,6 +137,7 @@ def make_app():
 			url(r'/here(\d)', BaseHandler, { "var": "tar" }, name = "here"), # regex quote!
 			url('/form', FormHandler, { "var": "initialize this!" }, name = "forlorn"),
 			url('/websocket', SocketHandler),
+			url('/json', JSONHandler, { "var": "null" }, name = "jsonme"),
 			url('/(.*)', StaticCachelessFileHandler, { "path": "../www/" }), # captures anything at all, and serves it as a static file. simple!
 		],
 		# settings:
@@ -155,7 +167,7 @@ if __name__ == "__main__":
 	print('The edges are:')
 	print(our_DAG.edges())
 	print()
-	# our_DAG.remove_redundant_edges()
+	our_DAG.remove_redundant_edges()
 
 	# 3. launch!
 	make_app_and_start_listening()
