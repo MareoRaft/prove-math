@@ -3,6 +3,7 @@ __pycache__/
 www/scripts/main.js
 www/scripts/main-optimized.min.js
 www/scripts/lib/data.js
+www/scripts/lib/user.js
 www/scripts/lib/profile.js
 www/scripts/lib/d3-and-svg.js
 www/stylesheets/main.css

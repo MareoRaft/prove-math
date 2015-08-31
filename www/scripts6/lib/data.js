@@ -1,4 +1,7 @@
-define( ['jquery', 'underscore', 'check-types', 'profile', 'd3-and-svg'], function($, _, check, undefined, d3AndSVG) {
+define( [
+	'jquery','underscore', 'check-types', 'profile', 'd3-and-svg', 'user'],
+	function(
+	$,        _,            check,         undefined, d3AndSVG,     user) {
 
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
@@ -20,6 +23,46 @@ function showFullContextInNames(){
 		node.displayName = node._name
 	})
 	d3AndSVG.processNewGraph()
+}
+
+function updateDisplayNameCapitalization(){
+	_.each(d3AndSVG.nodes, function(node){
+		switch (user.displayNameCapitalization){
+			case null:
+				node.displayName = node._name
+				break
+			case "sentence":
+				node.displayName = node._name.capitalizeFirstLetter()
+				break
+			case "title":
+				// for each word in node._name, capitalize it unless it's in the small words list
+				var smallWordsList = [
+					//nice guide // see http://www.superheronation.com/2011/08/16/words-that-should-not-be-capitalized-in-titles/
+					//================
+					// articles
+					// --------------
+					'a', 'an', 'the',
+					// coordinate conjunctions
+					// ---------------------------
+					'for', 'and', 'nor', 'but', 'or', 'yet', 'so',
+					// prepositions // there are actually A LOT of prepositions, but we'll just tackle the most common ones. for a full list, see https://en.wikipedia.org/wiki/List_of_English_prepositions
+					// --------------------
+					'at', 'around', 'by', 'after', 'along', 'for', 'from', 'in', 'into', 'minus', 'of', 'on', 'per', 'plus', 'qua', 'sans', 'since', 'to', 'than', 'times', 'up', 'via', 'with', 'without',
+				]
+				node.displayName = node._name.replace(/\b\w+\b/g, function(match){
+					if( !_.contains(smallWordsList, match) ){
+						match = match.capitalizeFirstLetter()
+					}
+					return match
+				})
+				// first and last word must be capitalized always!!!
+				node.displayName = node.displayName.capitalizeFirstLetter()
+				node.displayName = node.displayName.replace(/\b\w+\b$/g, match => match.capitalizeFirstLetter())
+				break
+			default:
+				die('Unrecognized displayNameCapitalization preference value "'+user.displayNameCapitalization+'".')
+		}
+	})
 }
 
 
@@ -97,6 +140,7 @@ return {
 	updateNodesAndLinks: updateNodesAndLinks,
 	removeOneContextFromNames: removeOneContextFromNames,
 	showFullContextInNames: showFullContextInNames,
+	updateDisplayNameCapitalization: updateDisplayNameCapitalization,
 }
 
 

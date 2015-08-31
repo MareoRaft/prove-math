@@ -242,7 +242,7 @@
 	"name":"Eulerian (trail)",
 	"definition":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
 	"intuition":"An Eulerian trail is a trail that uses all the edges in the graph exactly once.",
-	"dependencies":["multigraph"],
+	"dependencies":["multigraph", "trail"],
 }
 
 {

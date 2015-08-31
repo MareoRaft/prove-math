@@ -198,7 +198,8 @@ setTimeout(function() {
 		],
 	}
 	data.updateNodesAndLinks(new_graph)
-	data.removeOneContextFromNames()
+	data.updateDisplayNameCapitalization()
+	// data.removeOneContextFromNames()
 
 }, 3000);
 
@@ -214,7 +215,7 @@ setTimeout(function() {
 		],
 	}
 	data.updateNodesAndLinks(graph)
-	data.showFullContextInNames()
+	// data.showFullContextInNames()
 }, 6000);
 
 
