@@ -35,6 +35,6 @@ echo 'done updating files on local machine' &&
 
 
 
-open http://localhost/index.html &&
+open -a "Google Chrome" http://localhost/index.html &&
 
 echo 'done.'
