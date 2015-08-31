@@ -1,0 +1,122 @@
+// Introductory Algebra: http://math.rutgers.edu/~bud/summer_15_351.html
+// Check the syllabus in the folder as well
+//
+// Course Name: Introduction to Abstract Algebra
+// Course Number: 351 @ Rutgers University, New Brunswick
+// Instructor: Bud Coulson, Ph.D. Graduate Student, Rutgers,Department of Mathematics - Hill Center, Rutgers, The State University Of New Jersey
+// Lectures: MW 6:00 - 8:30 PM, May 27th - August 12th
+// Semester: Summer 2015 
+// Email: bud at math.rutgers.edu
+{
+	"weight": 10,
+	"def": "A __set__ is defined as a collection of distinct object where each object is denoted with some representative letter and contained in curly brackets. Further a set is itself an object" ,
+	"dependencies": "",
+// FIXME - How do have text within brackets
+// I could use /text{} or I could use html
+	"examples":
+	[ 
+		"\( \{x,y,z\} \) is a valid set of object represented by x,y,z",
+		"\( \{ \text{apple,banana,orange} \} \) is a valid set of objects apple, banana, orange"
+	],
+	"counterexample": "\( \{x,x,z\} \) is not a valid set as the object x is repeated twice"
+},
+{
+	"weight": 10,
+	"def": "A __subset__, A, is a set whose elements are entirely contained in another set, B. We write this as \( A \subset \B \)",
+	"dependencies": "set",
+	"example": "\( \{ x \} \subset \{x,y,z\} \) "
+},
+{
+	""weight": 9,
+	"def": "The __Set of Natural Numbers__, denoted as \(\mathbb{N}\), is defined as the set of numbers \left\{0,1,2,3, \dots \right\}",
+	"dependencies": "set",
+	"intuition": "You might think of these as the numbers that are natural in nature",
+	"note": "There is some considerable debate over whether 0 should be in the set of Natural Numbers. For the purposes of this website, we will stick with the convention that 0 is part of the set",
+	"note": "An element of the Set of Natural Numbers is called a \"natural number.\" Colloquially one may also refer to the Set of Natural Numbers as simply the Natural Numbers. One must pay special attention to the context incase it is ambiguous whether the set of Natural Numbers or an element of the set of Natural Numbers is being referred to."
+},
+{
+	"weight": 9,
+	"def": "The __Set of Integers__, denoted as $\mathbb{Z}$, is defined as the set of all positive and negative natural numbers, i.e., \left\{\dots, -2, -1, 0, 1, 2, \dots \right\}",
+	"dependencies": "Natural Numbers",
+	"example": " \( 1 \in \mathbb{Z} \)",
+	"counterexample": "\( 1.5 \not \in \mathbb{Z} \)",
+	"note": "We denote the positive integers as \( \mathbb{Z^+} \) and the negative integers as \( \mathbb{Z^-} \)",
+	"note": "The same naming system as explained in the note in the definition of the Set of Natural Numbers also applies here"
+},
+{
+	"weight": 9,
+	"def": "The __Set of Rational Numbers__, denoted as \( \mathbb{Q} \), is defined as the set of all numbers that can be expressed as the fraction \( p/q \), where \( p,q \in \mathbb{Z}, q \not = 0 \) ",
+	"dependencies": "Integers",
+	"intuition": "",
+	"example": "\( 1.5534 \in \mathbb{Q} \)",
+	"counterexample": "\( \pi \not \in \mathbb{Q} \)",
+	"note": "The same naming system as explained in the note in the definition of the Set of Natural Numbers also applies here"
+},
+{
+	"weight": 9,
+	"def": "A __real number__ is a number that representes a quantity on a continuous line. One can view a number as a real if it is on the \"real number line\". The __Set of Real Number__, denoted as \( \mathbb{R} \), is the set of all real numbers",
+	"dependencies": "set",
+},
+// Add in ordering, total ordering, binary relation
+// Then do upper bound, upper bound axiom - note that this is a an axiom of completeness
+// lower bound, lower bound theorem
+// Then use to prove well ordering principle, with dependencies in the proof
+
+// Change the definitions of upper/lower bound so that they are for any object in an ordering
+// The real numbers are a total ordering
+// Subset of the real numbers are also total ordering (do I have to prove this)
+
+{
+	"weight": 9,
+	"def": "The __Cartesian Product__ of two sets, \( A \times B \), is defined as the set containing all the ordered pairs of elements of A and B. That is \( A \times B = \{ (a,b) | a \in A, b \in B \} \)",
+	"dependencies": "set",
+	"example": "\( A = \{ 1,2,3 \}, B = \{ 4,5,6 \}, \)"
+},
+
+
+{
+	"name": "Upper Bound",
+	"weight": 1,
+	"def": "A real number, \( x \), is called an upper bound for a set, \( S \), if \( x \ge s, \forall s \in S \)  ",
+	"example": "In the set, \( S = {1,2,3} \), \( \forall x, \text{ such that } x \ge 3 \) is an upper bound.  Number such as \( 3, 4, \pi, 1000 \) are upper bounds"
+},
+{
+	"name": "Lower Bound",
+	"weight": 1,
+	"def": "A real number, \( x \), is called an lower bound for a set, \( S \), if \( x \ge s, \forall s \in S \)  ",
+	"example": "In the set, \( S = {1,2,3} \), \( \forall x, \text{ such that } x \ge 3 \) is an upper bound.  Number such as \( 3, 4, \pi, 1000 \) are upper bounds"
+},
+{
+	"name": "Least-upper-bound property",
+	"weight": 1,
+	"def": "",
+	"intuition": "",
+	"example": ""
+},
+{
+	"name": "",
+	"weight": ,
+	"thm": "",
+	"proofs":
+	[
+		{
+			"type": "",
+			"content": "",
+			"intuition": ""
+		}
+	]
+},
+
+{
+	"name": "Well Ordering Principle",
+	"weight": 8,
+	"thm": "Every nonempty subset of positive integers has a least element",
+	"proofs":
+	[
+		{
+			"type": "",
+			"content": "",
+			"intuition": ""
+		}
+	]
+},
