@@ -1,4 +1,4 @@
-define( ['jquery', 'underscore', 'd3', 'check-types', 'profile'], function($, _, d3, check, undefined) {
+define( ['jquery', 'underscore', 'd3', 'check-types', 'profile', 'user'], function($, _, d3, check, undefined, user) {
 
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
@@ -18,11 +18,25 @@ function updateSVGNodeAndLinkPositions(){
 }
 
 function dragstart(node) {
-	d3.select(this).classed('fixed', node.fixed = true)
+	// d3.select(this).classed('fixed', node.fixed = true)
 }
 
 function dblclick(node) {
-	d3.select(this).classed('fixed', node.fixed = false)
+	// d3.select(this).classed('fixed', node.fixed = false)
+}
+
+function mouseover(node) {
+	if( user.prefs.showDescriptionOnHover ){
+		node.displayName = node._description
+		updateSVGNodeAndLinkExistence()
+	}
+}
+
+function mouseout(node) {
+	if( user.prefs.showDescriptionOnHover ){
+		node.displayName = node._name
+		updateSVGNodeAndLinkExistence()
+	}
 }
 
 
@@ -41,6 +55,7 @@ var force = d3.layout.force() // see https://github.com/mbostock/d3/wiki/Force-L
 	// .linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
 	.linkStrength(0.2)
 	.gravity(0.05)
+	// .theta(1.5) // this enables approximation for charge interaction, which may be needed for large graphs or slow browsers.  Higher numbers are more approximation.  I wouldn't go any higher than 1.5 though.
 	.on('tick', updateSVGNodeAndLinkPositions)
 
 var drag = force.drag()
@@ -83,7 +98,6 @@ function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN wh
 			.classed('node', true)
 			// .id(d => d._id)
 			.call(drag)
-			.on('dblclick', dblclick)
 		node_group.append('circle')
 		    .classed('node-circle', true)
 			.classed('definition-circle', d => d._type === 'definition')
@@ -92,6 +106,9 @@ function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN wh
 	    	.attr({ // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
 	    		r: d => 6 * Math.sqrt(d._importance),
 	    	})
+			.on('dblclick', dblclick)
+			.on('mouseover', mouseover)
+			.on('mouseout', mouseout)
 	    node_group.append('text') // must appear ABOVE node-circle
 		    .classed('node-text', true)
 			.text(function(d){ if(d._type !== 'exercise') return d.displayName }) // exercise names should NOT appear

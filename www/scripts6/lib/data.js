@@ -27,7 +27,7 @@ function showFullContextInNames(){
 
 function updateDisplayNameCapitalization(){
 	_.each(d3AndSVG.nodes, function(node){
-		switch (user.displayNameCapitalization){
+		switch (user.prefs.displayNameCapitalization){
 			case null:
 				node.displayName = node._name
 				break
@@ -60,12 +60,16 @@ function updateDisplayNameCapitalization(){
 				node.displayName = node.displayName.replace(/\b\w+\b$/g, match => match.capitalizeFirstLetter())
 				break
 			default:
-				die('Unrecognized displayNameCapitalization preference value "'+user.displayNameCapitalization+'".')
+				die('Unrecognized displayNameCapitalization preference value "'+user.prefs.displayNameCapitalization+'".')
 		}
 	})
 }
 
-
+function updateDisplayName(node) { // for a single node
+	node.displayName = node._name
+	// node.displayName = updateDisplayNameContext
+	// updateDisplayNameCapitalization() // but for a single node
+}
 
 ///////////////////////////////// NODE THINGS /////////////////////////////////
 function removeNodeById(id){ // assumes only one node of each id exists
@@ -141,6 +145,7 @@ return {
 	removeOneContextFromNames: removeOneContextFromNames,
 	showFullContextInNames: showFullContextInNames,
 	updateDisplayNameCapitalization: updateDisplayNameCapitalization,
+	updateDisplayName: updateDisplayName,
 }
 
 

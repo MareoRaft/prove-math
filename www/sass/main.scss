@@ -43,6 +43,10 @@ svg {
     text-anchor: middle;
   }
 
+  text {
+    pointer-events: none;
+  }
+
   .link {
     stroke: gray;
     stroke-width: 2px;
