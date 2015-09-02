@@ -17,14 +17,6 @@ function updateSVGNodeAndLinkPositions(){
 		})
 }
 
-function dragstart(node) {
-	// d3.select(this).classed('fixed', node.fixed = true)
-}
-
-function dblclick(node) {
-	// d3.select(this).classed('fixed', node.fixed = false)
-}
-
 function mouseover(node) {
 	if( user.prefs.showDescriptionOnHover ){
 		node.displayName = node._description
@@ -39,6 +31,22 @@ function mouseout(node) {
 	}
 }
 
+function dblclick(node) {
+	// d3.select(this).classed('fixed', node.fixed = false)
+}
+
+// function dragstart(node) {
+// 	// d3.select(this).classed('fixed', node.fixed = true)
+// }
+
+// function dragstart(node) {
+// 	d3.event.sourceEvent.stopPropagation();
+// 	force.start();
+// }
+
+// function drag(node) {
+// 	d3.select(this).attr("cx", node.x = d3.event.x).attr("cy", node.y = d3.event.y);
+// }
 
 //////////////////////////////////// MAIN /////////////////////////////////////
 var nodes = [],
@@ -59,7 +67,7 @@ var force = d3.layout.force() // see https://github.com/mbostock/d3/wiki/Force-L
 	.on('tick', updateSVGNodeAndLinkPositions)
 
 var drag = force.drag()
-	.on('dragstart', dragstart);
+	// .on('dragstart', dragstart);
 
 var svg = d3.select('body')
 	.append('svg')

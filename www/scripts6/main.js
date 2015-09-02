@@ -11,6 +11,7 @@ require.config({
 		d3: "d3-for-development",
 		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
 		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
+		// marked: "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min", // disabled for consistent development
 	},
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
@@ -40,6 +41,7 @@ require( [
 	"katex",
 	"mathjax",
 	"profile",
+	"marked",
 ], function(
 	data,
 	$,
@@ -48,7 +50,8 @@ require( [
 	check,
 	katex,
 	mathjax,
-	undefined
+	undefined,
+	marked
 ){
 
 // websocket stuff!
@@ -150,25 +153,28 @@ function check_radio_button(radios){
 }
 
 
+/////////////////////////////////// MARKED ////////////////////////////////////
+$('#markme').html(marked($('#markme').html()))
+
 /////////////////////////////////// MATHJAX ///////////////////////////////////
-$(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
-	var texText = $(this).text();
-	var el = $(this).get(0);
-	var addDisplay = "";
-	if(el.tagName === "DIV"){
-		addDisplay = "\\displaystyle";
-	}
-	try{
-		katex.render(addDisplay+texText, el);
-	}
-	catch(err) {
-		if (err.__proto__ === katex.ParseError.prototype) {
-			$(this).html('$'+texText+'$')
-		} else {
-			$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
-		}
-	}
-})
+// $(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
+// 	var texText = $(this).text();
+// 	var el = $(this).get(0);
+// 	var addDisplay = "";
+// 	if(el.tagName === "DIV"){
+// 		addDisplay = "\\displaystyle";
+// 	}
+// 	try{
+// 		katex.render(addDisplay+texText, el);
+// 	}
+// 	catch(err) {
+// 		if (err.__proto__ === katex.ParseError.prototype) {
+// 			$(this).html('$'+texText+'$')
+// 		} else {
+// 			$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
+// 		}
+// 	}
+// })
 
 
 //////////////////////////// TEST D3 FUNCTIONALITY ////////////////////////////

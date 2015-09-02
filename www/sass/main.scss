@@ -16,8 +16,16 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #0a0; $green: $mediumgre
 }
 
 //////////////////////////////////////// CSS ////////////////////////////////////////
+strong {
+  font-weight: bold;
+}
+
+em {
+  font-style: italic;
+}
+
 .field {
-color:green
+  color: green;
 }
 
 
