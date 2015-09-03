@@ -27,3 +27,4 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 28. consider https://oauth.io/home
 29. for JSON, implemen id's to get a specific node.  in the future, add "search" function where you can put a name it guesses what you want.
 30. set POINTER EVENTS to NONE for the TEXT tags
+31. use a watcher for babel too so that build file is faster!  http://stackoverflow.com/search?q=watch+for+changed+files

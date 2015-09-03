@@ -21,11 +21,17 @@ babel www/scripts6/lib/d3-and-svg.js > www/scripts/lib/d3-and-svg.js &&
 babel www/scripts6/main.js > www/scripts/main.js &&
 
 # convert .scss files to main.css
-cd www
-compass compile
-# compass watch
-cd ..
-
+# instead of doing it manually every time, we will use a watch daemon.  but we should only launch it if it's not running!
+IFS=$'\n'
+array_of_processes=($(ps | grep 'compass watch'))
+number_of_matches=$#array_of_processes
+if [[ $number_of_matches = 1 ]]
+	then
+	cd www
+	compass watch & # in the background, so we can continue...
+	cd ..
+fi
+IFS=$' \t\n'
 
 # optimize and minify
 # node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2 &&

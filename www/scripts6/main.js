@@ -157,24 +157,24 @@ function check_radio_button(radios){
 $('#markme').html(marked($('#markme').html()))
 
 /////////////////////////////////// MATHJAX ///////////////////////////////////
-// $(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
-// 	var texText = $(this).text();
-// 	var el = $(this).get(0);
-// 	var addDisplay = "";
-// 	if(el.tagName === "DIV"){
-// 		addDisplay = "\\displaystyle";
-// 	}
-// 	try{
-// 		katex.render(addDisplay+texText, el);
-// 	}
-// 	catch(err) {
-// 		if (err.__proto__ === katex.ParseError.prototype) {
-// 			$(this).html('$'+texText+'$')
-// 		} else {
-// 			$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
-// 		}
-// 	}
-// })
+$(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
+	var texText = $(this).text();
+	var el = $(this).get(0);
+	var addDisplay = "";
+	if(el.tagName === "DIV"){
+		addDisplay = "\\displaystyle";
+	}
+	try{
+		katex.render(addDisplay+texText, el);
+	}
+	catch(err) {
+		if (err.__proto__ === katex.ParseError.prototype) {
+			$(this).html('$'+texText+'$')
+		} else {
+			$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
+		}
+	}
+})
 
 
 //////////////////////////// TEST D3 FUNCTIONALITY ////////////////////////////
