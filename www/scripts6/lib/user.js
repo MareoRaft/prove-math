@@ -10,7 +10,6 @@ var prefs = {
 	"showDescriptionOnHover": false, // can be true or false
 }
 
-
 return {
 	prefs: prefs,
 }

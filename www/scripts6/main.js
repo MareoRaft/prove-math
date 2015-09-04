@@ -225,7 +225,4 @@ setTimeout(function() {
 }, 6000);
 
 
-
-
-
 }); // end require

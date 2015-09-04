@@ -13,13 +13,6 @@ if [[ $CWD = '' ]]
 fi
 
 
-# convert javascript 6 files to 5
-babel www/scripts6/lib/data.js > www/scripts/lib/data.js &&
-babel www/scripts6/lib/user.js > www/scripts/lib/user.js &&
-babel www/scripts6/lib/profile.js > www/scripts/lib/profile.js &&
-babel www/scripts6/lib/d3-and-svg.js > www/scripts/lib/d3-and-svg.js &&
-babel www/scripts6/main.js > www/scripts/main.js &&
-
 # convert .scss files to main.css
 # instead of doing it manually every time, we will use a watch daemon.  but we should only launch it if it's not running!
 IFS=$'\n'
@@ -33,14 +26,25 @@ if [[ $number_of_matches = 1 ]]
 fi
 IFS=$' \t\n'
 
+
+# convert javascript 6 files to 5
+babel www/scripts6/lib/data.js > www/scripts/lib/data.js &
+babel www/scripts6/lib/user.js > www/scripts/lib/user.js &
+babel www/scripts6/lib/profile.js > www/scripts/lib/profile.js &
+babel www/scripts6/lib/d3-and-svg.js > www/scripts/lib/d3-and-svg.js &
+babel www/scripts6/main.js > www/scripts/main.js &
+wait # wait for all jobs to finish. for some reason, it doesn't wait on compass. i don't know why!!
+# see also, xargs! http://unix.stackexchange.com/questions/35416/four-tasks-in-parallel-how-do-i-do-that
+
+
 # optimize and minify
-# node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2 &&
+# node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2
 
 
-echo 'done updating files on local machine' &&
+echo 'done updating files on local machine'
 
 
 
-open -a "Google Chrome" http://localhost/index.html &&
+open -a "Google Chrome" http://localhost/index.html
 
 echo 'done.'
