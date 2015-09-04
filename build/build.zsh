@@ -1,3 +1,6 @@
+#!/bin/zsh
+
+
 # back out of directories until you arrive at /path/to/prove-math
 for ((i=0; i<99; i++))
 	do CWD=$(pwd | sed -e 's@.*/@@') # finds the stuff after the last / in pwd
@@ -21,19 +24,17 @@ number_of_matches=$#array_of_processes
 if [[ $number_of_matches = 1 ]]
 	then
 	cd www
-	compass watch & # in the background, so we can continue...
+	compass watch &| # In the background, so we can continue.  Disowned, so we won't be waiting on it.
 	cd ..
 fi
 IFS=$' \t\n'
 
 
 # convert javascript 6 files to 5
-babel www/scripts6/lib/data.js > www/scripts/lib/data.js &
-babel www/scripts6/lib/user.js > www/scripts/lib/user.js &
-babel www/scripts6/lib/profile.js > www/scripts/lib/profile.js &
-babel www/scripts6/lib/d3-and-svg.js > www/scripts/lib/d3-and-svg.js &
-babel www/scripts6/main.js > www/scripts/main.js &
-wait # wait for all jobs to finish. for some reason, it doesn't wait on compass. i don't know why!!
+for path_end in www/scripts6/lib/*(e*'REPLY=${REPLY#www/scripts6/}'*) main.js; do
+	babel www/scripts6/$path_end > www/scripts/$path_end &
+done
+wait
 # see also, xargs! http://unix.stackexchange.com/questions/35416/four-tasks-in-parallel-how-do-i-do-that
 
 
@@ -45,6 +46,6 @@ echo 'done updating files on local machine'
 
 
 
-open -a "Google Chrome" http://localhost/index.html
+open -a "Google Chrome" http://localhost
 
 echo 'done.'
