@@ -7,7 +7,6 @@ function updateSVGNodeAndLinkPositions(){
 		.attr({
 			transform: d => 'translate('+d.x+','+d.y+')',
 		})
-
 	svg.selectAll('.link')
 		.attr({
 			x1: d => d.source.x,
@@ -52,7 +51,7 @@ function dblclick(node) {
 var nodes = [],
 	links = []
 
-var width = $('body').width(),
+var width = $(window).width(),
 	height = $(window).height()
 
 var force = d3.layout.force() // see https://github.com/mbostock/d3/wiki/Force-Layout for options
@@ -63,8 +62,20 @@ var force = d3.layout.force() // see https://github.com/mbostock/d3/wiki/Force-L
 	// .linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
 	.linkStrength(0.2)
 	.gravity(0.05)
+	.alpha(0.2)
 	// .theta(1.5) // this enables approximation for charge interaction, which may be needed for large graphs or slow browsers.  Higher numbers are more approximation.  I wouldn't go any higher than 1.5 though.
 	.on('tick', updateSVGNodeAndLinkPositions)
+
+//we can't override force.tick easily. but we want the line change:
+	// if ((alpha *= .99) < .005) {
+    // to
+	// if ((alpha *= .995) < .0045) {
+force.resume = function() {
+  var alpha = force.alpha()
+  if( alpha < 0.0045 ){ alpha = 0.0050 } // assuming a cutoff of 0.0045.  That means for now, we are dependent on serving a customized version of d3 to users, even though its only one line change.  We could change it to 0.0050 and 0.0055 if we had to.
+  else if( alpha < 0.11 ){ alpha += 0.0006 }
+  return force.alpha(alpha);
+};
 
 var drag = force.drag()
 	// .on('dragstart', dragstart);
@@ -111,13 +122,13 @@ function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN wh
 			.classed('definition-circle', d => d._type === 'definition')
 			.classed('theorem-circle', d => d._type === 'theorem')
 			.classed('exercise-circle', d => d._type === 'exercise')
-	    	.attr({ // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
-	    		r: d => 6 * Math.sqrt(d._importance),
-	    	})
+			.attr({ // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
+				r: d => 6 * Math.sqrt(d._importance),
+			})
 			.on('dblclick', dblclick)
 			.on('mouseover', mouseover)
 			.on('mouseout', mouseout)
-	    node_group.append('text') // must appear ABOVE node-circle
+		node_group.append('text') // must appear ABOVE node-circle
 		    .classed('node-text', true)
 			.text(function(d){ if(d._type !== 'exercise') return d.displayName }) // exercise names should NOT appear
     node.exit().remove()
