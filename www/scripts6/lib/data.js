@@ -1,7 +1,7 @@
 define( [
-	'jquery','underscore', 'check-types', 'profile', 'd3-and-svg', 'user'],
+	'jquery','underscore', 'check-types', 'profile', 'd3-and-svg', 'user', 'marked'],
 	function(
-	$,        _,            check,         undefined, d3AndSVG,     user) {
+	$,        _,            check,         undefined, d3AndSVG,     user,   marked) {
 
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
@@ -71,7 +71,47 @@ function updateDisplayName(node) { // for a single node
 	// updateDisplayNameCapitalization() // but for a single node
 }
 
-///////////////////////////////// NODE THINGS /////////////////////////////////
+//////////////////////////////// NODE FRONTEND ////////////////////////////////
+function mod(m, n) {
+    return (m % n + n) % n;
+}
+
+function getColorClass(node, key) {
+	var string = ''
+	if( node._type === 'definition'){
+		string = 'definition'
+		if(_.contains(['name', 'definition', 'synonym', 'plural', 'note', 'intuition'], key)){ // need to make an array to remove redunacny
+			string = string + '-group-1'
+		}
+		else if(_.contains(['example', 'counterexample'], key)){
+			string = string + '-group-2'
+		}
+		else die('Unexpected key found: "' + key + '".')
+	}
+	else die('We can only color definitions so far.')
+	return string
+}
+
+function populateNodeAttribute(attr) {
+	$('#node-template').append(
+		'<div class="node-attribute ' + attr.colorClass + '">'
+		+ marked(attr.type + ': ' + attr.content) + '</div>'
+	)
+}
+
+function populateNodeTemplate(node) {
+	for( var key in node ){
+		var content = node[key] // in the if statement below, make sure the content is not blank eithers or empty array
+		key = key.replace(/_/, '')
+		if(_.contains(['name', 'definition', 'synonym', 'plural', 'note', 'intuition', 'example', 'counterexample'], key)){ // make some array remove redundancy
+			// if content is an array, cycle!
+			populateNodeAttribute({type: key, content: content, colorClass: getColorClass(node, key)})
+		}
+	}
+}
+
+
+//////////////////////////////// NODE OBJECTS /////////////////////////////////
 function removeNodeById(id){ // assumes only one node of each id exists
 	check.assert.string(id)
 	for( let i in d3AndSVG.nodes )if( d3AndSVG.nodes[i]._id === id ){
@@ -146,6 +186,8 @@ return {
 	showFullContextInNames: showFullContextInNames,
 	updateDisplayNameCapitalization: updateDisplayNameCapitalization,
 	updateDisplayName: updateDisplayName,
+	populateNodeAttribute: populateNodeAttribute,
+	populateNodeTemplate: populateNodeTemplate,
 }
 
 

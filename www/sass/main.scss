@@ -16,6 +16,29 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #0a0; $green: $mediumgre
 }
 
 //////////////////////////////////////// CSS ////////////////////////////////////////
+.definition-group-1:nth-child(3n+2) { // for some reason the first one is considered 2!!!!!
+  background-color: #CB9;
+}
+.definition-group-1:nth-child(3n+0) {
+  background-color: #4E201D;
+  color: white;
+}
+.definition-group-1:nth-child(3n+1) {
+  background-color: #CCB;
+}
+
+.definition-group-2:nth-child(3n+2) {
+  background-color: #198;
+  color: white;
+}
+.definition-group-2:nth-child(3n+0) {
+  background-color: #0DD;
+}
+.definition-group-2:nth-child(3n+1) {
+  background-color: #7A6;
+}
+
+
 strong {
   font-weight: bold;
 }
@@ -28,9 +51,21 @@ em {
   color: green;
 }
 
+.node-attribute {
+  padding: 44px;
+  font: 300 italic 19px Helvetica, Tahoma, Arial, sans-serif; /* somewhere in 18-22 range feels right */
+}
+
+#section-1 {
+  background-color: pink;
+}
+
+#section-form {
+  background-color: cyan;
+}
 
 svg {
-  border: green 1px solid;
+  background-color: lightgreen;
 
   .definition-circle {
     fill: $green;
