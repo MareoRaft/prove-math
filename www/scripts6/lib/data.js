@@ -6,13 +6,13 @@ define( [
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
 function removeParenthesizedThing(string){
-	return string.replace(/\([^\)]*\)/, '')
+	return string.replace(/\([^\)]*\)/, '');
 }
 
 function removeOneContextFromNames(){
 	// go through nodes and update the displayNames to be the _names with removal (above function)
 	_.each(d3AndSVG.nodes, function(node){
-		node.displayName = removeParenthesizedThing( node._name )
+		node.displayName = removeParenthesizedThing( node.name )
 	})
 	// after the loop is completed, kickoff the d3 restart, which should trigger the UPDATE automatically
 	d3AndSVG.processNewGraph() // nodes and links variables are global
@@ -20,7 +20,7 @@ function removeOneContextFromNames(){
 
 function showFullContextInNames(){
 	_.each(d3AndSVG.nodes, function(node){
-		node.displayName = node._name
+		node.displayName = node.name
 	})
 	d3AndSVG.processNewGraph()
 }
@@ -29,13 +29,13 @@ function updateDisplayNameCapitalization(){
 	_.each(d3AndSVG.nodes, function(node){
 		switch (user.prefs.displayNameCapitalization){
 			case null:
-				node.displayName = node._name
+				node.displayName = node.name
 				break
 			case "sentence":
-				node.displayName = node._name.capitalizeFirstLetter()
+				node.displayName = node.name.capitalizeFirstLetter()
 				break
 			case "title":
-				// for each word in node._name, capitalize it unless it's in the small words list
+				// for each word in node.name, capitalize it unless it's in the small words list
 				var smallWordsList = [
 					//nice guide // see http://www.superheronation.com/2011/08/16/words-that-should-not-be-capitalized-in-titles/
 					//================
@@ -49,7 +49,7 @@ function updateDisplayNameCapitalization(){
 					// --------------------
 					'at', 'around', 'by', 'after', 'along', 'for', 'from', 'in', 'into', 'minus', 'of', 'on', 'per', 'plus', 'qua', 'sans', 'since', 'to', 'than', 'times', 'up', 'via', 'with', 'without',
 				]
-				node.displayName = node._name.replace(/\b\w+\b/g, function(match){
+				node.displayName = node.name.replace(/\b\w+\b/g, function(match){
 					if( !_.contains(smallWordsList, match) ){
 						match = match.capitalizeFirstLetter()
 					}
@@ -66,55 +66,16 @@ function updateDisplayNameCapitalization(){
 }
 
 function updateDisplayName(node) { // for a single node
-	node.displayName = node._name
+	node.displayName = node.name
 	// node.displayName = updateDisplayNameContext
 	// updateDisplayNameCapitalization() // but for a single node
-}
-
-//////////////////////////////// NODE FRONTEND ////////////////////////////////
-function mod(m, n) {
-    return (m % n + n) % n;
-}
-
-function getColorClass(node, key) {
-	var string = ''
-	if( node._type === 'definition'){
-		string = 'definition'
-		if(_.contains(['name', 'definition', 'synonym', 'plural', 'note', 'intuition'], key)){ // need to make an array to remove redunacny
-			string = string + '-group-1'
-		}
-		else if(_.contains(['example', 'counterexample'], key)){
-			string = string + '-group-2'
-		}
-		else die('Unexpected key found: "' + key + '".')
-	}
-	else die('We can only color definitions so far.')
-	return string
-}
-
-function populateNodeAttribute(attr) {
-	$('#node-template').append(
-		'<div class="node-attribute ' + attr.colorClass + '">'
-		+ marked(attr.type + ': ' + attr.content) + '</div>'
-	)
-}
-
-function populateNodeTemplate(node) {
-	for( var key in node ){
-		var content = node[key] // in the if statement below, make sure the content is not blank eithers or empty array
-		key = key.replace(/_/, '')
-		if(_.contains(['name', 'definition', 'synonym', 'plural', 'note', 'intuition', 'example', 'counterexample'], key)){ // make some array remove redundancy
-			// if content is an array, cycle!
-			populateNodeAttribute({type: key, content: content, colorClass: getColorClass(node, key)})
-		}
-	}
 }
 
 
 //////////////////////////////// NODE OBJECTS /////////////////////////////////
 function removeNodeById(id){ // assumes only one node of each id exists
 	check.assert.string(id)
-	for( let i in d3AndSVG.nodes )if( d3AndSVG.nodes[i]._id === id ){
+	for( let i in d3AndSVG.nodes )if( d3AndSVG.nodes[i].id === id ){
 		d3AndSVG.nodes.splice(i, 1)
 		return true
 	}
@@ -124,7 +85,7 @@ function removeNodeById(id){ // assumes only one node of each id exists
 function removeLinksFromArrayById(link_array, id){
 	check.assert.array.of.object(link_array)
 	check.assert.string(id)
-	for( let i = 0; i < link_array.length; i++ )if( link_array[i].source._id === id || link_array[i].target._id === id ){
+	for( let i = 0; i < link_array.length; i++ )if( link_array[i].source.id === id || link_array[i].target.id === id ){
 		link_array.splice(i, 1)
 		i--
 	}
@@ -138,13 +99,23 @@ function removeLinksById(id){
 function findObjectById(array, id){
 	check.assert.array(array)
 	check.assert.string(id)
-	for( let i in array )if( array[i]._id === id ) return array[i]
+	for( let i in array )if( array[i].id === id ) return array[i]
 	die('id not found.')
+}
+
+function removeLeadingUnderscoresFromKeys(obj) {
+	_.each(obj, function(value, key){ if( key[0] === '_' ){
+		delete obj[key]
+		key = key.substr(1)
+		obj[key] = value
+	}})
+	return obj
 }
 
 function addNewNodes(new_nodes) {
 	_.each(new_nodes, function(new_node){
-		new_node.displayName = new_node._name
+		new_node = removeLeadingUnderscoresFromKeys(new_node)
+		new_node.displayName = new_node.name
 	})
 	d3AndSVG.nodes.pushArray(new_nodes)
 	check.assert.array.of.object(d3AndSVG.nodes)
@@ -158,8 +129,8 @@ function updateNodesAndLinks(new_graph) {
 			console.log('Found an empty node. Letting it proceed.')
 		}
 		else if( new_graph.nodes[i].remove ){
-			removeNodeById(new_graph.nodes[i]._id)
-			removeLinksById(new_graph.nodes[i]._id) // we assume there are no links to a removed node in new_graph.links.  That is, we assume a good input.
+			removeNodeById(new_graph.nodes[i].id)
+			removeLinksById(new_graph.nodes[i].id) // we assume there are no links to a removed node in new_graph.links.  That is, we assume a good input.
 			new_graph.nodes.splice(i, 1)
 			i--
 		}
@@ -186,8 +157,6 @@ return {
 	showFullContextInNames: showFullContextInNames,
 	updateDisplayNameCapitalization: updateDisplayNameCapitalization,
 	updateDisplayName: updateDisplayName,
-	populateNodeAttribute: populateNodeAttribute,
-	populateNodeTemplate: populateNodeTemplate,
 }
 
 

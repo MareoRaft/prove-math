@@ -42,6 +42,7 @@ require( [
 	// "mathjax",
 	"profile",
 	"marked",
+	"data-frontend",
 ], function(
 	data,
 	$,
@@ -51,7 +52,8 @@ require( [
 	katex,
 	// mathjax,
 	undefined,
-	marked
+	marked,
+	dataFrontend
 ){
 
 // websocket stuff!
@@ -74,34 +76,17 @@ ws.onmessage = function(event){
 }
 
 
-var toggle_state = '#section-1'
-$('#toggler').click(function(){
-	hide(toggle_state)
-	switch( toggle_state ){
-		case '#node-template': toggle_state = '#section-1'; break
-		case '#section-1': toggle_state = '#section-form'; break
-		case '#section-form': toggle_state = 'svg'; break
-		case 'svg': toggle_state = '#node-template'; break
-		default: die('Unexpected toggle_state "'+toggle_state+'".')
-	}
-	show(toggle_state)
-})
 // form stuff
-$('#test').click(hello)
 $('#AddProof').click(add_proof)
 $('#Submit').click(send_node_info)
-
-
-
+$('#back').click(function(){
+	dataFrontend.hide('#node-template')
+	dataFrontend.show('svg')
+	dataFrontend.unpopulateNodeTemplate()
+})
 
 
 // setup all the things we can do before actually getting the data:
-function hello(){
-	var letsTry = JSON.stringify({"contents":"I want to send this over upon a click in a json file preferably"})
-    //var contents = $('#cool').val()
-    ws.send("For my sanity")
-}
-
 function add_proof(){
     var proof_type=document.getElementById("ProofType");
     var selectedValue = proof_type.options[proof_type.selectedIndex].value;
@@ -168,22 +153,9 @@ function check_radio_button(radios){
 
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
-function hide(css_selector){
-	$(css_selector).css('overflow', 'hidden') // we can move this to SCSS file too
-	$(css_selector).css('border-width', '0') // we may not need this
-	$(css_selector).css('height', '0')
-	$(css_selector).css('position', 'absolute') // in the future we'll move this to the SCSS file
-}
-
-function show(css_selector){
-	// restore any borders if there were any (not relevant now)
-	$(css_selector).css('height', $(window).height())
-	$(css_selector).css('width', $(window).width())
-	$(css_selector).css('overflow', 'scroll')
-}
 
 /////////////////////////////////// MARKED ////////////////////////////////////
-$('#markme').html(marked($('#markme').html()))
+
 
 /////////////////////////////////// MATHJAX ///////////////////////////////////
 // $(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
@@ -224,45 +196,6 @@ $('#markme').html(marked($('#markme').html()))
 // 	data.removeOneContextFromNames()
 // 	data.showFullContextInNames()
 // }, 0);
-
-// { // a REAL node
-//     "_id": "degreevertex",
-//     "_type": "definition",
-//     "_importance": 4,
-//     "_counterexamples": [ ],
-//     "_examples": [ ],
-//     "_dependencies": [
-//         "vertex",
-//         "incident",
-//         "loop"
-//     ],
-//     "_notes": [ ],
-//     "_intuitions": [
-//         "The degree of vertex $v$ is the number of edge ends that touch it."
-//     ],
-//     "_plural": null,
-//     "_description": "Given a multigraph $G = (V,E)$, the __degree__ of a vertex $v \\in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
-//     "_name": "degree (vertex)"
-// }
-
-
-data.populateNodeTemplate({
-    "_id": "degreevertex",
-    "_type": "definition",
-    "_name": "degree (vertex)",
-    "_definition": "Given a multigraph $G = (V,E)$, the __degree__ of a vertex $v \\in V$, denoted $d(v)$, is the number of edges in $E$ incident to $v$, where loops are counted twice.",
-    "_note": "This is a note",
-    "_plural": null,
-    "_intuition": "The degree of vertex $v$ is the number of edge ends that touch it.",
-    "_importance": 4,
-    "_example": "This is an example",
-    "_counterexample": "This is a counter example!",
-    "_dependencies": [
-        "vertex",
-        "incident",
-        "loop"
-    ],
-})
 
 
 }); // end require

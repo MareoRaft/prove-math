@@ -1,4 +1,5 @@
-define( ['jquery', 'underscore', 'd3', 'check-types', 'profile', 'user'], function($, _, d3, check, undefined, user) {
+define( ['jquery', 'underscore', 'd3', 'check-types', 'profile', 'user', 'data-frontend'],
+function($, _, d3, check, undefined, user, dataFrontend) {
 
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
@@ -16,36 +17,25 @@ function updateSVGNodeAndLinkPositions(){
 		})
 }
 
+function dblclick(node) {
+	dataFrontend.hide('svg')
+	dataFrontend.populateNodeTemplate(node)
+	dataFrontend.show('#node-template')
+}
+
 function mouseover(node) {
 	if( user.prefs.showDescriptionOnHover ){
-		node.displayName = node._description
+		node.displayName = node.description
 		updateSVGNodeAndLinkExistence()
 	}
 }
 
 function mouseout(node) {
 	if( user.prefs.showDescriptionOnHover ){
-		node.displayName = node._name
+		node.displayName = node.name
 		updateSVGNodeAndLinkExistence()
 	}
 }
-
-function dblclick(node) {
-	// d3.select(this).classed('fixed', node.fixed = false)
-}
-
-// function dragstart(node) {
-// 	// d3.select(this).classed('fixed', node.fixed = true)
-// }
-
-// function dragstart(node) {
-// 	d3.event.sourceEvent.stopPropagation();
-// 	force.start();
-// }
-
-// function drag(node) {
-// 	d3.select(this).attr("cx", node.x = d3.event.x).attr("cy", node.y = d3.event.y);
-// }
 
 //////////////////////////////////// MAIN /////////////////////////////////////
 var nodes = [],
@@ -106,36 +96,36 @@ var x = d3.scale.linear()
 	.range([0, width]) // minus a 10 pixel buffer?  we should really get the width of #chart !!!
 
 function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN when new nodes come in
-    var link = svg.selectAll('.link').data(force.links(), d => d.source._id + '--->' + d.target._id) // links before nodes so that lines in SVG appear *under* nodes
+    var link = svg.selectAll('.link').data(force.links(), d => d.source.id + '--->' + d.target.id) // links before nodes so that lines in SVG appear *under* nodes
     link.enter().append('line')
     	.classed('link', true)
     	.attr('marker-end', 'url(#arrow-head)') // add in the marker-end defined above
     link.exit().remove()
 
-	var node = svg.selectAll('.node').data(force.nodes(), d => d._id)
+	var node = svg.selectAll('.node').data(force.nodes(), d => d.id)
 		var node_group = node.enter().append('g')
 			.classed('node', true)
-			// .id(d => d._id)
+			// .id(d => d.id)
 			.call(drag)
 		node_group.append('circle')
 		    .classed('node-circle', true)
-			.classed('definition-circle', d => d._type === 'definition')
-			.classed('theorem-circle', d => d._type === 'theorem')
-			.classed('exercise-circle', d => d._type === 'exercise')
+			.classed('definition-circle', d => d.type === 'definition')
+			.classed('theorem-circle', d => d.type === 'theorem')
+			.classed('exercise-circle', d => d.type === 'exercise')
 			.attr({ // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
-				r: d => 6 * Math.sqrt(d._importance),
+				r: d => 6 * Math.sqrt(d.importance),
 			})
 			.on('dblclick', dblclick)
 			.on('mouseover', mouseover)
 			.on('mouseout', mouseout)
 		node_group.append('text') // must appear ABOVE node-circle
 		    .classed('node-text', true)
-			.text(function(d){ if(d._type !== 'exercise') return d.displayName }) // exercise names should NOT appear
+			.text(function(d){ if(d.type !== 'exercise') return d.displayName }) // exercise names should NOT appear
     node.exit().remove()
 
     // UPDATE stuff:  // more to add later!
     svg.selectAll('.node-text')
-		.text(function(d){ if(d._type !== 'exercise') return d.displayName })
+		.text(function(d){ if(d.type !== 'exercise') return d.displayName })
 }
 
 function processNewGraph() {

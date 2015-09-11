@@ -26,5 +26,3 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 27. use the premade https://github.com/kerzol/markdown-mathjax thingy to do conversion.  Instead of building our own markdown mathjax stuff. (But we would still need to consider running conversion on the server for speed boosts.  and would that still work with this integration?)  I think the dev makes the right decision to FIRST apply MathJax and SECOND apply Markdown.  We should do the same.  Also he uses the "marked" markdown parser, which claims it is built for speed.  Sounds good.  It's in JavaScript, which means client-side. (as opposed to our current one which is on server side).  It seems that KA uses a version of marked.js too (https://github.com/Khan/simple-markdown).  Maybe it's a good choice!
 28. consider https://oauth.io/home
 29. for JSON, implemen id's to get a specific node.  in the future, add "search" function where you can put a name it guesses what you want.
-30. set POINTER EVENTS to NONE for the TEXT tags
-31. use a watcher for babel too so that build file is faster!  http://stackoverflow.com/search?q=watch+for+changed+files

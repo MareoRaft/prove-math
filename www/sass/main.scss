@@ -38,6 +38,14 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #0a0; $green: $mediumgre
   background-color: #7A6;
 }
 
+.definition-group-3:nth-child(2n+1) {
+  background-color: #4E201D;
+  color: white;
+}
+.definition-group-3:nth-child(2n+0) {
+  background-color: #CB9;
+}
+
 
 strong {
   font-weight: bold;
@@ -51,9 +59,16 @@ em {
   color: green;
 }
 
+#node-template {
+  position: absolute;
+  section {
+    overflow: scroll;
+  }
+}
+
 .node-attribute {
   padding: 44px;
-  font: 300 italic 19px Helvetica, Tahoma, Arial, sans-serif; /* somewhere in 18-22 range feels right */
+  font: 300 normal 19px Helvetica, Tahoma, Arial, sans-serif; /* somewhere in 18-22 range feels right */
 }
 
 #section-1 {
@@ -66,6 +81,7 @@ em {
 
 svg {
   background-color: lightgreen;
+  position: absolute;
 
   .definition-circle {
     fill: $green;
