@@ -455,7 +455,8 @@ var inline = {
   link: /^!?\[(inside)\]\(href\)/,
   reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
   nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
-  strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+  strong: /^\*\*([\s\S]+?)\*\*(?!\*)/,
+  u: /^__([\s\S]+?)__(?!_)/,
   em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
   code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
   br: /^ {2,}\n(?!\s*$)/,
@@ -486,7 +487,8 @@ inline.normal = merge({}, inline);
  */
 
 inline.pedantic = merge({}, inline.normal, {
-  strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
+  strong: /^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
+  u: /^__(?=\S)([\s\S]*?\S)__(?!_)/,
   em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/
 });
 
@@ -648,6 +650,13 @@ InlineLexer.prototype.output = function(src) {
     if (cap = this.rules.strong.exec(src)) {
       src = src.substring(cap[0].length);
       out += this.renderer.strong(this.output(cap[2] || cap[1]));
+      continue;
+    }
+
+    // u
+    if (cap = this.rules.u.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.u(this.output(cap[2] || cap[1]));
       continue;
     }
 
@@ -848,6 +857,10 @@ Renderer.prototype.tablecell = function(content, flags) {
 // span level renderer
 Renderer.prototype.strong = function(text) {
   return '<strong>' + text + '</strong>';
+};
+
+Renderer.prototype.u = function(text) {
+  return '<u>' + text + '</u>';
 };
 
 Renderer.prototype.em = function(text) {
