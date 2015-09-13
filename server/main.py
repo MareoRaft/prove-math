@@ -128,7 +128,7 @@ class StaticCachelessFileHandler(StaticFileHandler):
 
 
 	def prepare(self):
-		if self.request.host != 'provemath.org':
+		if self.request.host != 'provemath.org' and self.request.host != 'localhost':
 			self.redirect('http://provemath.org', self.request.uri)
 			tornado.web.Finish()
 	def set_extra_headers(self, path):
