@@ -38,7 +38,9 @@ class BaseHandler (RequestHandler):
 		pass
 	def get(self, num):
 		self.write("this is "+num+"!")
-
+		print(str(self.request))
+		print()
+		print(self.request.host)
 
 class FormHandler (BaseHandler):
 
@@ -125,6 +127,10 @@ class SocketHandler (WebSocketHandler):
 class StaticCachelessFileHandler(StaticFileHandler):
 
 
+	def prepare(self):
+		if self.request.host != 'provemath.org':
+			self.redirect('http://provemath.org', self.request.uri)
+			tornado.web.Finish()
 	def set_extra_headers(self, path):
 		# Disable cache
 		self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
