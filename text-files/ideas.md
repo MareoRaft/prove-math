@@ -26,3 +26,10 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 27. use the premade https://github.com/kerzol/markdown-mathjax thingy to do conversion.  Instead of building our own markdown mathjax stuff. (But we would still need to consider running conversion on the server for speed boosts.  and would that still work with this integration?)  I think the dev makes the right decision to FIRST apply MathJax and SECOND apply Markdown.  We should do the same.  Also he uses the "marked" markdown parser, which claims it is built for speed.  Sounds good.  It's in JavaScript, which means client-side. (as opposed to our current one which is on server side).  It seems that KA uses a version of marked.js too (https://github.com/Khan/simple-markdown).  Maybe it's a good choice!
 28. consider https://oauth.io/home
 29. for JSON, implemen id's to get a specific node.  in the future, add "search" function where you can put a name it guesses what you want.
+31. check that everything works in all browsers --> check!  except for Internet Explorer...
+32. change nodes array to a dictionary. that way we can find nodes by ID QUICKLY
+33. to finish off the editable thing to work... ALL keys should have ARRAYS as values.  Or so it seems..... this would be simpler to work with.  But consider that we may need to call node.name[0] elsewhere in the code.  Otherwise, we could just build a logic to handle that..
+34. implement a "tag" system for dependencies and proof "types".  See if there is a library out there for this!  I like this library: http://harvesthq.github.io/chosen/  .  Also this one . http://sean.is/poppin/tags  .  And this one!! https://maxfavilli.com/jquery-tag-manager    .   There are many many more.
+35. add in mathjax rendering for html.  is there a mathjax function i can call?
+36. double check that your start and end edit mode functions support arrays
+37. double check Safari for errors.

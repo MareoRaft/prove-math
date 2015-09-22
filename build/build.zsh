@@ -20,22 +20,26 @@ fi
 # instead of doing it manually every time, we will use a watch daemon.  but we should only launch it if it's not running!
 IFS=$'\n'
 array_of_processes=($(ps | grep 'compass watch'))
+IFS=$' \t\n'
 number_of_matches=$#array_of_processes
-if [[ $number_of_matches = 1 ]]
+if [[ $number_of_matches = 1 ]] # the one match is the grep process itself!
 	then
 	cd www
 	compass watch &| # In the background, so we can continue.  Disowned, so we won't be waiting on it.
 	cd ..
-fi
+fi # this only fails when babel_watchdog throws an error.  Then i get a SECOND compass process!
+
+
+# javascript 6 files to 5
+# we will use a watchdog, just like compass watch!
+IFS=$'\n'
+array_of_processes=($(ps | grep 'babel_watchdog'))
 IFS=$' \t\n'
-
-
-# convert javascript 6 files to 5
-for path_end in www/scripts6/lib/*(e*'REPLY=${REPLY#www/scripts6/}'*) main.js; do
-	babel www/scripts6/$path_end > www/scripts/$path_end &
-done
-wait
-# see also, xargs! http://unix.stackexchange.com/questions/35416/four-tasks-in-parallel-how-do-i-do-that
+number_of_matches=$#array_of_processes
+if [[ $number_of_matches = 1 ]]
+	then
+	python3 build/babel_watchdog.py ./www/scripts6 &|
+fi
 
 
 # optimize and minify
