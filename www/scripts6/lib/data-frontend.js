@@ -17,7 +17,7 @@ function show(css_selector){
 }
 
 //////////////////////////////// NODE FRONTEND ////////////////////////////////
-var colorClass1Keys = ['name', 'definition', 'theorem', 'synonyms', 'plurals', 'notes', 'intuitions']
+var colorClass1Keys = ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions']
 var colorClass2Keys = ['examples', 'counterexamples']
 var colorClass3Keys = ['dependencies']
 function getColorClass(node, key) {
@@ -39,37 +39,90 @@ function getColorClass(node, key) {
 	return string
 }
 
-function pluralToSingular(word) { // used for allColorClassKeys
+function keyToDisplayKey(node, word) { // used for allColorClassKeys
+	if( word === 'description' ) return node.type
 	if( word === 'dependencies' ) return 'dependencies' // we want this one to stay plural
 	if( word[word.length - 1] === 's' ) return word.substr(0, word.length - 1)
 	return word // word may have ALREADY been singular
 }
 
 function populateNodeAttribute(attr) {
-	if( check.string(attr.content) ) attr.content = [attr.content]
-	if( attr.type === 'dependencies' ) attr.content = [attr.content.join(", ")]
-	attr.type = pluralToSingular(attr.type)
-	_.each(attr.content, function(content){
+	if( !check.array(attr.value) ) die('Value was not an array.  We are making them ALL arrays now.')
+	if( attr.key === 'dependencies' ) attr.value = [attr.value.join(", ")]
+	_.each(attr.value, function(value, index){
+		if( !def(currentNode[attr.key][index.toString()+'-'+'state']) ){
+			currentNode[attr.key][index.toString()+'-'+'state'] = 'read'
+		}
 		$('#node-template > section').append(
 			'<div class="node-attribute ' + attr.colorClass + '">'
-			+ marked(attr.type + ': ' + content) + '</div>'
+				+ '<span class="key" data-name="' + attr.key + '" data-index="' + index + '">'
+					+ marked(keyToDisplayKey(attr.node, attr.key) + ':')
+				+'</span>'
+				+ ' ' // this space is not actually necessary, as marked wraps the above in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
+				+ '<span class="content">' + marked(value) + '</span>'
+			+ '</div>'
 		)
 	})
 }
 
 var allColorClassKeys = colorClass1Keys.concat(colorClass2Keys).concat(colorClass3Keys)
+var currentNode
 function populateNodeTemplate(node) {
-	for( var key of allColorClassKeys ){
+	currentNode = node
+	_.each(allColorClassKeys, function(key){ // NO FOR OF LOOPS BC BABEL DIDNT MAKE IT WORK CONSISTENTLY
 		if( node.hasOwnProperty(key) ){
-			var content = node[key] // in the if statement below, make sure the content is not blank eithers or empty array
-			populateNodeAttribute({type: key, content: content, colorClass: getColorClass(node, key)})
+			var value = node[key]
+			if( value === '' ) die('Found an empty string')
+			if( value === [] ) die('Found an empty array')
+			populateNodeAttribute({node: node, key: key, value: value, colorClass: getColorClass(node, key)})
 		}
-		else if( _.contains(['definition', 'theorem', 'exercise'], key) && node.type === key ){
-			var content = node.description
-			populateNodeAttribute({type: key, content: content, colorClass: getColorClass(node, key)})
+	})
+	$('.node-attribute').dblclick(function(){
+		var $key = $(this).children('.key:first')
+		var $content = $(this).children('.content:first')
+		var state = currentNode[$key.attr('data-name')][$key.attr('data-index').toString() + '-state']
+		if( state === 'read' ){
+			startEditMode($(this), $key, $content)
+			currentNode[$key.attr('data-name')][$key.attr('data-index').toString() + '-state'] = 'write'
 		}
-	}
+		else if( state === 'write' ){
+			endEditMode($(this), $key, $content)
+			currentNode[$key.attr('data-name')][$key.attr('data-index').toString() + '-state'] = 'read'
+		}
+		else die('Unexpected state "' + state + '".')
+	})
 }
+
+function startEditMode(jQueryNodeAttributeObj, $key, $content) {
+		// alert(JSON.stringify($key))
+	var pureMarkdown = currentNode[$key.attr('data-name')][$key.attr('data-index')]
+		// alert(pureMarkdown)
+		// alert(check.string(pureMarkdown))
+	$content.html(pureMarkdown)
+	$content.prop('contenteditable', true)
+
+	// set the cursor to the beginning and make it appear
+	$content.focus() // <-- needed for Firefox
+	var range = document.createRange()
+	var sel = window.getSelection()
+	range.setStart($content.get(0).childNodes[0], 0); // line 0, character 0
+	range.collapse(true)
+	sel.removeAllRanges()
+	sel.addRange(range)
+}
+
+function endEditMode(jQueryNodeAttributeObj, $key, $content) {
+	$content.prop('contenteditable', false)
+	// take content, STORE IT, then display the marked() version of it
+	if( check.array.of.string(currentNode[$key.attr('data-name')]) ){
+		currentNode[$key.attr('data-name')][$key.attr('data-index')] = $content.html()
+	}
+	else die('Unexpected value of node stuff ' + currentNode[$key.attr('data-name')])
+
+	$content.html(marked(currentNode[$key.attr('data-name')][$key.attr('data-index')]))
+}
+
+
 
 function unpopulateNodeTemplate() {
 	$('#node-template > section').html('')

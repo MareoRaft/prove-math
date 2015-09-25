@@ -12,7 +12,7 @@ function removeParenthesizedThing(string){
 function removeOneContextFromNames(){
 	// go through nodes and update the displayNames to be the _names with removal (above function)
 	_.each(d3AndSVG.nodes, function(node){
-		node.displayName = removeParenthesizedThing( node.name )
+		node.displayName = removeParenthesizedThing( node.name[0] )
 	})
 	// after the loop is completed, kickoff the d3 restart, which should trigger the UPDATE automatically
 	d3AndSVG.processNewGraph() // nodes and links variables are global
@@ -20,7 +20,7 @@ function removeOneContextFromNames(){
 
 function showFullContextInNames(){
 	_.each(d3AndSVG.nodes, function(node){
-		node.displayName = node.name
+		node.displayName = node.name[0]
 	})
 	d3AndSVG.processNewGraph()
 }
@@ -29,13 +29,13 @@ function updateDisplayNameCapitalization(){
 	_.each(d3AndSVG.nodes, function(node){
 		switch (user.prefs.displayNameCapitalization){
 			case null:
-				node.displayName = node.name
+				node.displayName = node.name[0]
 				break
 			case "sentence":
-				node.displayName = node.name.capitalizeFirstLetter()
+				node.displayName = node.name[0].capitalizeFirstLetter()
 				break
 			case "title":
-				// for each word in node.name, capitalize it unless it's in the small words list
+				// for each word in node.name[0], capitalize it unless it's in the small words list
 				var smallWordsList = [
 					//nice guide // see http://www.superheronation.com/2011/08/16/words-that-should-not-be-capitalized-in-titles/
 					//================
@@ -49,7 +49,7 @@ function updateDisplayNameCapitalization(){
 					// --------------------
 					'at', 'around', 'by', 'after', 'along', 'for', 'from', 'in', 'into', 'minus', 'of', 'on', 'per', 'plus', 'qua', 'sans', 'since', 'to', 'than', 'times', 'up', 'via', 'with', 'without',
 				]
-				node.displayName = node.name.replace(/\b\w+\b/g, function(match){
+				node.displayName = node.name[0].replace(/\b\w+\b/g, function(match){
 					if( !_.contains(smallWordsList, match) ){
 						match = match.capitalizeFirstLetter()
 					}
@@ -66,7 +66,7 @@ function updateDisplayNameCapitalization(){
 }
 
 function updateDisplayName(node) { // for a single node
-	node.displayName = node.name
+	node.displayName = node.name[0]
 	// node.displayName = updateDisplayNameContext
 	// updateDisplayNameCapitalization() // but for a single node
 }
@@ -112,10 +112,19 @@ function removeLeadingUnderscoresFromKeys(obj) {
 	return obj
 }
 
+var keys_to_arrayify_values = ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'dependencies'] // temp
+function arrayifyMostValues(node) {
+	_.each(node, function(value, key){ if(_.contains(keys_to_arrayify_values, key)) {
+		if( !check.array(value) ) node[key] = [value]
+	}})
+	return node
+}
+
 function addNewNodes(new_nodes) {
 	_.each(new_nodes, function(new_node){
 		new_node = removeLeadingUnderscoresFromKeys(new_node)
-		new_node.displayName = new_node.name
+		new_node = arrayifyMostValues(new_node)
+		new_node.displayName = new_node.name[0]
 	})
 	d3AndSVG.nodes.pushArray(new_nodes)
 	check.assert.array.of.object(d3AndSVG.nodes)

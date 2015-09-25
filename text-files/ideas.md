@@ -31,5 +31,3 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 33. to finish off the editable thing to work... ALL keys should have ARRAYS as values.  Or so it seems..... this would be simpler to work with.  But consider that we may need to call node.name[0] elsewhere in the code.  Otherwise, we could just build a logic to handle that..
 34. implement a "tag" system for dependencies and proof "types".  See if there is a library out there for this!  I like this library: http://harvesthq.github.io/chosen/  .  Also this one . http://sean.is/poppin/tags  .  And this one!! https://maxfavilli.com/jquery-tag-manager    .   There are many many more.
 35. add in mathjax rendering for html.  is there a mathjax function i can call?
-36. double check that your start and end edit mode functions support arrays
-37. double check Safari for errors.

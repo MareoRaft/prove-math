@@ -25,14 +25,14 @@ function dblclick(node) {
 
 function mouseover(node) {
 	if( user.prefs.showDescriptionOnHover ){
-		node.displayName = node.description
+		node.displayName = node.description[0]
 		updateSVGNodeAndLinkExistence()
 	}
 }
 
 function mouseout(node) {
 	if( user.prefs.showDescriptionOnHover ){
-		node.displayName = node.name
+		node.displayName = node.name[0]
 		updateSVGNodeAndLinkExistence()
 	}
 }

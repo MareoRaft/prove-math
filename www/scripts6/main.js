@@ -10,8 +10,9 @@ require.config({
 		// d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
 		d3: "d3-for-development",
 		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
-		// mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
+		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
 		// marked: "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min", // disabled for consistent development
+		chosen: "https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min",
 	},
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
@@ -73,6 +74,7 @@ ws.onmessage = function(event){
 	// 	alert(graph.nodes[i])
 	// }
 	data.updateNodesAndLinks(graph)
+	$('.node-circle').first().dblclick()
 }
 
 
@@ -158,24 +160,24 @@ function check_radio_button(radios){
 
 
 /////////////////////////////////// MATHJAX ///////////////////////////////////
-// $(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
-// 	var texText = $(this).text();
-// 	var el = $(this).get(0);
-// 	var addDisplay = "";
-// 	if(el.tagName === "DIV"){
-// 		addDisplay = "\\displaystyle";
-// 	}
-// 	try{
-// 		katex.render(addDisplay+texText, el);
-// 	}
-// 	catch(err) {
-// 		if (err.__proto__ === katex.ParseError.prototype) {
-// 			$(this).html('$'+texText+'$')
-// 		} else {
-// 			$(this).html("<span class='err'>"+'Hi! '+err+"</span>");
-// 		}
-// 	}
-// })
+$(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
+	var texText = $(this).text();
+	var el = $(this).get(0);
+	var addDisplay = "";
+	if(el.tagName === "DIV"){
+		addDisplay = "\\displaystyle";
+	}
+	try{
+		katex.render(addDisplay+texText, el);
+	}
+	catch(err) {
+		if (err.__proto__ === katex.ParseError.prototype) {
+			$(this).html('$'+texText+'$')
+		} else {
+			$(this).html('<span class="err">' + 'Got error: "'+err+'".' + '</span>');
+		}
+	}
+})
 
 
 //////////////////////////// TEST D3 FUNCTIONALITY ////////////////////////////
