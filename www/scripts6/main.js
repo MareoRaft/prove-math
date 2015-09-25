@@ -44,6 +44,7 @@ require( [
 	"profile",
 	"marked",
 	"data-frontend",
+	"d3-and-svg",
 ], function(
 	data,
 	$,
@@ -54,7 +55,8 @@ require( [
 	// mathjax,
 	undefined,
 	marked,
-	dataFrontend
+	dataFrontend,
+	d3AndSVG
 ){
 
 // websocket stuff!
@@ -82,6 +84,7 @@ ws.onmessage = function(event){
 $('#AddProof').click(add_proof)
 $('#Submit').click(send_node_info)
 $('#back').click(function(){
+	d3AndSVG.updateSVGNodeAndLinkExistence()
 	dataFrontend.hide('#node-template')
 	dataFrontend.show('svg')
 	dataFrontend.unpopulateNodeTemplate()

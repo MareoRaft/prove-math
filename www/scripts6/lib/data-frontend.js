@@ -91,6 +91,12 @@ function populateNodeTemplate(node) {
 		}
 		else die('Unexpected state "' + state + '".')
 	})
+	$('#learn').click(function(){
+		currentNode.learned = true
+	})
+	$('#unlearn').click(function(){
+		currentNode.learned = false
+	})
 }
 
 function startEditMode(jQueryNodeAttributeObj, $key, $content) {

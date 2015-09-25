@@ -125,6 +125,7 @@ function addNewNodes(new_nodes) {
 		new_node = removeLeadingUnderscoresFromKeys(new_node)
 		new_node = arrayifyMostValues(new_node)
 		new_node.displayName = new_node.name[0]
+		if( !new_node.learned ) new_node.learned = false // in future load from prefs.learned_nodes
 	})
 	d3AndSVG.nodes.pushArray(new_nodes)
 	check.assert.array.of.object(d3AndSVG.nodes)

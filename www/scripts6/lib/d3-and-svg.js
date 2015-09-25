@@ -105,7 +105,6 @@ function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN wh
 	var node = svg.selectAll('.node').data(force.nodes(), d => d.id)
 		var node_group = node.enter().append('g')
 			.classed('node', true)
-			// .id(d => d.id)
 			.call(drag)
 		node_group.append('circle')
 		    .classed('node-circle', true)
@@ -126,6 +125,9 @@ function updateSVGNodeAndLinkExistence() { // this function gets called AGAIN wh
     // UPDATE stuff:  // more to add later!
     svg.selectAll('.node-text')
 		.text(function(d){ if(d.type !== 'exercise') return d.displayName })
+	svg.selectAll('circle')
+		.classed('learned', d => d.learned)
+
 }
 
 function processNewGraph() {

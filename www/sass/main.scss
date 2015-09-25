@@ -6,7 +6,7 @@ $white: #eee; $darkwhite: #999;
 
 $gold: #e6d460; $blue: #0af;
 $rose: #f02b4c; $pink: #f12772; $red: $rose;
-$brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #0a0; $green: $mediumgreen;
+$brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $mediumgreen;
 
 @mixin font {
   color: $black;
@@ -79,21 +79,28 @@ em {
   background-color: cyan;
 }
 
+
 svg {
-  background-color: lightgreen;
+  background-color: white;
   position: absolute;
 
+  @mixin learned-and-unlearned-fill-and-opacity($color) {
+    fill: mix(gray, $color, 70%);
+    opacity: 0.3;
+    &.learned {
+      fill: $color;
+      opacity: 0.45;
+    }
+  }
+
   .definition-circle {
-    fill: $green;
-    opacity: 0.4;
+    @include learned-and-unlearned-fill-and-opacity($green);
   }
   .theorem-circle {
-    fill: steelblue;
-    opacity: 0.4;
+    @include learned-and-unlearned-fill-and-opacity(steelblue);
   }
   .exercise-circle {
-    fill: $darkwhite;
-    opacity: 0.4;
+    @include learned-and-unlearned-fill-and-opacity($darkwhite);
   }
 
   .node-text {
@@ -112,7 +119,7 @@ svg {
   }
 
   .arrow-head {
-    fill: pink;
+    fill: gray;
   }
 }
 
