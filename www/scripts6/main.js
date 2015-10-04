@@ -13,6 +13,7 @@ require.config({
 		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
 		// marked: "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min", // disabled for consistent development
 		chosen: "https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min",
+		jsnetworkx: "https://raw.githubusercontent.com/fkling/JSNetworkX/v0.3.4/jsnetworkx", //actually we maybe should download this
 	},
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
@@ -34,7 +35,6 @@ require.config({
 });
 
 require( [
-	"data",
 	"jquery",
 	"underscore",
 	"browser-detect",
@@ -43,10 +43,12 @@ require( [
 	// "mathjax",
 	"profile",
 	"marked",
-	"data-frontend",
-	"d3-and-svg",
+	"graph",
+	"node",
+	"graph-animation",
+	"blinds",
+	"user",
 ], function(
-	data,
 	$,
 	_,
 	browser,
@@ -55,152 +57,128 @@ require( [
 	// mathjax,
 	undefined,
 	marked,
-	dataFrontend,
-	d3AndSVG
+	graph,
+	Node,
+	graphAnimation,
+	blinds,
+	user
 ){
 
-// websocket stuff!
-// var ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined;
-var ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): undefined;
-if( !def(ws) ){
-	die('Your browser does not support websockets, which are essential for this program.')
-}
 
-ws.onopen = function(){
+//////////////////////////// INITIALIZATION ////////////////////////////
+// alert(JSON.stringify(user.prefs))
+user.init({ // this one should be triggered by jQuery when they login
+	account_type: 'facebook',
+	username: 'mischievous matt',
+	password: 'jellybeans',
+})
+// alert(JSON.stringify(user.prefs))
+
+graphAnimation.init({
+	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
+	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
+	node_radius: node => 6 * Math.sqrt(node.importance),
+	circle_class_conditions: {
+		'bright-circle': node => node.learned,
+		'definition-circle': node => node.type === 'definition',
+		'theorem-circle': node => node.type === 'theorem',
+		'exercise-circle': node => node.type === 'exercise',
+	},
+	circle_events: {
+		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.description },
+		mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
+		dblclick: node => $.event.trigger({ type: 'node-dbl-click', message: node.id }),
+	},
+})
+show('svg') // both svg and node-template are hidden on load
+
+blinds.init({
+	window_id: 'node-template-blinds',
+	blind_class: 'node-attribute',
+	render: marked,
+	transform_key: keyToDisplayKey,
+	expand_array: true,
+	blind_class_conditions: {
+		'definition-group-1': (node, key) => _.contains(['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions'], key),
+		'definition-group-2': (node, key) => _.contains(['examples', 'counterexamples'], key),
+		'definition-group-3': (node, key) => _.contains(['dependencies'], key),
+	},
+})
+let current_node = {}
+$('#learn').click(function(){
+	current_node.learned = true // does it grab current_node from outside scope? // YES
+	graphAnimation.update()
+})
+$('#unlearn').click(function(){
+	current_node.learned = false
+	graphAnimation.update()
+})
+
+// let ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined;
+let ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): undefined;
+if( !def(ws) ) die('Your browser does not support websockets, which are essential for this program.')
+
+ws.onopen = function() {
 	ws.send("Hello, world, Remember to clear cache if needed!")
+	// on the SERVER SIDE, on ws.onopen, before sending graph, send user info.
 }
-ws.onmessage = function(event){
-	var unbundled = JSON.parse(event.data)
-	var graph = unbundled
-	// for( var i=0; i < graph.nodes.length; i++){
-	// 	alert(graph.nodes[i])
-	// }
-	data.updateNodesAndLinks(graph)
-	$('.node-circle').first().dblclick()
+ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
+	let unbundled = JSON.parse(event.data)
+	// here we can do 'command' logic to process various commands from server
+	// 'load' command can direct to user.load()
+	let raw_graph = unbundled
+	_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
+		raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw
+	})
+	let ready_graph = raw_graph
+	graph.addNodesAndLinks({
+		nodes: ready_graph.nodes,
+		links: ready_graph.links,
+	})
 }
 
 
-// form stuff
-$('#AddProof').click(add_proof)
-$('#Submit').click(send_node_info)
+//////////////////////////// TOGGLE STUFF ////////////////////////////
+$(document).on('node-dbl-click', function(Event){
+	current_node = graph.nodes[Event.message] // this assumed HASH of nodes
+	blinds.open({
+		object: current_node,
+		keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'dependencies'],
+		collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
+	})
+	hide('svg')
+	show('#node-template')
+})
+
 $('#back').click(function(){
-	d3AndSVG.updateSVGNodeAndLinkExistence()
-	dataFrontend.hide('#node-template')
-	dataFrontend.show('svg')
-	dataFrontend.unpopulateNodeTemplate()
+	hide('#node-template')
+	show('svg')
+	blinds.close()
 })
 
 
-// setup all the things we can do before actually getting the data:
-function add_proof(){
-    var proof_type=document.getElementById("ProofType");
-    var selectedValue = proof_type.options[proof_type.selectedIndex].value;
-    var proofs = $('#Proofs').val();
-    // To Fix so not to repeat if statement for comma
-    if(document.getElementById('inputList').innerHTML!==""){
-		$('#inputList').append(",");
-    }
-
-    $('#inputList').append(JSON.stringify({"type":selectedValue, "content":proofs}));
+///////////////////////////// HELPERS /////////////////////////////
+function hide(css_selector) {
+	let $selected = $(css_selector)
+	$selected.css('overflow', 'hidden') // we can move this to SCSS file too
+	$selected.css('border-width', '0') // we may not need this
+	$selected.css('height', '0')
 }
 
-function send_node_info(){
-	try{
-	    //To Fix
-	    var name = $('#Name').val()
-	    var plural = $('#Plural').val()
-	    var content = $('#Content').val()
-	    var examples = $('#Examples').val()
-	    var counterexamples = $('#Counterexamples').val()
-	    var intuition = $('#Intuition').val()
-	    var notes = $('#Notes').val()
-	    var importance = document.getElementById('Importance').value
-
-	    var radios = document.getElementsByName('type');
-	    var type = check_radio_button(radios).value;
-	    var proofs = "["+document.getElementById('inputList').innerHTML+"]";
-
-	    ws.send(importance)
-	    if(type === "Theorem"){
-		    var clean_proofs = JSON.parse(proofs)
-		}
-	    else{
-	    	var clean_proofs = JSON.parse("{}")
-		}
-	    ws.send(type)
-	    ws.send(JSON.stringify({
-	    	"name": name,
-	    	"plural": plural,
-	    	"content": content,
-	    	"type": type,
-	    	"proofs": clean_proofs,
-			"importance": importance,
-	    	"examples": examples,
-	    	"counterexamples": counterexamples,
-	    	"intuition": intuition,
-	    	"notes": notes,
-		}))
-	  }
-	catch(err){
-		alert("There is an error")
-	}
+function show(css_selector) {
+	let $selected = $(css_selector)
+	// restore any borders if there were any (not relevant now)
+	$selected.css('height', $(window).height())
+	$selected.css('width', $(window).width())
+	$selected.css('overflow', 'scroll')
 }
 
-function check_radio_button(radios){
-	for(var i=0; i < radios.length; i++){
-	    var current = radios[i]
-	    if(current.checked){
-			return current
-	    }
-	}
-	alert("Please choose a type!")
+function keyToDisplayKey(word, node) {
+	if( word === 'description' ) return node.type
+	if( word === 'dependencies' ) return 'dependencies' // we want this one to stay plural
+	if( word[word.length - 1] === 's' ) return word.substr(0, word.length - 1)
+	return word // word may have ALREADY been singular
 }
-
-
-/////////////////////////////////// HELPERS ///////////////////////////////////
-
-/////////////////////////////////// MARKED ////////////////////////////////////
-
-
-/////////////////////////////////// MATHJAX ///////////////////////////////////
-$(".math").each(function(){ // this is set up as client-side rendering.  see #usage above and use katex.renderToString for server side.
-	var texText = $(this).text();
-	var el = $(this).get(0);
-	var addDisplay = "";
-	if(el.tagName === "DIV"){
-		addDisplay = "\\displaystyle";
-	}
-	try{
-		katex.render(addDisplay+texText, el);
-	}
-	catch(err) {
-		if (err.__proto__ === katex.ParseError.prototype) {
-			$(this).html('$'+texText+'$')
-		} else {
-			$(this).html('<span class="err">' + 'Got error: "'+err+'".' + '</span>');
-		}
-	}
-})
-
-
-//////////////////////////// TEST D3 FUNCTIONALITY ////////////////////////////
-// 1. Add three nodes and three links.
-// setTimeout(function() {
-// 	var new_graph = {
-// 		"nodes": [
-// 			{_id: "at", _importance: 1, _type: 'exercise', _name: 'pigeonhole principal'},
-// 			{_id: "b", _importance: 8, _type: "theorem", _name: 'pigeonhole theorem'},
-// 			{_id: "c", _importance: 5, _type: "definition", _name: 'Bernoulli number'},
-// 		],
-// 		"links": [
-// 			{source: "at", target: "b"}, {source: "at", target: "c"}, {source: "b", target: "c"},
-// 		],
-// 	}
-// 	data.updateNodesAndLinks(new_graph)
-// 	data.updateDisplayNameCapitalization()
-// 	data.removeOneContextFromNames()
-// 	data.showFullContextInNames()
-// }, 0);
 
 
 }); // end require

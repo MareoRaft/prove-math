@@ -31,6 +31,7 @@ class BabelEventHandler (FileSystemEventHandler):
             print('out_path is ' + out_path)
             try:
                 print(subprocess.check_output('babel ' + str(in_path) + ' > ' + str(out_path), shell=True))
+                print('success.')
             except Exception as e:
                 print(e)
 

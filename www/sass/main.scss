@@ -16,34 +16,40 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $medium
 }
 
 //////////////////////////////////////// CSS ////////////////////////////////////////
-.definition-group-1:nth-child(3n+2) { // for some reason the first one is considered 2!!!!!
-  background-color: #CB9;
-}
-.definition-group-1:nth-child(3n+0) {
-  background-color: #4E201D;
-  color: white;
-}
-.definition-group-1:nth-child(3n+1) {
-  background-color: #CCB;
-}
-
-.definition-group-2:nth-child(3n+2) {
-  background-color: #198;
-  color: white;
-}
-.definition-group-2:nth-child(3n+0) {
-  background-color: #0DD;
-}
-.definition-group-2:nth-child(3n+1) {
-  background-color: #7A6;
+.definition-group-1 {
+  &:nth-child(3n+2) { // for some reason the first one is considered 2!!!!!
+    background-color: #CB9;
+  }
+  &:nth-child(3n+0) {
+    background-color: #4E201D;
+    color: white;
+  }
+  &:nth-child(3n+1) {
+    background-color: #CCB;
+  }
 }
 
-.definition-group-3:nth-child(2n+1) {
-  background-color: #4E201D;
-  color: white;
+.definition-group-2 {
+  &:nth-child(3n+2) {
+    background-color: #198;
+    color: white;
+  }
+  &:nth-child(3n+0) {
+    background-color: #0DD;
+  }
+  &:nth-child(3n+1) {
+    background-color: #7A6;
+  }
 }
-.definition-group-3:nth-child(2n+0) {
-  background-color: #CB9;
+
+.definition-group-3 {
+  &:nth-child(2n+1) {
+    background-color: #4E201D;
+    color: white;
+  }
+  &:nth-child(2n+0) {
+    background-color: #CB9;
+  }
 }
 
 
@@ -59,8 +65,15 @@ em {
   color: green;
 }
 
-#node-template {
+@mixin hide { // we can't move the JS completely here because of grabbing window dimensions.  but we can at least initialize the sections to be hidden.
   position: absolute;
+  overflow: hidden;
+  border-width: 0;
+  height: 0;
+}
+
+#node-template {
+  @include hide;
   section {
     overflow: scroll;
   }
@@ -80,27 +93,28 @@ em {
 }
 
 
+// #graph-container {
+//   position: absolute;
+//   background-color: green;
 svg {
-  background-color: white;
-  position: absolute;
-
-  @mixin learned-and-unlearned-fill-and-opacity($color) {
+  @include hide;
+  @mixin bright-and-unbright-fill-and-opacity($color) {
     fill: mix(gray, $color, 70%);
     opacity: 0.3;
-    &.learned {
+    &.bright-circle {
       fill: $color;
       opacity: 0.45;
     }
   }
 
   .definition-circle {
-    @include learned-and-unlearned-fill-and-opacity($green);
+    @include bright-and-unbright-fill-and-opacity($green);
   }
   .theorem-circle {
-    @include learned-and-unlearned-fill-and-opacity(steelblue);
+    @include bright-and-unbright-fill-and-opacity(steelblue);
   }
   .exercise-circle {
-    @include learned-and-unlearned-fill-and-opacity($darkwhite);
+    @include bright-and-unbright-fill-and-opacity($darkwhite);
   }
 
   .node-text {
@@ -122,5 +136,6 @@ svg {
     fill: gray;
   }
 }
+// }
 
 
