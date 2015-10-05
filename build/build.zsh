@@ -38,6 +38,10 @@ IFS=$' \t\n'
 number_of_matches=$#array_of_processes
 if [[ $number_of_matches = 1 ]]
 	then
+	for path_end in www/scripts6/lib/*(e*'REPLY=${REPLY#www/scripts6/}'*) main.js; do # this excludes tests.js
+		babel www/scripts6/$path_end > www/scripts/$path_end &
+	done
+	wait
 	python3 build/babel_watchdog.py ./www/scripts6 &|
 fi
 
