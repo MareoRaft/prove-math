@@ -17,6 +17,7 @@ function init({
 	blinds.expand_array = expand_array
 	blinds.open_empty_blind = open_empty_blind
 	blinds.blind_class_conditions = blind_class_conditions
+	blinds.blind_id_counter = 0
 }
 
 function open({ object=null, keys='own', expand_array_keys=[], collapse_array_keys=[] }) {
@@ -28,142 +29,69 @@ function open({ object=null, keys='own', expand_array_keys=[], collapse_array_ke
 		if( blinds.object.hasOwnProperty(key) ){
 			_openBlind({
 				key: key,
+				display_key: key,
 				expand_array: (blinds.expand_array && !_.contains(collapse_array_keys, key)) || _.contains(expand_array_keys, key),
 			})
 		}
 	}
-	_enableDoubleClickRenderToggling() // enables this in general for all blinds
 }
 
 function close() {
-	// looping through all the divs.... if their state is write...  _endEditMode($key, $value)
-	$('.'+blinds.blind_class).each(function(){
-		let $key = $(this).children('.key:first')
-			let key = $key.attr('data-key')
-			let index = $key.attr('data-index')
-		let $value = $(this).children('.value:first')
-		let state = _getState(key, index)
-		if( state === 'write' ) _endEditMode($key, $value) // (but LEAVE the state as write!)
-	})
+	// save strings of any opened things (or just startReadMode on them)
 	blinds.$window.html('')
 	blinds.object = undefined
+	// clear jquery id double-click triggers?
 }
 
-function _openBlind({ key, expand_array, index }) { // at this point, expand_array represents whether we should expand for THIS key specifically.
-	// alert('opening blind')
-	// alert('focus: '+JSON.stringify(blinds.object[key])+'   and   index: '+index+' and expand_array: '+expand_array)
+function _openBlind({ parent_object=blinds.object, key, expand_array, display_key }) { // at this point, expand_array represents whether we should expand for THIS key specifically.
 	if( expand_array && check.array(blinds.object[key]) ) _.each(blinds.object[key], function(array_element, index) {
 		_openBlind({
-			key: key,
+			parent_object: blinds.object[key],
+			key: index,
+			display_key: key,
 			expand_array: false,
-			index: index,
 		})
 	})
 	else {
-		if( !def(index) && check.array(blinds.object[key]) ) blinds.object[key] = blinds.object[key].join(', ') // when expand_array is off, we should join arrays together with commas.
 		if( blinds.open_empty_blind || blinds.object[key] !== '' ){
-			_displayBlind({
-				key: key,
-				index: index,
-			})
+			// if a blind already exists (check '.blind' key in parent_object), fetch it here
+			// otherwise...
+			let blind = new Blind({ parent_object: parent_object, key: key, display_key: display_key })
+			_displayBlind(blind)
+			_enableDoubleClickRenderToggling(blind)
 		}
 	}
 }
 
-function _displayBlind({ key, index }) {
-	let value_string = def(index)? blinds.object[key][index]: blinds.object[key]
-	if( !def(value_string) || value_string === null) die('Found undefined or null value.  Do you want to show this?')
-	let data_index_string = def(index)? 'data-index="'+index+'"': ''
-	let class_string = blinds.blind_class
-	_.each(blinds.blind_class_conditions, function(bool_func, class_key) {
-		if( bool_func(blinds.object, key, index) ) class_string = class_string + ' ' + class_key
-	})
-
-	blinds.$window.append(
-		'<div class="' + class_string + '">'
-			+ '<span class="key" data-key="'+key+'"' + data_index_string + '>'
-				+ blinds.render(blinds.transform_key(key, blinds.object) + ':')
-			+ '</span>'
-			+ ' ' // this space is not actually necessary, as marked wraps the above in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
-			+ '<span class="value">' + blinds.render(value_string) + '</span>'
-		+ '</div>'
-	)
-
-	let $this = $('.'+blinds.blind_class).last()
-	let $key = $this.children('.key:first') // figure out how to get rid of this block here and in close() and in enableDoubleClickRendering. maybe each of these variables can be a function?
-		// let key = $key.attr('data-key') // this line is the issue!
-		// let index = $key.attr('data-index')
-	// let $value = $this.children('.value:first')
-	// let state = _getState(key, index)
-	// if( state === 'write' ) _startEditMode($key, $value)
+function _displayBlind(blind) {
+	blinds.$window.append(blind.htmlified)
 }
 
-function _enableDoubleClickRenderToggling() {
-	$('.' + blinds.blind_class).dblclick(function(){
-		let $key = $(this).children('.key:first')
-			let key = $key.attr('data-key')
-			let index = $key.attr('data-index')
-		let $value = $(this).children('.value:first')
-		let state = _getState(key, index)
-		if( state === 'read' ){
-			_startEditMode($key, $value)
-			_setCursor($value)
-			blinds.object[_getStateString(key, index)] = 'write'
-		}
-		else if( state === 'write' ){
-			_endEditMode($key, $value)
-			blinds.object[_getStateString(key, index)] = 'read'
-		}
-		else die('Unexpected state "'+state+'".')
-	})
+function _enableDoubleClickRenderToggling(blind) {
+	$('#'+blind.id).dblclick(function(){ _toggleBlindGiven$selected(blind, $(this)) })
 }
 
-function _getState(key, index) {
-	return blinds.object[_getStateString(key, index)] || 'read' // the first time a $value is double clicked, the corresponding state is undefined.  Here, we default it to 'read'.
+function _toggleBlindGiven$selected(blind, $this) {
+	let $key = $this.children('.key:first')
+		let key = $key.attr('data-key')
+		let index = $key.attr('data-index')
+	let $value = $this.children('.value:first')
+
+	blind.toggleState()
+	if(blind.state === 'read') _startReadMode(blind, $value)
+	if(blind.state === 'write') _startWriteMode(blind, $value)
 }
 
-function _getStateString(key, index) {
-	if( _keyHoldsString(key) ){
-		return key + '-state'
-	}
-	else if( _keyHoldsArrayOfStrings(key) ) {
-		return key + '-' + index.toString() + '-state'
-	}
-	else die('Unexpected object[key] type.')
-}
-
-function _startEditMode($key, $value) {
-	$value.html(_getBlindValueFromObject($key))
-	$value.prop('contenteditable', true)
-}
-
-function _endEditMode($key, $value) {
+function _startReadMode(blind, $value) {
 	$value.prop('contenteditable', false)
-	// take value, STORE IT, then display the render()ed version of it
-	_storeBlindValueIntoObject($key, $value) // THIS IS a mistake because it only works if the blind value is a pure string.  we need to protect against accidentally storing the rendered string into here (bad use of _endEditMode).
-	$value.html(blinds.render(_getBlindValueFromObject($key)))
+	blind.value = $value.html()
+	$value.html(blind.value_htmlified)
 }
 
-function _storeBlindValueIntoObject($key, $value) {
-	let key = $key.attr('data-key')
-	if( _keyHoldsString(key) ){
-		blinds.object[key] = $value.html() // store the html string back into the object (save changes for future use)
-	}
-	else if( _keyHoldsArrayOfStrings(key) ){
-		blinds.object[key][$key.attr('data-index')] = $value.html()
-	}
-	else die('Unexpected value of object: ' + blinds.object[key])
-}
-
-function _getBlindValueFromObject($key) { // this is after the blind has been initialized
-	let key = $key.attr('data-key')
-	if( _keyHoldsString(key) ){
-		return blinds.object[key]
-	}
-	else if( _keyHoldsArrayOfStrings(key) ){
-		return blinds.object[key][$key.attr('data-index')]
-	}
-	else die('Unexpected value of object: ' + blinds.object[key])
+function _startWriteMode(blind, $value) {
+	$value.html(blind.value_htmlified)
+	$value.prop('contenteditable', true)
+	_setCursor($value)
 }
 
 function _setCursor($contenteditable_container) {
@@ -177,14 +105,84 @@ function _setCursor($contenteditable_container) {
 	sel.addRange(range)
 }
 
-function _keyHoldsString(key) {
-	return check.string(blinds.object[key])
+//////////////////////////// BLIND CLASS ////////////////////////////
+class Blind {
+
+	constructor({ parent_object, key, display_key }) {
+		this.parent_object = parent_object
+		this.key = key
+		this.display_key = display_key
+		this.state = 'read'
+	}
+
+	get id() {
+		if( !def(this._id) ) this._id = 'Blind-ID-' + (blinds.blind_id_counter++).toString()
+		return this._id
+	}
+
+	get value() {
+		return this.parent_object[this.key]
+	}
+
+	set value(new_value) {
+		this.parent_object[this.key] = new_value
+	}
+
+	get classes() {
+		let classes = [blinds.blind_class]
+		for( let class_name in blinds.blind_class_conditions ){
+			let bool_func = blinds.blind_class_conditions[class_name]
+			if( bool_func(blinds.object, this.display_key, this.key) ) classes.push(class_name)
+		}
+		return classes
+	}
+
+	// get index() {
+	// 	// may not need this
+	// }
+
+	get htmlified() {
+		return	'<div id="' + this.id + '" class="' + this.classes_htmlified + '">'
+					// + '<span class="key" data-key="'+this.key+'"' + this.index_htmlified + '>' // may not need this info at all!
+					+ '<span class="key" data-key="'+this.key+'">'
+						+ this.display_key_htmlified
+					+ '</span>'
+					+ ' ' // this space is not actually necessary, as marked wraps the above in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
+					+ '<span class="value" ' + this.contenteditable_htmlified + '>'
+						+ this.value_htmlified
+					+ '</span>'
+			+ '</div>'
+	}
+
+	get display_key_htmlified() {
+		return blinds.render(blinds.transform_key(this.display_key, blinds.object) + ':')
+	}
+
+	get value_htmlified() {
+		let value_string = check.array(this.value)? this.value.join(', '): this.value
+		if(this.state === 'write') return value_string
+		else if(this.state === 'read') return blinds.render(value_string)
+		else die('Bad state.')
+	}
+
+	get classes_htmlified() {
+		return this.classes.join(' ')
+	}
+
+	get contenteditable_htmlified() {
+		if(this.state === 'read') return ''
+		else if(this.state === 'write') return 'contenteditable'
+		else die('Bad state.')
+	}
+
+	toggleState() {
+		if(this.state === 'read') this.state = 'write'
+		else if(this.state === 'write') this.state = 'read'
+		else die('Bad state.')
+	}
 }
 
-function _keyHoldsArrayOfStrings(key) {
-	return check.array.of.string(blinds.object[key])
-}
-
+////////////////////////////// EXPORTS //////////////////////////////
 return {
 	init: init,
 	open: open,

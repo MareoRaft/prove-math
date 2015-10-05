@@ -65,7 +65,7 @@ require( [
 ){
 
 
-//////////////////////////// INITIALIZATION ////////////////////////////
+/////////////////////////// INITIALIZATION ///////////////////////////
 // alert(JSON.stringify(user.prefs))
 user.init({ // this one should be triggered by jQuery when they login
 	account_type: 'facebook',
@@ -157,7 +157,7 @@ $('#back').click(function(){
 })
 
 
-///////////////////////////// HELPERS /////////////////////////////
+////////////////////////////// HELPERS //////////////////////////////
 function hide(css_selector) {
 	let $selected = $(css_selector)
 	$selected.css('overflow', 'hidden') // we can move this to SCSS file too
