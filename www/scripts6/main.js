@@ -6,9 +6,7 @@ require.config({
 	paths: { // other paths we want to access
 		jquery: "http://code.jquery.com/jquery-1.11.2.min",
 		underscore: "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
-		// backbone: "https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min",
-		// d3: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min",
-		d3: "d3-for-development",
+		d3: "d3-for-development", // if we add patches separately, then we can just use https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min
 		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
 		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
 		// marked: "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min", // disabled for consistent development
@@ -17,7 +15,7 @@ require.config({
 	},
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
-		// backbone: { deps: ["jquery", "underscore"], exports: "Backbone" },
+		chosen: { deps: ["jquery"] },
 		// mathjax: {
 		// 	exports: "MathJax",
 		// 	init: function (){
@@ -47,6 +45,7 @@ require( [
 	"node",
 	"graph-animation",
 	"blinds",
+	"chosen",
 	"user",
 ], function(
 	$,
@@ -61,8 +60,15 @@ require( [
 	Node,
 	graphAnimation,
 	blinds,
+	chosen,
 	user
 ){
+
+
+
+//// test chosen
+$('#cars').width("40%")
+$('#cars').chosen()
 
 
 /////////////////////////// INITIALIZATION ///////////////////////////
@@ -74,6 +80,11 @@ user.init({ // this one should be triggered by jQuery when they login
 })
 // alert(JSON.stringify(user.prefs))
 
+let circle_events = {
+	mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.description },
+	mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
+}
+circle_events[user.prefs.view_node_trigger] = node => $.event.trigger({ type: 'view-node', message: node.id })
 graphAnimation.init({
 	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
 	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
@@ -84,11 +95,7 @@ graphAnimation.init({
 		'theorem-circle': node => node.type === 'theorem',
 		'exercise-circle': node => node.type === 'exercise',
 	},
-	circle_events: {
-		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.description },
-		mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
-		dblclick: node => $.event.trigger({ type: 'node-dbl-click', message: node.id }),
-	},
+	circle_events: circle_events, // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
 })
 show('svg') // both svg and node-template are hidden on load
 
@@ -139,7 +146,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 
 
 //////////////////////////// TOGGLE STUFF ////////////////////////////
-$(document).on('node-dbl-click', function(Event){
+$(document).on('view-node', function(Event){
 	current_node = graph.nodes[Event.message] // this assumed HASH of nodes
 	blinds.open({
 		object: current_node,
