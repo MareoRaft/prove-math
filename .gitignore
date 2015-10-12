@@ -11,3 +11,6 @@ www/scripts/lib/graph-animation.js
 www/scripts/lib/node.js
 www/stylesheets/main.css
 server/data/*.json
+server/dictionary_maker.py
+text-files/things-to-go-over-with-theo.txt
+
