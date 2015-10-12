@@ -1,1 +1,1 @@
-check-types-3.3/src/check-types.js
+check-types/src/check-types.js
