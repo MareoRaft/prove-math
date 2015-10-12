@@ -64,7 +64,7 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 }
 
 function _displayBlind(blind) {
-	blinds.$window.append(blind.htmlified)
+	blinds.$window.append(blind.htmlified) // we could grab the jQuery $sel here by using last() (or possibly the return value of append()).  Then we would not need '#'+blind.id to tie the trigger.  But we *may* need blind.id for something else.  That is, resuing blind objects if we wanted to do that for some reason.
 }
 
 function _enableDoubleClickRenderToggling(blind) {

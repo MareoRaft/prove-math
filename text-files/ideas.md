@@ -32,3 +32,4 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 34. implement a "tag" system for dependencies and proof "types".  See if there is a library out there for this!  I like this library: http://harvesthq.github.io/chosen/  .  Also this one . http://sean.is/poppin/tags  .  And this one!! https://maxfavilli.com/jquery-tag-manager    .   There are many many more.
 35. add in mathjax rendering for html.  is there a mathjax function i can call?
 36. fix window resizing on resizing
+37. just keep building javascript features!  do chosen.  anything!
