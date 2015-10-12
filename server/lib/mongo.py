@@ -8,6 +8,11 @@ class Mongo:
         self.address = pymongo.MongoClient("mongodb://localhost")
         self.database = database
         self.collection = collection
+        # self.pass_hash = CryptContext(
+        #     schemes=[
+        #         "sha256_crypt",
+        #         "md5_crypt",
+        #         "des_crypt"])
 
     def __str__(self):
         msg = "(address: %s, db: %s, collection: %s)" % (self.address, self.database, self.collection)
@@ -54,58 +59,3 @@ class Mongo:
         # This will delete from all fields which match the parameter!!
         results = self.address[self.database][self.collection].delete_many(dict_fields)
         print("Number deleted: " + str(results.deleted_count))
-
-
-# Handles interactions with "users" Collection, Database
-
-
-# class Users(Mongo):
-
-#     def __init__(self):
-#         Mongo(self, "provemath", "users")
-#         self.pass_hash = CryptContext(
-#             schemes=[
-#                 "sha256_crypt",
-#                 "md5_crypt",
-#                 "des_crypt"])
-
-#     def make_pw_hash(self, pw):
-#         crypt = self.pass_hash
-#         return crypt.encrypt(pw)
-
-#     def add_user(self, username, password, email):
-#         password_hash = self.make_pw_hash(password)
-#         user = {'_id': username, 'password': password_hash, 'email': email}
-
-#         try:
-#             self.address[self.database][self.collection].insert(user)
-
-#         except pymongo.errors.OperationFailure:
-#             print("Mongo Error")
-#             return False
-
-#         except pymongo.errors.DuplicateKeyError as e:
-#             print("Username is already taken")
-#             return False
-
-#         return True
-
-#     def validate_login(self, username, password):
-#         query = {'_id': username}
-#         crypt = self.pass_hash
-#         user = None
-
-#         try:
-#             user = self.address[self.database][self.collection].find_one(query)
-#         except:
-#             print("Unexpected Error")
-
-#         if user is None:
-#             print("User or password not correct")
-#             return None
-
-#         if not crypt.verify(password, user['password']):
-#             print("User or password not correct")
-#             return None
-
-#         return user
