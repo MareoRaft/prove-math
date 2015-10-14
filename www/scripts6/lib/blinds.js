@@ -1,26 +1,35 @@
 define( ["jquery", "underscore", "profile", "check-types"], function($, _, undefined, check){
 
 let blinds = {}
-function init({
-			window_id = 'blinds',
-			blind_class = 'blind',
-			render = x => x,
-			transform_key = x => x,
-			expand_array = false,
-			open_empty_blind = true,
-			blind_class_conditions = {},
-		}) {
-	blinds.$window = $('#' + window_id)
-	blinds.render = render
-	blinds.transform_key = transform_key
-	blinds.blind_class = blind_class
-	blinds.expand_array = expand_array
-	blinds.open_empty_blind = open_empty_blind
-	blinds.blind_class_conditions = blind_class_conditions
+function init(input) {
+	blinds = _.defaults(input, {
+		window_id: 'blinds',
+		keys: undefined, // yes, you can inherit undefined values too
+		expand_array_keys: undefined,
+		collapse_array_keys: undefined,
+		render: x => x,
+		transform_key: x => x,
+		expand_array: false,
+		open_empty_blind: true,
+		blind_class_conditions: {},
+	})
+
+	blinds.$window = $('#' + blinds.window_id)
+	delete blinds.window_id
+
 	blinds.blind_id_counter = 0
 }
 
-function open({ object=null, keys='own', expand_array_keys=[], collapse_array_keys=[] }) {
+function open({
+			object = null,
+			keys = blinds.keys,
+			expand_array_keys = blinds.expand_array_keys,
+			collapse_array_keys = blinds.collapse_array_keys,
+		}) {
+	keys = def(keys)? keys: 'own'
+	expand_array_keys = def(expand_array_keys)? expand_array_keys: []
+	collapse_array_keys = def(collapse_array_keys)? collapse_array_keys: []
+
 	if( object === null ) die('Tried to open the blinds with no blinds (object input was null or undefined).')
 	blinds.object = object
 	let iterable = (keys === 'own')? blinds.object: keys
@@ -65,6 +74,7 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 
 function _displayBlind(blind) {
 	blinds.$window.append(blind.htmlified) // we could grab the jQuery $sel here by using last() (or possibly the return value of append()).  Then we would not need '#'+blind.id to tie the trigger.  But we *may* need blind.id for something else.  That is, resuing blind objects if we wanted to do that for some reason.
+	$('.chosen').chosen() // this should probably be moved to the end of open()
 }
 
 function _enableDoubleClickRenderToggling(blind) {
@@ -129,10 +139,17 @@ class Blind {
 	}
 
 	get classes() {
-		let classes = [blinds.blind_class]
+		let classes = []
 		for( let class_name in blinds.blind_class_conditions ){
-			let bool_func = blinds.blind_class_conditions[class_name]
-			if( bool_func(blinds.object, this.display_key, this.key) ) classes.push(class_name)
+			let value = blinds.blind_class_conditions[class_name]
+			if( check.function(value) ){
+				let bool_func = value
+				if( bool_func(blinds.object, this.display_key, this.key) ) classes.push(class_name)
+			}
+			else if( check.boolean(value) ){
+				let bool = value
+				if( bool ) classes.push(class_name)
+			}
 		}
 		return classes
 	}
@@ -160,9 +177,23 @@ class Blind {
 
 	get value_htmlified() {
 		let value_string = check.array(this.value)? this.value.join(', '): this.value
-		if(this.state === 'write') return value_string
+		// if(this.state === 'write') return value_string
+		if(this.state === 'write'){ // once this works, consider abstracting it out of blinds, or if not, at least making it a configurable option
+			return this.as_select_html(this.value)
+		}
 		else if(this.state === 'read') return blinds.render(value_string)
 		else die('Bad state.')
+	}
+
+	as_select_html(array) {
+		// alert(check.array(array))
+		let string = '<select class="chosen" multiple>'
+		_.each(array, function(el){
+			// alert(el) // you know, there is something fishy about this array!  it has this weird extra "true" in it and maybe a function?
+			string = string + '<option value="'+el+'">'+el+'</option>'
+		})
+		string = string + '</select>'
+		return string
 	}
 
 	get classes_htmlified() {

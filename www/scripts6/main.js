@@ -101,11 +101,13 @@ show('svg') // both svg and node-template are hidden on load
 
 blinds.init({
 	window_id: 'node-template-blinds',
-	blind_class: 'node-attribute',
+	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'dependencies'],
+	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
 	render: marked,
 	transform_key: keyToDisplayKey,
 	expand_array: true,
 	blind_class_conditions: {
+		'node-attribute': true,
 		'definition-group-1': (node, key) => _.contains(['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions'], key),
 		'definition-group-2': (node, key) => _.contains(['examples', 'counterexamples'], key),
 		'definition-group-3': (node, key) => _.contains(['dependencies'], key),
@@ -150,8 +152,6 @@ $(document).on('view-node', function(Event){
 	current_node = graph.nodes[Event.message] // this assumed HASH of nodes
 	blinds.open({
 		object: current_node,
-		keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'dependencies'],
-		collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
 	})
 	hide('svg')
 	show('#node-template')

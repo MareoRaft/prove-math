@@ -33,3 +33,4 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 35. add in mathjax rendering for html.  is there a mathjax function i can call?
 36. fix window resizing on resizing
 37. just keep building javascript features!  do chosen.  anything!
+38. why isn't plural of vertices appearing?

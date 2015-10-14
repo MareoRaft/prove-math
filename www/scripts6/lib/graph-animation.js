@@ -1,24 +1,19 @@
 define(["jquery", "check-types", "profile", "d3", "user"], function($, check, undefined, d3, user){
 
 let gA = {} // for graphAnimation
-function init({
-			// window_id, // due to select() issue having to use 'body'
-			nodes = [],
-			links = [],
-			node_id = function(node){ if( !def(node) ) die('got undefined node.'); return node.id },
-			node_label = '',
-			node_radius = node => node.r,
-			circle_class_conditions = {},
-			circle_events = {},
-		}) {
-	gA.nodes = nodes
-	gA.links = links
+function init(input) {
+	gA = _.defaults(input, {
+		// window_id, // due to select() issue having to use 'body'
+		nodes: [],
+		links: [],
+		node_id: function(node){ if( !def(node) ) die('got undefined node.'); return node.id },
+		node_label: '',
+		node_radius: node => node.r,
+		circle_class_conditions: {},
+		circle_events: {},
+	})
 
-	gA.node_id = node_id
-	gA.node_label = node_label
-	gA.node_radius = node_radius
-	gA.circle_class_conditions = circle_class_conditions
-	gA.circle_events = _.mapObject(circle_events, function(func) {
+	gA.circle_events = _.mapObject(gA.circle_events, function(func) {
 		return function(node) { func(node); update() }
 	})
 
@@ -31,7 +26,7 @@ function init({
 
 	gA.force = d3.layout.force() // see https://github.com/mbostock/d3/wiki/Force-Layout for options
 		.nodes(gA.nodes) // and when we push new nodes to nodes, things happen (i think)
-		.links(links)
+		.links(gA.links)
 		.size([gA.width, gA.height])
 		.charge(-400) // all of these can be FUNCTIONS, which act on each node or link, depending on the property :)
 		// .linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
