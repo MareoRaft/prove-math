@@ -7,6 +7,7 @@ function init(input) {
 		keys: undefined, // yes, you can inherit undefined values too
 		expand_array_keys: undefined,
 		collapse_array_keys: undefined,
+		chosen: false,
 		render: x => x,
 		transform_key: x => x,
 		expand_array: false,
@@ -65,7 +66,12 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 		if( blinds.open_empty_blind || blinds.object[key] !== '' ){
 			// if a blind already exists (check '.blind' key in parent_object), fetch it here
 			// otherwise...
-			let blind = new Blind({ parent_object: parent_object, key: key, display_key: display_key })
+			let blind = new Blind({
+				parent_object: parent_object,
+				key: key,
+				display_key: display_key,
+				mode: (blinds.chosen && check.array(parent_object[key]) )? 'chosen': 'standard',
+			})
 			_displayBlind(blind)
 			_enableDoubleClickRenderToggling(blind)
 		}
@@ -74,8 +80,6 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 
 function _displayBlind(blind) {
 	blinds.$window.append(blind.htmlified) // we could grab the jQuery $sel here by using last() (or possibly the return value of append()).  Then we would not need '#'+blind.id to tie the trigger.  But we *may* need blind.id for something else.  That is, resuing blind objects if we wanted to do that for some reason.
-	$('.chosen').chosen() // this should probably be moved to the end of open()
-	alert('chosen')
 }
 
 function _enableDoubleClickRenderToggling(blind) {
@@ -101,8 +105,18 @@ function _startReadMode(blind, $value) {
 
 function _startWriteMode(blind, $value) {
 	$value.html(blind.value_htmlified)
-	$value.prop('contenteditable', true)
-	_setCursor($value)
+	if( blind.mode === 'chosen' ){
+		$('.chosen').chosen({ width: '100%' }) // this should probably be moved to the end of open()
+		// can we add more options after the fact?
+		$('.chosen').append('<option value="new" selected>NEW</option>')
+		$('.chosen').trigger('chosen:updated')
+
+	}
+	else if( blind.mode === 'standard' ){
+		$value.prop('contenteditable', true)
+		_setCursor($value)
+	}
+	else die('Unexpected blind mode.')
 }
 
 function _setCursor($contenteditable_container) {
@@ -119,11 +133,15 @@ function _setCursor($contenteditable_container) {
 //////////////////////////// BLIND CLASS ////////////////////////////
 class Blind {
 
-	constructor({ parent_object, key, display_key }) {
-		this.parent_object = parent_object
-		this.key = key
-		this.display_key = display_key
-		this.state = 'read'
+	constructor(input) {
+		_.defaults(input, {
+			parent_object: undefined,
+			key: undefined,
+			display_key: undefined,
+			mode: 'standard', // can be 'standard' or 'chosen'
+			state: 'read', // can be 'read' or 'write'
+		})
+		_.extendOwn(this, input)
 	}
 
 	get id() {
@@ -178,23 +196,12 @@ class Blind {
 
 	get value_htmlified() {
 		let value_string = check.array(this.value)? this.value.join(', '): this.value
-		// if(this.state === 'write') return value_string
-		if(this.state === 'write'){ // once this works, consider abstracting it out of blinds, or if not, at least making it a configurable option
-			return this.as_select_html(this.value)
+		if(this.state === 'write'){
+			if( this.mode === 'chosen' ) return as_select_html(this.value)
+			else return value_string
 		}
 		else if(this.state === 'read') return blinds.render(value_string)
 		else die('Bad state.')
-	}
-
-	as_select_html(array) {
-		// alert(check.array(array))
-		let string = '<select class="chosen" multiple>'
-		_.each(array, function(el){
-			// alert(el) // you know, there is something fishy about this array!  it has this weird extra "true" in it and maybe a function?
-			string = string + '<option value="'+el+'">'+el+'</option>'
-		})
-		string = string + '</select>'
-		return string
 	}
 
 	get classes_htmlified() {
@@ -212,6 +219,19 @@ class Blind {
 		else if(this.state === 'write') this.state = 'read'
 		else die('Bad state.')
 	}
+}
+
+////////////////////////////// HELPERS //////////////////////////////
+function as_select_html(array) {
+	// alert(check.array(array))
+	let string = '<select class="chosen" multiple>'
+	_.each(array, function(el){
+		// alert(el) // you know, there is something fishy about this array!  it has this weird extra "true" in it and maybe a function?
+		string = string + '<option value="'+el+'" selected>'+el+'</option>' // we set property selected to true, so that everything is pre-selected
+		// we can add other options to the list by grabbing other node names, but don't use selected for these
+	})
+	string = string + '</select>'
+	return string
 }
 
 ////////////////////////////// EXPORTS //////////////////////////////

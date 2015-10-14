@@ -112,6 +112,7 @@ blinds.init({
 		'definition-group-2': (node, key) => _.contains(['examples', 'counterexamples'], key),
 		'definition-group-3': (node, key) => _.contains(['dependencies'], key),
 	},
+	chosen: true,
 })
 let current_node = {}
 $('#learn').click(function(){
