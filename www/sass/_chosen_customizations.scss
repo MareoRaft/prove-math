@@ -1,0 +1,38 @@
+.chosen-container {
+	font-size: 13px; // was 13. probably could be bigger, but then we need to increase some sort of padding too
+}
+
+.chosen-container-multi .chosen-choices { // this is the BIG box with everything else in it
+	background-color: transparent; // makes the BIG box see-through
+	background-image: none;
+	border: none;
+}
+
+.chosen-container-multi .chosen-choices li.search-choice { // there is also a search-choice-focus you may need to look into
+	box-shadow: none;
+	background-image: none;
+	// background-color: orange; // use this to override background-color of tags
+	border: none;
+}
+
+.chosen-container-multi .chosen-drop .result-selected {
+	color: red;
+}
+
+.chosen-container .chosen-results {
+	color: #444;
+	li {
+		&.disabled-result {
+			color: #ccc;
+		}
+		&.highlighted {
+			background-image: none;
+			background-color: pink;
+			color: #fff;
+		}
+		&.no-results {
+			color: #777;
+			background: #f4f4f4;
+		}
+	}
+}
