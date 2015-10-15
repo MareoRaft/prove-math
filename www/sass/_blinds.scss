@@ -1,0 +1,63 @@
+@import 'chosen';
+@import 'chosen_customizations';
+@import 'animate';
+
+//////////////////////////////////////// BLINDS ////////////////////////////////////////
+.node-attribute {
+  padding: 44px;
+  font: 300 normal 19px Helvetica, Tahoma, Arial, sans-serif; /* somewhere in 18-22 range feels right */
+  .key {
+    display: inline-block;
+    vertical-align: top;
+    width: 15%;
+    text-align: right;
+  }
+  .value {
+    display: inline-block;
+    vertical-align: top;
+    width: 85%;
+  }
+  strong {
+  font-weight: bold;
+  }
+  em {
+    font-style: italic;
+  }
+}
+
+.definition-group-1 {
+  &:nth-child(3n+2) { // for some reason the first one is considered 2!!!!!
+    background-color: #CB9;
+  }
+  &:nth-child(3n+0) {
+    background-color: #4E201D;
+    color: white;
+  }
+  &:nth-child(3n+1) {
+    background-color: #CCB;
+  }
+}
+
+.definition-group-2 {
+  &:nth-child(3n+2) {
+    background-color: #198;
+    color: white;
+  }
+  &:nth-child(3n+0) {
+    background-color: #0DD;
+  }
+  &:nth-child(3n+1) {
+    background-color: #7A6;
+  }
+}
+
+.definition-group-3 {
+  &:nth-child(2n+1) {
+    background-color: #4E201D;
+    color: white;
+  }
+  &:nth-child(2n+0) {
+    background-color: #CB9;
+  }
+}
+

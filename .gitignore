@@ -9,8 +9,7 @@ www/scripts/lib/profile.js
 www/scripts/lib/graph.js
 www/scripts/lib/graph-animation.js
 www/scripts/lib/node.js
-www/stylesheets/animate.css
-www/stylesheets/main.css
+www/stylesheets
 server/data/*.json
 server/dictionary_maker.py
 text-files/things-to-go-over-with-theo.txt
