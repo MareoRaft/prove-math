@@ -4,16 +4,22 @@
 
 //////////////////////////////////////// INDEX ////////////////////////////////////////
 #node-template {
-  @include hide;
-  section {
-    overflow: scroll;
-  }
+	@include hide;
+	section {
+		overflow: scroll;
+	}
 }
 
 #section-1 {
-  background-color: pink;
+	background-color: pink;
 }
 
 #section-form {
-  background-color: cyan;
+	background-color: cyan;
+}
+
+body {
+	display: inline-flex; // this kinda works! // but perhaps not all elements are inheriting.
+	// or maybe we need to set flex-grow
+	flex-grow: 1;
 }

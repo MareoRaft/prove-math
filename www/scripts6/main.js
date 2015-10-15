@@ -108,8 +108,8 @@ blinds.init({
 	expand_array: true,
 	blind_class_conditions: {
 		'node-attribute': true,
-		animated: true,
-		flipInX: true,
+		animated: user.prefs.animate_blinds,
+		flipInX: user.prefs.animate_blinds,
 		'definition-group-1': (node, key) => _.contains(['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions'], key),
 		'definition-group-2': (node, key) => _.contains(['examples', 'counterexamples'], key),
 		'definition-group-3': (node, key) => _.contains(['dependencies'], key),
@@ -161,14 +161,18 @@ $(document).on('view-node', function(Event){
 })
 
 $('#back').click(function(){
-	$('.node-attribute').addClass('animated flipOutX')
-	$('.node-attribute').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-		hide('#node-template')
-		show('svg')
-		blinds.close()
-	})
+	if( user.prefs.animate_blinds ){
+		$('.node-attribute').addClass('animated flipOutX')
+		$('.node-attribute').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', toggleToGraphAnimation)
+	}
+	else toggleToGraphAnimation()
 })
 
+function toggleToGraphAnimation() {
+	hide('#node-template')
+	show('svg')
+	blinds.close()
+}
 
 ////////////////////////////// HELPERS //////////////////////////////
 function hide(css_selector) {
