@@ -98,8 +98,24 @@ function _toggleBlindGiven$selected(blind, $this) {
 }
 
 function _startReadMode(blind, $value) {
-	$value.prop('contenteditable', false)
-	blind.value = $value.html()
+	if( blind.mode === 'chosen' ){
+		let selected_elements = []
+		// grab the options that have the selected property (jQuery)
+		$('#'+blind.id+' '+'.chosen').children().each(function(){
+			if( $(this).prop('selected') ) selected_elements.push($(this).val())
+		})
+		// put them in an array and give it to blind.value
+		blind.value = selected_elements
+		// alert('partially implemented')
+	}
+	else if( blind.mode === 'standard' ){
+		$value.prop('contenteditable', false)
+		blind.value = $value.html()
+	}
+	else die('Unexpected blind mode.')
+
+
+
 	$value.html(blind.value_htmlified)
 }
 
@@ -108,8 +124,8 @@ function _startWriteMode(blind, $value) {
 	if( blind.mode === 'chosen' ){
 		$('.chosen').chosen({ width: '100%' }) // this should probably be moved to the end of open()
 		// can we add more options after the fact?
-		$('.chosen').append('<option value="new" selected>NEW</option>')
-		$('.chosen').trigger('chosen:updated')
+		// $('.chosen').append('<option value="new" selected>NEW</option>')
+		$('.chosen').trigger('chosen:updated') // this is how to update chosen after adding more options
 
 	}
 	else if( blind.mode === 'standard' ){
