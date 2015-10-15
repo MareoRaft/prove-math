@@ -174,7 +174,7 @@ class Blind {
 	}
 
 	get classes() {
-		let classes = []
+		let classes = ['blind']
 		for( let class_name in blinds.blind_class_conditions ){
 			let value = blinds.blind_class_conditions[class_name]
 			if( check.function(value) ){
@@ -196,18 +196,17 @@ class Blind {
 	get htmlified() {
 		return	'<div id="' + this.id + '" class="' + this.classes_htmlified + '">'
 					// + '<span class="key" data-key="'+this.key+'"' + this.index_htmlified + '>' // may not need this info at all!
-					+ '<span class="key" data-key="'+this.key+'">'
-						+ this.display_key_htmlified
-					+ '</span>'
-					+ ' ' // this space is not actually necessary, as marked wraps the above in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
-					+ '<span class="value" ' + this.contenteditable_htmlified + '>'
+					+ '<div class="key" data-key="'+this.key+'">'
+						+ this.display_key_htmlified + '&nbsp'
+					+ '</div>'
+					+ '<div class="value" ' + this.contenteditable_htmlified + '>'
 						+ this.value_htmlified
-					+ '</span>'
+					+ '</div>'
 			+ '</div>'
 	}
 
 	get display_key_htmlified() {
-		return blinds.render(blinds.transform_key(this.display_key, blinds.object) + ':')
+		return blinds.render(blinds.transform_key(this.display_key, blinds.object) + ':') // marked wraps this in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
 	}
 
 	get value_htmlified() {
