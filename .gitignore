@@ -13,4 +13,7 @@ www/stylesheets
 server/data/*.json
 server/dictionary_maker.py
 text-files/things-to-go-over-with-theo.txt
-
+*~
+#*#
+*.pyc
+server/oauth_secrets.txt
