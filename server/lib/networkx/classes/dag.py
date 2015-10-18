@@ -63,9 +63,9 @@ class _DAG (nx.DiGraph):
 		graph['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
 		return graph
 
-	def as_complete_json(self, list_of_complete_nodes):
-		graph_dict = self.as_complete_dict(list_of_complete_nodes)
-		return json.dumps(graph_dict) # for the future, the following may be faster: 1. simplejason or 2. cjson
+	# def as_complete_json(self, list_of_complete_nodes): # this is probably no longer needed as tornado has a helper function to wrap things in json
+	# 	graph_dict = self.as_complete_dict(list_of_complete_nodes)
+	# 	return json.dumps(graph_dict) # for the future, the following may be faster: 1. simplejason or 2. cjson
 
 
 nx.DAG = _DAG

@@ -126,24 +126,50 @@ $('#unlearn').click(function(){
 let ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): undefined;
 if( !def(ws) ) die('Your browser does not support websockets, which are essential for this program.')
 
+ws.jsend = function(raw_object) {
+	ws.send(JSON.stringify(raw_object))
+}
 ws.onopen = function() {
-	ws.send("Hello, world, Remember to clear cache if needed!")
-	// on the SERVER SIDE, on ws.onopen, before sending graph, send user info.
+	ws.jsend({ command: 'print', message: 'websocket opened.' })
+	// on the SERVER SIDE, if the server remembers this user somehow, immediately send user info
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
-	let unbundled = JSON.parse(event.data)
-	// here we can do 'command' logic to process various commands from server
-	// 'load' command can direct to user.load()
-	let raw_graph = unbundled
-	_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
-		raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
-	})
-	let ready_graph = raw_graph
-	graph.addNodesAndLinks({
-		nodes: ready_graph.nodes,
-		links: ready_graph.links,
-	})
+	let ball = JSON.parse(event.data)
+	if( ball.command === 'load-user' ) {
+		user.init(ball.user_dict)
+	}
+	if( ball.command === 'load-graph' ) {
+		let raw_graph = ball.new_graph
+		_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
+			raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
+		})
+		let ready_graph = raw_graph
+		graph.addNodesAndLinks({
+			nodes: ready_graph.nodes,
+			links: ready_graph.links,
+		})
+	}
+	else die('Unrecognized command '+ball.command+'.')
 }
+
+$(document).on('learned-node-to-server', function(Event) {
+	// ws.jsend({
+	// 	command: 'learn-node',
+	// 	node_id: Event.message,
+	// })
+})
+$(document).on('unlearned-node-to-server', function(Event) {
+	// ws.jsend({
+	// 	command: 'unlearn-node',
+	// 	node_id: Event.message,
+	// })
+})
+$(document).on('pref-to-server', function(Event) {
+	// ws.jsend({
+	// 	command: 'set-pref',
+	// 	pref_dict: Event.message,
+	// })
+})
 
 ///////////////////////////// LOGIN STUFF /////////////////////////////
 $('#password').keypress(function(event) { if(event.which === 13) {
