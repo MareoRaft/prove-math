@@ -64,14 +64,10 @@ require( [
 	user
 ){
 
-
-
-//// test chosen
-$('#cars').width("40%")
-$('#cars').chosen()
-
-
 /////////////////////////// INITIALIZATION ///////////////////////////
+loginInit()
+show('#login')
+
 // alert(JSON.stringify(user.prefs))
 user.init({ // this one should be triggered by jQuery when they login
 	account_type: 'facebook',
@@ -108,11 +104,11 @@ blinds.init({
 	expand_array: true,
 	blind_class_conditions: {
 		'node-attribute': true,
-		animated: user.prefs.animate_blinds,
-		flipInX: user.prefs.animate_blinds,
 		'definition-group-1': (node, key) => _.contains(['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions'], key),
 		'definition-group-2': (node, key) => _.contains(['examples', 'counterexamples'], key),
 		'definition-group-3': (node, key) => _.contains(['dependencies'], key),
+		animated: user.prefs.animate_blinds,
+		flipInX: user.prefs.animate_blinds,
 	},
 	chosen: true,
 })
@@ -140,7 +136,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	// 'load' command can direct to user.load()
 	let raw_graph = unbundled
 	_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
-		raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw
+		raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
 	})
 	let ready_graph = raw_graph
 	graph.addNodesAndLinks({
@@ -149,6 +145,36 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	})
 }
 
+///////////////////////////// LOGIN STUFF /////////////////////////////
+$('#password').keypress(function(event) { if(event.which === 13) {
+	login()
+}})
+$('#login-button').click(login)
+$('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE whatever was just typed in .val()
+	if($(this).val() !== '') {
+		$(this).removeClass('invalid')
+	}
+})
+
+function login() {
+	let account_type = $('#account-type').val()
+	let username = $('#username').val()
+	let password = $('#password').val()
+	// if any field is empty, complain
+	if( account_type === '' || username === '' || password === '' ){
+		if( account_type === '' ){
+			$('.account-type .chosen-single').addClass('invalid')
+		}
+		if( username === '' ){
+			$('#username').addClass('invalid')
+		}
+		if( password === '' ){
+			$('#password').addClass('invalid')
+		}
+	} else {
+		hide('#login')
+	}
+}
 
 //////////////////////////// TOGGLE STUFF ////////////////////////////
 $(document).on('view-node', function(Event){
@@ -197,5 +223,15 @@ function keyToDisplayKey(word, node) {
 	return word // word may have ALREADY been singular
 }
 
+function loginInit() {
+	$('#account-type').chosen({
+		allow_single_deselect: true,
+		inherit_select_classes: true,
+		search_contains: true,
+		width: '100%'
+	}).change(function(){
+		$('.account-type .chosen-single').removeClass('invalid')
+	})
+}
 
 }); // end require

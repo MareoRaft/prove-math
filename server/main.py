@@ -14,15 +14,14 @@ from tornado.web import StaticFileHandler
 from tornado.websocket import WebSocketHandler
 # other
 from tornado.web import Application
-#from tornado.log import enable_pretty_logging
+# from tornado.log import enable_pretty_logging
 
 from lib import helper
 from lib.mongo import Mongo
 import networkx as nx
 from lib.networkx.classes import dag
 
-#Oauth
-import requests
+# Oauth
 import oauth_helper
 
 ################################# HELPERS #####################################
@@ -60,7 +59,7 @@ class FormHandler (BaseHandler):
 		linkedin_authorization_url, state = linkedin.authorization_url('https://www.linkedin.com/uas/oauth2/authorization')
 		github_authorization_url, state = github.authorization_url('https://github.com/login/oauth/authorize')
 		self.write('<button id="FacebookManual" type="button">Facebook Manual</button><br><button id="GoogleManual" type="button">Google Manual</button><br><button id="LinkedinManual" type="button">Linkedin Manual</button> <br><button id="GithubManual" type="button">Github Manual</button><br><button id="TwitterManual" type="button">Twitter Manual</button><br> <script> document.getElementById("FacebookManual").onclick = function () {location.href ="'+fb_authorization_url+'";};document.getElementById("GoogleManual").onclick = function () {location.href ="'+google_authorization_url+'";};document.getElementById("LinkedinManual").onclick = function () {location.href ="'+linkedin_authorization_url+'";};document.getElementById("GithubManual").onclick = function () {location.href ="'+github_authorization_url+'";};</script>')
-		
+
 	def post(self):
 		invar = self.get_body_argument("thisistheonlyinput")
 		print( "going to post the input!"+invar )
@@ -106,10 +105,10 @@ class HomeHandler(BaseHandler):
 			github.fetch_token(github_token_url, client_secret=github_client_secret,authorization_response=redirect_response)
 			r=github.get('https://api.github.com/user')
 			self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
-	
+
 		else:
 			self.write('<h2> Login Error </h2>')
-		
+
 	def post(self):
 		invar = self.get_body_argument("thisistheonlyinput")
 		print( "going to post the input!"+invar )

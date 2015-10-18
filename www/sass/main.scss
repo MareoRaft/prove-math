@@ -1,13 +1,50 @@
 @import 'reset';
+@import 'variables';
+@import 'normalize';
+@import 'chosen';
+@import 'chosen_normalize';
 @import 'graph_animation';
 @import 'blinds';
 
 //////////////////////////////////////// INDEX ////////////////////////////////////////
+#login {
+	z-index: 1;
+	@include hide;
+	background: radial-gradient(white, transparent);
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	& > div {
+		width: 40%;
+		height: 40%;
+		// background-color: rgba( 255, 255, 255, 0.8 );
+		// border: 2px solid $white;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		& > div {
+			width: 70%;
+			// background-color: purple;
+			input {
+				width: 100%;
+			}
+			button {
+				width: 100%;
+			}
+		}
+	}
+}
+
 #node-template {
 	@include hide;
+	// background-color: yellow;
 	section {
 		overflow: scroll;
 	}
+}
+
+svg {
+	// background-color: cyan;
 }
 
 #section-1 {
@@ -18,8 +55,13 @@
 	background-color: cyan;
 }
 
+.invalid {
+	border-style: solid;
+	border-color: yellow !important; // soft red: rgba( 255, 51, 0, 0.9 )
+}
+
 body {
-	display: inline-flex; // this kinda works! // but perhaps not all elements are inheriting.
+	display: flex; // this kinda works... but do NOT use inline-flex
 	// or maybe we need to set flex-grow
 	flex-grow: 1;
 }

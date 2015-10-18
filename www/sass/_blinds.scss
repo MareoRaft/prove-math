@@ -1,20 +1,23 @@
 @import 'chosen';
-@import 'chosen_customizations';
+@import 'chosen_normalize';
 @import 'animate';
 
 //////////////////////////////////////// BLINDS ////////////////////////////////////////
 .node-attribute {
+  display: flex;
   padding: 44px;
   font: 300 normal 19px Helvetica, Tahoma, Arial, sans-serif; /* somewhere in 18-22 range feels right */
+  overflow: visible;
   .key {
-    display: inline-block;
-    vertical-align: top;
+    display: inline-flex;
+    // vertical-align: top; // this is necessary if using inline-block
     width: 15%;
-    text-align: right;
+    text-align: right; // this is necessary if using inline-block
+    justify-content: flex-end; // this is necessary if using flex
   }
   .value {
-    display: inline-block;
-    vertical-align: top;
+    display: inline-flex;
+    // vertical-align: top;
     width: 85%;
   }
   strong {
@@ -60,4 +63,35 @@
     background-color: #CB9;
   }
 }
+
+// chosen-related blinds stuff...
+.tags .chosen-results {
+  color: #444;
+  background-color: transparent;
+  li {
+    &.disabled-result {
+      color: #ccc;
+    }
+    &.highlighted {
+      // background-image: none;
+      background-color: pink;
+      // color: #fff;
+    }
+    &.no-results {
+      color: #777;
+      background: red;
+    }
+  }
+}
+
+.tags .chosen-drop {
+  background-color: transparent;
+  // THE PROBLEM WITH THE DROPDOWN GETTING CUTOFF IS THAT THE BLINDS CONTAINER IS SET TO OVERFLOW: SCROLL.  but changing that may be a bad idea because that was good for other reasons...
+}
+
+.tags .chosen-drop .result-selected { // already selected stuff
+  color: $grey;
+}
+
+
 

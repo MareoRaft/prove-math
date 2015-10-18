@@ -35,3 +35,5 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 37. just keep building javascript features!  do chosen.  anything!
 38. why isn't plural of vertices appearing?
 39. consider switching everything to flex instead of block.  This (should (you need to test this before doing anything)) mean that things resize automatically as you resize the browser window.
+40. pushArray causing issue with for in loop javascript.
+41. add ~.pyc and *~ to .gitignore --- and maybe #files# too.

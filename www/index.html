@@ -9,15 +9,25 @@
     <script src='scripts/lib/require.js' data-main='scripts/main'></script>
 </head>
 <body>
-
-
-<header>
-	test chosen stuff:
-	<select id="cars" multiple>
-		<option value="volvo">Volvo</option>
-		<option value="saab">Saab</option>
-	</select>
-</header>
+<section id='login'>
+	<div>
+		<div>
+			<select id="account-type" class="account-type" data-placeholder="account type"> <!-- the class is to grab the relevant chosen container for css changes -->
+				<option></option> <!-- blank option in order to get data-placeholder support -->
+				<option value="facebook">Facebook</option>
+				<option value="google">Google+</option>
+				<option value="github">GitHub</option>
+				<option value="linkedin">LinkedIn</option>
+			</select>
+			<br /><br />
+			<input type="text" id="username" placeholder="username" />
+			<br /><br />
+			<input type="password" id="password" placeholder="password" />
+			<br /><br />
+			<button type="button" id='login-button'>Login!</button>
+		</div>
+	</div>
+</section>
 <section id='node-template'>
 	<header>
 		<span id='back'>back</span><pre>    </pre>

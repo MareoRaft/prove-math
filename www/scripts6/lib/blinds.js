@@ -101,7 +101,7 @@ function _startReadMode(blind, $value) {
 	if( blind.mode === 'chosen' ){
 		let selected_elements = []
 		// grab the options that have the selected property (jQuery)
-		$('#'+blind.id+' '+'.chosen').children().each(function(){
+		$('#'+blind.id+' '+'.tags').children().each(function(){
 			if( $(this).prop('selected') ) selected_elements.push($(this).val())
 		})
 		// put them in an array and give it to blind.value
@@ -122,10 +122,13 @@ function _startReadMode(blind, $value) {
 function _startWriteMode(blind, $value) {
 	$value.html(blind.value_htmlified)
 	if( blind.mode === 'chosen' ){
-		$('.chosen').chosen({ width: '100%' }) // this should probably be moved to the end of open()
-		// can we add more options after the fact?
-		// $('.chosen').append('<option value="new" selected>NEW</option>')
-		$('.chosen').trigger('chosen:updated') // this is how to update chosen after adding more options
+		$('.tags').chosen({
+			inherit_select_classes: true,
+			search_contains: true,
+			width: '100%'
+		})
+		// $('.tags').append('<option value="new" selected>NEW</option>')
+		$('.tags').trigger('chosen:updated') // this is how to update chosen after adding more options
 
 	}
 	else if( blind.mode === 'standard' ){
@@ -166,10 +169,12 @@ class Blind {
 	}
 
 	get value() {
+		// hand over the iterable() (or string) of the BlindValue object value
 		return this.parent_object[this.key]
 	}
 
 	set value(new_value) {
+		// create a BlindValue object with new_value, or if it already exists, update the obj w/ new_value
 		this.parent_object[this.key] = new_value
 	}
 
@@ -190,14 +195,14 @@ class Blind {
 	}
 
 	// get index() {
-	// 	// may not need this
+	// 	// may not need this //
 	// }
 
 	get htmlified() {
 		return	'<div id="' + this.id + '" class="' + this.classes_htmlified + '">'
 					// + '<span class="key" data-key="'+this.key+'"' + this.index_htmlified + '>' // may not need this info at all!
 					+ '<div class="key" data-key="'+this.key+'">'
-						+ this.display_key_htmlified + '&nbsp'
+						+ this.display_key_htmlified + '&nbsp&nbsp'
 					+ '</div>'
 					+ '<div class="value" ' + this.contenteditable_htmlified + '>'
 						+ this.value_htmlified
@@ -236,10 +241,52 @@ class Blind {
 	}
 }
 
+//////////////////////////// BLINDVALUE CLASS ////////////////////////////
+class BlindValue {
+
+	constructor(value) {
+		// if string, store it
+		// if array, map el to [el, true] and store
+	}
+
+	get this() {
+		return this.iterable.this
+	}
+
+	set _iterable(array) {
+		// this could possibly be something other than an array if necessary
+		// if an iterable already exists, complain
+		// the array can also hold a hidden 'this' key which holds the pointer to the blind value
+		this.__iterable = array
+	}
+
+	get iterable() {
+		return this.__iterable
+	}
+
+	select(el) {
+		// if element exists, make sure its true
+		// otherwise, create it true
+	}
+
+	deselect(el) {
+		// if el exists, make false
+		// otherwise, create it false
+	}
+
+	_append(el, bool) {
+		// create it w/ bool value
+	}
+
+	_delete(el) {
+		// we may need this in the future
+	}
+}
+
 ////////////////////////////// HELPERS //////////////////////////////
 function as_select_html(array) {
 	// alert(check.array(array))
-	let string = '<select class="chosen" multiple>'
+	let string = '<select class="tags" multiple>'
 	_.each(array, function(el){
 		// alert(el) // you know, there is something fishy about this array!  it has this weird extra "true" in it and maybe a function?
 		string = string + '<option value="'+el+'" selected>'+el+'</option>' // we set property selected to true, so that everything is pre-selected
