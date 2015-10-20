@@ -1,0 +1,20 @@
+$black: #633d11; $darkgrey: #333; $grey: #555; $lightgrey: #777; $transgrey: rgba( 80, 80, 80, 0.5 );
+$white: #eee; $darkwhite: #999;
+
+$gold: #e6d460; $blue: #0af;
+$rose: #f02b4c; $pink: #f12772; $red: $rose;
+$brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $mediumgreen;
+
+@mixin font {
+  color: $black;
+  font-family: Monaco, "Lucida Console", Courier, "Courier New", monospace;
+  font-size: 0.9rem; //0.9rem == 14px
+  line-height: 1.2rem; //1.2 rem ~~ 19px
+}
+
+@mixin hide { // we can't move the JS completely here because of grabbing window dimensions.  but we can at least initialize the sections to be hidden.
+  position: absolute;
+  overflow: hidden;
+  border-width: 0;
+  height: 0;
+}

@@ -6227,7 +6227,7 @@
       };
     }
     force.tick = function() {
-      if ((alpha *= .99) < .005) {
+      if ((alpha *= .995) < .0045) {
         event.end({
           type: "end",
           alpha: alpha = 0

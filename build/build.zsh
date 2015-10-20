@@ -1,3 +1,6 @@
+#!/bin/zsh
+
+
 # back out of directories until you arrive at /path/to/prove-math
 for ((i=0; i<99; i++))
 	do CWD=$(pwd | sed -e 's@.*/@@') # finds the stuff after the last / in pwd
@@ -13,28 +16,40 @@ if [[ $CWD = '' ]]
 fi
 
 
-# convert javascript 6 files to 5
-babel www/scripts6/lib/data.js > www/scripts/lib/data.js &&
-babel www/scripts6/lib/user.js > www/scripts/lib/user.js &&
-babel www/scripts6/lib/profile.js > www/scripts/lib/profile.js &&
-babel www/scripts6/lib/d3-and-svg.js > www/scripts/lib/d3-and-svg.js &&
-babel www/scripts6/main.js > www/scripts/main.js &&
-
 # convert .scss files to main.css
-cd www
-compass compile
-# compass watch
-cd ..
+# instead of doing it manually every time, we will use a watch daemon.  but we should only launch it if it's not running!
+IFS=$'\n'
+array_of_processes=($(ps | grep 'compass watch'))
+IFS=$' \t\n'
+number_of_matches=$#array_of_processes
+if [[ $number_of_matches = 1 ]] # the one match is the grep process itself!
+	then
+	cd www
+	compass watch &| # In the background, so we can continue.  Disowned, so we won't be waiting on it.
+	cd ..
+fi # this only fails when babel_watchdog throws an error.  Then i get a SECOND compass process!
+
+
+# javascript 6 files to 5
+# we will use a watchdog, just like compass watch!
+IFS=$'\n'
+array_of_processes=($(ps | grep 'babel_watchdog'))
+IFS=$' \t\n'
+number_of_matches=$#array_of_processes
+if [[ $number_of_matches = 1 ]]
+	then
+	python3 build/babel_watchdog.py ./www/scripts6 &|
+fi
 
 
 # optimize and minify
-# node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2 &&
+# node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2
 
 
-echo 'done updating files on local machine' &&
+echo 'done updating files on local machine'
 
 
 
-open -a "Google Chrome" http://localhost/index.html &&
+open -a "Google Chrome" http://localhost
 
 echo 'done.'

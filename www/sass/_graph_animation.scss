@@ -1,0 +1,47 @@
+@import 'variables';
+
+// #graph-container {
+//   position: absolute;
+//   background-color: green;
+svg {
+	@include hide;
+	@mixin bright-and-unbright-fill-and-opacity($color) {
+		fill: mix(gray, $color, 70%);
+		opacity: 0.3;
+		&.bright-circle {
+			fill: $color;
+			opacity: 0.45;
+		}
+	}
+
+	.definition-circle {
+		@include bright-and-unbright-fill-and-opacity($green);
+	}
+	.theorem-circle {
+		@include bright-and-unbright-fill-and-opacity(steelblue);
+	}
+	.exercise-circle {
+		@include bright-and-unbright-fill-and-opacity($darkwhite);
+	}
+
+	.node-text {
+		@include font; // we won't need this if we end up overriding everything...
+		font-family: Helvetica, Tahoma, Arial, sans-serif;
+		text-anchor: middle;
+	}
+
+	text {
+		pointer-events: none;
+	}
+
+	.link {
+		stroke: gray;
+		stroke-width: 2px;
+	}
+
+	.arrow-head {
+		fill: gray;
+	}
+}
+// }
+

@@ -1,0 +1,51 @@
+// this file is for very fundamental things that many areas of math depend on
+
+
+// todo: sequence, ordered pair, maximum, minimum, union, class
+
+{ // this should be given a concrete definition through the axioms in the future
+	"def":"A __set__ is a collection of distinct elements where order does not matter.", // replace this w/ axioms
+	"intuition":"A **set** is a collection of distinct elements where order does not matter.",
+	"example":"The set ${a,b}$ is equal to the set ${b,a}$.",
+	"example":"The *set* ${t,t}$ is equal to the set ${t}$.  That is, because sets must have distinct elements, the notation ${t,t}$ is considered to be a *redundant* listing of $t$.",
+	"counterexample":"The *multiset* ${t,t}$ is not a set.  Since there are two $t$s in the multiset, the elements are not distinct, and therefore it cannot be a set.",
+}
+
+{
+	"def":"An __ordered pair__ of elements $a$ and $b$, denoted $(a,b)$, is the set ${ {a}, {a,b} }$.",
+	"intuition":"An **ordered pair** of elements $a$ and $b$ is like the set ${a,b}$ with an order imposed on it.  That is, we want to show that $a$ comes *first* and $b$ comes *second*.  The set ${ {a}, {a,b} }$ is a way to unambiguously show that $a$ comes first and $b$ comes second using only sets.  Therefore, ordered pairs need only depend on the definition of sets.  In practice, we use the notation $(a,b)$ for an ordered pair because it is easy to read.",
+	"denotation": "$(a,b)$",
+	"dependencies":["set"],
+}
+
+{
+	"def":"A __map__ is a set of ordered pairs.",
+	"dependencies":["ordered pair"],
+}
+
+{
+	"def":"A __function__ is a map with the following property.  The first elements of the ordered pairs of the map are distinct.",
+	"dependencies":["map", "distinct"],
+}
+
+{
+	"def":"The __domain__ of a map is the set containing the first elements of the ordered pairs of the map.",
+	"note":"Although the first elements of the ordered pairs of the map may have duplicates, the domain will only include them once.  This guarantees that the domain is a set.",
+	"dependencies": ["function"],
+}
+
+// codomain will be the same definition, just using the *second* elements
+
+{
+	// "def":"A __multiset__ is an ordered pair $(S, m)$ where $S$ is a set and $m:S\\to\\mathbb{N}^+$ is a function.", // that's nice, but i think the following is simpler!...
+	"def":"A __multiset__ is a function $m:S\\to\\mathbb{N}^+$.",
+	"intuition":"A **multiset** is a collection of elements where order does not matter, and elements can appear more than once.  In the multiset $(S,m)$, $S$ is the underlying set of elements, and for each $s\in S$, $m(s)$ is the number of times that $s$ appears.",
+	// but why don't we JUST USE THE FUNCTION?.  answer: because a general function can possible use something other than a SET as its domain?
+	"example":"The multiset $({t,g}, {(t,2), (g,4)})$ is a collection of elements where $t$ appears twice and $g$ appears four times.  It is commonly denoted ${t,t,g,g,g,g}$.",
+	"example":"The multiset ${a,b,b}$ contains the element $a$ once and the element $b$ twice.",
+	"example":"The multiset ${x,t,t,w}$ is equal to the multiset ${t,x,w,t}$.",
+	"example":"The *multiset* ${f,g}$ is equal to the *set* ${f,g}$.",
+	"counterexample":"The sequence $(x,y,z)$ is not a multiset because it imposes an order on its elements.",
+	"dependencies":["set", "function", "ordered pair", "the natural numbers"],
+}
+

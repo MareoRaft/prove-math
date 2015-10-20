@@ -1,56 +1,67 @@
 @import 'reset';
+@import 'variables';
+@import 'normalize';
+@import 'chosen';
+@import 'chosen_normalize';
+@import 'graph_animation';
+@import 'blinds';
 
-///////////////////////////////////// VARIABLES /////////////////////////////////////
-$black: #633d11; $darkgrey: #333; $grey: #555; $lightgrey: #777; $transgrey: rgba( 80, 80, 80, 0.5 );
-$white: #eee; $darkwhite: #999;
-
-$gold: #e6d460; $blue: #0af;
-$rose: #f02b4c; $pink: #f12772; $red: $rose;
-$brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #0a0; $green: $mediumgreen;
-
-@mixin font {
-  color: $black;
-  font-family: Monaco, "Lucida Console", Courier, "Courier New", monospace;
-  font-size: 0.9rem; //0.9rem == 14px
-  line-height: 1.2rem; //1.2 rem ~~ 19px
+//////////////////////////////////////// INDEX ////////////////////////////////////////
+#login {
+	z-index: 1;
+	@include hide;
+	background: radial-gradient(white, transparent);
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	& > div {
+		width: 40%;
+		height: 40%;
+		// background-color: rgba( 255, 255, 255, 0.8 );
+		// border: 2px solid $white;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		& > div {
+			width: 70%;
+			// background-color: purple;
+			input {
+				width: 100%;
+			}
+			button {
+				width: 100%;
+			}
+		}
+	}
 }
 
-//////////////////////////////////////// CSS ////////////////////////////////////////
-.field {
-color:green
+#node-template {
+	@include hide;
+	// background-color: yellow;
+	section {
+		overflow: scroll;
+	}
 }
-
 
 svg {
-  border: green 1px solid;
-
-  .definition-circle {
-    fill: $green;
-    opacity: 0.4;
-  }
-  .theorem-circle {
-    fill: steelblue;
-    opacity: 0.4;
-  }
-  .exercise-circle {
-    fill: $darkwhite;
-    opacity: 0.4;
-  }
-
-  .node-text {
-    @include font; // we won't need this if we end up overriding everything...
-    font-family: Helvetica, Tahoma, Arial, sans-serif;
-    text-anchor: middle;
-  }
-
-  .link {
-    stroke: gray;
-    stroke-width: 2px;
-  }
-
-  .arrow-head {
-    fill: pink;
-  }
+	// background-color: cyan;
 }
 
+#section-1 {
+	background-color: pink;
+}
 
+#section-form {
+	background-color: cyan;
+}
+
+.invalid {
+	border-style: solid;
+	border-color: yellow !important; // soft red: rgba( 255, 51, 0, 0.9 )
+}
+
+body {
+	display: flex; // this kinda works... but do NOT use inline-flex
+	// or maybe we need to set flex-grow
+	flex-grow: 1;
+}

@@ -9,84 +9,34 @@
     <script src='scripts/lib/require.js' data-main='scripts/main'></script>
 </head>
 <body>
-
-
-
-<header>
-</header>
-<section>This is a section. Here is a span with "math" class:<span class="math">a^2+b^2=c^2</span>end.
-
-	<span class='math'>\sqrt2</span><br />
-	<span class='math'>\sqrt{2}{2}</span><br />
-	<span class='math'>\sqrt[2]{2}</span><br />
-
-	Inline math with dollar signs: $hi i'm inline$.<br />
-	Inline math with parenthesis: \(hi, i'm inline too\).<br />
-	Display math with dollar signs: $$This is diplay math!$$.<br />
-	Display math with square brackets: \[THIS is display math too!\]<br />
-
-	Now, here is escaped dollar \$. followed by escaped dollar\$.<br />
-	Now, here is a doubly escaped dollar \\$.<br />
-
+<section id='login'>
+	<div>
+		<div>
+			<select id="account-type" class="account-type" data-placeholder="account type"> <!-- the class is to grab the relevant chosen container for css changes -->
+				<option></option> <!-- blank option in order to get data-placeholder support -->
+				<option value="facebook">Facebook</option>
+				<option value="google">Google+</option>
+				<option value="github">GitHub</option>
+				<option value="linkedin">LinkedIn</option>
+			</select>
+			<br /><br />
+			<input type="text" id="username" placeholder="username" />
+			<br /><br />
+			<input type="password" id="password" placeholder="password" />
+			<br /><br />
+			<button type="button" id='login-button'>Login!</button>
+		</div>
+	</div>
 </section>
-<section id="test">
-	Hello How are you doing today. This is my section
+<section id='node-template'>
+	<header>
+		<span id='back'>back</span><pre>    </pre>
+		<span id='learn'>learn</span><pre>    </pre>
+		<span id='unlearn'>unlearn</span><pre>    </pre>
+	</header>
+	<section id='node-template-blinds'>
+	</section>
 </section>
-<!-- <section>
-	<textarea id="cool"></textarea><br>
-
-	Type:<br>
-	<input type="radio" name="type" value="Definition">Definition<br>
-	<input type="radio" name="type" value="Theorem">Theorem<br>
-	<input type="radio" name="type" value="Exercise">Exercise<br>
-
-	<span class="field">
-	Name:</span> <br>
-	<input type="text" id="Name"><br>
-
-	<span class="field">
-	Plural:</span><br>
-	<input type="text" id="Plural"><br>
-
-	Content:<br>
-	<textarea cols="40" rows="10" id="Content"></textarea><br>
-
-	Proofs (Theorems only):<br>
-	<div id="inputList"></div>
-	<select id="ProofType">
-		<option value="ProofType1">Type1</option>
-		<option value="ProofType2">Type2</option>
-		<option value="ProofType3">Type3</option>
-		<option value="ProofType4">Type4</option>
-	</select><br>
-
-	Proof Description:<br>
-	<textarea  cols="40" rows="10" id="Proofs"></textarea><br>
-	<button id="AddProof" type="button">Add Proof</button><br>
-
-	Weight:<br>
-	<input type="number" id="Importance"><br>
-
-	Examples:<br>
-	<textarea cols="40" rows="10" id="Examples"></textarea><br>
-
-
-	Counterexamples:<br>
-	<textarea cols="40" rows="10" id="Counterexamples"></textarea><br>
-
-	Intuition:<br>
-	<textarea cols="40" rows="10" id="Intuition"></textarea><br>
-
-	Notes:<br>
-	<textarea cols="40" rows="10" id="Notes"></textarea><br>
-
-	<input type="submit" id="Submit">
-</section> -->
-
-<footer>
-</footer>
-
-
-
+<!-- svg should appear here (populated by JS) -->
 </body>
 </html>
