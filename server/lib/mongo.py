@@ -4,6 +4,7 @@ import pymongo
 
 class Mongo:
 
+
     def __init__(self, database, collection):
         self.address = pymongo.MongoClient("mongodb://localhost")
         self.database = database
@@ -51,6 +52,9 @@ class Mongo:
     def insert_many(self, list_of_dicts):
         # Will complain if you attempt to insert duplicates
         self.address[self.database][self.collection].insert_many(list_of_dicts)
+
+    def update(self, query, update, options):
+        self.address[self.database][self.collection].update(query, update, options)
 
     def find(self, dict_fields=None):
         return self.address[self.database][self.collection].find(dict_fields)
