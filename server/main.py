@@ -70,25 +70,12 @@ class HomeHandler(BaseHandler):
 
 		if method=='fb':
 			obj=oauth_helper.get_facebook_oauth()
-			#facebook.oauth_obj.fetch_token(facebook.token_url, client_secret=facebook.secret, authorization_response=redirect_response)
-			#r=facebook.oauth_obj.get(facebook.request_url)
-			#self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is</h2>')
-
 		elif method=='google':
 			obj=oauth_helper.get_google_oauth()
-			#google.oauth_obj.fetch_token(google.token_url,client_secret=google.secret,authorization_response=redirect_response)
-			#r = google.oauth_obj.get('https://www.googleapis.com/oauth2/v1/userinfo')
-			#self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
 		elif method=='linkedin':
 			obj=oauth_helper.get_linkedin_oauth()
-			#linkedin.oauth_obj.fetch_token(linkedin.token_url, client_secret=linkedin.secret,authorization_response=redirect_response)
-			#r = linkedin.oauth_obj.get('https://api.linkedin.com/v1/people/~')
-			#self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
 		elif method=='github':
 			obj=oauth_helper.get_github_oauth()
-			#github.oauth_obj.fetch_token(github.token_url, client_secret=github.secret,authorization_response=redirect_response)
-			#r=github.oauth_obj.get('https://api.github.com/user')
-			#self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
 
 		obj.oauth_obj.fetch_token(obj.token_url, client_secret=obj.secret,authorization_response=redirect_response)
 		r=obj.oauth_obj.get(obj.request_url)
