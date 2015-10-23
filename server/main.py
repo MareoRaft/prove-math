@@ -49,16 +49,9 @@ class FormHandler (BaseHandler):
 
 	def get(self):
 		# / is relative
-		facebook=oauth_helper.facebook_oauth()
-		google=oauth_helper.google_oauth()
-		linkedin=oauth_helper.linkedin_oauth()
-		github=oauth_helper.github_oauth()
+		urls=oauth_helper.initialize_login()
 
-		fb_authorization_url, state = facebook.authorization_url('https://www.facebook.com/dialog/oauth')
-		google_authorization_url, state = google.authorization_url("https://accounts.google.com/o/oauth2/auth",access_type="offline", approval_prompt="force")
-		linkedin_authorization_url, state = linkedin.authorization_url('https://www.linkedin.com/uas/oauth2/authorization')
-		github_authorization_url, state = github.authorization_url('https://github.com/login/oauth/authorize')
-		self.write('<button id="FacebookManual" type="button">Facebook Manual</button><br><button id="GoogleManual" type="button">Google Manual</button><br><button id="LinkedinManual" type="button">Linkedin Manual</button> <br><button id="GithubManual" type="button">Github Manual</button><br><button id="TwitterManual" type="button">Twitter Manual</button><br> <script> document.getElementById("FacebookManual").onclick = function () {location.href ="'+fb_authorization_url+'";};document.getElementById("GoogleManual").onclick = function () {location.href ="'+google_authorization_url+'";};document.getElementById("LinkedinManual").onclick = function () {location.href ="'+linkedin_authorization_url+'";};document.getElementById("GithubManual").onclick = function () {location.href ="'+github_authorization_url+'";};</script>')
+		self.write('<button id="FacebookManual" type="button">Facebook Manual</button><br><button id="GoogleManual" type="button">Google Manual</button><br><button id="LinkedinManual" type="button">Linkedin Manual</button> <br><button id="GithubManual" type="button">Github Manual</button><br><button id="TwitterManual" type="button">Twitter Manual</button><br> <script> document.getElementById("FacebookManual").onclick = function () {location.href ="'+urls['facebook']+'";};document.getElementById("GoogleManual").onclick = function () {location.href ="'+urls['google']+'";};document.getElementById("LinkedinManual").onclick = function () {location.href ="'+urls['linkedin']+'";};document.getElementById("GithubManual").onclick = function () {location.href ="'+urls['github']+'";};</script>')
 
 	def post(self):
 		invar = self.get_body_argument("thisistheonlyinput")
@@ -66,48 +59,37 @@ class FormHandler (BaseHandler):
 
 class HomeHandler(BaseHandler):
 	def get(self):
-		secrets=oauth_helper.get_secrets()
-		fb_client_secret=secrets[0]
-		google_client_secret=secrets[1]
-		linkedin_client_secret=secrets[2]
-		github_client_secret=secrets[3]
+
 
 		method=self.get_argument("method", default=None, strip=False)
 		authorization_code=self.get_argument("code", default=None, strip=False)
-
-		facebook=oauth_helper.facebook_oauth()
-		google=oauth_helper.google_oauth()
-		linkedin=oauth_helper.linkedin_oauth()
-		github=oauth_helper.github_oauth()
+		redirect_response='https://localhost/home?method='+method+'&code='+authorization_code
 
 		if method=='fb':
-			fb_token_url = 'https://graph.facebook.com/oauth/access_token'
-			redirect_response='https://localhost/home?method=fb&code='+authorization_code
-			facebook.fetch_token(fb_token_url, client_secret=fb_client_secret, authorization_response=redirect_response)
-			r=facebook.get('https://graph.facebook.com/me?')
-			self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is '+facebook.token['access_token']+'</h2>')
+			obj=oauth_helper.get_facebook_oauth()
+			#facebook.oauth_obj.fetch_token(facebook.token_url, client_secret=facebook.secret, authorization_response=redirect_response)
+			#r=facebook.oauth_obj.get(facebook.request_url)
+			#self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is</h2>')
 
 		elif method=='google':
-			google_token_url="https://accounts.google.com/o/oauth2/token"
-			redirect_response='https://localhost/home?method=google&code='+authorization_code
-			google.fetch_token(google_token_url,client_secret=google_client_secret,authorization_response=redirect_response)
-			r = google.get('https://www.googleapis.com/oauth2/v1/userinfo')
-			self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
+			obj=oauth_helper.get_google_oauth()
+			#google.oauth_obj.fetch_token(google.token_url,client_secret=google.secret,authorization_response=redirect_response)
+			#r = google.oauth_obj.get('https://www.googleapis.com/oauth2/v1/userinfo')
+			#self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
 		elif method=='linkedin':
-			linkedin_token_url = 'https://www.linkedin.com/uas/oauth2/accessToken'
-			redirect_response='https://localhost/home?method=linkedin&code='+authorization_code
-			linkedin.fetch_token(linkedin_token_url, client_secret=linkedin_client_secret,authorization_response=redirect_response)
-			r = linkedin.get('https://api.linkedin.com/v1/people/~')
-			self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
+			obj=oauth_helper.get_linkedin_oauth()
+			#linkedin.oauth_obj.fetch_token(linkedin.token_url, client_secret=linkedin.secret,authorization_response=redirect_response)
+			#r = linkedin.oauth_obj.get('https://api.linkedin.com/v1/people/~')
+			#self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
 		elif method=='github':
-			github_token_url = 'https://github.com/login/oauth/access_token'
-			redirect_response='https://localhost/home?method=github&code='+authorization_code
-			github.fetch_token(github_token_url, client_secret=github_client_secret,authorization_response=redirect_response)
-			r=github.get('https://api.github.com/user')
-			self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
+			obj=oauth_helper.get_github_oauth()
+			#github.oauth_obj.fetch_token(github.token_url, client_secret=github.secret,authorization_response=redirect_response)
+			#r=github.oauth_obj.get('https://api.github.com/user')
+			#self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
 
-		else:
-			self.write('<h2> Login Error </h2>')
+		obj.oauth_obj.fetch_token(obj.token_url, client_secret=obj.secret,authorization_response=redirect_response)
+		r=obj.oauth_obj.get(obj.request_url)
+		self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
 
 	def post(self):
 		invar = self.get_body_argument("thisistheonlyinput")

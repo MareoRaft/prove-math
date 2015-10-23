@@ -91,7 +91,7 @@
 	"name": "null (multigraph)",
 	"def":"The __null__ multigraph is the multigraph with 0 vertices.",
 	"dependencies":["multigraph"],
-	"negation": "non-null",
+	//"negation": "non-null",
 }
 
 // {
@@ -117,7 +117,7 @@
 	"name": "empty (multigraph)",
 	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
 	"dependencies":["multigraph"],
-	"negation": "nonempty",
+	//"negation": "nonempty",
 }
 
 // {
@@ -258,7 +258,7 @@
 	"name":"connected (vertices)",
 	"def":"Given a multigraph $G=(V,E)$, vertices $a,b\in V$ are __connected__ if there is an $ab$-walk in $G$.",
 	"dependencies":["walk"],
-	"negation": "disconnected (vertices)",
+	//"negation": "disconnected (vertices)",
 }
 
 // {
@@ -272,7 +272,7 @@
 	"def": "A multigraph $(V,E)$ is __connected__ if for every $a,b\in V$, $a$ is connected to $b$.",
 	"intuition": "All the vertices in the graph are tied to each other by edges.  We cannot pull the graph apart into pieces.",
 	"dependencies":["connected vertices"],
-	"negation": "disconnected (graph)",
+	//"negation": "disconnected (graph)",
 }
 
 // {
