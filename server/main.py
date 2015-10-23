@@ -20,8 +20,7 @@ from lib import helper
 from lib.mongo import Mongo
 import networkx as nx
 from lib.networkx.classes import dag
-
-# Oauth
+from lib import user
 import oauth_helper
 
 ################################# HELPERS #####################################
@@ -44,6 +43,7 @@ class BaseHandler (RequestHandler):
 		print()
 		print(self.request.host)
 
+
 class FormHandler (BaseHandler):
 
 
@@ -57,7 +57,10 @@ class FormHandler (BaseHandler):
 		invar = self.get_body_argument("thisistheonlyinput")
 		print( "going to post the input!"+invar )
 
+
 class HomeHandler(BaseHandler):
+
+
 	def get(self):
 
 
@@ -97,7 +100,6 @@ class HomeHandler(BaseHandler):
 
 
 
-
 class JSONHandler (BaseHandler):
 
 
@@ -115,6 +117,8 @@ class JSONHandler (BaseHandler):
 
 # The WebSocket protocol is still in development. This module currently implements the "hixie-76" and "hybi-10" versions of the protocol. See this browser compatibility table on Wikipedia: http://en.wikipedia.org/wiki/WebSockets#Browser_support
 class SocketHandler (WebSocketHandler):
+
+
 	def open(self):
 		print('websocket opened!')
 
@@ -135,31 +139,41 @@ class SocketHandler (WebSocketHandler):
 		# get appropriate subgraph from NewtorkX!
 		global all_nodes
 		global our_DAG
-		json_graph = our_DAG.as_complete_json(all_nodes)
+		dict_graph = our_DAG.as_complete_dict(all_nodes)
 
-		# send to the user!
-		self.write_message(json_graph)
+		self.write_message({ # write_message uses json by default!
+			'command': 'load-graph',
+			'new_graph': dict_graph,
+		})
 
-
-	def on_message(self, message):
+	def on_message(self, message): # here, however, we must json.loads it ourselves...
 		print('got message: ' + message)
-		# # ALL messages should come in as json strings
-		# message = json.loads(message)
-		# # ALL messages have a command that tells you what to do
-		# # if the command is to add a new theorem, do it:
-		# if message.command == 'new_node':
-		# 	dic = message.dic
-		# 	if 'importance' in dic.keys():
-		# 		dic['importance'] = int(dic['importance'])
-		# 	new_node = lib.node.create_appropriate_node(dic)
+		ball = json.loads(message)
+		if ball['command'] == 'print':
+			print(ball['message'])
+		elif ball['command'] == 'learn-node':
+			# get associated user somehow?
+			user.learn_node(ball['node_id'])
+		elif ball['command'] == 'unlearn-node':
+			# ditto
+			user.unlearn_node(ball['node_id'])
+		elif ball['command'] == 'set-pref':
+			# ditto
+			user.set_pref(ball['pref_dict'])
+
+		# if ball['command'] == 'new_node':
+		# 	node_dict = ball['dict']
+		# 	if 'importance' in node_dict.keys():
+		# 		node_dict['importance'] = int(node_dict['importance'])
+		# 	new_node = lib.node.create_appropriate_node(node_dict)
 		# 	print('new node made.  looks like: '+new_node+'.  Now time to put it into the DB...')
 		# 	global our_mongo
 		# 	our_mongo.insert_single(new_node.__dict__)
-		# # This can be placed in a try/exception block
-		# # try:
-		# #except Exception as e:
-		# #	print("Unexpected error "+str(type(e)))
-		# #	print(e)
+		# This can be placed in a try/exception block
+		# try:
+		#except Exception as e:
+		#	print("Unexpected error "+str(type(e)))
+		#	print(e)
 
 	def on_close(self):
 		print('A websocket has been closed.')

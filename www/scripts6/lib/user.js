@@ -3,7 +3,6 @@ define(['jquery', 'underscore', 'check-types', 'profile'], function($, _, check,
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
 //////////////////////////////////// MAIN /////////////////////////////////////
-
 let user = {
 	prefs: {
 		display_name_capitalization: "title", // can be null, "sentence", or "title"
@@ -14,13 +13,13 @@ let user = {
 	},
 	learned_node_ids: [],
 }
-function init({
-			account_type = 'local', // can be 'local', 'facebook', 'google', 'twitter', etc...
-			username,
-			password, // for security reasons, don't actually store this onto user.
-		}) {
-	user.account_type = account_type
-	user.username = username
+function init(dict) { // this must handle empty input before user logs in, and the real user account init when they log in
+	_.defaults(dict, {
+		account_type: 'local', // can be 'local', 'facebook', 'google', 'twitter', etc...
+		username: undefined,
+		password: undefined, // for security reasons, don't actually store this onto user.
+	})
+	_.extend(user, dict)
 
 	// user.oauth = _login(password)
 	_.extend(user.prefs, _loadPrefs())
@@ -46,24 +45,39 @@ function _loadPrefs() { // gets prefs from server
 function learnNode(node) {
 	if( hasLearned(node) ) die('Tried to learn a node that was already learned (maybe you just clicked "learn" twice).')
 	user.learned_node_ids.push(node.id)
-	_save()
+	$.event.trigger({
+		type: 'learned-node-to-server',
+		message: node.id,
+		date: new Date(),
+	})
 }
 
 function unlearnNode(node) {
 	if( !hasLearned(node) ) die('Tried to unlearn a node that was *not* learned (maybe you just clicked "unlearn" twice).')
 	user.learned_node_ids = _.without(user.learned_node_ids, node.id)
-	_save()
+	$.event.trigger({
+		type: 'unlearned-node-to-server',
+		message: node.id,
+		date: new Date(),
+	})
 }
 
 function hasLearned(node) {
 	return _.contains(user.learned_node_ids, node.id)
 }
 
-function nodesAndPrefs() {}
-
-function _save() { // to actually save back to server
-
+function setPref(dic) {
+	_.extend(user.prefs, dic)
+	// maybe check for an error here that no preference was actually changed.
+	// if there was a change...
+	$.event.trigger({
+		type: 'pref-to-server',
+		message: dic,
+		date: new Date(),
+	})
 }
+
+function nodesAndPrefs() {}
 
 return {
 	init: init,

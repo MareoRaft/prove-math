@@ -1,0 +1,337 @@
+\documentclass[12pt]{article}%
+
+%%Preamble%%
+
+%--------------------------------------------------------
+%% File Packages
+\usepackage[T1]{fontenc}
+%\usepackage{fontspec}
+%\usepackage{lmodern}
+\usepackage{nameref}
+%\usepackage[pdftex,breaklinks]{hyperref}
+\usepackage[breaklinks]{hyperref}
+\usepackage{cleveref}
+
+%--------------------------------------------------------
+%% Misc Packages
+%\usepackage{fancyhdr} % Used below
+\usepackage{extramarks}
+
+%--------------------------------------------------------
+%% Formatting Packages
+\usepackage{outlines}
+\usepackage{verbatim}%
+\usepackage{titling}%
+
+%--------------------------------------------------------
+%% Math Packages
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amssymb} % more symbols and fonts
+\usepackage{thmtools}
+
+%--------------------------------------------------------
+%% Drawing Packages
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+
+%--------------------------------------------------------
+%% Enumerate Packages
+% Find out the difference between the two
+\usepackage{enumerate} %% To customize enumeration. 
+\usepackage[shortlabels, inline]{enumitem} %% From homework Preamble - check it for comment
+
+%--------------------------------------------------------
+%%%%%%% Pagestyle stuff %%%%%%%%%%%%%%%%%%%
+ \usepackage{fancyhdr}                   %%
+   %\pagestyle{fancy}                     %%
+   %\fancyhf{} %delete the current section for header and footer
+ \usepackage[paperheight=11in,%          %%
+             paperwidth=8.5in,%          %%
+             outer=1.2in,%               %%
+             inner=1.2in,%               %%
+             bottom=.7in,%               %%
+             top=.7in,%                  %%
+             includeheadfoot]{geometry}  %%
+   \addtolength{\headwidth}{.75in}       %%
+   \fancyhead[RO,LE]{\thepage}           %%
+   \fancyhead[RE,LO]{\sectionname}       %%
+   \setlength{\headheight}{15.8pt}       %%
+   \raggedbottom                         %%
+%%%%%%% End Pagestyle stuff %%%%%%%%%%%%%%%
+
+%%% These three lines load and resize a caligraphic font %%%%%%%%%
+%%% which I use whenever I want lowercase \mathcal %%%%%%%%%%%%%%%
+ \DeclareFontFamily{OT1}{pzc}{}                                 %%
+ \DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.100] pzcmi7t}{}  %%
+ \DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}                %%
+                                                                %%
+%%% and this is manfnt; used to produce the warning symbol %%%%%%%
+ \DeclareFontFamily{U}{manual}{}                                %%
+ \DeclareFontShape{U}{manual}{m}{n}{ <->  manfnt }{}            %%
+ \newcommand{\manfntsymbol}[1]{%                                %%
+    {\fontencoding{U}\fontfamily{manual}\selectfont\symbol{#1}}}%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%-------------------------------------------------------- 
+%% Alphabet Mappings
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cH}{\mathcal{H}} 
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\cU}{\mathcal{U}} 
+\newcommand{\cV}{\mathcal{V}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\B}{$\mathbb{B}$}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\D}{$\mathbb{D}$}
+%\newcommand{\E}{$\mathbb{E}$}
+\newcommand{\F}{$\mathbb{F}$}
+%\newcommand{\G}{$\mathbb{G}$}
+% \renewcommand{\H}{$\mathbb{H}$} % old \H{x} is an x with a weird umlaut in text mode
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\J}{$\mathbb{J}$}
+\newcommand{\K}{$\mathbb{K}$}
+% \renewcommand{\L}{$\mathbb{L}$}
+\newcommand{\M}{$\mathbb{M}$}
+\newcommand{\N}{\mathbb{N}}
+% \renewcommand{\O}{$\mathbb{O}$}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+% \renewcommand{\S}{$\mathbb{S}$}
+\newcommand{\T}{$\mathbb{T}$}
+%\newcommand{\U}{$\mathbb{U}$}
+\newcommand{\V}{$\mathbb{V}$}
+\newcommand{\W}{$\mathbb{W}$}
+\newcommand{\X}{$\mathbb{X}$}
+\newcommand{\Y}{$\mathbb{Y}$}
+\newcommand{\Z}{\mathbb{Z}}
+
+\newcommand{\sA}{\mathsf{A}}
+\newcommand{\sB}{\mathsf{B}}
+\newcommand{\sC}{\mathsf{C}}
+\newcommand{\sD}{\mathsf{D}}
+\newcommand{\sE}{\mathsf{E}}
+\newcommand{\sF}{\mathsf{F}}
+\newcommand{\sG}{\mathsf{G}}
+\newcommand{\sH}{\mathsf{H}} 
+\newcommand{\sI}{\mathsf{I}}
+\newcommand{\sJ}{\mathsf{J}}
+\newcommand{\sK}{\mathsf{K}}
+\newcommand{\sL}{\mathsf{L}}
+\newcommand{\sM}{\mathsf{M}}
+\newcommand{\sN}{\mathsf{N}}
+\newcommand{\sO}{\mathsf{O}}
+\newcommand{\sP}{\mathsf{P}}
+\newcommand{\sQ}{\mathsf{Q}}
+\newcommand{\sR}{\mathsf{R}}
+\newcommand{\sS}{\mathsf{S}}
+\newcommand{\sT}{\mathsf{T}}
+\newcommand{\sU}{\mathsf{U}} 
+\newcommand{\sV}{\mathsf{V}}
+\newcommand{\sW}{\mathsf{W}}
+\newcommand{\sX}{\mathsf{X}}
+\newcommand{\sY}{\mathsf{Y}}
+\newcommand{\sZ}{\mathsf{Z}}
+\newcommand{\cl}{\mathfrak{cl}}
+\newcommand{\g}{\mathfrak{g}}
+\newcommand{\h}{\mathfrak{h}}
+% \newcommand{\l}{\mathfrak{l}}
+\newcommand{\m}{\mathfrak{m}}
+\newcommand{\n}{\mathfrak{n}}
+\newcommand{\p}{\mathfrak{p}}
+\newcommand{\q}{\mathfrak{q}}
+% \renewcommand{\r}{\mathfrak{r}} % old \r{x} is a little circle over x in text mode
+
+%--------------------------------------------------------
+%% Theorem Tweaks - Gotten from Lecture Notes by Christopher J. Schommer-Pries
+
+\newcounter{homework}
+ \renewcommand{\theequation}{\thesection.\arabic{equation}}         %%
+ \renewcommand{\thehomework}{\thesection.\arabic{homework}} 
+ \makeatletter                                                      %%
+    \@addtoreset{equation}{section} % Make the equation counter reset each section
+    \@addtoreset{homework}{section} % Make the homework counter reset each section
+
+ \newenvironment{warning}[1][]{%                                    %%
+    \begin{trivlist} \item[] \noindent%                             %%
+    \begingroup\hangindent=2pc\hangafter=-2                         %%
+    \clubpenalty=10000%                                             %%
+    \hbox to0pt{\hskip-\hangindent\manfntsymbol{127}\hfill}\ignorespaces%
+    \refstepcounter{equation}\textbf{Warning~\theequation}%         %%
+    \@ifnotempty{#1}{\the\thm@notefont \ (#1)}\textbf{.}            %%
+    \let\p@@r=\par \def\p@r{\p@@r \hangindent=0pc} \let\par=\p@r}%  %%
+    {\hspace*{\fill}$\lrcorner$\endgraf\endgroup\end{trivlist}}     %%
+
+\newenvironment{exercise}{
+	\refstepcounter{homework}
+	\begin{trivlist}  						                        %%
+    \item{\bf Exercise~\thehomework.}}{\end{trivlist}}     
+
+ \newenvironment{solution}{\begin{trivlist}%                        %%
+    \item{\it Solution:}}{\end{trivlist}}                           %%
+
+ \def\newprooflikeenvironment#1#2#3#4{%                             %%
+      \newenvironment{#1}[1][]{%                                    %%
+          \refstepcounter{equation}                                 %%
+          \begin{proof}[{\rm\csname#4\endcsname{#2~\theequation}%   %%
+          \@ifnotempty{##1}{\the\thm@notefont \ (##1)}\csname#4\endcsname{.}}]%%
+          \def\qedsymbol{#3}}%                                      %%
+         {\end{proof}}}                                             %%
+ \makeatother                                                       %%
+                                                                    %%
+
+ \newprooflikeenvironment{definition}{Definition}{$\diamond$}{textbf}%
+ %\newprooflikeenvironment{example}{Example}{$\diamond$}{textbf}     %%
+ \newprooflikeenvironment{remark}{Remark}{$\diamond$}{textbf}       %%
+ \newprooflikeenvironment{digression}{Digression}{$\diamond$}{textbf}%
+ \newprooflikeenvironment{aside}{Aside}{$\diamond$}{textbf}%
+ \newprooflikeenvironment{claim}{Claim}{$\diamond$}{textbf}%
+
+%--------------------------------------------------------
+%% Theorem Like Environments
+
+\theoremstyle{plain}               %%%%% Theorem-like commands
+\newtheorem{theorem}[equation]{Theorem}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{corollary}[equation]{Corollary}
+\newtheorem{lemma}[equation]{Lemma}
+\newtheorem{proposition}[equation]{Proposition}
+\newtheorem{conjecture}[equation]{Conjecture}
+\newtheorem{criterion}[equation]{Criterion}
+\newtheorem{axiom}[equation]{Axiom}
+\newtheorem{principle}[equation]{Principle}
+
+
+  %\newtheorem{solution}[equation]{Solution}
+
+
+\theoremstyle{remark} %%%%%% Remark-Like Commands
+%\newtheorem{remark}{Remark} % Defined above section
+\newtheorem{note}{Note}
+\newtheorem{notation}{Notation}
+%\newtheorem{claim}{Claim}
+\newtheorem{summary}{Summary}
+\newtheorem*{acknowledgement}{Acknowledgement}
+\newtheorem{case}{Case}
+\newtheorem{conclusion}{Conclusion}
+ 
+ % from Lecture Notes by Christopher J. Schommer-Pries
+ \newtheorem{question}[equation]{Question}
+ \newtheorem{idea}[equation]{Idea}
+
+% See above section for definition like theorem environments
+
+\theoremstyle{definition} 
+%\newtheorem{definition}{Definition}
+%\newtheorem{define}{Definition}
+%\newtheorem*{define*}{Definition}
+%\newtheorem{condition}{Condition}
+\newtheorem{problem}{Problem}
+\newtheorem*{problem*}{Problem}
+%\newtheorem{exercise}{Exercise}
+
+
+\newtheoremstyle{break}%
+{}{}%
+{}{}%
+{\bfseries}{}% % Note that final punctuation is omitted.
+{\newline}{}
+
+% Ntheorem solution
+%\theoremstyle{nonumberbreak} 
+%\theorembodyfont{\normalfont}
+
+% Amsthm solution
+\theoremstyle{break}
+\newtheorem*{assign}{Assignment}
+\newtheorem{example}[equation]{Example}
+
+
+%--------------------------------------------------------%
+%% Inserting Code
+
+% http://stackoverflow.com/questions/3175105/how-to-insert-code-into-a-latex-doc
+% From the above
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+%-------------------------------------------------------- 
+%% Various Helper Commands
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+
+\newcommand{\attention}[1]{[[\ensuremath{\bigstar\bigstar\bigstar} #1]]}  %%% Three Eye-Catching Stars
+%-------------------------------------------------------- 
+%% Misc - Other Math Operators
+
+% From ChromaticArchive - CourseNotesPreamble
+% Lecture Notes by Christopher J. Schommer-Pries
+\setlength{\marginparwidth}{.8in}
+\definecolor{MyBlue}{rgb}{.1,0.7,1.3}
+\newcommand{\notetoself}[1]{\marginpar{\tiny\color{MyBlue}{ #1}}}
+
+% Adding Divides symbols
+% http://tex.stackexchange.com/questions/117032/divides-not-divides-and-cardinalities
+\DeclareFontFamily{U}{matha}{\hyphenchar\font45}
+\DeclareFontShape{U}{matha}{m}{n}{
+      <5> <6> <7> <8> <9> <10> gen * matha
+      <10.95> matha10 <12> <14.4> <17.28> <20.74> <24.88> matha12
+      }{}
+\DeclareSymbolFont{matha}{U}{matha}{m}{n}
+\DeclareMathSymbol{\notdivides}{3}{matha}{"1F}
+\DeclareMathSymbol{\divides}{3}{matha}{"17}
+
+%\DeclareMathOperator{\sup}{sup}
+%\DeclareMathOperator{\inf}{inf}
+\DeclareMathOperator{\var}{Var}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\cov}{cov}
+\DeclareMathOperator{\Ex}{E}
+\newcommand{\abs}[1]{|#1|}

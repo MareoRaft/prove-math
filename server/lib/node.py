@@ -1,8 +1,3 @@
-##################################### TODO ####################################
-#Reg expressions for processing definition, name, etc..
-
-# MathJax/Node.js, run bash commands from python script, export json
-
 ################################### IMPORTS ###################################
 # standard library:
 import sys
@@ -14,7 +9,6 @@ import json
 from string import punctuation
 
 # local:
-#Written as from lib import helper
 from lib import helper
 
 ############################### INTERNAL HELPERS ###############################

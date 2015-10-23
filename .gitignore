@@ -16,4 +16,9 @@ text-files/things-to-go-over-with-theo.txt
 *~
 #*#
 *.pyc
-server/oauth_secrets.txt
+*secrets.txt
+
+# TeX things
+Output/
+*.pdf
+*.synctex.gz
