@@ -184,12 +184,15 @@ $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE 
 
 function login() {
 	let account_type = $('#account-type').val()
+	// alert(account_type)
 	let username = $('#username').val()
 	let password = $('#password').val()
 	// if any field is empty, complain
 	if( account_type === '' || username === '' || password === '' ){
 		if( account_type === '' ){
-			$('.account-type .chosen-single').addClass('invalid')
+			// alert('i')
+			$('#social-icon-container > img').addClass('invalid')
+			// $('.account-type .chosen-single').addClass('invalid')
 		}
 		if( username === '' ){
 			$('#username').addClass('invalid')

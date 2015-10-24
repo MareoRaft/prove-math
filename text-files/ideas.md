@@ -37,3 +37,6 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 39. consider switching everything to flex instead of block.  This (should (you need to test this before doing anything)) mean that things resize automatically as you resize the browser window.
 40. pushArray causing issue with for in loop javascript.
 41. add ~.pyc and *~ to .gitignore --- and maybe #files# too.
+42. for algebra things, if they HAVE NOT learned abt structure, define a field (for example) to have each property (pull them out).  If they HAVE learned, then it's a commutative division ring.
+43. Users can select what fields they already know and level of familiarity and it pre-highlight nodes for learned
+44. note to self: image color extraction: http://jariz.github.io/vibrant.js/

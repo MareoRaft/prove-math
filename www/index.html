@@ -9,9 +9,36 @@
     <script src='scripts/lib/require.js' data-main='scripts/main'></script>
 </head>
 <body>
+<!-- <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs>
+    <filter id="name-your-filter-here">
+		<feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+		<!-- <feColorMatrix in="SourceGraphic" mode="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" /> ->
+    </filter>
+  </defs>
+</svg>
+ -->
 <section id='login'>
 	<div>
 		<div>
+			<div id="social-icon-container">
+				<label>
+					<input type="radio" name="provider" value="facebook" />
+					<div class="img-wrapper"><img src="images/social-icons/facebook.png" alt="Facebook" /></div>
+				</label>
+				<label>
+					<input type="radio" name="provider" value="google" />
+					<div class="img-wrapper"><img src="images/social-icons/google.png" alt="Google+" /></div>
+				</label>
+				<label>
+					<input type="radio" name="provider" value="github" />
+					<div class="img-wrapper"><img src="images/social-icons/github.png" alt="GitHub" /></div>
+				</label>
+				<label>
+					<input type="radio" name="provider" value="linkedin" />
+					<div class="img-wrapper"><img src="images/social-icons/linkedin.png" alt="LinkedIn" /></div>
+				</label>
+			</div>
 			<select id="account-type" class="account-type" data-placeholder="account type"> <!-- the class is to grab the relevant chosen container for css changes -->
 				<option></option> <!-- blank option in order to get data-placeholder support -->
 				<option value="facebook">Facebook</option>
@@ -19,7 +46,7 @@
 				<option value="github">GitHub</option>
 				<option value="linkedin">LinkedIn</option>
 			</select>
-			<br /><br />
+			<br />
 			<input type="text" id="username" placeholder="username" />
 			<br /><br />
 			<input type="password" id="password" placeholder="password" />
