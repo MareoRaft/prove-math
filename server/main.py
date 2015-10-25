@@ -148,7 +148,7 @@ class SocketHandler (WebSocketHandler):
 			# ditto
 			user.set_pref(ball['pref_dict'])
 
-		# if ball['command'] == 'new_node':
+		# if ball['command'] == 'new-node':
 		# 	node_dict = ball['dict']
 		# 	if 'importance' in node_dict.keys():
 		# 		node_dict['importance'] = int(node_dict['importance'])

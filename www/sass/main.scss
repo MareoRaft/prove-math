@@ -54,28 +54,28 @@
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
-	.img-wrapper {
+	.image-wrapper {
 		display: inline-flex; // causes the wrapper to be properly shrink-wrapped around the image
 	}
-	.invalid{ // maybe change JS so that this class is assigned to WRAPPER, not to image itself
+	.invalid {
 		border-width: 2px;
 		border-radius: 50%;  // we don't want to impose 50% on valid images because it blurs the image border slightly
 	}
 	label {
-		&:hover .img-wrapper{
-			border-radius: 50%; // see above comment for why this isn't imposed on all img-wrappers always
+		&:hover .image-wrapper{
+			border-radius: 50%; // see above comment for why this isn't imposed on all image-wrappers always
 		}
 		@for $n from 1 through 4 {
 			&:nth-child(#{$n}) {
-				&:hover .img-wrapper {
+				&:hover .image-wrapper {
 					background-color: index-to-color($n, 0.1);
 				}
 				input[type=radio][name=provider] {
 					@include hide;
 					visibility: hidden;
 					&:checked {
-						& + .img-wrapper {
-							border-radius: 50%; // see below comment for why this isn't imposed on all img-wrappers always
+						& + .image-wrapper {
+							border-radius: 50%; // see below comment for why this isn't imposed on all image-wrappers always
 							background-color: index-to-color($n, 0.8) !important;
 							img {
 								@include filter(brightness(25500%));
@@ -110,11 +110,5 @@ svg {
 
 .invalid {
 	border-style: solid;
-	border-color: yellow !important; // soft red: rgba( 255, 51, 0, 0.9 )
-}
-
-body {
-	display: flex; // this kinda works... but do NOT use inline-flex
-	// or maybe we need to set flex-grow
-	flex-grow: 1;
+	border-color: $yellow !important; // soft red: rgba( 255, 51, 0, 0.9 )
 }

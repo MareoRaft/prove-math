@@ -137,6 +137,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	let ball = JSON.parse(event.data)
 	if( ball.command === 'load-user' ) {
 		user.init(ball.user_dict)
+		hide('#login')
 	}
 	if( ball.command === 'load-graph' ) {
 		let raw_graph = ball.new_graph
@@ -172,10 +173,13 @@ $(document).on('pref-to-server', function(Event) {
 })
 
 ///////////////////////////// LOGIN STUFF /////////////////////////////
-$('#password').keypress(function(event) { if(event.which === 13) {
+$('#login-button').click(login)
+$('#password, #username').keypress(function(event) { if(event.which === 13) {
 	login()
 }})
-$('#login-button').click(login)
+$('.image-wrapper').click(function() {
+	$('.image-wrapper').removeClass('invalid')
+})
 $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE whatever was just typed in .val()
 	if($(this).val() !== '') {
 		$(this).removeClass('invalid')
@@ -183,16 +187,17 @@ $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE 
 })
 
 function login() {
-	let account_type = $('#account-type').val()
-	// alert(account_type)
+	// let account_type = $('#account-type').val()
+	let account_type = $('input[type=radio][name=provider]:checked').val()
 	let username = $('#username').val()
 	let password = $('#password').val()
 	// if any field is empty, complain
-	if( account_type === '' || username === '' || password === '' ){
+	if( !def(account_type) || account_type === '' || username === '' || password === '' ){
+		if( !def(account_type) ){
+			$('.image-wrapper').addClass('invalid')
+		}
 		if( account_type === '' ){
-			// alert('i')
 			$('#social-icon-container > img').addClass('invalid')
-			// $('.account-type .chosen-single').addClass('invalid')
 		}
 		if( username === '' ){
 			$('#username').addClass('invalid')
@@ -201,7 +206,8 @@ function login() {
 			$('#password').addClass('invalid')
 		}
 	} else {
-		hide('#login')
+		ws.jsend({ command: 'login', account_type: account_type, username: username, password: password })
+		// display SWoD?
 	}
 }
 
