@@ -32,15 +32,16 @@ svg {
 
 	text {
 		pointer-events: none;
+		text-shadow: 0px 0px 4px white; // helps us to see words ontop of other things better!
 	}
 
 	.link {
-		stroke: gray;
+		stroke: $lightestgrey;
 		stroke-width: 2px;
 	}
 
 	.arrow-head {
-		fill: gray;
+		fill: $lightestgrey;
 	}
 }
 // }
