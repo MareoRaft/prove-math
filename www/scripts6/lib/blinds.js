@@ -9,6 +9,7 @@ function init(input) {
 		collapse_array_keys: undefined,
 		chosen: false,
 		render: x => x,
+		post_render: x => x,
 		transform_key: x => x,
 		expand_array: false,
 		open_empty_blind: true,
@@ -44,6 +45,8 @@ function open({
 			})
 		}
 	}
+	// ASSUMING that when we open a blind, it is always in read mode, then we would run post_render here:
+	blinds.post_render()
 }
 
 function close() {
@@ -114,9 +117,8 @@ function _startReadMode(blind, $value) {
 	}
 	else die('Unexpected blind mode.')
 
-
-
 	$value.html(blind.value_htmlified)
+	blinds.post_render()
 }
 
 function _startWriteMode(blind, $value) {

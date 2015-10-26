@@ -23,7 +23,6 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 24. create preview to convert Markdown + LaTeX dropin so we can see stuff.
 25. implememt nicknames
 26. if context dependent definitions share the same name and are within 8 (CUSTOMIZABLE. anywhere from 1 to infinity) edges from eachother, then show the context on the DAG.
-27. use the premade https://github.com/kerzol/markdown-mathjax thingy to do conversion.  Instead of building our own markdown mathjax stuff. (But we would still need to consider running conversion on the server for speed boosts.  and would that still work with this integration?)  I think the dev makes the right decision to FIRST apply MathJax and SECOND apply Markdown.  We should do the same.  Also he uses the "marked" markdown parser, which claims it is built for speed.  Sounds good.  It's in JavaScript, which means client-side. (as opposed to our current one which is on server side).  It seems that KA uses a version of marked.js too (https://github.com/Khan/simple-markdown).  Maybe it's a good choice!
 28. consider https://oauth.io/home
 29. for JSON, implemen id's to get a specific node.  in the future, add "search" function where you can put a name it guesses what you want.
 31. check that everything works in all browsers --> check!  except for Internet Explorer...
@@ -36,7 +35,9 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 38. why isn't plural of vertices appearing?
 39. consider switching everything to flex instead of block.  This (should (you need to test this before doing anything)) mean that things resize automatically as you resize the browser window.
 40. pushArray causing issue with for in loop javascript.
-41. add ~.pyc and *~ to .gitignore --- and maybe #files# too.
 42. for algebra things, if they HAVE NOT learned abt structure, define a field (for example) to have each property (pull them out).  If they HAVE learned, then it's a commutative division ring.
 43. Users can select what fields they already know and level of familiarity and it pre-highlight nodes for learned
-44. note to self: image color extraction: http://jariz.github.io/vibrant.js/
+
+27. use the premade https://github.com/kerzol/markdown-mathjax thingy to do conversion.  Instead of building our own markdown mathjax stuff. (But we would still need to consider running conversion on the server for speed boosts.  and would that still work with this integration?)  I think the dev makes the right decision to FIRST apply MathJax and SECOND apply Markdown.  We should do the same.  Also he uses the "marked" markdown parser, which claims it is built for speed.  Sounds good.  It's in JavaScript, which means client-side. (as opposed to our current one which is on server side).  It seems that KA uses a version of marked.js too (https://github.com/Khan/simple-markdown).  Maybe it's a good choice!
+
+44. understand how https://github.com/kerzol/markdown-mathjax/blob/master/editor.html works.  either USE it, or EMULATE it

@@ -2,3 +2,5 @@ We may be able to get a good color scheme from the following places:
 
 solarized-light
 solarized-dark
+
+44. note to self: image color extraction: http://jariz.github.io/vibrant.js/

@@ -16,19 +16,19 @@ require.config({
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
 		chosen: { deps: ["jquery"] },
-		// mathjax: {
-		// 	exports: "MathJax",
-		// 	init: function (){
-		// 		MathJax.Hub.Config({
-		// 			tex2jax: {
-		// 				inlineMath: [['$','$'], ['\\(','\\)']],
-		// 				processEscapes: true, // this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
-		// 			},
-		// 		});
-		// 		MathJax.Hub.Startup.onload();
-		// 		return MathJax;
-		// 	}
-		// },
+		mathjax: {
+			exports: "MathJax",
+			init: function (){
+				MathJax.Hub.Config({
+					tex2jax: {
+						inlineMath: [['$','$'], ['\\(','\\)']],
+						processEscapes: true, // this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
+					},
+				});
+				MathJax.Hub.Startup.onload();
+				return MathJax;
+			}
+		},
 	},
 });
 
@@ -38,7 +38,7 @@ require( [
 	"browser-detect",
 	"check-types",
 	"katex",
-	// "mathjax",
+	"mathjax",
 	"profile",
 	"marked",
 	"graph",
@@ -53,7 +53,7 @@ require( [
 	browser,
 	check,
 	katex,
-	// mathjax,
+	mathjax,
 	undefined,
 	marked,
 	graph,
@@ -66,7 +66,7 @@ require( [
 
 /////////////////////////// INITIALIZATION ///////////////////////////
 loginInit()
-show('#login')
+// show('#login')
 
 // alert(JSON.stringify(user.prefs))
 user.init({ // this one should be triggered by jQuery when they login
@@ -99,7 +99,15 @@ blinds.init({
 	window_id: 'node-template-blinds',
 	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'dependencies'],
 	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
-	render: marked,
+	render: function(string) {
+		// make all \ into \\ instead, so that they will be \ again when marked is done. This is for MathJax postrender compatability.
+		string = string.replace(/\\/g, '\\\\')
+		return marked(string)
+	},
+	post_render: function() {
+		// the following should be equivalent to // mathjax.Hub.Queue(['Typeset', mathjax.Hub])
+		mathjax.Hub.Typeset() // this can't be passed in without the parenthesis
+	},
 	transform_key: keyToDisplayKey,
 	expand_array: true,
 	blind_class_conditions: {
