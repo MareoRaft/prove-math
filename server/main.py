@@ -18,9 +18,12 @@ from tornado.web import Application
 
 from lib import helper
 from lib.mongo import Mongo
+from lib.user import User
 import networkx as nx
 from lib.networkx.classes import dag
 from lib import user
+import json
+import xml.etree.ElementTree as ET
 import oauth_helper
 
 ################################# HELPERS #####################################
@@ -79,6 +82,17 @@ class HomeHandler(BaseHandler):
 
 		obj.oauth_obj.fetch_token(obj.token_url, client_secret=obj.secret,authorization_response=redirect_response)
 		r=obj.oauth_obj.get(obj.request_url)
+
+		if obj.request_format=='json':
+			tojson=json.loads(r.text)
+			account_id=tojson['id']
+		else:
+			xml_root=ET.fromstring(r.text)
+			account_id=xml_root.find('id').text
+
+		identifier={'account_type':obj.name,'account_id':account_id}
+		logged_in=User(**identifier)
+		print(logged_in.dict)
 		self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
 
 	def post(self):

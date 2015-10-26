@@ -48,7 +48,7 @@ def get_github_oauth():
 
 
 def get_linkedin_oauth():
-    linkedin=Provider(name='linkedin',client_id='771om0rwuhhpqh',redirect_uri='http://localhost/home?method=linkedin', auth_url='https://www.linkedin.com/uas/oauth2/authorization',token_url='https://www.linkedin.com/uas/oauth2/accessToken',request_url='https://api.linkedin.com/v1/people/~',secret=linkedin_client_secret,compliance_fix=linkedin_compliance_fix)
+    linkedin=Provider(name='linkedin',client_id='771om0rwuhhpqh',redirect_uri='http://localhost/home?method=linkedin', auth_url='https://www.linkedin.com/uas/oauth2/authorization',token_url='https://www.linkedin.com/uas/oauth2/accessToken',request_url='https://api.linkedin.com/v1/people/~',secret=linkedin_client_secret,compliance_fix=linkedin_compliance_fix, request_format='xml')
     return linkedin
 
 def get_google_oauth():
@@ -66,7 +66,7 @@ def initialize_login():
 
 ###########################Provider Class######################################
 class Provider:
-    def __init__(self,name,client_id,redirect_uri,auth_url,token_url,request_url,secret,compliance_fix=dummy_func,scope=None,auth_url_params={}):
+    def __init__(self,name,client_id,redirect_uri,auth_url,token_url,request_url,secret,compliance_fix=dummy_func,scope=None,auth_url_params={},request_format='json'):
         g=OAuth2Session(client_id=client_id,redirect_uri=redirect_uri,scope=scope)
         
         self.oauth_obj=[g,compliance_fix]
@@ -76,6 +76,16 @@ class Provider:
         self.token_url=token_url
         self.secret=secret
         self.request_url=request_url
+        self.request_format=request_format
+
+    @property
+    def request_format(self):
+        return self._request_format
+
+    @request_format.setter
+    def request_format(self,new_request_format):
+        self._request_format=new_request_format
+    
 
     @property
     def request_url(self):
