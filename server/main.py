@@ -123,6 +123,11 @@ class SocketHandler (WebSocketHandler):
 	def open(self):
 		print('websocket opened!')
 
+		self.write_message({
+			'command': 'populate-oauth-urls',
+			'url_dict': oauth_helper.initialize_login(),
+		})
+
 		# graph = { # python dictionary
 		# 	'nodes': [
 		# 		{'x': 40,  'y': 40}, # 0 is the index of this node

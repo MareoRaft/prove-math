@@ -66,7 +66,7 @@ require( [
 
 /////////////////////////// INITIALIZATION ///////////////////////////
 loginInit()
-// show('#login')
+show('#login')
 
 // alert(JSON.stringify(user.prefs))
 user.init({ // this one should be triggered by jQuery when they login
@@ -95,11 +95,32 @@ graphAnimation.init({
 })
 show('svg') // both svg and node-template are hidden on load
 
+function katexRenderIfPossible(string) {
+	let content = string.substr(1, -1)
+	try{
+		content = katex.renderToString(content) // katex.render takes in element as second parameter
+	}
+	catch(error) {
+		if (error.__proto__ === katex.ParseError.prototype) {
+			alert('error1')
+			return string // the original string unchanged (for mathjax to snatch up later)
+		} else {
+			alert('error2')
+			return "<span class='err' style='color:red;'>"+'ERROR: '+error+"</span>"
+		}
+	}
+	alert(content)
+	return content
+}
+
 blinds.init({
 	window_id: 'node-template-blinds',
 	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'dependencies'],
 	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
 	render: function(string) {
+		// run katex
+		// string = string.replace(/\$[^\$]*\$/g, katexRenderIfPossible)
+		// return string
 		// make all \ into \\ instead, so that they will be \ again when marked is done. This is for MathJax postrender compatability.
 		string = string.replace(/\\/g, '\\\\')
 		return marked(string)
@@ -143,11 +164,14 @@ ws.onopen = function() {
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
-	if( ball.command === 'load-user' ) {
+	if( ball.command === 'populate-oauth-urls' ) {
+		oauth_url_dict = ball.url_dict
+	}
+	else if( ball.command === 'load-user' ) {
 		user.init(ball.user_dict)
 		hide('#login')
 	}
-	if( ball.command === 'load-graph' ) {
+	else if( ball.command === 'load-graph' ) {
 		let raw_graph = ball.new_graph
 		_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
 			raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
@@ -181,6 +205,8 @@ $(document).on('pref-to-server', function(Event) {
 })
 
 ///////////////////////////// LOGIN STUFF /////////////////////////////
+var oauth_url_dict = undefined
+
 $('#login-button').click(login)
 $('#password, #username').keypress(function(event) { if(event.which === 13) {
 	login()
@@ -195,27 +221,30 @@ $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE 
 })
 
 function login() {
+	if( !def(oauth_url_dict) ) alert('oauth login broken.')
 	// let account_type = $('#account-type').val()
 	let account_type = $('input[type=radio][name=provider]:checked').val()
-	let username = $('#username').val()
-	let password = $('#password').val()
+	// let username = $('#username').val()
+	// let password = $('#password').val()
 	// if any field is empty, complain
-	if( !def(account_type) || account_type === '' || username === '' || password === '' ){
+	// if( !def(account_type) || account_type === '' || username === '' || password === '' ){
+	if( !def(account_type) || account_type === '' ){
 		if( !def(account_type) ){
 			$('.image-wrapper').addClass('invalid')
 		}
 		if( account_type === '' ){
 			$('#social-icon-container > img').addClass('invalid')
 		}
-		if( username === '' ){
-			$('#username').addClass('invalid')
-		}
-		if( password === '' ){
-			$('#password').addClass('invalid')
-		}
+		// if( username === '' ){
+		// 	$('#username').addClass('invalid')
+		// }
+		// if( password === '' ){
+		// 	$('#password').addClass('invalid')
+		// }
 	} else {
-		ws.jsend({ command: 'login', account_type: account_type, username: username, password: password })
+		// ws.jsend({ command: 'login', account_type: account_type, username: username, password: password })
 		// display SWoD?
+		location.href = oauth_url_dict[account_type]
 	}
 }
 
