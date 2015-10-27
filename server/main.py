@@ -99,6 +99,39 @@ class HomeHandler(BaseHandler):
 		invar = self.get_body_argument("thisistheonlyinput")
 		print( "going to post the input!"+invar )
 
+class IndexHandler(BaseHandler):
+	def get(self):
+		method=self.get_argument("method", default=None, strip=False)
+		authorization_code=self.get_argument("code", default=None, strip=False)
+		
+		if method is None or authorization_code is None:
+			self.render("../www/index.html")
+		else:
+			redirect_response='https://'+self.request.host+'/index?method='+method+'&code='+authorization_code
+			if method=='fb':
+				obj=oauth_helper.get_facebook_oauth()
+			elif method=='google':
+				obj=oauth_helper.get_google_oauth()
+			elif method=='linkedin':
+				obj=oauth_helper.get_linkedin_oauth()
+			elif method=='github':
+				obj=oauth_helper.get_github_oauth()
+
+			obj.oauth_obj.fetch_token(obj.token_url, client_secret=obj.secret,authorization_response=redirect_response)
+			r=obj.oauth_obj.get(obj.request_url)
+
+			if obj.request_format=='json':
+				tojson=json.loads(r.text)
+				account_id=tojson['id']
+			else:
+				xml_root=ET.fromstring(r.text)
+				account_id=xml_root.find('id').text
+
+			identifier={'account_type':obj.name,'account_id':account_id}
+			logged_in=User(**identifier)
+			print(logged_in.dict)
+			self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
+
 
 
 class JSONHandler (BaseHandler):
@@ -204,6 +237,7 @@ def make_app():
 			url(r'/here(\d)', BaseHandler, { "var": "tar" }, name = "here"), # regex quote!
 			url('/form', FormHandler, { "var": "initialize this!" }, name = "forlorn"),
 			url('/websocket', SocketHandler),url('/home',HomeHandler, {"var":"test"}  ),
+			url('/index',IndexHandler, {"var":"dummy"},name="index"),
 			url('/json', JSONHandler, { "var": "null" }, name = "jsonme"),
 			url('/(.*)', StaticCachelessFileHandler, { "path": "../www/" }), # captures anything at all, and serves it as a static file. simple!
 		],

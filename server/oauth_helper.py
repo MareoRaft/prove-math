@@ -39,7 +39,7 @@ def get_authorization_urls(array_of_providers):
     return urls
 
 def get_facebook_oauth():
-    fb=Provider(name='facebook',client_id ='1614168325504559',redirect_uri='http://localhost/home?method=fb',auth_url='https://www.facebook.com/dialog/oauth',token_url='https://graph.facebook.com/oauth/access_token',request_url='https://graph.facebook.com/me?',secret=fb_client_secret,compliance_fix=facebook_compliance_fix)
+    fb=Provider(name='facebook',client_id ='1614168325504559',redirect_uri='http://localhost/index?method=fb',auth_url='https://www.facebook.com/dialog/oauth',token_url='https://graph.facebook.com/oauth/access_token',request_url='https://graph.facebook.com/me?',secret=fb_client_secret,compliance_fix=facebook_compliance_fix)
     return fb
 
 def get_github_oauth():
@@ -48,11 +48,11 @@ def get_github_oauth():
 
 
 def get_linkedin_oauth():
-    linkedin=Provider(name='linkedin',client_id='771om0rwuhhpqh',redirect_uri='http://localhost/home?method=linkedin', auth_url='https://www.linkedin.com/uas/oauth2/authorization',token_url='https://www.linkedin.com/uas/oauth2/accessToken',request_url='https://api.linkedin.com/v1/people/~',secret=linkedin_client_secret,compliance_fix=linkedin_compliance_fix, request_format='xml')
+    linkedin=Provider(name='linkedin',client_id='771om0rwuhhpqh',redirect_uri='http://localhost/index?method=linkedin', auth_url='https://www.linkedin.com/uas/oauth2/authorization',token_url='https://www.linkedin.com/uas/oauth2/accessToken',request_url='https://api.linkedin.com/v1/people/~',secret=linkedin_client_secret,compliance_fix=linkedin_compliance_fix, request_format='xml')
     return linkedin
 
 def get_google_oauth():
-    google=Provider(name='google', client_id='1008334791623-c2slo9fqrksbuac72krlnbq1tdlsgo64.apps.googleusercontent.com',redirect_uri = 'http://localhost/home?method=google',auth_url="https://accounts.google.com/o/oauth2/auth",token_url="https://accounts.google.com/o/oauth2/token", request_url='https://www.googleapis.com/oauth2/v1/userinfo',secret=google_client_secret,scope=["https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile"],auth_url_params={'access_type':"offline", 'approval_prompt':"force"})
+    google=Provider(name='google', client_id='1008334791623-c2slo9fqrksbuac72krlnbq1tdlsgo64.apps.googleusercontent.com',redirect_uri = 'http://localhost/index?method=google',auth_url="https://accounts.google.com/o/oauth2/auth",token_url="https://accounts.google.com/o/oauth2/token", request_url='https://www.googleapis.com/oauth2/v1/userinfo',secret=google_client_secret,scope=["https://www.googleapis.com/auth/userinfo.email","https://www.googleapis.com/auth/userinfo.profile"],auth_url_params={'access_type':"offline", 'approval_prompt':"force"})
     return google
 
 
