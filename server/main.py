@@ -36,77 +36,23 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 class BaseHandler (RequestHandler):
 
 
-	def initialize(self, var):
+	def initialize(self):
 		#init stuff!
-		print( var )
 		pass
-	def get(self, num):
-		self.write("this is "+num+"!")
-		print(str(self.request))
-		print()
-		print(self.request.host)
-
-
-class FormHandler (BaseHandler):
-
-
 	def get(self):
-		# / is relative
-		urls=oauth_helper.initialize_login()
+		self.write("You requested the base handler!")
 
-		self.write('<button id="FacebookManual" type="button">Facebook Manual</button><br><button id="GoogleManual" type="button">Google Manual</button><br><button id="LinkedinManual" type="button">Linkedin Manual</button> <br><button id="GithubManual" type="button">Github Manual</button><br><button id="TwitterManual" type="button">Twitter Manual</button><br> <script> document.getElementById("FacebookManual").onclick = function () {location.href ="'+urls['facebook']+'";};document.getElementById("GoogleManual").onclick = function () {location.href ="'+urls['google']+'";};document.getElementById("LinkedinManual").onclick = function () {location.href ="'+urls['linkedin']+'";};document.getElementById("GithubManual").onclick = function () {location.href ="'+urls['github']+'";};</script>')
-
-	def post(self):
-		invar = self.get_body_argument("thisistheonlyinput")
-		print( "going to post the input!"+invar )
-
-
-class HomeHandler(BaseHandler):
-
-
-	def get(self):
-
-
-		method=self.get_argument("method", default=None, strip=False)
-		authorization_code=self.get_argument("code", default=None, strip=False)
-		redirect_response='https://localhost/home?method='+method+'&code='+authorization_code
-
-		if method=='fb':
-			obj=oauth_helper.get_facebook_oauth()
-		elif method=='google':
-			obj=oauth_helper.get_google_oauth()
-		elif method=='linkedin':
-			obj=oauth_helper.get_linkedin_oauth()
-		elif method=='github':
-			obj=oauth_helper.get_github_oauth()
-
-		obj.oauth_obj.fetch_token(obj.token_url, client_secret=obj.secret,authorization_response=redirect_response)
-		r=obj.oauth_obj.get(obj.request_url)
-
-		if obj.request_format=='json':
-			tojson=json.loads(r.text)
-			account_id=tojson['id']
-		else:
-			xml_root=ET.fromstring(r.text)
-			account_id=xml_root.find('id').text
-
-		identifier={'account_type':obj.name,'account_id':account_id}
-		logged_in=User(**identifier)
-		print(logged_in.dict)
-		self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
-
-	def post(self):
-		invar = self.get_body_argument("thisistheonlyinput")
-		print( "going to post the input!"+invar )
 
 class IndexHandler(BaseHandler):
+
+
 	def get(self):
+		self.render("../www/index.html")
+
 		method=self.get_argument("method", default=None, strip=False)
 		authorization_code=self.get_argument("code", default=None, strip=False)
-		
-		if method is None or authorization_code is None:
-			self.render("../www/index.html")
-		else:
+
+		if method is not None and authorization_code is not None:
 			redirect_response='https://'+self.request.host+'/index?method='+method+'&code='+authorization_code
 			if method=='fb':
 				obj=oauth_helper.get_facebook_oauth()
@@ -129,9 +75,11 @@ class IndexHandler(BaseHandler):
 
 			identifier={'account_type':obj.name,'account_id':account_id}
 			logged_in=User(**identifier)
-			print(logged_in.dict)
-			self.write('<h2>Welcome '+str(r.content)+'</h2> <br> <h2> Your access token is </h2>')
+			print("logged_in.dict is: "+str(logged_in.dict))
 
+			# use r to grab user info via user.py
+
+			# send that info to user through websocket after handshake (how to pass this variable?)
 
 
 class JSONHandler (BaseHandler):
@@ -147,8 +95,6 @@ class JSONHandler (BaseHandler):
 		self.write(json_graph)
 
 
-
-
 # The WebSocket protocol is still in development. This module currently implements the "hixie-76" and "hybi-10" versions of the protocol. See this browser compatibility table on Wikipedia: http://en.wikipedia.org/wiki/WebSockets#Browser_support
 class SocketHandler (WebSocketHandler):
 
@@ -160,20 +106,6 @@ class SocketHandler (WebSocketHandler):
 			'command': 'populate-oauth-urls',
 			'url_dict': oauth_helper.initialize_login(),
 		})
-
-		# graph = { # python dictionary
-		# 	'nodes': [
-		# 		{'x': 40,  'y': 40}, # 0 is the index of this node
-		# 		{'x': 80,  'y': 80}, # 1
-		# 		{'x': 160, 'y': 160}, # 2
-		# 		{'x': 0,   'y': 20}, # 3
-		# 	],
-		# 	'links': [
-		# 		{'source': 0, 'target': 1, 'fixed': True, },
-		# 		{'source': 2, 'target': 3},
-		# 		{'source': 3, 'target': 1},
-		# 	],
-		# }
 
 		# get appropriate subgraph from NewtorkX!
 		global all_nodes
@@ -234,12 +166,11 @@ def make_app():
 	return Application(
 		[
 			url('/', RedirectHandler, { "url": "index.html" }, name = "rootme"),
-			url(r'/here(\d)', BaseHandler, { "var": "tar" }, name = "here"), # regex quote!
-			url('/form', FormHandler, { "var": "initialize this!" }, name = "forlorn"),
-			url('/websocket', SocketHandler),url('/home',HomeHandler, {"var":"test"}  ),
-			url('/index',IndexHandler, {"var":"dummy"},name="index"),
-			url('/json', JSONHandler, { "var": "null" }, name = "jsonme"),
-			url('/(.*)', StaticCachelessFileHandler, { "path": "../www/" }), # captures anything at all, and serves it as a static file. simple!
+			url(r'/base', BaseHandler, name = "here"), # regex quote!
+			url('/websocket', SocketHandler),
+			url(r'/index(?:\.html)?', IndexHandler, name="index"),
+			url('/json', JSONHandler, name = "jsonme"),
+			url(r'/(.*)', StaticCachelessFileHandler, { "path": "../www/" }), # captures anything at all, and serves it as a static file. simple!
 		],
 		# settings:
 		debug = True,
@@ -262,12 +193,8 @@ if __name__ == "__main__":
 	our_DAG = nx.DAG()
 	our_DAG.add_nodes_from([node['_id'] for node in all_nodes])
 	our_DAG.add_edges_from([(edge['source'], edge['target']) for edge in all_edges])
-	print('The nodes are:')
-	print(our_DAG.nodes())
-	print()
-	print('The edges are:')
-	print(our_DAG.edges())
-	print()
+	print('Node array loaded with length: ' + str(len(our_DAG.nodes())))
+	print('Edge array loaded with length: ' + str(len(our_DAG.edges())))
 	our_DAG.remove_redundant_edges()
 
 	# 3. launch!
