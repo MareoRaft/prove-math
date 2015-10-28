@@ -16,15 +16,13 @@ from tornado.websocket import WebSocketHandler
 from tornado.web import Application
 # from tornado.log import enable_pretty_logging
 
-from lib import helper
 from lib.mongo import Mongo
 from lib.user import User
 import networkx as nx
 from lib.networkx.classes import dag
 from lib import user
-import json
-import xml.etree.ElementTree as ET
-import oauth_helper
+from lib import auth
+import xml.etree.ElementTree as ET # this and relevant code should eventually be migrated into auth module
 
 ################################# HELPERS #####################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
@@ -49,33 +47,31 @@ class IndexHandler(BaseHandler):
 	def get(self):
 		self.render("../www/index.html")
 
-		method=self.get_argument("method", default=None, strip=False)
-		authorization_code=self.get_argument("code", default=None, strip=False)
+		method = self.get_argument("method", default=None, strip=False)
+		authorization_code = self.get_argument("code", default=None, strip=False)
 
 		if method is not None and authorization_code is not None:
-			redirect_response='https://'+self.request.host+'/index?method='+method+'&code='+authorization_code
-			if method=='fb':
-				obj=oauth_helper.get_facebook_oauth()
-			elif method=='google':
-				obj=oauth_helper.get_google_oauth()
-			elif method=='linkedin':
-				obj=oauth_helper.get_linkedin_oauth()
-			elif method=='github':
-				obj=oauth_helper.get_github_oauth()
+			print('got params!!!!')
+			redirect_response = 'https://'+self.request.host+'/index?method='+method+'&code='+authorization_code
+			provider = auth.get_new_provider(method)
 
-			obj.oauth_obj.fetch_token(obj.token_url, client_secret=obj.secret,authorization_response=redirect_response)
-			r=obj.oauth_obj.get(obj.request_url)
+			provider.oauth_obj.fetch_token(
+				provider.token_url,
+				client_secret=provider.secret,
+				authorization_response=redirect_response
+			)
+			user_info = provider.oauth_obj.get(provider.request_url)
 
-			if obj.request_format=='json':
-				tojson=json.loads(r.text)
-				account_id=tojson['id']
+			if provider.request_format == 'json':
+				r_text_dict = json.loads(user_info.text)
+				account_id = r_text_dict['id']
 			else:
-				xml_root=ET.fromstring(r.text)
-				account_id=xml_root.find('id').text
+				xml_root = ET.fromstring(user_info.text)
+				account_id = xml_root.find('id').text
 
-			identifier={'account_type':obj.name,'account_id':account_id}
-			logged_in=User(**identifier)
-			print("logged_in.dict is: "+str(logged_in.dict))
+			user_identifier = { 'account_type': provider.name, 'account_id': account_id }
+			user = User(**user_identifier)
+			print("logged_in.dict is: "+str(user.dict))
 
 			# use r to grab user info via user.py
 
@@ -104,7 +100,7 @@ class SocketHandler (WebSocketHandler):
 
 		self.write_message({
 			'command': 'populate-oauth-urls',
-			'url_dict': oauth_helper.initialize_login(),
+			'url_dict': auth.auth_url_dict(),
 		})
 
 		# get appropriate subgraph from NewtorkX!
