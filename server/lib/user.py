@@ -20,7 +20,14 @@ class User: # there's really no point in storing users ephemerally, other than t
 		if len(user_dicts) > 1:
 			raise Exception('REDUNDANT USER INFORMATION!')
 		elif len(user_dicts) == 1:
-			return user_dicts[0]
+			user_dict = user_dicts[0]
+			user_dict['_id'] = str(user_dict['_id'])
+			print(user_dict)
+			print()
+			print()
+
+
+			return user_dict
 		else:
 			# otherwise, make a new dictionary and store it into the db
 			temp_dict = self._default_dict()

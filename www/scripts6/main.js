@@ -65,16 +65,13 @@ require( [
 ){
 
 /////////////////////////// INITIALIZATION ///////////////////////////
-loginInit()
-show('#login')
-
-// alert(JSON.stringify(user.prefs))
-user.init({ // this one should be triggered by jQuery when they login
-	account_type: 'facebook',
-	username: 'mischievous matt',
-	password: 'jellybeans',
-})
-// alert(JSON.stringify(user.prefs))
+let user_dict_json_string = $('#node-template').attr('data-user-dict-json-string')
+let user_dict = JSON.parse(user_dict_json_string)
+if( check.emptyObject(user_dict) ){
+	loginInit()
+	show('#login')
+}
+user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 
 let circle_events = {
 	mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.description },

@@ -4,22 +4,24 @@ define(['jquery', 'underscore', 'check-types', 'profile'], function($, _, check,
 /////////////////////////////////// HELPERS ///////////////////////////////////
 //////////////////////////////////// MAIN /////////////////////////////////////
 let user = {
+	account: {
+		type: "local",
+		id: undefined,
+	},
 	prefs: {
 		display_name_capitalization: "title", // can be null, "sentence", or "title"
 		underline_definitions: false, // can be true or false // do you want definitions to be underlined in the DAG view?
 		show_description_on_hover: false, // can be true or false
 		view_node_trigger: 'dblclick', // can be dblclick or click
-		animate_blinds: true,
+		animate_blinds: false,
 	},
 	learned_node_ids: [],
 }
 function init(dict) { // this must handle empty input before user logs in, and the real user account init when they log in
 	_.defaults(dict, {
-		account_type: 'local', // can be 'local', 'facebook', 'google', 'twitter', etc...
-		username: undefined,
-		password: undefined, // for security reasons, don't actually store this onto user.
+		// i don't think we need this because we put defaults above
 	})
-	_.extend(user, dict)
+	$.extend(true, user, dict) // the first parameter means DEEP extend
 
 	// user.oauth = _login(password)
 	_.extend(user.prefs, _loadPrefs())

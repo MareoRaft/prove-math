@@ -45,11 +45,10 @@ class IndexHandler(BaseHandler):
 
 
 	def get(self):
-		self.render("../www/index.html")
+		user_dict = {}
 
 		method = self.get_argument("method", default=None, strip=False)
 		authorization_code = self.get_argument("code", default=None, strip=False)
-
 		if method is not None and authorization_code is not None:
 			print('got params!!!!')
 			redirect_response = 'https://'+self.request.host+'/index?method='+method+'&code='+authorization_code
@@ -72,10 +71,8 @@ class IndexHandler(BaseHandler):
 			user_identifier = { 'account_type': provider.name, 'account_id': account_id }
 			user = User(**user_identifier)
 			print("logged_in.dict is: "+str(user.dict))
-
-			# use r to grab user info via user.py
-
-			# send that info to user through websocket after handshake (how to pass this variable?)
+			user_dict = user.dict
+		self.render("../www/index.html", user_dict_json_string = json.dumps(user_dict))
 
 
 class JSONHandler (BaseHandler):
@@ -162,7 +159,7 @@ def make_app():
 	return Application(
 		[
 			url('/', RedirectHandler, { "url": "index.html" }, name = "rootme"),
-			url(r'/base', BaseHandler, name = "here"), # regex quote!
+			url('/base', BaseHandler, name = "here"),
 			url('/websocket', SocketHandler),
 			url(r'/index(?:\.html)?', IndexHandler, name="index"),
 			url('/json', JSONHandler, name = "jsonme"),
