@@ -6,10 +6,10 @@ class User: # there's really no point in storing users ephemerally, other than t
 
 	USERS = Mongo("provemath", "users")
 
-	def __init__(self, account_type, account_id):
-		if account_type in ['google', 'facebook', 'github', 'linkedin']:
-			self.account_type = account_type
-			self.account_id = account_id
+	def __init__(self, initial_identifier):
+		if initial_identifier['account_type'] in ['google', 'facebook', 'github', 'linkedin']:
+			self.account_type = initial_identifier['account_type']
+			self.account_id = initial_identifier['account_id']
 		else:
 			raise ValueError('Account type not supported.')
 
@@ -22,11 +22,6 @@ class User: # there's really no point in storing users ephemerally, other than t
 		elif len(user_dicts) == 1:
 			user_dict = user_dicts[0]
 			user_dict['_id'] = str(user_dict['_id'])
-			print(user_dict)
-			print()
-			print()
-
-
 			return user_dict
 		else:
 			# otherwise, make a new dictionary and store it into the db

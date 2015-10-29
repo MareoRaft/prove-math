@@ -182,23 +182,8 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	else die('Unrecognized command '+ball.command+'.')
 }
 
-$(document).on('learned-node-to-server', function(Event) {
-	// ws.jsend({
-	// 	command: 'learn-node',
-	// 	node_id: Event.message,
-	// })
-})
-$(document).on('unlearned-node-to-server', function(Event) {
-	// ws.jsend({
-	// 	command: 'unlearn-node',
-	// 	node_id: Event.message,
-	// })
-})
-$(document).on('pref-to-server', function(Event) {
-	// ws.jsend({
-	// 	command: 'set-pref',
-	// 	pref_dict: Event.message,
-	// })
+$(document).on('jsend', function(Event) {
+	ws.jsend(Event.message)
 })
 
 ///////////////////////////// LOGIN STUFF /////////////////////////////

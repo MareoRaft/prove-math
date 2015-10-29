@@ -48,9 +48,8 @@ function learnNode(node) {
 	if( hasLearned(node) ) die('Tried to learn a node that was already learned (maybe you just clicked "learn" twice).')
 	user.learned_node_ids.push(node.id)
 	$.event.trigger({
-		type: 'learned-node-to-server',
-		message: node.id,
-		date: new Date(),
+		type: 'jsend',
+		message: { command: 'learn-node', identifier: identifier(), node_id: node.id },
 	})
 }
 
@@ -58,9 +57,8 @@ function unlearnNode(node) {
 	if( !hasLearned(node) ) die('Tried to unlearn a node that was *not* learned (maybe you just clicked "unlearn" twice).')
 	user.learned_node_ids = _.without(user.learned_node_ids, node.id)
 	$.event.trigger({
-		type: 'unlearned-node-to-server',
-		message: node.id,
-		date: new Date(),
+		type: 'jsend',
+		message: { command: 'unlearn-node', identifier: identifier(), node_id: node.id },
 	})
 }
 
@@ -73,13 +71,19 @@ function setPref(dic) {
 	// maybe check for an error here that no preference was actually changed.
 	// if there was a change...
 	$.event.trigger({
-		type: 'pref-to-server',
-		message: dic,
-		date: new Date(),
+		type: 'jsend',
+		message: { command: 'set-pref', identifier: identifier(), pref_dict: dic },
 	})
 }
 
 function nodesAndPrefs() {}
+
+function identifier(){
+	return {
+		account_type: user.account.type,
+		account_id: user.account.id,
+	}
+}
 
 return {
 	init: init,
@@ -89,6 +93,7 @@ return {
 	learnNode: learnNode,
 	unlearnNode: unlearnNode,
 	hasLearned: hasLearned,
+	setPref: setPref, // temporary
 }
 
 }) // end of define

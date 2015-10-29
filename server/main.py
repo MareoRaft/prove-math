@@ -69,7 +69,7 @@ class IndexHandler(BaseHandler):
 				account_id = xml_root.find('id').text
 
 			user_identifier = { 'account_type': provider.name, 'account_id': account_id }
-			user = User(**user_identifier)
+			user = User(user_identifier)
 			print("logged_in.dict is: "+str(user.dict))
 			user_dict = user.dict
 		self.render("../www/index.html", user_dict_json_string = json.dumps(user_dict))
@@ -116,13 +116,13 @@ class SocketHandler (WebSocketHandler):
 		if ball['command'] == 'print':
 			print(ball['message'])
 		elif ball['command'] == 'learn-node':
-			# get associated user somehow?
+			user = User(ball['identifier'])
 			user.learn_node(ball['node_id'])
 		elif ball['command'] == 'unlearn-node':
-			# ditto
+			user = User(ball['identifier'])
 			user.unlearn_node(ball['node_id'])
 		elif ball['command'] == 'set-pref':
-			# ditto
+			user = User(ball['identifier'])
 			user.set_pref(ball['pref_dict'])
 
 		# if ball['command'] == 'new-node':
