@@ -43,3 +43,5 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 44. understand how https://github.com/kerzol/markdown-mathjax/blob/master/editor.html works.  either USE it, or EMULATE it
 45. Understand what MathML is.  perhaps make a mathjax config with a \big{} that does nothing, so that blind people can hear \big and have capital letters distinguished from lowercase.
 46. https://groups.google.com/forum/#!topic/rubyonrails-talk/STny0vF5FX4 -- this is a discussion on embedding JSON into an HTML page.  I think the json encoding is good enough, and because JSON is supposed to be a subset of javascript, that we will have no issue.  but just in case, there's the link.
+47. pass in HOST variable through INDEX also, so that WEBSOCKETS doesn't say "localhost" or "provemath".
+48. for alpha testing, no facebook because fb hasn't approved us yet

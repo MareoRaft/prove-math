@@ -65,7 +65,7 @@ require( [
 ){
 
 /////////////////////////// INITIALIZATION ///////////////////////////
-let user_dict_json_string = $('#node-template').attr('data-user-dict-json-string')
+let user_dict_json_string = $('body').attr('data-user-dict-json-string')
 let user_dict = JSON.parse(user_dict_json_string)
 if( check.emptyObject(user_dict) ){
 	loginInit()
@@ -148,8 +148,8 @@ $('#unlearn').click(function(){
 	graphAnimation.update()
 })
 
-// let ws = ('WebSocket' in window)? new WebSocket("ws://provemath.org/websocket"): undefined;
-let ws = ('WebSocket' in window)? new WebSocket("ws://localhost/websocket"): undefined;
+let host = $('body').attr('data-host')
+let ws = ('WebSocket' in window)? new WebSocket("ws://"+host+"/websocket"): undefined;
 if( !def(ws) ) die('Your browser does not support websockets, which are essential for this program.')
 
 ws.jsend = function(raw_object) {

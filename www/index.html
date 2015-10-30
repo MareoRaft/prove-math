@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
     <script src='scripts/lib/require.js' data-main='scripts/main'></script>
 </head>
-<body>
+<body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}">
 <!-- <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
   <defs>
     <filter id="name-your-filter-here">
@@ -56,7 +56,7 @@
 		</div>
 	</div>
 </section>
-<section id='node-template' data-user-dict-json-string="{{ user_dict_json_string }}">
+<section id='node-template'>
 	<header>
 		<span id='back'>back</span><pre>    </pre>
 		<span id='learn'>learn</span><pre>    </pre>

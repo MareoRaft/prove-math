@@ -68,11 +68,13 @@ class IndexHandler(BaseHandler):
 				xml_root = ET.fromstring(user_info.text)
 				account_id = xml_root.find('id').text
 
-			user_identifier = { 'account_type': provider.name, 'account_id': account_id }
-			user = User(user_identifier)
+			user = User({ 'account_type': provider.name, 'account_id': account_id })
 			print("logged_in.dict is: "+str(user.dict))
 			user_dict = user.dict
-		self.render("../www/index.html", user_dict_json_string = json.dumps(user_dict))
+		self.render("../www/index.html",
+			user_dict_json_string = json.dumps(user_dict),
+			host = self.request.host
+		)
 
 
 class JSONHandler (BaseHandler):
