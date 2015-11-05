@@ -23,6 +23,10 @@
 }
 
 #login {
+	max-width: 100%;
+	overflow: hidden;
+	scroll: none;
+	// background-color: rgba(lightblue, 0.5);
 	z-index: 1;
 	@include hide;
 	background: radial-gradient(white, transparent);
@@ -32,7 +36,7 @@
 	& > div {
 		width: 40%;
 		height: 40%;
-		// background-color: rgba( 255, 255, 255, 0.8 );
+		// background-color: rgba(pink, 0.5);
 		// border: 2px solid $white;
 		display: flex;
 		justify-content: space-around;
@@ -47,6 +51,17 @@
 				width: 100%;
 			}
 		}
+	}
+}
+
+#x {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	height: 80px;
+	opacity: 0.6;
+	&:hover {
+		opacity: 1;
 	}
 }
 

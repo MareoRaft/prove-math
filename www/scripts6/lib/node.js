@@ -37,8 +37,9 @@ class Node {
 		_removeLeadingUnderscoresFromKeys(object)
 		_.extend(this, object)
 		if( this.empty ){
+			// then it's an "axiom"...
 			this.name = "id: " + this.id
-			this.type = null
+			this.type = "axiom"
 			this.description = "No description.  Please fill it in for us!"
 		}
 	}

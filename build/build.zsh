@@ -50,6 +50,6 @@ echo 'done updating files on local machine'
 
 
 
-open -a "Google Chrome" http://localhost
+open -a "Opera" http://localhost
 
 echo 'done.'

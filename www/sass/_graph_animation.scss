@@ -14,6 +14,9 @@ svg {
 		}
 	}
 
+	.axiom-circle {
+		@include bright-and-unbright-fill-and-opacity($grey);
+	}
 	.definition-circle {
 		@include bright-and-unbright-fill-and-opacity($green);
 	}

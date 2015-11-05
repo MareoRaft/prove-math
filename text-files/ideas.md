@@ -45,3 +45,11 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 46. https://groups.google.com/forum/#!topic/rubyonrails-talk/STny0vF5FX4 -- this is a discussion on embedding JSON into an HTML page.  I think the json encoding is good enough, and because JSON is supposed to be a subset of javascript, that we will have no issue.  but just in case, there's the link.
 47. pass in HOST variable through INDEX also, so that WEBSOCKETS doesn't say "localhost" or "provemath".
 48. for alpha testing, no facebook because fb hasn't approved us yet
+49. It looks like Tornado offers builtin oauth things: http://www.tornadoweb.org/en/stable/auth.html#module-tornado.auth
+Victoria Feedback
+-----------------------
+50. things need to automatically resize when user resizes their browser window.
+51. the "hover" definitions on the graph-animation are not rendered!
+52. double-click part is not intuitive. --> single click. --> add a message "click for details"
+53. refresh error. (when i reload, it breaks)
+54. change "axiom" color

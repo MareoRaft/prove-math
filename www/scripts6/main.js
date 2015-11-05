@@ -84,6 +84,7 @@ graphAnimation.init({
 	node_radius: node => 6 * Math.sqrt(node.importance),
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
+		'axiom-circle': node => node.type === 'axiom',
 		'definition-circle': node => node.type === 'definition',
 		'theorem-circle': node => node.type === 'theorem',
 		'exercise-circle': node => node.type === 'exercise',
@@ -156,8 +157,6 @@ ws.jsend = function(raw_object) {
 	ws.send(JSON.stringify(raw_object))
 }
 ws.onopen = function() {
-	ws.jsend({ command: 'print', message: 'websocket opened.' })
-	// on the SERVER SIDE, if the server remembers this user somehow, immediately send user info
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -189,6 +188,9 @@ $(document).on('jsend', function(Event) {
 ///////////////////////////// LOGIN STUFF /////////////////////////////
 var oauth_url_dict = undefined
 
+$('#x').click(function(){
+	hide('#login')
+})
 $('#login-button').click(login)
 $('#password, #username').keypress(function(event) { if(event.which === 13) {
 	login()
