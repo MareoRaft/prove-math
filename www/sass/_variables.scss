@@ -17,4 +17,5 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $medium
   overflow: hidden;
   border-width: 0;
   height: 0;
+  width: 0; // prevent rogue width overflows
 }
