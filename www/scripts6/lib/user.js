@@ -18,15 +18,7 @@ let user = {
 	learned_node_ids: [],
 }
 function init(dict) { // this must handle empty input before user logs in, and the real user account init when they log in
-	_.defaults(dict, {
-		// i don't think we need this because we put defaults above
-	})
 	$.extend(true, user, dict) // the first parameter means DEEP extend
-
-	// user.oauth = _login(password)
-	_.extend(user.prefs, _loadPrefs())
-	// user.learned_node_ids
-	// alert(JSON.stringify(user.prefs))
 }
 
 function _login(password) {
@@ -34,12 +26,6 @@ function _login(password) {
 	// bla bla oauth.
 	// user.account_type, user.username, password
 	// return oauth object
-}
-
-function _loadPrefs() { // gets prefs from server
-	return {show_description_on_hover: true} // just for testing purposes
-	// die('oauth retrieval not implemented.')
-	// return user.oauth.get( prefs request )
 }
 
 // function learnedNodeIds() {} // getter
@@ -93,7 +79,7 @@ return {
 	learnNode: learnNode,
 	unlearnNode: unlearnNode,
 	hasLearned: hasLearned,
-	setPref: setPref, // temporary
+	setPref: setPref,
 }
 
 }) // end of define

@@ -21,7 +21,7 @@ svg {
 		@include bright-and-unbright-fill-and-opacity($green);
 	}
 	.theorem-circle {
-		@include bright-and-unbright-fill-and-opacity(steelblue);
+		@include bright-and-unbright-fill-and-opacity(blue);
 	}
 	.exercise-circle {
 		@include bright-and-unbright-fill-and-opacity($darkwhite);

@@ -7,60 +7,61 @@
   display: flex;
   padding: 44px;
   font: 300 normal 19px Helvetica, Tahoma, Arial, sans-serif; /* somewhere in 18-22 range feels right */
-  overflow: visible;
+  overflow: visible; // i think this is for the dependencies dropdown
   .key {
-    display: inline-flex;
-    // vertical-align: top; // this is necessary if using inline-block
-    width: 15%;
-    text-align: right; // this is necessary if using inline-block
-    justify-content: flex-end; // this is necessary if using flex
+	display: inline-flex;
+	// vertical-align: top; // this is necessary if using inline-block
+	width: 15%;
+	min-width: 100px; // this is to prevent stuff getting cut-off when width of window is very narrow
+	// text-align: right; // this is necessary if using inline-block
+	justify-content: flex-end; // this is necessary if using flex
   }
   .value {
-    display: inline-flex;
-    // vertical-align: top;
-    width: 85%;
+	display: inline-flex;
+	// vertical-align: top;
+	width: 85%;
   }
   strong {
   font-weight: bold;
   }
   em {
-    font-style: italic;
+	font-style: italic;
   }
 }
 
 .definition-group-1 {
   &:nth-child(3n+2) { // for some reason the first one is considered 2!!!!!
-    background-color: #CB9;
+	background-color: #CB9;
   }
   &:nth-child(3n+0) {
-    background-color: #4E201D;
-    color: white;
+	background-color: #4E201D;
+	color: white;
   }
   &:nth-child(3n+1) {
-    background-color: #CCB;
+	background-color: #CCB;
   }
 }
 
 .definition-group-2 {
   &:nth-child(3n+2) {
-    background-color: #198;
-    color: white;
+	background-color: #198;
+	color: white;
   }
   &:nth-child(3n+0) {
-    background-color: #0DD;
+	background-color: #0DD;
   }
   &:nth-child(3n+1) {
-    background-color: #7A6;
+	background-color: #7A6;
   }
 }
 
 .definition-group-3 {
   &:nth-child(2n+1) {
-    background-color: #4E201D;
-    color: white;
+	background-color: #4E201D;
+	color: white;
   }
   &:nth-child(2n+0) {
-    background-color: #CB9;
+	background-color: #CB9;
   }
 }
 
@@ -69,18 +70,18 @@
   color: #444;
   background-color: transparent;
   li {
-    &.disabled-result {
-      color: #ccc;
-    }
-    &.highlighted {
-      // background-image: none;
-      background-color: pink;
-      // color: #fff;
-    }
-    &.no-results {
-      color: #777;
-      background: red;
-    }
+	&.disabled-result {
+	  color: #ccc;
+	}
+	&.highlighted {
+	  // background-image: none;
+	  background-color: pink;
+	  // color: #fff;
+	}
+	&.no-results {
+	  color: #777;
+	  background: red;
+	}
   }
 }
 

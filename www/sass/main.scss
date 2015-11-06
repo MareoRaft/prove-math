@@ -23,7 +23,6 @@
 }
 
 #login {
-	max-width: 100%;
 	overflow: hidden;
 	scroll: none;
 	// background-color: rgba(lightblue, 0.5);
@@ -107,7 +106,7 @@
 	@include hide;
 	// background-color: yellow;
 	section {
-		overflow: scroll;
+		overflow-y: scroll;
 	}
 }
 

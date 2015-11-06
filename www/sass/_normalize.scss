@@ -16,3 +16,8 @@ button {
 	line-height: 20px;
 	border: 1px solid #aaa;
 }
+
+section, svg { // this resizes svg element but NOT the graph animation inside of it
+	min-width: 100%;
+	max-width: 100%;
+}

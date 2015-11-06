@@ -81,7 +81,7 @@ circle_events[user.prefs.view_node_trigger] = node => $.event.trigger({ type: 'v
 graphAnimation.init({
 	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
 	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
-	node_radius: node => 6 * Math.sqrt(node.importance),
+	node_radius: node => 7.5 * Math.sqrt(node.importance),
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom',
@@ -259,16 +259,15 @@ function toggleToGraphAnimation() {
 ////////////////////////////// HELPERS //////////////////////////////
 function hide(css_selector) {
 	let $selected = $(css_selector)
-	$selected.css('overflow', 'hidden') // we can move this to SCSS file too
-	$selected.css('border-width', '0') // we may not need this
 	$selected.css('height', '0')
+	$selected.css('width', '0')
+	$selected.css('overflow', 'hidden')
 }
 
-function show(css_selector) {
+function show(css_selector) { // this stuff fails for svg when using .addClass, so we can just leave show and hide stuff in the JS.
 	let $selected = $(css_selector)
-	// restore any borders if there were any (not relevant now)
-	$selected.css('height', $(window).height())
-	$selected.css('width', $(window).width())
+	$selected.css('height', '100%')
+	$selected.css('width', '100%')
 	$selected.css('overflow', 'scroll')
 }
 

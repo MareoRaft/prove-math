@@ -11,23 +11,18 @@ function init(input) {
 		node_radius: node => node.r,
 		circle_class_conditions: {},
 		circle_events: {},
+		width: () => $(window).width(),
+		height: () => $(window).height(),
 	})
 
 	gA.circle_events = _.mapObject(gA.circle_events, function(func) {
 		return function(node) { func(node); update() }
 	})
 
-	// if( !def(window_id) ) die('No window_id (id of html container) given to initialize graphAnimation in.')
-	// gA.$window = $('#' + window_id)
-	// gA.width = gA.$window.width(),
-	// gA.height = gA.$window.height()
-	gA.width = $(window).width()
-	gA.height = $(window).height()
-
 	gA.force = d3.layout.force() // see https://github.com/mbostock/d3/wiki/Force-Layout for options
 		.nodes(gA.nodes) // and when we push new nodes to nodes, things happen (i think)
 		.links(gA.links)
-		.size([gA.width, gA.height])
+		.size([gA.width(), gA.height()])
 		.charge(-400) // all of these can be FUNCTIONS, which act on each node or link, depending on the property :)
 		// .linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
 		.linkStrength(0.2)
@@ -52,17 +47,16 @@ function init(input) {
 	gA.svg = d3.select('body') // select() only seems to work on 'body', but not on any '#id's!!!! :(
 		.append('svg')
 			.attr({
-				width: gA.width,
-				height: gA.height,
+				viewBox: '0' + ' ' + '0' + ' ' + gA.width() + ' ' + gA.height(),
 			})
 
-	gA.svg.append('defs').attr('fill', 'green').selectAll('marker').data(['arrow-head']) // binding 'arrow-head' is our way of attaching a name!
+	gA.svg.append('defs').selectAll('marker').data(['arrow-head']) // binding 'arrow-head' is our way of attaching a name!
 		.enter().append('marker')
 			.classed('arrow-head', true)
 	    	.attr({
 	    		id: String,
 	    		viewBox: '0 -5 10 10',
-		    	refX: 21,
+		    	refX: 24, // this controls the distance of the arrowhead from the end of the line segment!
 		    	refY: 0,
 		    	markerWidth: 5,
 		    	markerHeight: 5,
@@ -72,7 +66,7 @@ function init(input) {
 				.attr('d', 'M0,-5L10,0L0,5')
 
 	gA.x = d3.scale.linear()
-		.range([0, gA.width])
+		.range([0, gA.width()])
 
 	if( gA.nodes.length > 0 ) _start()
 }
@@ -122,6 +116,17 @@ function update() { // this function gets called AGAIN when new nodes come in
 		.text(gA.node_label)
 	gA.svg.selectAll('circle')
 		.classed(gA.circle_class_conditions)
+}
+
+function updateSize() {
+	// something that calculates the farthest node from the center, and then
+	// updates the svg viewBox (so we won't have to change graph animation at all_
+	// taking into account the size of the window.  so that we can have
+	// shrinkage, but not too much
+
+	// also, note that
+	// gA.force.size([gA.width(), gA.height()])
+	// DOES work, but only affects centering and where new nodes are populated.  not scaling.
 }
 
 function addNodesAndLinks({ nodes=[], links=[] }) {
