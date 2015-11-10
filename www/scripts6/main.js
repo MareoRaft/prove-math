@@ -92,6 +92,7 @@ graphAnimation.init({
 	circle_events: circle_events, // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
 })
 show('svg') // both svg and node-template are hidden on load
+show('#banner')
 
 function katexRenderIfPossible(string) {
 	let content = string.substr(1, -1)
@@ -238,6 +239,7 @@ $(document).on('view-node', function(Event){
 	blinds.open({
 		object: current_node,
 	})
+	hide('#banner')
 	hide('svg')
 	show('#node-template')
 })
@@ -253,6 +255,7 @@ $('#back').click(function(){
 function toggleToGraphAnimation() {
 	hide('#node-template')
 	show('svg')
+	show('#banner')
 	blinds.close()
 }
 

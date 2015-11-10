@@ -52,7 +52,6 @@
 		}
 	}
 }
-
 #x {
 	position: absolute;
 	top: 0px;
@@ -63,7 +62,6 @@
 		opacity: 1;
 	}
 }
-
 #social-icon-container {
 	width: 100%;
 	display: flex;
@@ -112,6 +110,19 @@
 
 svg {
 	// background-color: cyan;
+}
+
+#banner {
+	@include hide;
+	z-index: 2;
+	pointer-events: none;
+}
+#explanation {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	background-color: rgba( white, 0.7 );
+	pointer-events: auto;
 }
 
 #section-1 {
