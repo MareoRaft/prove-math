@@ -48,8 +48,7 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 49. It looks like Tornado offers builtin oauth things: http://www.tornadoweb.org/en/stable/auth.html#module-tornado.auth
 Victoria Feedback
 -----------------------
-50. things need to automatically resize when user resizes their browser window.
 51. the "hover" definitions on the graph-animation are not rendered!
 52. double-click part is not intuitive. --> single click. --> add a message "click for details"
 53. refresh error. (when i reload, it breaks)
-54. change "axiom" color
+54. consider using https://github.com/ftlabs/fastclick to make clicking not laggy on mobile devices.

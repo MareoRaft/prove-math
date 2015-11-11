@@ -33,7 +33,7 @@ function init(input) {
 
 	//we can't override force.tick easily. but we want the line change:
 		// if ((alpha *= .99) < .005) {
-	    // to
+		// to
 		// if ((alpha *= .995) < .0045) {
 	gA.force.resume = function() {
 		let alpha = gA.force.alpha()
@@ -53,16 +53,16 @@ function init(input) {
 	gA.svg.append('defs').selectAll('marker').data(['arrow-head']) // binding 'arrow-head' is our way of attaching a name!
 		.enter().append('marker')
 			.classed('arrow-head', true)
-	    	.attr({
-	    		id: String,
-	    		viewBox: '0 -5 10 10',
-		    	refX: 24, // this controls the distance of the arrowhead from the end of the line segment!
-		    	refY: 0,
-		    	markerWidth: 5,
-		    	markerHeight: 5,
-		    	orient: 'auto',
-		    })
-	  		.append('path')
+			.attr({
+				id: String,
+				viewBox: '0 -5 10 10',
+				refX: 10, // this controls the distance of the arrowhead from the end of the line segment!
+				refY: 0,
+				markerWidth: 5,
+				markerHeight: 5,
+				orient: 'auto',
+			})
+			.append('path')
 				.attr('d', 'M0,-5L10,0L0,5')
 
 	gA.x = d3.scale.linear()
@@ -82,40 +82,83 @@ function _tick(){
 		})
 	gA.svg.selectAll('.link')
 		.attr({
-			x1: node => node.source.x,
-			y1: node => node.source.y,
-			x2: node => node.target.x,
-			y2: node => node.target.y,
+			x1: link => endpointLessRadius(link, 'x1'),
+			y1: link => endpointLessRadius(link, 'y1'),
+			x2: link => endpointLessRadius(link, 'x2'),
+			y2: link => endpointLessRadius(link, 'y2'),
 		})
 }
+function endpointLessRadius(link, attr_name) { // subtract radius away from line ends
+	let x1 = link.source.x
+	let y1 = link.source.y
+	let x2 = link.target.x
+	let y2 = link.target.y
+
+	let distance = cartesianDistance([x1, y1], [x2, y2])
+	let radius1 = gA.node_radius(link.source)
+	let radius2 = gA.node_radius(link.target)
+
+	if( attr_name === 'x1' ) return x1 + (x2-x1) * radius1/distance
+	if( attr_name === 'y1' ) return y1 + (y2-y1) * radius1/distance
+	if( attr_name === 'x2' ) return x2 + (x1-x2) * radius2/distance
+	if( attr_name === 'y2' ) return y2 + (y1-y2) * radius2/distance
+}
+function cartesianDistance(P1, P2) {
+	return Math.sqrt( Math.pow(P1[0]-P2[0], 2) + Math.pow(P1[1]-P2[1], 2) )
+}
+
 
 function update() { // this function gets called AGAIN when new nodes come in
 	// x.domain([0, d3.max(_.pluck(nodes, 'x'))]) // not sure where in the flow this belongs...
 
 // it was a LINK ISSUE!  you need to go over entire link importation stuff to verify it makes sense
-    let link = gA.svg.selectAll('.link').data(gA.force.links(), link => gA.node_id(link.source) + '--->' + gA.node_id(link.target)) // links before nodes so that lines in SVG appear *under* nodes
-    link.enter().append('line')
-    	.classed('link', true)
-    	.attr('marker-end', 'url(#arrow-head)') // add in the marker-end defined above
-    link.exit().remove()
+	let link = gA.svg.selectAll('.link').data(gA.force.links(), link => gA.node_id(link.source) + '--->' + gA.node_id(link.target)) // links before nodes so that lines in SVG appear *under* nodes
+	link.enter().append('line')
+		.classed('link', true)
+		.attr('marker-end', 'url(#arrow-head)') // add in the marker-end defined above
+	link.exit().remove()
 
 	let node = gA.svg.selectAll('.node').data(gA.force.nodes(), gA.node_id)
 		let node_group = node.enter().append('g')
 			.classed('node', true)
 			.call(gA.drag)
 		node_group.append('circle')
-		    .classed('node-circle', true)
+			.classed('node-circle', true)
 			.attr('r', gA.node_radius) // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
+			.on('mousedown', mousedown)
+			.on('mouseup', mouseup)
 			.on(gA.circle_events)
 		node_group.append('text') // must appear ABOVE node-circle
-		    .classed('node-text', true)
-    node.exit().remove()
+			.classed('node-text', true)
+	node.exit().remove()
 
-    // UPDATE stuff (things we need to update even if we are not enter()ing the node for the first time
-    gA.svg.selectAll('.node-text')
+	// UPDATE stuff (things we need to update even if we are not enter()ing the node for the first time
+	gA.svg.selectAll('.node-text')
 		.text(gA.node_label)
 	gA.svg.selectAll('circle')
 		.classed(gA.circle_class_conditions)
+}
+
+function mousedown(node) {
+	node.time_before = getShortTime(new Date())
+	node.client_x_before = d3.event.clientX
+	node.client_y_before = d3.event.clientY
+}
+function mouseup(node) {
+	if( mod(getShortTime(new Date()) - node.time_before, 60) < 0.85
+			&& cartesianDistance([node.client_x_before, node.client_y_before], [d3.event.clientX, d3.event.clientY]) < 55
+		) {
+		$.event.trigger({ type: 'node-click', message: node.id })
+	}
+	delete node.time_before
+	delete node.client_x_before
+	delete node.client_y_before
+}
+function getShortTime(date) {
+  return date.getSeconds() + date.getMilliseconds()/1000
+}
+function mod(m, n) {
+	return (m % n + n) % n;
 }
 
 function updateSize() {

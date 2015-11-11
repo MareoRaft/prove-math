@@ -73,15 +73,10 @@ if( check.emptyObject(user_dict) ){
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 
-let circle_events = {
-	mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.description },
-	mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
-}
-circle_events[user.prefs.view_node_trigger] = node => $.event.trigger({ type: 'view-node', message: node.id })
 graphAnimation.init({
 	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
 	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
-	node_radius: node => 7.5 * Math.sqrt(node.importance),
+	node_radius: node => 7.9 * Math.sqrt(node.importance), // 7.5
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom',
@@ -89,7 +84,10 @@ graphAnimation.init({
 		'theorem-circle': node => node.type === 'theorem',
 		'exercise-circle': node => node.type === 'exercise',
 	},
-	circle_events: circle_events, // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
+	circle_events: { // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
+		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.description },
+		mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
+	},
 })
 show('svg') // both svg and node-template are hidden on load
 show('#banner')
@@ -234,7 +232,7 @@ function login() {
 }
 
 //////////////////////////// TOGGLE STUFF ////////////////////////////
-$(document).on('view-node', function(Event){
+$(document).on('node-click', function(Event){
 	current_node = graph.nodes[Event.message] // this assumed HASH of nodes
 	blinds.open({
 		object: current_node,
