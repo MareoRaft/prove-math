@@ -25,10 +25,7 @@
 		width: 40px;
 		height: 40px;
 		margin-left: 15px;
-		opacity: 0.5;
-		&:hover {
-			opacity: 1;
-		}
+		@include hover-opacity;
 	}
 	strong {
 	font-weight: bold;

@@ -17,6 +17,7 @@ text-files/things-to-go-over-with-theo.txt
 #*#
 *.pyc
 *secrets.txt
+ignore/
 
 # TeX things
 Output/

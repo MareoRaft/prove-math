@@ -49,9 +49,15 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 Victoria Feedback
 -----------------------
 51. the "hover" definitions on the graph-animation are not rendered!
-53. refresh error. (when i reload, it breaks)
+53. refresh error. (when i reload, it breaks) --> Andrew adds back and forward browser button things.
+53.5 can we remember when somebody is already logged in?
 Continued
 --------------
 54. consider using https://github.com/ftlabs/fastclick to make clicking not laggy on mobile devices.
 55. add an "edit" and "save" button on blinds, instead of double-click
 56. need to get support@provemath.org online!
+57. need stopPropogation or preventDefault or something to disable drag on firefox after clicking node.
+Andrew stuff
+------------------
+58. restrict the nodes to the visible screen -- can we have a repulsive force along the boundary?
+59. some reaction to pressing "I learned it"
