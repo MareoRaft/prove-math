@@ -38,13 +38,19 @@ IFS=$' \t\n'
 number_of_matches=$#array_of_processes
 if [[ $number_of_matches = 1 ]]
 	then
+	zsh build/javascript6to5.zsh
 	python3 build/babel_watchdog.py ./www/scripts6 &|
 fi
 
 
 # optimize and minify
-# node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2
-
+os=$(uname)
+if [[ $os = FreeBSD ]]
+	then
+	# node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2
+	node build/r.js -o mainConfigFile=www/scripts/main.js baseUrl=www/scripts/lib name=../main out=www/scripts/main-optimized.min.js generateSourceMap=true preserveLicenseComments=false optimize=uglify2
+	echo 'remember to switch "main" to "main-optimized.min" in index.html'
+fi
 
 echo 'done updating files on local machine'
 

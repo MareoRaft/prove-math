@@ -49,6 +49,9 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 Victoria Feedback
 -----------------------
 51. the "hover" definitions on the graph-animation are not rendered!
-52. double-click part is not intuitive. --> single click. --> add a message "click for details"
 53. refresh error. (when i reload, it breaks)
+Continued
+--------------
 54. consider using https://github.com/ftlabs/fastclick to make clicking not laggy on mobile devices.
+55. add an "edit" and "save" button on blinds, instead of double-click
+56. need to get support@provemath.org online!

@@ -14,6 +14,7 @@ function init(input) {
 		expand_array: false,
 		open_empty_blind: true,
 		blind_class_conditions: {},
+		edit_save_icon: true,
 	})
 
 	blinds.$window = $('#' + blinds.window_id)
@@ -86,7 +87,8 @@ function _displayBlind(blind) {
 }
 
 function _enableDoubleClickRenderToggling(blind) {
-	$('#'+blind.id).dblclick(function(){ _toggleBlindGiven$selected(blind, $(this)) })
+	// $('#'+blind.id).dblclick(function(){ _toggleBlindGiven$selected(blind, $(this)) })
+	$('#'+blind.id+' '+'.edit-save').click(function(){ _toggleBlindGiven$selected(blind, $(this).parent()) })
 }
 
 function _toggleBlindGiven$selected(blind, $this) {
@@ -118,6 +120,7 @@ function _startReadMode(blind, $value) {
 	else die('Unexpected blind mode.')
 
 	$value.html(blind.value_htmlified)
+	$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit-icon.svg')
 	blinds.post_render()
 }
 
@@ -138,6 +141,8 @@ function _startWriteMode(blind, $value) {
 		_setCursor($value)
 	}
 	else die('Unexpected blind mode.')
+
+	$('#'+blind.id+' '+'.edit-save').attr('src', 'images/save-icon.svg')
 }
 
 function _setCursor($contenteditable_container) {
@@ -209,7 +214,15 @@ class Blind {
 					+ '<div class="value" ' + this.contenteditable_htmlified + '>'
 						+ this.value_htmlified
 					+ '</div>'
+					+ this.edit_save_htmlified
 			+ '</div>'
+	}
+
+	get edit_save_htmlified() {
+		return (blinds.edit_save_icon)? '<img class="edit-save" src="images/'+editOrSave(this.state)+'-icon.svg" />': ''
+		function editOrSave(state) {
+			return (state === 'read')? 'edit': 'save'
+		}
 	}
 
 	get display_key_htmlified() {
