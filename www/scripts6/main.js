@@ -290,4 +290,8 @@ function loginInit() {
 	})
 }
 
+function logout(){
+    ws.jsend({ command: 'logout'})
+}
+
 }); // end require

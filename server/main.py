@@ -146,6 +146,9 @@ class SocketHandler(WebSocketHandler):
 		elif ball['command'] == 'set-pref':
 			user = User(ball['identifier'])
 			user.set_pref(ball['pref_dict'])
+		elif ball['command']=='logout':
+			self.clear_cookie("mycookie")
+			
 
 		# if ball['command'] == 'new-node':
 		# 	node_dict = ball['dict']
