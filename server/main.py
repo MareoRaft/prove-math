@@ -15,6 +15,7 @@ from tornado.websocket import WebSocketHandler
 # other
 from tornado.web import Application
 from tornado.web import Finish
+from tornado.escape import xhtml_escape
 # from tornado.log import enable_pretty_logging
 
 from lib.mongo import Mongo
@@ -53,12 +54,15 @@ class BaseHandler(RequestHandler):
 class IndexHandler(BaseHandler):
 
 	def get(self):
-		user_dict = {}
-
 		method = self.get_argument("method", default=None, strip=False)
-		authorization_code = self.get_argument(
-			"code", default=None, strip=False)
-		if method is not None and authorization_code is not None:
+		authorization_code = self.get_argument("code", default=None, strip=False)
+		if self.get_secure_cookie("mycookie"):
+			user_dict=json.loads(str(self.get_secure_cookie("mycookie"),'UTF-8'))
+			print("Welcome back user "+ user_dict['_id'])
+			print("Now clearing you out")
+			self.clear_cookie("mycookie")
+
+		elif method is not None and authorization_code is not None:
 			print('got params!!!!')
 			redirect_response = 'https://' + self.request.host + \
 				'/index?method=' + method + '&code=' + authorization_code
@@ -82,6 +86,9 @@ class IndexHandler(BaseHandler):
 						 'account_id': account_id})
 			print("logged_in.dict is: " + str(user.dict))
 			user_dict = user.dict
+			self.set_secure_cookie("mycookie",json.dumps(user_dict))
+		else:
+			user_dict={}
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
 					host=self.request.host
@@ -176,6 +183,7 @@ def make_app():
 		],
 		# settings:
 		debug=True,
+		cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__"
 	)
 
 
