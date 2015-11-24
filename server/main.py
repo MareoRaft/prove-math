@@ -67,26 +67,28 @@ class IndexHandler(BaseHandler):
 			redirect_response = 'https://' + self.request.host + \
 				'/index?method=' + method + '&code=' + authorization_code
 			provider = auth.get_new_provider(method)
+			try:
+				provider.oauth_obj.fetch_token(
+					provider.token_url,
+					client_secret=provider.secret,
+					authorization_response=redirect_response
+					)
+				user_info = provider.oauth_obj.get(provider.request_url)
 
-			provider.oauth_obj.fetch_token(
-				provider.token_url,
-				client_secret=provider.secret,
-				authorization_response=redirect_response
-			)
-			user_info = provider.oauth_obj.get(provider.request_url)
+				if provider.request_format == 'json':
+					r_text_dict = json.loads(user_info.text)
+					account_id = r_text_dict['id']
+				else:
+					xml_root = ET.fromstring(user_info.text)
+					account_id = xml_root.find('id').text
 
-			if provider.request_format == 'json':
-				r_text_dict = json.loads(user_info.text)
-				account_id = r_text_dict['id']
-			else:
-				xml_root = ET.fromstring(user_info.text)
-				account_id = xml_root.find('id').text
-
-			user = User({'account_type': provider.name,
+					user = User({'account_type': provider.name,
 						 'account_id': account_id})
-			print("logged_in.dict is: " + str(user.dict))
-			user_dict = user.dict
-			self.set_secure_cookie("mycookie",json.dumps(user_dict))
+					print("logged_in.dict is: " + str(user.dict))
+					user_dict = user.dict
+					self.set_secure_cookie("mycookie",json.dumps(user_dict))
+			except:
+				user_dict={}
 		else:
 			user_dict={}
 
