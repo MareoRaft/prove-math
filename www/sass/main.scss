@@ -123,6 +123,19 @@ svg {
 	pointer-events: auto;
 }
 
+#overlay{
+	@include hide;
+	z-index: 3;
+	pointer-events: none;
+}
+#logout{
+	position:absolute;
+	top: 0;
+	right: 0;
+	@include hover-opacity;	
+	pointer-events: auto;
+}
+
 #section-1 {
 	background-color: pink;
 }

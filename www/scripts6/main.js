@@ -71,6 +71,9 @@ if( check.emptyObject(user_dict) ){
 	loginInit()
 	show('#login')
 }
+else{
+    show('#overlay')
+}
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 
 graphAnimation.init({
@@ -91,6 +94,7 @@ graphAnimation.init({
 })
 show('svg') // both svg and node-template are hidden on load
 show('#banner')
+
 
 function katexRenderIfPossible(string) {
 	let content = string.substr(1, -1)
@@ -250,6 +254,9 @@ $('#back').click(function(){
 	else toggleToGraphAnimation()
 })
 
+$('#logout').click(logout)
+
+
 function toggleToGraphAnimation() {
 	hide('#node-template')
 	show('svg')
@@ -291,7 +298,13 @@ function loginInit() {
 }
 
 function logout(){
-    ws.jsend({ command: 'logout'})
+    delete_cookie()
+    hide('#overlay')
+    show('#login')
+}
+
+function delete_cookie() {
+  document.cookie = 'mycookie' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
 }); // end require

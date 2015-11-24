@@ -15,7 +15,7 @@ from tornado.websocket import WebSocketHandler
 # other
 from tornado.web import Application
 from tornado.web import Finish
-from tornado.escape import xhtml_escape
+#from tornado.escape import xhtml_escape
 # from tornado.log import enable_pretty_logging
 
 from lib.mongo import Mongo
@@ -89,6 +89,7 @@ class IndexHandler(BaseHandler):
 			self.set_secure_cookie("mycookie",json.dumps(user_dict))
 		else:
 			user_dict={}
+
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
 					host=self.request.host
@@ -146,8 +147,7 @@ class SocketHandler(WebSocketHandler):
 		elif ball['command'] == 'set-pref':
 			user = User(ball['identifier'])
 			user.set_pref(ball['pref_dict'])
-		elif ball['command']=='logout':
-			self.clear_cookie("mycookie")
+
 			
 
 		# if ball['command'] == 'new-node':
