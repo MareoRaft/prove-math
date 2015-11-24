@@ -7,6 +7,7 @@ function init(input) {
 		keys: undefined, // yes, you can inherit undefined values too
 		expand_array_keys: undefined,
 		collapse_array_keys: undefined,
+		append_keys: undefined,
 		chosen: false,
 		render: x => x,
 		post_render: x => x,
@@ -28,10 +29,12 @@ function open({
 			keys = blinds.keys,
 			expand_array_keys = blinds.expand_array_keys,
 			collapse_array_keys = blinds.collapse_array_keys,
+			append_keys = blinds.append_keys,
 		}) {
 	keys = def(keys)? keys: 'own'
 	expand_array_keys = def(expand_array_keys)? expand_array_keys: []
 	collapse_array_keys = def(collapse_array_keys)? collapse_array_keys: []
+	append_keys = def(append_keys)? append_keys: []
 
 	if( object === null ) die('Tried to open the blinds with no blinds (object input was null or undefined).')
 	blinds.object = object
@@ -39,11 +42,24 @@ function open({
 	for( let key in iterable ){
 		if( check.array(iterable) ) key = iterable[key] // for the keys array, grab the STRINGS, not the INDECIS
 		if( blinds.object.hasOwnProperty(key) ){
-			_openBlind({
+			if( blinds.object[key] !== null ) _openBlind({
 				key: key,
 				display_key: key,
 				expand_array: (blinds.expand_array && !_.contains(collapse_array_keys, key)) || _.contains(expand_array_keys, key),
 			})
+			else { if( _.contains(append_keys, key) ) {
+				_openAppendBlind({
+					key: key,
+					display_key: key,
+				})
+			}}
+			// for arrays, ALWAYS show an append:
+			if( check.array(blinds.object[key]) ) { if( _.contains(append_keys, key) ) {
+				_openAppendBlind({
+					key: key,
+					display_key: key,
+				})
+			}}
 		}
 	}
 	// ASSUMING that when we open a blind, it is always in read mode, then we would run post_render here:
@@ -57,15 +73,20 @@ function close() {
 	// clear jquery id double-click triggers?
 }
 
-function _openBlind({ parent_object=blinds.object, key, expand_array, display_key }) { // at this point, expand_array represents whether we should expand for THIS key specifically.
-	if( expand_array && check.array(blinds.object[key]) ) _.each(blinds.object[key], function(array_element, index) {
-		_openBlind({
-			parent_object: blinds.object[key],
-			key: index,
-			display_key: key,
-			expand_array: false,
+function _openBlind({ parent_object=blinds.object, key, expand_array, display_key, $before }) { // at this point, expand_array represents whether we should expand for THIS key specifically.
+	if( expand_array && check.array(blinds.object[key]) ) {
+		let array = blinds.object[key]
+		// if( check.emptyArray(array) && blinds.open_empty_blind ) array.push('') // empty arrays get a single empty string element
+		_.each(array, function(array_element, index) {
+			_openBlind({
+				parent_object: blinds.object[key],
+				key: index,
+				display_key: key,
+				expand_array: false,
+				$before: $before,
+			})
 		})
-	})
+	}
 	else {
 		if( blinds.open_empty_blind || blinds.object[key] !== '' ){
 			// if a blind already exists (check '.blind' key in parent_object), fetch it here
@@ -76,30 +97,68 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 				display_key: display_key,
 				mode: (blinds.chosen && check.array(parent_object[key]) )? 'chosen': 'standard',
 			})
-			_displayBlind(blind)
-			_enableDoubleClickRenderToggling(blind)
+			_displayBlind(blind, $before)
+			_enableRenderToggling(blind)
 		}
 	}
 }
 
-function _displayBlind(blind) {
-	blinds.$window.append(blind.htmlified) // we could grab the jQuery $sel here by using last() (or possibly the return value of append()).  Then we would not need '#'+blind.id to tie the trigger.  But we *may* need blind.id for something else.  That is, resuing blind objects if we wanted to do that for some reason.
+function _openAppendBlind({ key, display_key }) {
+	let blind = new Blind({
+		parent_object: check.array(blinds.object[key])? blinds.object[key]: blinds.object, // the array.  haven't handled non-array yet
+		key: key, // there is no key since there is no value
+		display_key: display_key,
+		mode: 'append',
+	})
+	_displayBlind(blind)
+	_enableAppending(blind)
 }
 
-function _enableDoubleClickRenderToggling(blind) {
+function _displayBlind(blind, $before) {
+	// alert(JSON.stringify(blind))
+	if( def($before) ) $before.before(blind.htmlified)
+	else blinds.$window.append(blind.htmlified) // we could grab the jQuery $sel here by using last() (or possibly the return value of append()).  Then we would not need '#'+blind.id to tie the trigger.  But we *may* need blind.id for something else.  That is, resuing blind objects if we wanted to do that for some reason.
+}
+
+function _enableRenderToggling(blind) {
 	// $('#'+blind.id).dblclick(function(){ _toggleBlindGiven$selected(blind, $(this)) })
 	$('#'+blind.id+' '+'.edit-save').click(function(){ _toggleBlindGiven$selected(blind, $(this).parent()) })
 }
 
+function _enableAppending(blind) {
+	$('#'+blind.id+' '+'.append').click(function(){ _appendValueGiven$selected(blind, $(this).parent()) })
+}
+
 function _toggleBlindGiven$selected(blind, $this) {
-	let $key = $this.children('.key:first')
-		let key = $key.attr('data-key')
-		let index = $key.attr('data-index')
+	// let $key = $this.children('.key:first') // don't think we use these three lines anymore.  i'll leave these here and as long as we don't have any issues by December 15, then just delete these lines
+		// let key = $key.attr('data-key')
+		// let index = $key.attr('data-index')
 	let $value = $this.children('.value:first')
 
 	blind.toggleState()
 	if(blind.state === 'read') _startReadMode(blind, $value)
 	if(blind.state === 'write') _startWriteMode(blind, $value)
+}
+
+function _appendValueGiven$selected(blind, $this) {
+	// alert(JSON.stringify(blind))
+	let key = undefined
+	if( check.array(blind.parent_object) ){
+		blind.parent_object.push('Fill in the new value here!')
+		key = blind.parent_object.length - 1
+	}
+	else {
+		// alert('non-array attempt!')
+		blind.parent_object[blind.key] = 'new value from append' // not sure about this.  what is blind exactly here?  and is the key correct, or is it just a display_key?
+		key = blind.key
+	}
+	_openBlind({
+		parent_object: blind.parent_object,
+		key: key, // needs to be ARRAY key when relevant.  // for non-array, blind.key may do
+		display_key: blind.display_key,
+		expand_array: false,
+		$before: $this,
+	})
 }
 
 function _startReadMode(blind, $value) {
@@ -120,7 +179,7 @@ function _startReadMode(blind, $value) {
 	else die('Unexpected blind mode.')
 
 	$value.html(blind.value_htmlified)
-	$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit-icon.svg')
+	$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit.svg')
 	blinds.post_render()
 }
 
@@ -142,18 +201,33 @@ function _startWriteMode(blind, $value) {
 	}
 	else die('Unexpected blind mode.')
 
-	$('#'+blind.id+' '+'.edit-save').attr('src', 'images/save-icon.svg')
+	$('#'+blind.id+' '+'.edit-save').attr('src', 'images/save.svg')
 }
+
+$.fn.selectRange = function(start, end) { // see http://stackoverflow.com/questions/499126/jquery-set-cursor-position-in-text-area
+    if(typeof end === 'undefined') {
+        end = start;
+    }
+    return this.each(function() {
+        if('selectionStart' in this) {
+            this.selectionStart = start;
+            this.selectionEnd = end;
+        } else if(this.setSelectionRange) {
+            this.setSelectionRange(start, end);
+        } else if(this.createTextRange) {
+            var range = this.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', end);
+            range.moveStart('character', start);
+            range.select();
+        }
+    });
+};
 
 function _setCursor($contenteditable_container) {
 	// set the cursor to the beginning and make it appear
-	$contenteditable_container.focus() // <-- needed for Firefox
-	let range = document.createRange()
-	let sel = window.getSelection()
-	range.setStart($contenteditable_container.get(0).childNodes[0], 0); // line 0, character 0
-	range.collapse(true)
-	sel.removeAllRanges()
-	sel.addRange(range)
+	$contenteditable_container.focus() // <-- needed to see the blinking cursor
+	$contenteditable_container.selectRange(0)
 }
 
 //////////////////////////// BLIND CLASS ////////////////////////////
@@ -164,7 +238,7 @@ class Blind {
 			parent_object: undefined,
 			key: undefined,
 			display_key: undefined,
-			mode: 'standard', // can be 'standard' or 'chosen'
+			mode: 'standard', // can be 'standard' or 'chosen' or 'append'
 			state: 'read', // can be 'read' or 'write'
 		})
 		_.extendOwn(this, input)
@@ -177,7 +251,12 @@ class Blind {
 
 	get value() {
 		// hand over the iterable() (or string) of the BlindValue object value
-		return this.parent_object[this.key]
+		if( this.mode === 'append' ){
+			return 'append new!'
+		}
+		else {
+			return this.parent_object[this.key]
+		}
 	}
 
 	set value(new_value) {
@@ -187,6 +266,7 @@ class Blind {
 
 	get classes() {
 		let classes = ['blind']
+		if( this.mode === 'append' ) classes.push('blind-append')
 		for( let class_name in blinds.blind_class_conditions ){
 			let value = blinds.blind_class_conditions[class_name]
 			if( check.function(value) ){
@@ -214,12 +294,13 @@ class Blind {
 					+ '<div class="value" ' + this.contenteditable_htmlified + '>'
 						+ this.value_htmlified
 					+ '</div>'
-					+ this.edit_save_htmlified
+					+ this.icon_htmlified
 			+ '</div>'
 	}
 
-	get edit_save_htmlified() {
-		return (blinds.edit_save_icon)? '<img class="edit-save" src="images/'+editOrSave(this.state)+'-icon.svg" />': ''
+	get icon_htmlified() {
+		if( this.mode === 'append' ) return '<img class="icon append" src="images/append.svg" />'
+		return (blinds.edit_save_icon)? '<img class="icon edit-save" src="images/'+editOrSave(this.state)+'.svg" />': ''
 		function editOrSave(state) {
 			return (state === 'read')? 'edit': 'save'
 		}
@@ -235,7 +316,9 @@ class Blind {
 			if( this.mode === 'chosen' ) return as_select_html(this.value)
 			else return value_string
 		}
-		else if(this.state === 'read') return blinds.render(value_string)
+		else if(this.state === 'read') {
+			return blinds.render(value_string)
+		}
 		else die('Bad state.')
 	}
 

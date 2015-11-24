@@ -21,7 +21,7 @@
 		// vertical-align: top;
 		width: 85%;
 	}
-	.edit-save {
+	.icon {
 		width: 40px;
 		height: 40px;
 		margin-left: 15px;
@@ -100,5 +100,12 @@
 	color: $grey;
 }
 
+.empty {
+	// background-color: pink !important;
+}
 
-
+.blind-append {
+	// background-color: orange !important;
+	padding-top: 9px;
+	padding-bottom: 9px;
+}

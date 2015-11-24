@@ -272,12 +272,12 @@ class Node:
 class Definition(Node):
 
 
-	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'plural']
+	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'plurals']
 
 	def __init__(self,dic):
 		super().__init__(dic)
 		self.type = "definition"
-		self.plural = move_attribute(dic, {'plural', 'pl'}, strict=False)
+		self.plurals = move_attribute(dic, {'plurals', 'plural', 'pl'}, strict=False)
 		self.negation = move_attribute(dic, {'negation'}, strict=False)
 		if self.importance is None:
 			self.importance = 4
@@ -286,16 +286,17 @@ class Definition(Node):
 			self.name = get_contents_of_dunderscores(self.description)
 
 	@property
-	def plural(self):
-		return self._plural
-	@plural.setter
-	def plural(self, new_plural):
-		if new_plural is None:
-			self._plural = None
+	def plurals(self):
+		return self._plurals
+	@plurals.setter
+	def plurals(self, new_plurals):
+		if new_plurals is None:
+			self._plurals = None
 		else:
-			clean_plural = check_type_and_clean(new_plural, str)
-			assert dunderscore_count(clean_plural) >= 2
-			self._plural = clean_plural
+			cleaned_plurals = check_type_and_clean(new_plurals, str, list_of=True)
+			for p in cleaned_plurals:
+				assert dunderscore_count(p) >= 2
+			self._plurals = cleaned_plurals
 
 	@property
 	def negation(self):
@@ -324,7 +325,7 @@ class PreTheorem(Node):
 		super().__init__(dic)
 		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
 		# theorems and exercises CANNOT have plurals: (but since we only created plural for Definitions, we shouldn't need this as long as there is a way to block undefined properties (see other Stack Overflow question))
-		if 'plural' in self.__dict__:
+		if 'plurals' in self.__dict__:
 			raise KeyError('Theorems cannot have plurals.')
 
 	@property

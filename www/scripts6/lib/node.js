@@ -40,14 +40,34 @@ class Node {
 			// then it's an "axiom"...
 			this.name = "id: " + this.id
 			this.type = "axiom"
-			this.description = "No description.  Please fill it in for us!"
 		}
+		this.fillWithNullKeys()
+		// if( this.id === 'euleriangraph' ) this.alert()
+	}
+
+	fillWithNullKeys() {
+		// if node.py is edited, then this needs to be edited to reflect that:
+		let keys = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples']
+		if( this.type === 'axiom' ) keys.pushArray(['synonyms', 'plurals', 'notes', 'negation'])
+		else if( this.type === 'definition') keys.pushArray(['synonyms', 'plurals', 'notes', 'negation'])
+		else if( this.type === 'theorem' ) keys.pushArray(['proofs'])
+		else if( this.type === 'exercise' ) keys.pushArray(['proofs'])
+
+		let node = this // this changes within the anonymous function
+		_.each(keys, function(key) {
+			if( !key in node || !def(node[key]) ) node[key] = null
+			// else if( check.emptyArray(node[key]) ) node[key] = [""] // functionality put into blinds
+		})
 	}
 
 	stringify() {
 		return "automatic attributes:\n\n" + JSON.stringify(this)
 			+ "\n\nspecial attributes:\n\n"
 			+ "learned: " + this.learned + "display_name: " + this.display_name
+	}
+
+	alert() {
+		alert(this.stringify())
 	}
 
 	set learned(bool) {

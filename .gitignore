@@ -18,6 +18,8 @@ text-files/things-to-go-over-with-theo.txt
 *.pyc
 *secrets.txt
 ignore/
+email-backup/
+siteground-chat.txt
 
 # TeX things
 Output/

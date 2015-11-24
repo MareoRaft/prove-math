@@ -55,7 +55,9 @@ fi
 echo 'done updating files on local machine'
 
 
-
-open -a "Opera" http://localhost
+if [[ $os != FreeBSD ]]
+	then
+	open -a "Google Chrome" http://localhost
+fi
 
 echo 'done.'

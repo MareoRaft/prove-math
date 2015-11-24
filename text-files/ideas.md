@@ -32,7 +32,6 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 35. add in mathjax rendering for html.  is there a mathjax function i can call?
 36. fix window resizing on resizing
 37. just keep building javascript features!  do chosen.  anything!
-38. why isn't plural of vertices appearing?
 39. consider switching everything to flex instead of block.  This (should (you need to test this before doing anything)) mean that things resize automatically as you resize the browser window.
 40. pushArray causing issue with for in loop javascript.
 42. for algebra things, if they HAVE NOT learned abt structure, define a field (for example) to have each property (pull them out).  If they HAVE learned, then it's a commutative division ring.
@@ -43,8 +42,6 @@ source: http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-
 44. understand how https://github.com/kerzol/markdown-mathjax/blob/master/editor.html works.  either USE it, or EMULATE it
 45. Understand what MathML is.  perhaps make a mathjax config with a \big{} that does nothing, so that blind people can hear \big and have capital letters distinguished from lowercase.
 46. https://groups.google.com/forum/#!topic/rubyonrails-talk/STny0vF5FX4 -- this is a discussion on embedding JSON into an HTML page.  I think the json encoding is good enough, and because JSON is supposed to be a subset of javascript, that we will have no issue.  but just in case, there's the link.
-47. pass in HOST variable through INDEX also, so that WEBSOCKETS doesn't say "localhost" or "provemath".
-48. for alpha testing, no facebook because fb hasn't approved us yet
 49. It looks like Tornado offers builtin oauth things: http://www.tornadoweb.org/en/stable/auth.html#module-tornado.auth
 Victoria Feedback
 -----------------------
@@ -53,11 +50,11 @@ Victoria Feedback
 53.5 can we remember when somebody is already logged in?
 Continued
 --------------
-54. consider using https://github.com/ftlabs/fastclick to make clicking not laggy on mobile devices.
-55. add an "edit" and "save" button on blinds, instead of double-click
-56. need to get support@provemath.org online!
+54. consider using https://github.com/ftlabs/fastclick to make clicking not laggy on mobile devices, only if needed.
 57. need stopPropogation or preventDefault or something to disable drag on firefox after clicking node.
 Andrew stuff
 ------------------
 58. restrict the nodes to the visible screen -- can we have a repulsive force along the boundary?
 59. some reaction to pressing "I learned it"
+60. deal with rogue empty plurals.  what have i done!!!
+61. create vertical centering for key and value-block if possible.

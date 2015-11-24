@@ -112,8 +112,9 @@ function katexRenderIfPossible(string) {
 
 blinds.init({
 	window_id: 'node-template-blinds',
-	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'dependencies'],
+	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
 	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
+	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
 	render: function(string) {
 		// run katex
 		// string = string.replace(/\$[^\$]*\$/g, katexRenderIfPossible)
@@ -135,6 +136,7 @@ blinds.init({
 		'definition-group-3': (node, key) => _.contains(['dependencies'], key),
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
+		empty: (node, display_key, key) => check.null(node[key]) || (check.array(node[key]) && (check.emptyArray(node[key]) || !check.nonEmptyString(node[key][0]))),
 	},
 	chosen: true,
 })
