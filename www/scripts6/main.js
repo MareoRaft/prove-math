@@ -72,6 +72,8 @@ if( check.emptyObject(user_dict) ){
 	show('#login')
 }
 else{
+    document.getElementById("avatar").src=user_dict["profile_pic"];
+    document.getElementById("display_name").innerHTML=user_dict["id_name"];
     show('#overlay')
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
