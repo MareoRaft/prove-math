@@ -82,7 +82,7 @@ graphAnimation.init({
 	node_radius: node => 7.9 * Math.sqrt(node.importance), // 7.5
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
-		'axiom-circle': node => node.type === 'axiom',
+		'axiom-circle': node => node.type === 'axiom' || node.type === null,
 		'definition-circle': node => node.type === 'definition',
 		'theorem-circle': node => node.type === 'theorem',
 		'exercise-circle': node => node.type === 'exercise',
@@ -135,9 +135,6 @@ blinds.init({
 	expand_array: true,
 	blind_class_conditions: {
 		'node-attribute': true,
-		'definition-group-1': (node, key) => _.contains(['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions'], key),
-		'definition-group-2': (node, key) => _.contains(['examples', 'counterexamples'], key),
-		'definition-group-3': (node, key) => _.contains(['dependencies'], key),
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
 		empty: (node, display_key, key) => check.null(node[key]) || (check.array(node[key]) && (check.emptyArray(node[key]) || !check.nonEmptyString(node[key][0]))),
@@ -190,14 +187,14 @@ $(document).on('jsend', function(Event) {
 	ws.jsend(Event.message)
 })
 
-///////////////////////////// LOGIN STUFF /////////////////////////////
+////////////////////////// LOGIN/LOGOUT STUFF //////////////////////////
 var oauth_url_dict = undefined
 
 $('#x').click(function(){
 	hide('#login')
 })
 $('#login-button').click(login)
-$('#password, #username').keypress(function(event) { if(event.which === 13) {
+$('#password, #username').keypress(function(event) { if(event.which === 13 /* Enter */) {
 	login()
 }})
 $('.image-wrapper').click(function() {
@@ -208,6 +205,8 @@ $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE 
 		$(this).removeClass('invalid')
 	}
 })
+$('#logout').click(logout)
+
 
 function login() {
 	if( !def(oauth_url_dict) ) alert('oauth login broken.')
@@ -237,6 +236,19 @@ function login() {
 	}
 }
 
+function logout(){
+    delete_cookie()
+    hide('#overlay')
+    show('#login')
+}
+
+
+//////////////////////////// ACTION STUFF ////////////////////////////
+$('#add-node').click(function(){
+	graph.addNode(new Node())
+})
+
+
 //////////////////////////// TOGGLE STUFF ////////////////////////////
 $(document).on('node-click', function(Event){
 	current_node = graph.nodes[Event.message] // this assumed HASH of nodes
@@ -244,24 +256,26 @@ $(document).on('node-click', function(Event){
 		object: current_node,
 	})
 	hide('#banner')
+	hide('#overlay')
 	hide('svg')
 	show('#node-template')
 })
 
-$('#back').click(function(){
+$('#back').click(fromBlindsToGraphAnimation)
+$(document).keyup(function(event) { if(event.which === 27 /* Esc */) { // right now this runs even if the blinds are NOT the frontmost thing, which could lead to unpredictable behavior
+	fromBlindsToGraphAnimation()
+}})
+function fromBlindsToGraphAnimation(){
 	if( user.prefs.animate_blinds ){
 		$('.node-attribute').addClass('animated flipOutX')
 		$('.node-attribute').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', toggleToGraphAnimation)
 	}
 	else toggleToGraphAnimation()
-})
-
-$('#logout').click(logout)
-
-
+}
 function toggleToGraphAnimation() {
 	hide('#node-template')
 	show('svg')
+	show('#overlay')
 	show('#banner')
 	blinds.close()
 }
@@ -299,14 +313,8 @@ function loginInit() {
 	})
 }
 
-function logout(){
-    delete_cookie()
-    hide('#overlay')
-    show('#login')
-}
-
 function delete_cookie() {
-  document.cookie = 'mycookie' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  document.cookie = 'mycookie=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
 }); // end require

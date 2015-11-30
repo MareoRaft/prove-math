@@ -7,10 +7,6 @@
 @import 'blinds';
 
 //////////////////////////////////////// INDEX ////////////////////////////////////////
-@mixin filter($prop) {
-	filter: $prop;
-	-webkit-filter: $prop;
-}
 @function index-to-color($i, $alpha) {
 	$colors:
 		rgb( 60, 90, 153 ) // facebook
@@ -110,6 +106,15 @@ svg {
 	// background-color: cyan;
 }
 
+
+///////////////////////// HOVER THINGS ///////////////////////////
+@mixin side-hover-option {
+	position: absolute;
+	margin: 20px;
+	pointer-events: auto;
+	@include hover-opacity;
+}
+
 #banner {
 	@include hide;
 	z-index: 2;
@@ -118,22 +123,27 @@ svg {
 #explanation {
 	position: absolute;
 	bottom: 0;
-	right: 0;
-	background-color: rgba( white, 0.7 );
+	left: 4px;
 	pointer-events: auto;
+	background-color: rgba( white, 0.7 );
 }
 
-#overlay{
+#overlay {
 	@include hide;
 	z-index: 3;
 	pointer-events: none;
 }
-#logout{
-	position:absolute;
+#logout {
+	@include side-hover-option;
 	top: 0;
 	right: 0;
-	@include hover-opacity;	
-	pointer-events: auto;
+}
+#add-node {
+	@include side-hover-option;
+	bottom: 0;
+	right: 0;
+
+	height: 40px;
 }
 
 #section-1 {

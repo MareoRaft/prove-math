@@ -1,3 +1,4 @@
+@import 'variables';
 @import 'chosen';
 @import 'chosen_normalize';
 @import 'animate';
@@ -35,41 +36,29 @@
 	}
 }
 
-.definition-group-1 {
-	&:nth-child(3n+2) { // for some reason the first one is considered 2!!!!!
-		background-color: #CB9;
-	}
-	&:nth-child(3n+0) {
-		background-color: #4E201D;
-		color: white;
-	}
-	&:nth-child(3n+1) {
-		background-color: #CCB;
+@mixin white {
+	color: white;
+	img {
+		@include filter(invert(1));
 	}
 }
-
-.definition-group-2 {
-	&:nth-child(3n+2) {
-		background-color: #198;
-		color: white;
+.node-attribute {
+	&:nth-child(4n+1) {
+		background-color: #7A6;
+		@include white;
 	}
-	&:nth-child(3n+0) {
+	&:nth-child(4n+2) {
+		background-color: #198;
+		@include white;
+	}
+	&:nth-child(4n+3) {
+		background-color: white;
+	}
+	&:nth-child(4n+4) {
 		background-color: #0DD;
 	}
-	&:nth-child(3n+1) {
-		background-color: #7A6;
-	}
 }
 
-.definition-group-3 {
-	&:nth-child(2n+1) {
-		background-color: #4E201D;
-		color: white;
-	}
-	&:nth-child(2n+0) {
-		background-color: #CB9;
-	}
-}
 
 // chosen-related blinds stuff...
 .tags .chosen-results {

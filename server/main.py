@@ -37,7 +37,6 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 class BaseHandler(RequestHandler):
 
 	def prepare(self):
-		print('THE HOST IS: ' + self.request.host)
 		if self.request.host != 'provemath.org' and self.request.host != 'localhost':
 			self.redirect('http://provemath.org', self.request.uri)
 			Finish()
@@ -54,13 +53,13 @@ class BaseHandler(RequestHandler):
 class IndexHandler(BaseHandler):
 
 	def get(self):
+		user_dict = {}
+
 		method = self.get_argument("method", default=None, strip=False)
 		authorization_code = self.get_argument("code", default=None, strip=False)
 		if self.get_secure_cookie("mycookie"):
 			user_dict=json.loads(str(self.get_secure_cookie("mycookie"),'UTF-8'))
 			print("Welcome back user "+ user_dict['_id'])
-			print("Now clearing you out")
-			self.clear_cookie("mycookie")
 
 		elif method is not None and authorization_code is not None:
 			print('got params!!!!')
@@ -86,11 +85,9 @@ class IndexHandler(BaseHandler):
 						 'account_id': account_id})
 					print("logged_in.dict is: " + str(user.dict))
 					user_dict = user.dict
-					self.set_secure_cookie("mycookie",json.dumps(user_dict))
+					self.set_secure_cookie("mycookie", json.dumps(user_dict))
 			except:
-				user_dict={}
-		else:
-			user_dict={}
+				pass # user_dict is still {}
 
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
@@ -150,7 +147,7 @@ class SocketHandler(WebSocketHandler):
 			user = User(ball['identifier'])
 			user.set_pref(ball['pref_dict'])
 
-			
+
 
 		# if ball['command'] == 'new-node':
 		# 	node_dict = ball['dict']

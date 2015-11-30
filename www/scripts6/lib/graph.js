@@ -14,6 +14,12 @@ function init(nodes=[], links=[]) {
 	})
 }
 
+function addNode(node) {
+	addNodesAndLinks({
+		nodes: [node],
+	})
+}
+
 function addNodesAndLinks({ nodes=[], links=[] }) {
 	_.each(nodes, function(node){ if (node === undefined) die('before. undefined node in graph.addNodesAndLinks') })
 	_addNodesHereAndJSNetworkX(nodes)
@@ -27,8 +33,14 @@ function addNodesAndLinks({ nodes=[], links=[] }) {
 }
 
 function _addNodesHereAndJSNetworkX(nodes) {
+	let temparr = []
 	_.each(nodes, function(node) {
-		if( node.id in graph.nodes ) die('That node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
+		temparr.push(node.id)
+	})
+	alert(temparr) //
+
+	_.each(nodes, function(node) {
+		if( node.id in graph.nodes ) die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
 		if( node.remove ){
 			_removeNodes([node])
 		}
@@ -79,6 +91,7 @@ function _removeLinks() {
 
 return {
 	init: init,
+	addNode: addNode,
 	addNodesAndLinks: addNodesAndLinks,
 	nodes: graph.nodes,
 }

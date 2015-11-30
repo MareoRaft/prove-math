@@ -299,7 +299,7 @@ class Blind {
 	}
 
 	get icon_htmlified() {
-		if( this.mode === 'append' ) return '<img class="icon append" src="images/append.svg" />'
+		if( this.mode === 'append' ) return '<img class="icon append" src="images/add.svg" />'
 		return (blinds.edit_save_icon)? '<img class="icon edit-save" src="images/'+editOrSave(this.state)+'.svg" />': ''
 		function editOrSave(state) {
 			return (state === 'read')? 'edit': 'save'

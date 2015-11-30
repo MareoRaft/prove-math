@@ -9,7 +9,7 @@ let user = {
 		id: undefined,
 	},
 	prefs: {
-		display_name_capitalization: "title", // can be null, "sentence", or "title"
+		display_name_capitalization: null, // can be null, "sentence", or "title"
 		underline_definitions: false, // can be true or false // do you want definitions to be underlined in the DAG view?
 		show_description_on_hover: false, // can be true or false
 		// view_node_trigger: 'dblclick', // can be dblclick or click // obsolete

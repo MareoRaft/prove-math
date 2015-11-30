@@ -58,3 +58,4 @@ Andrew stuff
 59. some reaction to pressing "I learned it"
 60. deal with rogue empty plurals.  what have i done!!!
 61. create vertical centering for key and value-block if possible.
+62. after next push to server, check all cookie and oauth things to make sure they work right.

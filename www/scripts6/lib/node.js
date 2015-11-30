@@ -33,16 +33,18 @@ function _removeLeadingUnderscoresFromKeys(obj) {
 ///////////////////////////////////// MAIN ////////////////////////////////////
 class Node {
 
-	constructor(object) {
+	constructor(object={}) {
 		_removeLeadingUnderscoresFromKeys(object)
+		_.defaults(object, {
+			type: 'axiom',
+			importance: 5,
+		})
 		_.extend(this, object)
 		if( this.empty ){
 			// then it's an "axiom"...
-			this.name = "id: " + this.id
-			this.type = "axiom"
+			this.name = object.id // and remember the ID is generated from this too
 		}
 		this.fillWithNullKeys()
-		// if( this.id === 'euleriangraph' ) this.alert()
 	}
 
 	fillWithNullKeys() {
@@ -95,10 +97,30 @@ class Node {
 	// 	this._display_name = string
 	// }
 
+	set id(new_id) {
+		if( this.name === null || this.name === '' ) this._id = new_id
+		else die('You cannot set the id of a node.  It is automatically generated from the name!')
+	}
+
+	get id() {
+		return this.name.replace(/[_\W]/g, '').toLowerCase()
+	}
+
+	set name(new_name) {
+		this._name = new_name
+	}
+
+	get name() {
+		if( !def(this._name) || this._name === null ) return ''
+		return this._name
+	}
+
 	get display_name() {
 		switch( user.prefs.display_name_capitalization ){
 			case null:
 				return this.name
+			case "lower":
+				return this.name.toLowerCase()
 			case "sentence":
 				return this.name.capitalizeFirstLetter()
 			case "title":
@@ -116,7 +138,6 @@ class Node {
 					// --------------------
 					'at', 'around', 'by', 'after', 'along', 'for', 'from', 'in', 'into', 'minus', 'of', 'on', 'per', 'plus', 'qua', 'sans', 'since', 'to', 'than', 'times', 'up', 'via', 'with', 'without',
 				]
-				// alert('name is: ' + this.name)
 				let display_name = this.name.replace(/\b\w+\b/g, function(match){
 					if( !_.contains(small_words_list, match) ){
 						match = match.capitalizeFirstLetter()
