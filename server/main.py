@@ -75,17 +75,17 @@ class IndexHandler(BaseHandler):
 				user_info = provider.oauth_obj.get(provider.request_url)
 
 				if provider.request_format == 'json':
-					r_text_dict = json.loads(user_info.text)
-					account_id = r_text_dict['id']
+					request_root = json.loads(user_info.text)
+					account_id = request_root['id']
 				else:
-					xml_root = ET.fromstring(user_info.text)
-					account_id = xml_root.find('id').text
-
-					user = User({'account_type': provider.name,
+					request_root = ET.fromstring(user_info.text)
+					account_id = request_root.find('id').text
+				user = User({'account_type': provider.name,
 						 'account_id': account_id})
-					print("logged_in.dict is: " + str(user.dict))
-					user_dict = user.dict
-					self.set_secure_cookie("mycookie", json.dumps(user_dict))
+				#print("logged_in.dict is: " + str(user.dict))
+				user_dict = auth.get_id(provider,request_root,user.dict)
+				print("logged in dict is:"+ str(user_dict))
+				self.set_secure_cookie("mycookie",json.dumps(user_dict))
 			except:
 				pass # user_dict is still {}
 

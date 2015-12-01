@@ -1,6 +1,8 @@
 from requests_oauthlib import OAuth2Session
 from requests_oauthlib.compliance_fixes import facebook_compliance_fix
 from requests_oauthlib.compliance_fixes import linkedin_compliance_fix
+import json
+import xml.etree.ElementTree as ET
 
 ########################## Global Variables #############################
 secret_array = []
@@ -21,6 +23,26 @@ def auth_url_dict():
 	for provider_name in provider_dict.keys():
 		url_dict[provider_name] = get_new_provider(provider_name).auth_url
 	return url_dict
+
+def get_id(provider,user_info,user_dict):
+	account_type=user_dict['account']['type']
+	if account_type =='facebook':
+		r=json.loads(provider.oauth_obj.get('https://graph.facebook.com/me?fields=first_name').text)
+		user_dict['id_name']=r['first_name']
+		user_dict['profile_pic']='https://graph.facebook.com/'+r['id']+'/picture'
+	elif account_type =='linkedin':
+		user_dict['id_name']=user_info.find('first-name').text
+		pic_content=provider.oauth_obj.get('https://api.linkedin.com/v1/people/~/picture-url')
+		user_dict['profile_pic']= ET.fromstring(pic_content.text).text
+	elif account_type =='google':
+		user_dict['id_name']=user_info['given_name']
+		url=provider.oauth_obj.get('https://www.googleapis.com/plus/v1/people/'+user_info['id']+'?fields=image&key='+provider.oauth_obj.client_id)
+		user_dict['profile_pic']=json.loads(url.text)['image']['url']
+	elif account_type =='github':
+		user_dict['id_name']=user_info['login']
+		user_dict['profile_pic']=user_info['avatar_url']
+	
+	return user_dict
 
 ################################## Provider ###################################
 
