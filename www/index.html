@@ -6,7 +6,7 @@
  	<link rel="icon" type="image/png" sizes="256x256" href="favicon/256.png">
     <link rel='stylesheet' href='stylesheets/main.css' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
-    <script src='scripts/lib/require.js' data-main='scripts/main'></script>
+    <script src='scripts/lib/require.js?' data-main='scripts/main'></script>
 </head>
 <body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}">
 <!-- <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
@@ -62,6 +62,7 @@
 		<span id='back'>Back</span><pre>    </pre>
 		<span id='learn'>I learned it!</span><pre>    </pre>
 		<span id='unlearn'>Unlearn</span><pre>    </pre>
+		<span id='save'>Save to Database</span><pre>    </pre>
 	</header>
 	<section id='node-template-blinds'>
 	</section>
@@ -70,11 +71,13 @@
 <section id='banner'>
 	<div id='explanation'>ProveMath is a growing <a href='http://github.com/ProveMath/prove-math'>project</a>.  If you are interested in collaborating or just want to say hello, feel free to <a href='mailto:support@provemath.org'>contact</a> us.</div>
 </section>
-<section id='overlay'>
- Welcome <span id="display_name"></span><button type="button" id='logout'>Logout </button>
- <br>
- <img id='avatar'>
- <img id="add-node" src="images/add.svg" />
+<section id='overlay-loggedin'>
+	<div id='avatar'></div>
+	<div id='logout-circle'>logout</div>
+	<img id="add-node" src="images/add.svg">
+</section>
+<section id='overlay-loggedout'>
+	<div id='login-circle'>login</div>
 </section>
 </body>
 </html>

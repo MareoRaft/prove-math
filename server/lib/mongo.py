@@ -56,6 +56,9 @@ class Mongo:
     def update(self, query, update, options):
         self.address[self.database][self.collection].update(query, update, options)
 
+    def upsert(self, query, update):
+        self.address[self.database][self.collection].update(query, update, upsert=True)
+
     def find(self, dict_fields=None):
         return self.address[self.database][self.collection].find(dict_fields)
 

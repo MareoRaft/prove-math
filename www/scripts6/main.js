@@ -1,7 +1,5 @@
 require.config({
-	// by eliminating baseUrl, everything becomes relative, which is the convention that KaTeX files follow.
-	// in order for this to work, we CANT USE PATHS SHORTCUTS FOR directories either
-	// now i'm trying KaTeX by CDN instead.
+	urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: "scripts/lib", // the default base is the directory of the INDEX.HTML file
 	paths: { // other paths we want to access
 		jquery: "http://code.jquery.com/jquery-1.11.2.min",
@@ -72,9 +70,9 @@ if( check.emptyObject(user_dict) ){
 	show('#login')
 }
 else{
-    document.getElementById("avatar").src=user_dict["profile_pic"];
-    document.getElementById("display_name").innerHTML=user_dict["id_name"];
-    show('#overlay')
+    $("#avatar").css("background-image", 'url('+user_dict["profile_pic"]+')')
+    // document.getElementById("display_name").innerHTML=user_dict["id_name"] // add this back in when we have a drop down
+    show('#overlay-loggedin')
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 
@@ -152,6 +150,10 @@ $('#unlearn').click(function(){
 	current_node.learned = false
 	graphAnimation.update()
 })
+$('#save').click(function(){
+	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
+})
+
 
 let host = $('body').attr('data-host')
 let ws = ('WebSocket' in window)? new WebSocket("ws://"+host+"/websocket"): undefined;
@@ -170,6 +172,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	else if( ball.command === 'load-user' ) {
 		user.init(ball.user_dict)
 		hide('#login')
+		show('#overlay-loggedin')
 	}
 	else if( ball.command === 'load-graph' ) {
 		let raw_graph = ball.new_graph
@@ -192,8 +195,13 @@ $(document).on('jsend', function(Event) {
 ////////////////////////// LOGIN/LOGOUT STUFF //////////////////////////
 var oauth_url_dict = undefined
 
-$('#x').click(function(){
+$('#x').click(function() {
 	hide('#login')
+	show('#overlay-loggedout')
+})
+$('#login-circle').click(function() {
+	hide('#overlay-loggedout')
+	show('#login')
 })
 $('#login-button').click(login)
 $('#password, #username').keypress(function(event) { if(event.which === 13 /* Enter */) {
@@ -207,7 +215,7 @@ $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE 
 		$(this).removeClass('invalid')
 	}
 })
-$('#logout').click(logout)
+$('#logout-circle').click(logout)
 
 
 function login() {
@@ -240,7 +248,7 @@ function login() {
 
 function logout(){
     delete_cookie()
-    hide('#overlay')
+    hide('#overlay-loggedin')
     show('#login')
 }
 
@@ -258,7 +266,7 @@ $(document).on('node-click', function(Event){
 		object: current_node,
 	})
 	hide('#banner')
-	hide('#overlay')
+	if( check.emptyObject(user_dict) ){ hide('#overlay-loggedout') }else{ hide('#overlay-loggedin') }
 	hide('svg')
 	show('#node-template')
 })
@@ -277,7 +285,7 @@ function fromBlindsToGraphAnimation(){
 function toggleToGraphAnimation() {
 	hide('#node-template')
 	show('svg')
-	show('#overlay')
+	if( check.emptyObject(user_dict) ){ show('#overlay-loggedout') }else{ show('#overlay-loggedin') }
 	show('#banner')
 	blinds.close()
 }

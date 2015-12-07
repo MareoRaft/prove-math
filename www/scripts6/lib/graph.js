@@ -37,7 +37,7 @@ function _addNodesHereAndJSNetworkX(nodes) {
 	_.each(nodes, function(node) {
 		temparr.push(node.id)
 	})
-	alert(temparr) //
+	// alert(temparr)
 
 	_.each(nodes, function(node) {
 		if( node.id in graph.nodes ) die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')

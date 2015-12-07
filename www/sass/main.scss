@@ -128,14 +128,24 @@ svg {
 	background-color: rgba( white, 0.7 );
 }
 
-#overlay {
+#overlay-loggedin {
 	@include hide;
 	z-index: 3;
 	pointer-events: none;
 }
-#logout {
+#avatar {
 	@include side-hover-option;
 	top: 0;
+	right: 0;
+
+	height: 60px;
+	width: 60px;
+	background-color: blue; // add a background-image, a default image
+	border-radius: 50%;
+}
+#logout-circle {
+	@include side-hover-option;
+	top: 160px;
 	right: 0;
 }
 #add-node {
@@ -144,6 +154,23 @@ svg {
 	right: 0;
 
 	height: 40px;
+}
+
+#overlay-loggedout {
+	@include hide;
+	z-index: 3;
+	pointer-events: none;
+}
+#login-circle {
+	@include side-hover-option;
+	top: 0;
+	right: 0;
+
+	height: 60px;
+	width: 60px;
+	background-color: black;
+	color: white;
+	border-radius: 50%;
 }
 
 #section-1 {

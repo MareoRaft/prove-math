@@ -58,14 +58,27 @@ class Node {
 		let node = this // this changes within the anonymous function
 		_.each(keys, function(key) {
 			if( !key in node || !def(node[key]) ) node[key] = null
-			// else if( check.emptyArray(node[key]) ) node[key] = [""] // functionality put into blinds
 		})
+	}
+
+	dict() {
+		let dictionary = {}
+		let node = this
+		_.each(this, function(value, key) { if( node.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
+			dictionary[key] = node[key]
+		}})
+		dictionary.name = node._name
+		dictionary.id = node.id
+		return dictionary
 	}
 
 	stringify() {
 		return "automatic attributes:\n\n" + JSON.stringify(this)
-			+ "\n\nspecial attributes:\n\n"
-			+ "learned: " + this.learned + "display_name: " + this.display_name
+			+ "\n\nspecial attributes:"
+			+ "\n\nlearned: " + this.learned
+			+ "\ndisplay_name: " + this.display_name
+			+ "\nname: " + this.name
+			+ "\nid: " + this.id
 	}
 
 	alert() {
@@ -99,11 +112,12 @@ class Node {
 
 	set id(new_id) {
 		if( this.name === null || this.name === '' ) this._id = new_id
-		else die('You cannot set the id of a node.  It is automatically generated from the name!')
 	}
 
 	get id() {
-		return this.name.replace(/[_\W]/g, '').toLowerCase()
+		if( this.name !== null && this.name !== '' ) return this.name.replace(/[_\W]/g, '').toLowerCase()
+		else if( this._id !== null && this._id !== '' ) return this._id
+		else return ''
 	}
 
 	set name(new_name) {

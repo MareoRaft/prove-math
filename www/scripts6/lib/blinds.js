@@ -149,7 +149,7 @@ function _appendValueGiven$selected(blind, $this) {
 	}
 	else {
 		// alert('non-array attempt!')
-		blind.parent_object[blind.key] = 'new value from append' // not sure about this.  what is blind exactly here?  and is the key correct, or is it just a display_key?
+		blind.parent_object[blind.key] = '' // not sure about this.  what is blind exactly here?  and is the key correct, or is it just a display_key?
 		key = blind.key
 	}
 	_openBlind({

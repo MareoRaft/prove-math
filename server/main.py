@@ -24,6 +24,7 @@ import networkx as nx
 from lib.networkx.classes import dag
 from lib import user
 from lib import auth
+from lib import node
 # this and relevant code should eventually be migrated into auth module
 import xml.etree.ElementTree as ET
 
@@ -146,22 +147,15 @@ class SocketHandler(WebSocketHandler):
 		elif ball['command'] == 'set-pref':
 			user = User(ball['identifier'])
 			user.set_pref(ball['pref_dict'])
+		elif ball['command'] == 'save-node': # hopefully this can handle both new nodes and changes to nodes
+			node_dict = ball['node_dict']
+			if 'importance' in node_dict.keys():
+				node_dict['importance'] = int(node_dict['importance'])
+			node_obj = node.create_appropriate_node(node_dict)
+			print('node made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...')
+			global our_mongo
+			our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
 
-
-
-		# if ball['command'] == 'new-node':
-		# 	node_dict = ball['dict']
-		# 	if 'importance' in node_dict.keys():
-		# 		node_dict['importance'] = int(node_dict['importance'])
-		# 	new_node = lib.node.create_appropriate_node(node_dict)
-		# 	print('new node made.  looks like: '+new_node+'.  Now time to put it into the DB...')
-		# 	global our_mongo
-		# 	our_mongo.insert_single(new_node.__dict__)
-		# This can be placed in a try/exception block
-		# try:
-		# except Exception as e:
-		#	print("Unexpected error "+str(type(e)))
-		#	print(e)
 
 	def on_close(self):
 		print('A websocket has been closed.')
@@ -200,6 +194,9 @@ def make_app_and_start_listening():
 
 
 if __name__ == "__main__":
+	# 0. create a global mongo object for later use (for upserts in the future)
+	our_mongo = Mongo("provemath", "nodes")
+
 	# 1. grab nodes and edges from database
 	all_nodes = list(Mongo("provemath", "nodes").find())
 	all_edges = list(Mongo("provemath", "edges").find())
