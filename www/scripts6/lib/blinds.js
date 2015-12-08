@@ -99,6 +99,7 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 			})
 			_displayBlind(blind, $before)
 			_enableRenderToggling(blind)
+			return blind
 		}
 	}
 }
@@ -115,24 +116,23 @@ function _openAppendBlind({ key, display_key }) {
 }
 
 function _displayBlind(blind, $before) {
-	// alert(JSON.stringify(blind))
 	if( def($before) ) $before.before(blind.htmlified)
 	else blinds.$window.append(blind.htmlified) // we could grab the jQuery $sel here by using last() (or possibly the return value of append()).  Then we would not need '#'+blind.id to tie the trigger.  But we *may* need blind.id for something else.  That is, resuing blind objects if we wanted to do that for some reason.
 }
 
 function _enableRenderToggling(blind) {
-	// $('#'+blind.id).dblclick(function(){ _toggleBlindGiven$selected(blind, $(this)) })
-	$('#'+blind.id+' '+'.edit-save').click(function(){ _toggleBlindGiven$selected(blind, $(this).parent()) })
+	$('#'+blind.id+' '+'.edit-save').click(function(){ _toggleBlind(blind) })
 }
 
 function _enableAppending(blind) {
-	$('#'+blind.id+' '+'.append').click(function(){ _appendValueGiven$selected(blind, $(this).parent()) })
+	$('#'+blind.id+' '+'.append').click(function(){
+		let new_blind = _appendValue(blind)
+		_toggleBlind(new_blind)
+	})
 }
 
-function _toggleBlindGiven$selected(blind, $this) {
-	// let $key = $this.children('.key:first') // don't think we use these three lines anymore.  i'll leave these here and as long as we don't have any issues by December 15, then just delete these lines
-		// let key = $key.attr('data-key')
-		// let index = $key.attr('data-index')
+function _toggleBlind(blind) {
+	let $this = $('#'+blind.id)
 	let $value = $this.children('.value:first')
 
 	blind.toggleState()
@@ -140,19 +140,18 @@ function _toggleBlindGiven$selected(blind, $this) {
 	if(blind.state === 'write') _startWriteMode(blind, $value)
 }
 
-function _appendValueGiven$selected(blind, $this) {
-	// alert(JSON.stringify(blind))
+function _appendValue(blind) {
+	let $this = $('#'+blind.id)
 	let key = undefined
 	if( check.array(blind.parent_object) ){
-		blind.parent_object.push('Fill in the new value here!')
+		blind.parent_object.push('')
 		key = blind.parent_object.length - 1
 	}
 	else {
-		// alert('non-array attempt!')
 		blind.parent_object[blind.key] = '' // not sure about this.  what is blind exactly here?  and is the key correct, or is it just a display_key?
 		key = blind.key
 	}
-	_openBlind({
+	return _openBlind({
 		parent_object: blind.parent_object,
 		key: key, // needs to be ARRAY key when relevant.  // for non-array, blind.key may do
 		display_key: blind.display_key,
