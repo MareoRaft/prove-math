@@ -70,7 +70,7 @@ if( check.emptyObject(user_dict) ){
 	show('#login')
 }
 else{
-    $("#avatar").css("background-image", 'url('+user_dict["profile_pic"]+')')
+    $("#avatar").attr("src", user_dict["profile_pic"])
     // document.getElementById("display_name").innerHTML=user_dict["id_name"] // add this back in when we have a drop down
     show('#overlay-loggedin')
 }
@@ -265,10 +265,8 @@ $(document).on('node-click', function(Event){
 	blinds.open({
 		object: current_node,
 	})
-	hide('#banner')
-	if( check.emptyObject(user_dict) ){ hide('#overlay-loggedout') }else{ hide('#overlay-loggedin') }
-	hide('svg')
 	show('#node-template')
+	ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
 })
 
 $('#back').click(fromBlindsToGraphAnimation)
@@ -284,9 +282,6 @@ function fromBlindsToGraphAnimation(){
 }
 function toggleToGraphAnimation() {
 	hide('#node-template')
-	show('svg')
-	if( check.emptyObject(user_dict) ){ show('#overlay-loggedout') }else{ show('#overlay-loggedin') }
-	show('#banner')
 	blinds.close()
 }
 

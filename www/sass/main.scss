@@ -95,6 +95,7 @@
 
 #node-template {
 	@include hide;
+	z-index: 4;
 	// background-color: yellow;
 	section {
 		overflow-y: scroll;
@@ -140,13 +141,21 @@ svg {
 
 	height: 60px;
 	width: 60px;
-	background-color: blue; // add a background-image, a default image
 	border-radius: 50%;
 }
 #logout-circle {
 	@include side-hover-option;
-	top: 160px;
+	top: 100px;
 	right: 0;
+
+	height: 60px;
+	width: 60px;
+	background-color: black;
+	color: white;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 #add-node {
 	@include side-hover-option;
@@ -171,6 +180,9 @@ svg {
 	background-color: black;
 	color: white;
 	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #section-1 {

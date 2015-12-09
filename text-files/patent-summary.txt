@@ -1,0 +1,23 @@
+Description of the ProveMath product (for patenting)
+====================================
+
+Basic Intro
+------------
+Provemath.org is a website currently under construction.  You can visit provemath.org to get an idea of what it is.  Basically, it is a place students can go to learn math (or other technical fields).  The website helps students keep track of what they know, and suggest what to learn next.
+
+
+
+Technical description
+-----------------------
+
+1. In scientific/technical fields, knowledge begins with building blocks, and grows from there.  ProveMath structures knowledge by representing each fact with a node.  When one node depends on other nodes, directed edges are used to connect them, resulting in a directed graph.  ProveMath allows users to access/navigate this structure visually and use it as a map to follow when learning.
+
+In addition, ProveMath provides the following features.
+
+2. Teachers can select nodes from the graph in order to build a curriculum:  ProveMath allows them to select a "final" node that is the goal of their course, and it will deliver to them the tree of dependency nodes leading up to it.  ProveMath can then linearize the nodes, resulting in the curriculum they will follow in teaching the course.
+
+3. Teachers can share their curriculum with their students online, and can monitor their students' progress on the website.
+
+4. ProveMath will optimize learning by calculating which nodes to learn will give the student the greatest possible depth (in the graph).  This is called "depth-first learning".  ProveMath will recommend those particular nodes to the user.
+
+5. When a student knows multiple disconnected nodes in the graph, ProveMath will recommend nodes that bridge together the disconnected nodes (causing them to become connected).  This is called "connective learning" (studies show that students are more likely to remember things that are connected to what they already know).
