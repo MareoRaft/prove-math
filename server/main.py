@@ -155,6 +155,11 @@ class SocketHandler(WebSocketHandler):
 			print('node made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...')
 			global our_mongo
 			our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
+		elif ball['command']=="re-center-graph":
+			# We get the 5th nearest neighbors 
+			neighbors=global our_DAG.single_source_shortest_path_length(['central_node_id'],5)
+			#Not sure how you want to return this...
+		
 
 
 	def on_close(self):
