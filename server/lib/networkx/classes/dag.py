@@ -66,6 +66,21 @@ class _DAG (nx.DiGraph):
 	# def as_complete_json(self, list_of_complete_nodes): # this is probably no longer needed as tornado has a helper function to wrap things in json
 	# 	graph_dict = self.as_complete_dict(list_of_complete_nodes)
 	# 	return json.dumps(graph_dict) # for the future, the following may be faster: 1. simplejason or 2. cjson
+	def single_source_shortest_path_length(self,source,cutoff=None):
+		 seen={}                  # level (number of hops) when seen in BFS
+		 level=0                  # the current level
+		 nextlevel={source:1}  # dict of nodes to check at next level
+		 while nextlevel:
+			 thislevel=nextlevel  # advance to next level
+			 nextlevel={}         # and start a new list (fringe)
+			 for v in thislevel:
+				 if v not in seen:
+					 seen[v]=level # set the level of vertex v
+					 neighbors=nx.all_neighbors(self,v)
+					 nextlevel.update(dict.fromkeys(neighbors)) # add neighbors of v
+			 if (cutoff is not None and cutoff <= level):  break
+			 level=level+1
+		 return seen  # return all path lengths as dictionary
 
 
 nx.DAG = _DAG

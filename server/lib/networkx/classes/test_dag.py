@@ -111,3 +111,11 @@ def test_remove_redundant_edges():
 	assert {('a', 'b'), ('b', 'c'), ('c', 'd'), 			('d', 'z'),
 									('c', 't'), ('t', 'y'), ('y', 'z'),} == set(DAG.edges())
 
+def test_single_source_shortest_path_lengths():
+	G=nx.DAG()
+	G.add_path([0,1,2,3,4,5,6,7,8,9])
+	x=G.single_source_shortest_path_length(5,3)
+	assert len(x)==7
+	assert x=={3: 2, 4: 1, 5: 0, 6: 1, 7: 2, 8: 3, 2: 3}
+
+
