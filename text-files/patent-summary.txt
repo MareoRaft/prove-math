@@ -3,21 +3,20 @@ Description of the ProveMath product (for patenting)
 
 Basic Intro
 ------------
-Provemath.org is a website currently under construction.  You can visit provemath.org to get an idea of what it is.  Basically, it is a place students can go to learn math (or other technical fields).  The website helps students keep track of what they know, and suggest what to learn next.
+Provemath.org is a website currently under construction. It is a learning tool for teachers and students alike to learn math and other technical fields, track learning progress, and suggest new topics for futher learning. Please visit provemath.org to see an alpha version of our website!
 
-
-
-Technical description
+Website Description
 -----------------------
 
-1. In scientific/technical fields, knowledge begins with building blocks, and grows from there.  ProveMath structures knowledge by representing each fact with a node.  When one node depends on other nodes, directed edges are used to connect them, resulting in a directed graph.  ProveMath allows users to access/navigate this structure visually and use it as a map to follow when learning.
+ In scientific/technical fields, knowledge begins with building blocks, and grow from there.  ProveMath structures knowledge by representing each fact/topic with a node.  When one node depends on other nodes, directed edges are used to connect them, resulting in a directed graph(network). There are several advantages of using a network based learning model. Firstly, unlike article based websites, ProveMath allows users to access/navigate the structure visually and use it as a map to follow when learning. Secondly, ProveMath utilizes graph algorithms in order to provide novel ways of learning and planning curriculum. We outline some of these graph features along with others below.  
 
-In addition, ProveMath provides the following features.
+1. Teachers and self learners can select nodes from the graph in order to build a curriculum:  ProveMath allows them to select a "final" node that is the goal of their course, and it will deliver to them the tree of dependency nodes leading up to it. We execute this function using graph based shortest path algorithms. ProveMath can then linearize the nodes, resulting in the curriculum they will follow in teaching the course.
 
-2. Teachers can select nodes from the graph in order to build a curriculum:  ProveMath allows them to select a "final" node that is the goal of their course, and it will deliver to them the tree of dependency nodes leading up to it.  ProveMath can then linearize the nodes, resulting in the curriculum they will follow in teaching the course.
+2. ProveMath will optimize learning by calculating which "unlearned" nodes will give the student the greatest possible depth (in the graph).  This depth-first learning function utlizes the graph function known as depth-first searching.
 
-3. Teachers can share their curriculum with their students online, and can monitor their students' progress on the website.
+3. When a student knows multiple disconnected nodes in the graph, ProveMath will recommend nodes that bridge together the disconnected nodes (causing them to become connected).  This is called "connective learning". Studies have shown that students are more likely to retain knowledge when learning new topics that are related to pre-existing knowledge.
 
-4. ProveMath will optimize learning by calculating which nodes to learn will give the student the greatest possible depth (in the graph).  This is called "depth-first learning".  ProveMath will recommend those particular nodes to the user.
+4. Unlike article based websites, Provemath allows teachers to share their curriculum/network with their students online. In this way, teachers and students alike can easily monitor progress on the website. 
 
-5. When a student knows multiple disconnected nodes in the graph, ProveMath will recommend nodes that bridge together the disconnected nodes (causing them to become connected).  This is called "connective learning" (studies show that students are more likely to remember things that are connected to what they already know).
+5. We intend to implement a forum with upvotes/downvotes within each Provemath node similar to those found in websites such as stackoverflow and reddit. Users can then add their own comments, proofs and exercises to each tpic. 
+  
