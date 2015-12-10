@@ -156,8 +156,10 @@ class SocketHandler(WebSocketHandler):
 			global our_mongo
 			our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
 		elif ball['command']=="re-center-graph":
-			# We get the 5th nearest neighbors 
-			neighbors=global our_DAG.single_source_shortest_path_length(['central_node_id'],5)
+			# We get the 5th nearest neighbors
+			global our_DAG
+			neighbors= our_DAG.single_source_shortest_path_length(['central_node_id'],5)
+			H= our_DAG.subgraph(list(neighbors.keys()))
 			#Not sure how you want to return this...
 		
 
