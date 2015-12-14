@@ -9,7 +9,7 @@ Project description below!
 ------------------------------
 We are building a website for people to learn math.  Math is made from initial "definitions" and "axioms", and then "theorems" that follow.  Imagine that each definition is represented by a node.  When a *new* theorem is proved based on a few definitions/theorems, we draw arrows from those definitions/theorems to the *new* theorem (which is also a node).
 
-The result will be a big hierarchy of different math theorems!  That is, a DAG.
+The result will be a big hierarchy of different math theorems!  That is, a directed acyclic graph (DAG).
 
 The cool thing is that users can see this hierarchy.  They can navigate to each node and learn the theorem, get an explanation, read proofs (or attempt to do it themselves).  In the future I intend for this content to be user contributed, using a Reddit/SO upvote system.
 
