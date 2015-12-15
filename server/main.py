@@ -84,11 +84,12 @@ class IndexHandler(BaseHandler):
 				user = User({'account_type': provider.name,
 						 'account_id': account_id})
 				#print("logged_in.dict is: " + str(user.dict))
-				user_dict = auth.get_id(provider,request_root,user.dict)
+				user_dict = provider.get_id_and_picture(provider,request_root,user.dict)
 				print("logged in dict is:"+ str(user_dict))
 				self.set_secure_cookie("mycookie",json.dumps(user_dict))
-			except:
-				pass # user_dict is still {}
+			except Exception as e:
+				print('Login failed')
+				print(e) # user_dict is still {}
 
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
