@@ -159,7 +159,7 @@ class SocketHandler(WebSocketHandler):
 		elif ball['command']=="re-center-graph":
 			# We get the 5th nearest neighbors
 			global our_DAG
-			neighbors= our_DAG.single_source_shortest_path_length(['central_node_id'],5)
+			neighbors= our_DAG.single_source_shortest_any_directional_path_length(['central_node_id'],5)
 			H= our_DAG.subgraph(list(neighbors.keys()))
 			#Not sure how you want to return this...
 		
