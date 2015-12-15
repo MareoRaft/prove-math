@@ -76,10 +76,28 @@ class _DiGraphExtended (nx.DiGraph):
 		descB = self.descendants(nbunchB)
 		return set.intersection(descA, descB)
 
+	def single_source_shortest_any_directional_path_length(self,source,cutoff=None):
+		 seen={}                  # level (number of hops) when seen in BFS
+		 level=0                  # the current level
+		 nextlevel={source:1}  # dict of nodes to check at next level
+		 while nextlevel:
+			 thislevel=nextlevel  # advance to next level
+			 nextlevel={}         # and start a new list (fringe)
+			 for v in thislevel:
+				 if v not in seen:
+					 seen[v]=level # set the level of vertex v
+					 neighbors=nx.all_neighbors(self,v)
+					 nextlevel.update(dict.fromkeys(neighbors)) # add neighbors of v
+			 if (cutoff is not None and cutoff <= level):  break
+			 level=level+1
+		 return seen  # return all path lengths as dictionary
+
 for key, value in _DiGraphExtended.__dict__.items():
 	try:
 		setattr(nx.DiGraph, key, value)
 	except TypeError:
 		pass
+
+	
 
 
