@@ -159,8 +159,16 @@ class SocketHandler(WebSocketHandler):
 		elif ball['command']=="re-center-graph":
 			# We get the 5th nearest neighbors
 			global our_DAG
-			neighbors= our_DAG.single_source_shortest_any_directional_path_length(['central_node_id'],5)
+			global all_nodes
+			neighbors= our_DAG.single_source_shortest_any_directional_path_length(ball['central_node_id'],5)
 			H= our_DAG.subgraph(list(neighbors.keys()))
+			dict_graph = H.as_complete_dict(all_nodes)
+
+			self.write_message({  # write_message uses json by default!
+			'command': 'load-graph',
+			'new_graph': dict_graph,
+			})
+
 			#Not sure how you want to return this...
 		
 

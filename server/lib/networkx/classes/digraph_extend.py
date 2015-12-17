@@ -92,6 +92,12 @@ class _DiGraphExtended (nx.DiGraph):
 			 level=level+1
 		 return seen  # return all path lengths as dictionary
 
+	def as_complete_dict(self, list_of_complete_nodes):
+		graph = dict()
+		graph['nodes'] = [find_dict_from_id(list_of_complete_nodes, dict_id) for dict_id in self.nodes()]
+		graph['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
+		return graph
+
 for key, value in _DiGraphExtended.__dict__.items():
 	try:
 		setattr(nx.DiGraph, key, value)
