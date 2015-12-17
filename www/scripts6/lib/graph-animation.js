@@ -175,9 +175,9 @@ function updateSize() {
 function addNodesAndLinks({ nodes=[], links=[] }) {
 	// $.extend(gA.nodes, nodes) // but this is no good for duplicates. switch to hash soon
 	_.each(nodes, function(node){ if (node === undefined) die('before. undefined node in gA.addNodesAndLinks') })
-	gA.nodes.pushArray(nodes)
+	pushArray(gA.nodes, nodes)
 	// $.extend(gA.links, links)
-	gA.links.pushArray(links)
+	pushArray(gA.links, links)
 	// maybe get smart here and detect whether there actually was a change or not.  can d3 do this?
 	_.each(gA.nodes, function(node){ if (node === undefined) die('after. undefined node in gA.addNodesAndLinks') })
 	update()
@@ -189,7 +189,7 @@ function addNodesAndLinks({ nodes=[], links=[] }) {
 function removeNodes(nodes) {
 	_.each(nodes, function(node) {
 		_.each(gA.nodes, function(gA_node, index) {
-			if( node.id === gA_node.id ) gA.nodes.remove(index)
+			if( node.id === gA_node.id ) remove(gA.nodes, index)
 		})
 	})
 	update()

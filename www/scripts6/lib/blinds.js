@@ -41,25 +41,60 @@ function open({
 	let iterable = (keys === 'own')? blinds.object: keys
 	for( let key in iterable ){
 		if( check.array(iterable) ) key = iterable[key] // for the keys array, grab the STRINGS, not the INDECIS
-		if( blinds.object.hasOwnProperty(key) ){
-			if( blinds.object[key] !== null ) _openBlind({
-				key: key,
-				display_key: key,
-				expand_array: (blinds.expand_array && !_.contains(collapse_array_keys, key)) || _.contains(expand_array_keys, key),
-			})
-			else { if( _.contains(append_keys, key) ) {
-				_openAppendBlind({
-					key: key,
-					display_key: key,
-				})
-			}}
-			// for arrays, ALWAYS show an append:
-			if( check.array(blinds.object[key]) ) { if( _.contains(append_keys, key) ) {
-				_openAppendBlind({
-					key: key,
-					display_key: key,
-				})
-			}}
+		let expand_array = (blinds.expand_array && !_.contains(collapse_array_keys, key)) || _.contains(expand_array_keys, key)
+		if( hasOwnPropertyOrGetter(blinds.object, key) ){
+			// nonarrays:
+			if( check.not.array(blinds.object[key]) ){
+				if( blinds.object[key] !== null ) {
+					_openBlind({
+						key: key,
+						display_key: key,
+						expand_array: false,
+					})
+				}
+				else if( _.contains(append_keys, key) ) {
+					_openAppendBlind({
+						key: key,
+						display_key: key,
+						is_one_time_only: true,
+						expand_array: false,
+					})
+				}
+			}
+			// arrays:
+			else {
+				// for collapse arrays, show an append when its empty:
+				if( !expand_array ){
+					if( check.not.emptyArray(blinds.object[key]) ) {
+						_openBlind({
+							key: key,
+							display_key: key,
+							expand_array: false,
+						})
+					}
+					else if( _.contains(append_keys, key) ) {
+						_openAppendBlind({
+							key: key,
+							display_key: key,
+							is_one_time_only: true,
+							expand_array: false,
+						})
+					}
+				}
+				// for other arrays, always show append.
+				else{
+					_openBlind({ // if the array is empty, this won't actually show a blind.  so no problem here.
+						key: key,
+						display_key: key,
+						expand_array: true,
+					})
+					_openAppendBlind({
+						key: key,
+						display_key: key,
+						expand_array: true,
+					})
+				}
+			}
 		}
 	}
 	// ASSUMING that when we open a blind, it is always in read mode, then we would run post_render here:
@@ -68,9 +103,8 @@ function open({
 
 function close() {
 	// save strings of any opened things (or just startReadMode on them)
-	blinds.$window.html('')
+	blinds.$window.empty() // attached triggers and things are automatically removed by jQuery (see http://stackoverflow.com/questions/34189052/if-i-bind-a-javascript-event-to-an-element-then-delete-the-element-what-happen)
 	blinds.object = undefined
-	// clear jquery id double-click triggers?
 }
 
 function _openBlind({ parent_object=blinds.object, key, expand_array, display_key, $before }) { // at this point, expand_array represents whether we should expand for THIS key specifically.
@@ -104,15 +138,16 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 	}
 }
 
-function _openAppendBlind({ key, display_key }) {
+function _openAppendBlind({ key, display_key, expand_array, is_one_time_only }) {
+	let parent_object = (check.array(blinds.object[key]) && expand_array)? blinds.object[key]: blinds.object
 	let blind = new Blind({
-		parent_object: check.array(blinds.object[key])? blinds.object[key]: blinds.object, // the array.  haven't handled non-array yet
+		parent_object: parent_object,
 		key: key, // there is no key since there is no value
 		display_key: display_key,
 		mode: 'append',
 	})
 	_displayBlind(blind)
-	_enableAppending(blind)
+	_enableAppending(blind, expand_array, is_one_time_only)
 }
 
 function _displayBlind(blind, $before) {
@@ -124,11 +159,20 @@ function _enableRenderToggling(blind) {
 	$('#'+blind.id+' '+'.edit-save').click(function(){ _toggleBlind(blind) })
 }
 
-function _enableAppending(blind) {
-	$('#'+blind.id+' '+'.append').click(function(){
-		let new_blind = _appendValue(blind)
-		_toggleBlind(new_blind)
-	})
+function _enableAppending(blind, expand_array, is_one_time_only) {
+	if( is_one_time_only ){ // it looks like closure wasn't an issue after all.  once the chosen glitch and the one_time_only glitch is resolved, revert this code to the compact form
+		$('#'+blind.id+' '+'.append').click(function(){
+			let new_blind = _appendValueOrCollapsedBlind(blind, expand_array)
+			_toggleBlind(new_blind)
+			$('#'+blind.id).remove()
+		})
+	}
+	else{
+		$('#'+blind.id+' '+'.append').click(function(){
+			let new_blind = _appendValueOrCollapsedBlind(blind, expand_array)
+			_toggleBlind(new_blind)
+		})
+	}
 }
 
 function _toggleBlind(blind) {
@@ -140,15 +184,28 @@ function _toggleBlind(blind) {
 	if(blind.state === 'write') _startWriteMode(blind, $value)
 }
 
-function _appendValue(blind) {
+function _appendValueOrCollapsedBlind(blind, expand_array) {
 	let $this = $('#'+blind.id)
 	let key = undefined
 	if( check.array(blind.parent_object) ){
-		blind.parent_object.push('')
-		key = blind.parent_object.length - 1
+		if( expand_array ){
+			blind.parent_object.push('')
+			key = blind.parent_object.length - 1
+		}
+		else{
+			die('If the parent object is an array, then it should ALWAYS be expand_array.  Because if it is not expand_array, then the PARENT OBJECT should be the bigger dictionary containing the array instead.')
+		}
+	}
+	else if( check.array(blind.parent_object[blind.key]) ){
+		if( !expand_array ){
+			key = blind.key // this is the collapse array case
+		}
+		else{
+			die('Similar to die above, this should not happen.')
+		}
 	}
 	else {
-		blind.parent_object[blind.key] = '' // not sure about this.  what is blind exactly here?  and is the key correct, or is it just a display_key?
+		blind.parent_object[blind.key] = '' // for regular nonarray things
 		key = blind.key
 	}
 	return _openBlind({
@@ -164,7 +221,7 @@ function _startReadMode(blind, $value) {
 	if( blind.mode === 'chosen' ){
 		let selected_elements = []
 		// grab the options that have the selected property (jQuery)
-		$('#'+blind.id+' '+'.tags').children().each(function(){
+		$('#'+blind.id+'.tags').children().each(function(){
 			if( $(this).prop('selected') ) selected_elements.push($(this).val())
 		})
 		// put them in an array and give it to blind.value
@@ -185,13 +242,13 @@ function _startReadMode(blind, $value) {
 function _startWriteMode(blind, $value) {
 	$value.html(blind.value_htmlified)
 	if( blind.mode === 'chosen' ){
-		$('.tags').chosen({
+		$('#'+blind.id+'.tags').chosen({
 			inherit_select_classes: true,
 			search_contains: true,
 			width: '100%'
 		})
 		// $('.tags').append('<option value="new" selected>NEW</option>')
-		$('.tags').trigger('chosen:updated') // this is how to update chosen after adding more options
+		$('#'+blind.id+'.tags').trigger('chosen:updated') // this is how to update chosen after adding more options
 
 	}
 	else if( blind.mode === 'standard' ){
@@ -251,7 +308,7 @@ class Blind {
 	get value() {
 		// hand over the iterable() (or string) of the BlindValue object value
 		if( this.mode === 'append' ){
-			return 'append new!'
+			return 'Add a new ' + this.display_key.singularize() + '!'
 		}
 		else {
 			return this.parent_object[this.key]
@@ -382,10 +439,8 @@ class BlindValue {
 
 ////////////////////////////// HELPERS //////////////////////////////
 function as_select_html(array) {
-	// alert(check.array(array))
 	let string = '<select class="tags" multiple>'
 	_.each(array, function(el){
-		// alert(el) // you know, there is something fishy about this array!  it has this weird extra "true" in it and maybe a function?
 		string = string + '<option value="'+el+'" selected>'+el+'</option>' // we set property selected to true, so that everything is pre-selected
 		// we can add other options to the list by grabbing other node names, but don't use selected for these
 	})

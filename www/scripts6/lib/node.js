@@ -50,14 +50,17 @@ class Node {
 	fillWithNullKeys() {
 		// if node.py is edited, then this needs to be edited to reflect that:
 		let keys = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples']
-		if( this.type === 'axiom' ) keys.pushArray(['synonyms', 'plurals', 'notes', 'negation'])
-		else if( this.type === 'definition') keys.pushArray(['synonyms', 'plurals', 'notes', 'negation'])
-		else if( this.type === 'theorem' ) keys.pushArray(['proofs'])
-		else if( this.type === 'exercise' ) keys.pushArray(['proofs'])
+		if( this.type === 'axiom' ) pushArray(keys, ['synonyms', 'plurals', 'notes', 'negation'])
+		else if( this.type === 'definition') pushArray(keys, ['synonyms', 'plurals', 'notes', 'negation'])
+		else if( this.type === 'theorem' ) pushArray(keys, ['proofs'])
+		else if( this.type === 'exercise' ) pushArray(keys, ['proofs'])
 
 		let node = this // this changes within the anonymous function
 		_.each(keys, function(key) {
-			if( !key in node || !def(node[key]) ) node[key] = null
+			if( !key in node || !def(node[key]) ) {
+				if( _.contains(["synonyms", "plurals", "dependencies"], key) ) node[key] = []
+				else node[key] = null
+			}
 		})
 	}
 

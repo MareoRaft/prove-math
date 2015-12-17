@@ -70,9 +70,9 @@ if( check.emptyObject(user_dict) ){
 	show('#login')
 }
 else{
-    $("#avatar").attr("src", user_dict["profile_pic"])
-    // document.getElementById("display_name").innerHTML=user_dict["id_name"] // add this back in when we have a drop down
-    show('#overlay-loggedin')
+	$("#avatar").attr("src", user_dict["profile_pic"])
+	// document.getElementById("display_name").innerHTML=user_dict["id_name"] // add this back in when we have a drop down
+	show('#overlay-loggedin')
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 
@@ -247,9 +247,9 @@ function login() {
 }
 
 function logout(){
-    delete_cookie()
-    hide('#overlay-loggedin')
-    show('#login')
+	delete_cookie()
+	hide('#overlay-loggedin')
+	show('#login')
 }
 
 
@@ -302,7 +302,7 @@ function show(css_selector) { // this stuff fails for svg when using .addClass, 
 
 function keyToDisplayKey(word, node) {
 	if( word === 'description' ) return node.type
-	if( word === 'dependencies' ) return 'dependencies' // we want this one to stay plural
+	if( word === 'dependencies' || word === 'synonyms' || word === 'plurals' ) return word // we want these to stay plural
 	if( word[word.length - 1] === 's' ) return word.substr(0, word.length - 1)
 	return word // word may have ALREADY been singular
 }
