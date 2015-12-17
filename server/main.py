@@ -84,11 +84,12 @@ class IndexHandler(BaseHandler):
 				user = User({'account_type': provider.name,
 						 'account_id': account_id})
 				#print("logged_in.dict is: " + str(user.dict))
-				user_dict = auth.get_id(provider,request_root,user.dict)
+				user_dict = provider.get_id_and_picture(provider,request_root,user.dict)
 				print("logged in dict is:"+ str(user_dict))
 				self.set_secure_cookie("mycookie",json.dumps(user_dict))
-			except:
-				pass # user_dict is still {}
+			except Exception as e:
+				print('Login failed')
+				print(e) # user_dict is still {}
 
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
@@ -158,8 +159,16 @@ class SocketHandler(WebSocketHandler):
 		elif ball['command']=="re-center-graph":
 			# We get the 5th nearest neighbors
 			global our_DAG
-			neighbors= our_DAG.single_source_shortest_path_length(['central_node_id'],5)
+			global all_nodes
+			neighbors= our_DAG.single_source_shortest_any_directional_path_length(ball['central_node_id'],5)
 			H= our_DAG.subgraph(list(neighbors.keys()))
+			dict_graph = H.as_complete_dict(all_nodes)
+
+			self.write_message({  # write_message uses json by default!
+			'command': 'load-graph',
+			'new_graph': dict_graph,
+			})
+
 			#Not sure how you want to return this...
 		
 

@@ -180,6 +180,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
 		})
 		let ready_graph = raw_graph
+	        //alert(JSON.stringify(ready_graph.nodes))
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,
