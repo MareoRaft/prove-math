@@ -221,7 +221,7 @@ function _startReadMode(blind, $value) {
 	if( blind.mode === 'chosen' ){
 		let selected_elements = []
 		// grab the options that have the selected property (jQuery)
-		$('#'+blind.id+'.tags').children().each(function(){
+		$('#'+blind.id+' > .value > .tags').children().each(function(){
 			if( $(this).prop('selected') ) selected_elements.push($(this).val())
 		})
 		// put them in an array and give it to blind.value
@@ -242,13 +242,14 @@ function _startReadMode(blind, $value) {
 function _startWriteMode(blind, $value) {
 	$value.html(blind.value_htmlified)
 	if( blind.mode === 'chosen' ){
-		$('#'+blind.id+'.tags').chosen({
+		$('#'+blind.id+' > .value > .tags').chosen({ // this seems to work, as opposed to '#'+blind.id+'.tags'
 			inherit_select_classes: true,
 			search_contains: true,
 			width: '100%'
 		})
 		// $('.tags').append('<option value="new" selected>NEW</option>')
-		$('#'+blind.id+'.tags').trigger('chosen:updated') // this is how to update chosen after adding more options
+		// the following might be messing things up.  leave it commented until we need that feature
+		// $('#'+blind.id+' > .value > .tags').trigger('chosen:updated') // this is how to update chosen after adding more options
 
 	}
 	else if( blind.mode === 'standard' ){
