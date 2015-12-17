@@ -84,7 +84,7 @@ class IndexHandler(BaseHandler):
 				user = User({'account_type': provider.name,
 						 'account_id': account_id})
 				#print("logged_in.dict is: " + str(user.dict))
-				user_dict = provider.get_id_and_picture(provider,request_root,user.dict)
+				user_dict = provider.id_and_picture(request_root, user.dict)
 				print("logged in dict is:"+ str(user_dict))
 				self.set_secure_cookie("mycookie",json.dumps(user_dict))
 			except Exception as e:
@@ -156,21 +156,19 @@ class SocketHandler(WebSocketHandler):
 			print('node made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...')
 			global our_mongo
 			our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
-		elif ball['command']=="re-center-graph":
+		elif ball['command'] == "re-center-graph":
 			# We get the 5th nearest neighbors
 			global our_DAG
 			global all_nodes
-			neighbors= our_DAG.single_source_shortest_any_directional_path_length(ball['central_node_id'],5)
-			H= our_DAG.subgraph(list(neighbors.keys()))
+			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 4)
+			H = our_DAG.subgraph(list(neighbors.keys()))
 			dict_graph = H.as_complete_dict(all_nodes)
 
-			self.write_message({  # write_message uses json by default!
-			'command': 'load-graph',
-			'new_graph': dict_graph,
+			self.write_message({
+				'command': 'load-graph',
+				'new_graph': dict_graph,
 			})
 
-			#Not sure how you want to return this...
-		
 
 
 	def on_close(self):

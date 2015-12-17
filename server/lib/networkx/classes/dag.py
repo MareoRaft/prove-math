@@ -3,17 +3,9 @@ import networkx as nx
 
 from lib.networkx.classes import digraph_extend
 
-from warnings import warn
 import json
 
 ################################# HELPERS #####################################
-def find_dict_from_id(list_of_dics, ID):
-	for dic in list_of_dics:
-		if dic['_id'] == ID:
-			return dic
-	# if the id doesn't exist, make a fake node...
-	warn('Could node find dict with ID "' + ID + '" within list_of_dics.')
-	return {"_id": ID, "empty": True, "_importance": 4, "_name": ""}
 
 #################################### MAIN #####################################
 
@@ -56,12 +48,6 @@ class _DAG (nx.DiGraph):
 			self.remove_edge(edge[0], edge[1])
 			if not self.has_path(edge[0], edge[1]):
 				self.add_edge(edge[0], edge[1])
-
-	def as_complete_dict(self, list_of_complete_nodes):
-		graph = dict()
-		graph['nodes'] = [find_dict_from_id(list_of_complete_nodes, dict_id) for dict_id in self.nodes()]
-		graph['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
-		return graph
 
 	# def as_complete_json(self, list_of_complete_nodes): # this is probably no longer needed as tornado has a helper function to wrap things in json
 	# 	graph_dict = self.as_complete_dict(list_of_complete_nodes)

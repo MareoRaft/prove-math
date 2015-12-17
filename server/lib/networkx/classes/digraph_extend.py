@@ -3,6 +3,8 @@ import networkx as nx
 
 from lib.networkx.classes import graph_extend
 
+from warnings import warn
+
 ################################## HELPERS ####################################
 def create_s_pointing_to_source(DG, source):
 	if not hasattr(source, '__iter__'): # although strings are iterable, they don't have __iter__.  My goal is that "scalar" values will get stuffed into a list.  But lists and sets will not.
@@ -28,6 +30,14 @@ def shortest_path_helper(DG, source, target):
 		return nx.shortest_path(DG, source=s, target=t)[1:-1] # the final 1:-1 cuts off the first and last element, that is, s and t.
 	except nx.exception.NetworkXNoPath:
 		return None
+
+def find_dict_from_id(list_of_dics, ID):
+	for dic in list_of_dics:
+		if dic['_id'] == ID:
+			return dic
+	# if the id doesn't exist, make a fake node...
+	warn('Could node find dict with ID "' + ID + '" within list_of_dics.')
+	return {"_id": ID, "empty": True, "_importance": 4, "_name": ""}
 
 #################################### MAIN #####################################
 
@@ -76,7 +86,7 @@ class _DiGraphExtended (nx.DiGraph):
 		descB = self.descendants(nbunchB)
 		return set.intersection(descA, descB)
 
-	def single_source_shortest_any_directional_path_length(self,source,cutoff=None):
+	def single_source_shortest_anydirectional_path_length(self, source, cutoff=None):
 		 seen={}                  # level (number of hops) when seen in BFS
 		 level=0                  # the current level
 		 nextlevel={source:1}  # dict of nodes to check at next level
@@ -103,7 +113,4 @@ for key, value in _DiGraphExtended.__dict__.items():
 		setattr(nx.DiGraph, key, value)
 	except TypeError:
 		pass
-
-	
-
 

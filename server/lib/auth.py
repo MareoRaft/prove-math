@@ -24,25 +24,25 @@ def auth_url_dict():
 		url_dict[provider_name] = get_new_provider(provider_name).auth_url
 	return url_dict
 
-def facebook_id_and_pic(self,user_info,user_dict):
+def facebook_id_and_pic(self, user_info, user_dict):
 	r=json.loads(self.oauth_obj.get('https://graph.facebook.com/me?fields=first_name').text)
 	user_dict['id_name']=r['first_name']
 	user_dict['profile_pic']='https://graph.facebook.com/'+r['id']+'/picture'
 	return user_dict
 
-def linkedin_id_and_pic(self,user_info,user_dict):
+def linkedin_id_and_pic(self, user_info, user_dict):
 	user_dict['id_name']=user_info.find('first-name').text
 	pic_content=self.oauth_obj.get('https://api.linkedin.com/v1/people/~/picture-url')
 	user_dict['profile_pic']= ET.fromstring(pic_content.text).text
 	return user_dict
 
-def google_id_and_pic(self,user_info,user_dict):
+def google_id_and_pic(self, user_info, user_dict):
 	user_dict['id_name']=user_info['given_name']
 	url=self.oauth_obj.get('https://www.googleapis.com/plus/v1/people/'+user_info['id']+'?fields=image&key='+provider.oauth_obj.client_id)
 	user_dict['profile_pic']=json.loads(url.text)['image']['url']
 	return user_dict
 
-def github_id_and_pic(self,user_info,user_dict):
+def github_id_and_pic(self, user_info, user_dict):
 	user_dict['id_name']=user_info['login']
 	user_dict['profile_pic']=user_info['avatar_url']
 	return user_dict
@@ -53,7 +53,7 @@ def github_id_and_pic(self,user_info,user_dict):
 class Provider:
 
 
-	def __init__(self, name, client_id, redirect_uri, auth_url, token_url, request_url, secret, get_id_and_picture,
+	def __init__(self, name, client_id, redirect_uri, auth_url, token_url, request_url, secret, id_and_picture,
 				 compliance_fix=(lambda x: x), scope=None, auth_url_params={}, request_format='json'):
 
 		oauth2session = OAuth2Session(
@@ -70,7 +70,7 @@ class Provider:
 		self.secret = secret
 		self.request_url = request_url
 		self.request_format = request_format
-		self.get_id_and_picture=get_id_and_picture
+		self.id_and_picture = lambda user_info, user_dict: id_and_picture(self, user_info, user_dict)
 
 		# self.is_token_fetched = False
 
@@ -106,7 +106,7 @@ provider_dict = {
 		'request_url': 'https://graph.facebook.com/me?',
 		'secret': fb_client_secret,
 		'compliance_fix': facebook_compliance_fix,
-		'get_id_and_picture': facebook_id_and_pic
+		'id_and_picture': facebook_id_and_pic
 	},
 	'github': {
 		'name': 'github',
@@ -116,7 +116,7 @@ provider_dict = {
 		'token_url': 'https://github.com/login/oauth/access_token',
 		'request_url': 'https://api.github.com/user',
 		'secret': github_client_secret,
-		'get_id_and_picture': github_id_and_pic
+		'id_and_picture': github_id_and_pic
 	},
 	'linkedin': {
 		'name': 'linkedin',
@@ -128,7 +128,7 @@ provider_dict = {
 		'secret': linkedin_client_secret,
 		'compliance_fix': linkedin_compliance_fix,
 		'request_format': 'xml',
-		'get_id_and_picture': linkedin_id_and_pic
+		'id_and_picture': linkedin_id_and_pic
 	},
 	'google': {
 		'name': 'google',
@@ -146,7 +146,7 @@ provider_dict = {
 			'access_type': "offline",
 			'approval_prompt': "force",
 		},
-		'get_id_and_picture':google_id_and_pic
+		'id_and_picture': google_id_and_pic
 	},
 }
 
