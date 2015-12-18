@@ -40,12 +40,16 @@ function _addNodesHereAndJSNetworkX(nodes) {
 	// alert(temparr)
 
 	_.each(nodes, function(node) {
-		if( node.id in graph.nodes ) die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
 		if( node.remove ){
 			_removeNodes([node])
 		}
 		else{
-			graph.nodes[node.id] = node
+			if( node.id in graph.nodes ){
+				//die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
+			}
+			else{
+				graph.nodes[node.id] = node
+			}
 		}
 	})
 	// add ids to JSnetworkx too

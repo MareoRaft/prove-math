@@ -72,7 +72,8 @@ function init(input) {
 }
 
 function _start() {
-	gA.force.start() // well, we actually only want this when there has been a change in node or link presence.  A mere change of name is not enough.  If we could autodetect such changes, then this could be integrated into update() instead of making user trigger it manually
+	gA.force.start()
+	gA.force.alpha(0.11) // rejiggle graph
 }
 
 function _tick(){

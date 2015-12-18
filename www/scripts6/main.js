@@ -267,7 +267,9 @@ $(document).on('node-click', function(Event){
 		object: current_node,
 	})
 	show('#node-template')
-	ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
+	if( false /*mode !== 'learn'*/){
+		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
+	}
 })
 
 $('#back').click(fromBlindsToGraphAnimation)

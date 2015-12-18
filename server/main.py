@@ -126,7 +126,9 @@ class SocketHandler(WebSocketHandler):
 		# get appropriate subgraph from NewtorkX!
 		global all_nodes
 		global our_DAG
-		dict_graph = our_DAG.as_complete_dict(all_nodes)
+		neighbors = our_DAG.single_source_shortest_anydirectional_path_length('vertex', 0)
+		H = our_DAG.subgraph(list(neighbors.keys()))
+		dict_graph = H.as_complete_dict(all_nodes)
 
 		self.write_message({  # write_message uses json by default!
 			'command': 'load-graph',
@@ -142,6 +144,25 @@ class SocketHandler(WebSocketHandler):
 		elif ball['command'] == 'learn-node':
 			user = User(ball['identifier'])
 			user.learn_node(ball['node_id'])
+			if ball['mode'] == 'learn':
+				learnable_ids = [ball['node_id']] # a list
+				# find the successors of the node
+				global our_DAG
+				successor_ids = set(our_DAG.successors(ball['node_id']))
+				for successor_id in successor_ids:
+					predecessor_ids = set(our_DAG.predecessors(successor_id))
+					# if ALL its predecessors are known, then:
+					if predecessor_ids <= set(user.dict['learned_node_ids']): # set containment
+						learnable_ids.append(successor_id)
+				# use list to make subgraph
+				H = our_DAG.subgraph(learnable_ids)
+				global all_nodes
+				dict_graph = H.as_complete_dict(all_nodes)
+				self.write_message({
+					'command': 'load-graph',
+					'new_graph': dict_graph,
+				})
+
 		elif ball['command'] == 'unlearn-node':
 			user = User(ball['identifier'])
 			user.unlearn_node(ball['node_id'])
@@ -156,14 +177,13 @@ class SocketHandler(WebSocketHandler):
 			print('node made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...')
 			global our_mongo
 			our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
-		elif ball['command'] == "re-center-graph":
+		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors
 			global our_DAG
 			global all_nodes
-			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 4)
+			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1)
 			H = our_DAG.subgraph(list(neighbors.keys()))
 			dict_graph = H.as_complete_dict(all_nodes)
-
 			self.write_message({
 				'command': 'load-graph',
 				'new_graph': dict_graph,

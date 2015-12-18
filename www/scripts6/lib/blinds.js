@@ -249,7 +249,7 @@ function _startWriteMode(blind, $value) {
 		})
 		// $('.tags').append('<option value="new" selected>NEW</option>')
 		// the following might be messing things up.  leave it commented until we need that feature
-		// $('#'+blind.id+' > .value > .tags').trigger('chosen:updated') // this is how to update chosen after adding more options
+		$('#'+blind.id+' > .value > .tags').trigger('chosen:updated') // this is how to update chosen after adding more options
 
 	}
 	else if( blind.mode === 'standard' ){

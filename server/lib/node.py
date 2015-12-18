@@ -307,7 +307,7 @@ class Definition(Node):
 			self._negation = None
 		else:
 			clean_negation = check_type_and_clean(new_negation, str)
-			assert dunderscore_count(clean_negation) >= 2
+			# assert dunderscore_count(clean_negation) >= 2 # let's make BLINDS do that stuff INSTEAD
 			self._negation = clean_negation
 
 	@Node.description.setter

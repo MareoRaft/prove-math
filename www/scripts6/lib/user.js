@@ -35,7 +35,7 @@ function learnNode(node) {
 	user.learned_node_ids.push(node.id)
 	$.event.trigger({
 		type: 'jsend',
-		message: { command: 'learn-node', identifier: identifier(), node_id: node.id },
+		message: { command: 'learn-node', identifier: identifier(), node_id: node.id, mode: 'learn' },
 	})
 }
 

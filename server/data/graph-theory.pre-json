@@ -91,14 +91,8 @@
 	"name": "null (multigraph)",
 	"def":"The __null__ multigraph is the multigraph with 0 vertices.",
 	"dependencies":["multigraph"],
-	//"negation": "non-null",
+	"negation": "non-null",
 }
-
-// {
-// 	"name": "non-null (multigraph)",
-// 	"def":"A __non-null__ multigraph is a multigraph that is not null.",
-// 	"dependencies":["null (multigraph)"],
-// }
 
 {
 	"name": "trivial (multigraph)",
@@ -117,14 +111,8 @@
 	"name": "empty (multigraph)",
 	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
 	"dependencies":["multigraph"],
-	//"negation": "nonempty",
+	"negation": "nonempty",
 }
-
-// {
-// 	"name": "nonempty (multigraph)",
-// 	"def":"A multigraph is __nonempty__ if it is not empty.",
-// 	"dependencies":["empty (multigraph)"],
-// }
 
 {
 	"name": "degree (vertex)",
@@ -253,33 +241,21 @@
 }
 
 
-//insert combinatorixs class graph theory things here:
+//insert combinatorics class graph theory things here:
 {
 	"name":"connected (vertices)",
 	"def":"Given a multigraph $G=(V,E)$, vertices $a,b\in V$ are __connected__ if there is an $ab$-walk in $G$.",
 	"dependencies":["walk"],
-	//"negation": "disconnected (vertices)",
+	"negation": "disconnected (vertices)",
 }
-
-// {
-// 	"name":"disconnected (vertices)",
-// 	"def":"Given a multigraph $(V,E)$, vertices $a,b\in V$ are __disconnected__ if they are not connected.",
-// 	"dependencies":["connected vertices"],
-// }
 
 {
 	"name":"connected (graph)",
 	"def": "A multigraph $(V,E)$ is __connected__ if for every $a,b\in V$, $a$ is connected to $b$.",
 	"intuition": "All the vertices in the graph are tied to each other by edges.  We cannot pull the graph apart into pieces.",
 	"dependencies":["connected vertices"],
-	//"negation": "disconnected (graph)",
+	"negation": "disconnected (graph)",
 }
-
-// {
-// 	"def": "A multigraph is __disconnected__ if it is not connected.",
-// 	"intuition": "There are at least two components in the graph that are not connected to each other by any edges whatsoever.",
-// 	"dependencies":["connected graph"],
-// }
 
 {
 	"name": "complement",
@@ -295,7 +271,7 @@
 	"weight": 3,
 	"type": "theorem",
 	"content": "If a multigraph is disconnected, then its complement is connected.",
-	"dependencies":["connected"],
+	"dependencies":["connected graph"],
 }
 
 {//1 b
@@ -305,7 +281,7 @@
 		"type": ["graph theoretic", "pigeonhole principle"],
 		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principle, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
 	},
-	"dependencies":["simple (graph)", "vertex", "connected"],
+	"dependencies":["simple (graph)", "vertex", "connected graph"],
 }
 
 {//2
@@ -313,44 +289,62 @@
 	"type": "exercise",
 	"content": "The number of nonempty simple graphs on the vertex set $[4]$ is [[$2^\binom{4}{2}-1$ or $63$]].  The number of connected simple graphs on the vertex set $[4]$ is [[28? 39?]].",
 	"intuition": "The vertices are labelled $1$, $2$, $3$, and $4$.  Therefore the graph $([4], {{1,2}})$ is different from the graph $([4], {{2,3}})$.",
-	"dependencies":["simple graph", "nonempty", "vertex", "connected"],
+	"dependencies":["simple graph", "empty (multigraph)", "vertex", "connected graph"],
 }
 
-// {
-// 	"name": "Diameters",
-// 	"weight": 2,
-// 	"type": "exercise",
-// 	"content": "Let $P$ be the longest path in a simple graph $G$.  Prove that if either endpoint of $P$ has degree greater than $1$, then $G$ has a cycle.  Prove that for any simple graph $H$ with minimum degree at least $2$, then $H$ is cyclic.",
-// }
+{
+	"name": "Diameters",
+	"weight": 2,
+	"type": "exercise",
+	"content": "Let $P$ be the longest path in a simple graph $G$.  Prove that if either endpoint of $P$ has degree greater than $1$, then $G$ has a cycle.  Prove that for any simple graph $H$ with minimum degree at least $2$, then $H$ is cyclic.",
+	"dependencies":["diameter"],
+}
 
-// //HW 13
-// {// 1
-// 	"weight": 2,
-// 	"type": "exercise",
-// 	"content": "$G=(A\cup B,E)$ is a bipartite graph with parts $A$ and $B$.  The complement of $G$ is connected iff [[$G$ is not complete bipartite]].  Prove that if $G$ is regular, then $|A|=|B|$.",
-// }
+//HW 13
+{// 1
+	"weight": 2,
+	"type": "exercise",
+	"content": "$G=(A\cup B,E)$ is a bipartite graph with parts $A$ and $B$.  The complement of $G$ is connected iff [[$G$ is not complete bipartite]].  Prove that if $G$ is regular, then $|A|=|B|$.",
+	"dependencies":["bipartite (graph)", "part (partition)", "complement", "connected graph", "complete bipartite"],
+}
 
-// { // 2
-// 	"name": "Subtrees of a Cycle",
-// 	"weight": 2,
-// 	"type": "exercise",
-// 	"content": "Consider the cycle on $n$ vertices, $C_n$, with the labels $1, 2, 3,,, n$.  The number of (labeled) subtrees of $C_n$ is [[$n^\underline{2}$, or $n$ pick $2$, or $n(n-1)$.]].",
-// 	"intuition": "[[A subtree of a cycle is just a path.  We need only count the possible paths.]]",
-// }
+{ // 2
+	"name": "Subtrees of a Cycle",
+	"weight": 2,
+	"type": "exercise",
+	"content": "Consider the cycle on $n$ vertices, $C_n$, with the labels $1, 2, 3,,, n$.  The number of (labeled) subtrees of $C_n$ is [[$n^\underline{2}$, or $n$ pick $2$, or $n(n-1)$.]].",
+	"intuition": "[[A subtree of a cycle is just a path.  We need only count the possible paths.]]",
+	"dependencies": ["sub", "tree", "cycle", "pick"],
+}
 
-// { // 3
-// 	"weight": 2,
-// 	"type": "exercise",
-// 	"content": "Let $G = ([n],E)$ be a graph with labeled vertices.  Let $m_i$ be the size of $G-i$.  The size of $G$ in terms of $n$ and the $m_i$s is [[$\frac{1}{n-2}\sum_{i=1}^{n} m_i$]].",
-// }
+{
+	"name": "size (set)",
+	"def": "The __size__ of a set is the number of elements in that set.  In the case of an infinite set, the size can be a specific type of infinity.",
+	"synonyms": "cardinality",
+	"dependencies": ["set"],
+}
 
-// //thms
-// {
-// 	"nickname": "Kirchhoff's Theorem",
-// 	"name": "Kirchhoff's matrix tree theorem",
-// 	"weight": 6,
-// 	"thm": "The number of spanning trees of a graph is equal to any cofactor of the graph's laplacian.",
-// }
+{
+	"name": "size (graph)",
+	"def": "The __size__ of a graph $G=(V,E)$ is the size of the set $V$.",
+	"dependencies": ["size (set)"],
+}
+
+{ // 3
+	"weight": 2,
+	"type": "exercise",
+	"content": "Let $G = ([n],E)$ be a graph with labeled vertices.  Let $m_i$ be the size of $G-i$.  The size of $G$ in terms of $n$ and the $m_i$s is [[$\frac{1}{n-2}\sum_{i=1}^{n} m_i$]].",
+	"dependencies": ["vertex", "size (graph)"],
+}
+
+//thms
+{
+	"nickname": "Kirchhoff's Theorem",
+	"name": "Kirchhoff's matrix tree theorem",
+	"weight": 6,
+	"thm": "The number of spanning trees of a graph is equal to any cofactor of the graph's laplacian.",
+	"dependencies":["laplacian (of a graph)", "cofactor", "spanning (tree)"],
+}
 
 // {
 // 	"name": "Bipartite iff no odd cycles",
@@ -1312,10 +1306,10 @@
 // 	"thm":"The shortest Hamiltonian stroll of a digraph $D=(V,E)$ (if such a stroll exists), has a length of at most $\dfrac{(|V|+1)^2}4$ (for $n \geq 3$).",
 // } // book uses different proof which i dont understand (gives overview)
 
-// {
-// 	"def":"A __bipartite graph__, denoted $G=(A,B,E)$, is a graph $G=(V,E)$ such that ${A,B}$ is a bipartition of $V$, and $(\forall e \in E) e\cap A \neq {}$ and $e\cap B \neq {}$.",
-// 	"note":"*Bigraph* is short for *bipartite graph*.",
-// }
+{
+	"def":"A graph $G=(V,E)$ is __bipartite__ is there exists a bipartition ${A,B}$ of $V$ such that $(\forall e \in E) e\cap A \neq {}$ and $e\cap B \neq {}$.",
+	"note":"*Bigraph* is short for *bipartite graph*.",
+}
 
 // {
 // 	"def":"A __$k$-partite graph__, denoted $G=(A_1,,,A_k,E)$, is a graph $G=(V,E)$ such that ${A_1,,,A_k}$ is a $k$-partition of $V$, and $(\forall e \in E)(\forall i \in [k]) e \not\subset A_i$.",
@@ -1481,10 +1475,9 @@
 // 	// alt def
 // }
 
-// {
-// 	"def":"The __diameter__ is the maximum distance.",
-// 	// alt def
-// }
+{
+	"def":"Given a graph, the __diameter__ is the maximum distance between all pairs of vertices.",
+}
 
 // {
 // 	"Ex":"Find the diameter and radius of $K_{a,b}$.",

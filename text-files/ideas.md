@@ -64,4 +64,5 @@ Andrew stuff
 65. instead of synonyms, what if name was expandable to show all possible names, w/ same upvote/downvote stuff, and the winner is shown as the name?
 66. (and then, make sure the new one is a correct collapse style too (mode)) --> so there is a glitch with CHOSEN because there are more than one of them.  Perhaps we need to give them separate IDS.  There is also a glitch with one_time_only only working for the FIRST append blind that is clicked.  I think THAT glitch may be related to the CHOSEN glitch, so resolve the CHOSEN glitch first, and see if the other one gets resolved on its own.
 consider switching to Taggle --> http://sean.is/poppin/tags
-
+67. it doesn't really make sense to underline negations, synonyms etc.  Instead, let's make the BLINDS put underlines automatically on READ mode!
+68. there is a weird glitch with latex rendering. see the exercise based on vertex. --> its caused by marked things withn dollars!  such as _ within dollars being interpreted as italic!
