@@ -26,8 +26,10 @@ String.prototype.singularize = function() {
 	if( this.charAt(this.length-1) === 's' ) return this.slice(0, this.length-1)
 	else return this
 }
-
 // we are appending these to window in order to make them global variables
+window.reduce_string = function(string) {
+	return string.replace(/[_\W]/g, '').toLowerCase()
+}
 window.die = function(string) {
 	alert(string)
 	throw(string)

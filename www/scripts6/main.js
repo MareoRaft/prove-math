@@ -163,6 +163,8 @@ ws.jsend = function(raw_object) {
 	ws.send(JSON.stringify(raw_object))
 }
 ws.onopen = function() {
+	alert(JSON.stringify(user.get_identifier()))
+	ws.jsend({command: 'open', identifier: user.get_identifier()})
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -180,7 +182,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
 		})
 		let ready_graph = raw_graph
-	        //alert(JSON.stringify(ready_graph.nodes))
+        // alert(JSON.stringify(ready_graph.nodes))
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,
@@ -191,6 +193,15 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 
 $(document).on('jsend', function(Event) {
 	ws.jsend(Event.message)
+})
+$(document).on('add-links', function(Event) {
+	alert('addlinks triggered, links: '+JSON.stringify(Event.message))
+	graph.addNodesAndLinks({
+		links: Event.message,
+	})
+})
+$(document).on('request-node', function(Event) {
+	ws.jsend({command: 'request-node', node_id: Event.message, identifier: user.identifier})
 })
 
 ////////////////////////// LOGIN/LOGOUT STUFF //////////////////////////

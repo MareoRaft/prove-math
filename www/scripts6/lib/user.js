@@ -80,6 +80,7 @@ return {
 	unlearnNode: unlearnNode,
 	hasLearned: hasLearned,
 	setPref: setPref,
+	get_identifier: identifier,
 }
 
 }) // end of define

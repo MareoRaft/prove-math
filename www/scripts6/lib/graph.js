@@ -79,9 +79,17 @@ function _addLinksHereAndJSNetworkX(links) {
 	_.each(links, function(link){
 		let source_key = link.source
 		let target_key = link.target
+
+		let source_before = link.source
 		link.source = graph.nodes[link.source]
 		link.target = graph.nodes[link.target]
-		if(!def(link.source)) die('bad source key is: '+source_key)
+		if( !def(link.source) ){
+			alert('bad source key is: '+source_key+'.  Sending request!')
+			$.event.trigger({
+				type: 'request-node',
+				message: source_before,
+			})
+		}
 		if(!def(link.target)) die('bad target key is: '+target_key)
 		// link.source = findObjectById(graph.nodes, link.source)
 		// link.target = findObjectById(graph.nodes, link.target)

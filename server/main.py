@@ -116,31 +116,45 @@ class JSONHandler(BaseHandler):
 class SocketHandler(WebSocketHandler):
 
 	def open(self):
-		print('websocket opened!')
-
 		self.write_message({
 			'command': 'populate-oauth-urls',
 			'url_dict': auth.auth_url_dict(),
 		})
-
-		# get appropriate subgraph from NewtorkX!
-		global all_nodes
-		global our_DAG
-		neighbors = our_DAG.single_source_shortest_anydirectional_path_length('vertex', 0)
-		H = our_DAG.subgraph(list(neighbors.keys()))
-		dict_graph = H.as_complete_dict(all_nodes)
-
-		self.write_message({  # write_message uses json by default!
-			'command': 'load-graph',
-			'new_graph': dict_graph,
-		})
-
-	# here, however, we must json.loads it ourselves...
 	def on_message(self, message):
 		print('got message: ' + message)
 		ball = json.loads(message)
+
 		if ball['command'] == 'print':
 			print(ball['message'])
+
+		elif ball['command'] == 'open':
+			global all_nodes
+			global our_DAG
+			learned_ids = []
+
+
+			user = User(ball['identifier'])
+			if user: # is logged in
+				learned_ids = user.dict['learned_node_ids']
+				if learned_ids:
+					ids_to_send = our_DAG.absolute_dominion(learned_ids)
+					H = our_DAG.subgraph(ids_to_send)
+				else:
+					H = our_DAG.subgraph(['vertex'])
+			else:
+				H = our_DAG.subgraph(['vertex'])
+
+
+			dict_graph = H.as_complete_dict(all_nodes)
+			self.write_message({
+				'command': 'load-graph',
+				'new_graph': dict_graph,
+			})
+
+
+
+
+
 		elif ball['command'] == 'learn-node':
 			user = User(ball['identifier'])
 			user.learn_node(ball['node_id'])
@@ -155,7 +169,7 @@ class SocketHandler(WebSocketHandler):
 					if predecessor_ids <= set(user.dict['learned_node_ids']): # set containment
 						learnable_ids.append(successor_id)
 				# use list to make subgraph
-				H = our_DAG.subgraph(learnable_ids)
+				H = our_DAG.subgraph(learnable_ids) # i think this has same flaw.  What about connections betwwen H and OTHER stuff on ON SCREEN graph.  they won't appear in subgraph!
 				global all_nodes
 				dict_graph = H.as_complete_dict(all_nodes)
 				self.write_message({
@@ -188,6 +202,25 @@ class SocketHandler(WebSocketHandler):
 				'command': 'load-graph',
 				'new_graph': dict_graph,
 			})
+		elif ball['command'] == 'request-node':
+			global our_DAG
+			global all_nodes # this is a list of dictionaries
+			if ball['node_id'] not in [node['_id'] for node in all_nodes]: # this is temp for debugging
+				raise ValueError('The node_id "'+ball['node_id']+'" does not exist.')
+			else:
+				# this needs to be replace with....
+				# client sends all nodes ON SCREEN through websocket to here, in addition to node_id.  We take the neighbors
+				# of node_id and ITERSECT them with the ON SCREEN NODES, then use THAT for the subgraph.  This guarantees
+				# that any links between node_id and things on screen will appear when node_id comes.
+				user = User(ball['identifier'])
+				learned_ids = user.dict['learned_node_ids'] # so we get the links to all learned nodes too...
+				learned_ids.append(ball['node_id'])
+				H = our_DAG.subgraph(learned_ids)
+				dict_graph = H.as_complete_dict(all_nodes)
+				self.write_message({
+					'command': 'load-graph',
+					'new_graph': dict_graph,
+				})
 
 
 

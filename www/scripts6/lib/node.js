@@ -118,7 +118,7 @@ class Node {
 	}
 
 	get id() {
-		if( this.name !== null && this.name !== '' ) return this.name.replace(/[_\W]/g, '').toLowerCase()
+		if( this.name !== null && this.name !== '' ) return reduce_string(this.name)
 		else if( this._id !== null && this._id !== '' ) return this._id
 		else return ''
 	}

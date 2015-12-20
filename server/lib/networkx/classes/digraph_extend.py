@@ -108,6 +108,22 @@ class _DiGraphExtended (nx.DiGraph):
 		graph['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
 		return graph
 
+	# needs test
+	def hanging_dominion(self, nodes):
+		hanging_dominion_and_extra = set()
+		for node in nodes:
+			hanging_dominion_and_extra = hanging_dominion_and_extra.union(set(self.successors(node)))
+		return hanging_dominion_and_extra - set(nodes)
+
+	# needs test
+	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
+		hanging_dominion = self.hanging_dominion(nodes)
+		hanging_absolute_dominion = []
+		for candidate in hanging_dominion:
+			if set(self.predecessors(candidate)) <= set(nodes):
+				hanging_absolute_dominion.append(candidate)
+		return hanging_absolute_dominion + nodes
+
 for key, value in _DiGraphExtended.__dict__.items():
 	try:
 		setattr(nx.DiGraph, key, value)

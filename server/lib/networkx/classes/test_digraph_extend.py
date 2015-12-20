@@ -115,3 +115,31 @@ def test_common_descendants():
 	# assert DG.common_descendants({'y', 'c'}, 't') == {'d', 'L'}
 	# assert DG.common_descendants('y', {'c', 't'}) == {'d', 'L'}
 
+def test_hanging_dominion():
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['y', 'c'], ['c', 'L'],
+		['t', 'c'], ['c', 'd'],
+	])
+	assert DG.hanging_dominion(['y']) == set('c')
+	assert DG.hanging_dominion(['y', 't']) == set('c')
+	assert DG.hanging_dominion(['c']) == {'L', 'd'}
+	assert DG.hanging_dominion(['y', 'c']) == {'L', 'd'}
+
+def test_absolute_dominion():
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['y', 'c'], ['c', 'L'],
+		['t', 'c'], ['c', 'd'],
+	])
+	assert DG.absolute_dominion(['y']) == ['y']
+	assert DG.absolute_dominion(['y', 't']) == ['c', 'y', 't']
+	assert DG.absolute_dominion(['y', 'c']) == ['L', 'd', 'y', 'c']
+
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['a', 'b'], ['b', 'c'],
+		['x', 'c'],
+	])
+	assert DG.absolute_dominion(['a', 'x']) == ['b', 'a', 'x']
+
