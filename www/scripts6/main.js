@@ -273,7 +273,7 @@ $('#add-node').click(function(){
 
 //////////////////////////// TOGGLE STUFF ////////////////////////////
 $(document).on('node-click', function(Event){
-	current_node = graph.nodes[Event.message] // this assumed HASH of nodes
+	current_node = graph.nodes[Event.message] // graph.nodes is a DICTIONARY of nodes
 	blinds.open({
 		object: current_node,
 	})

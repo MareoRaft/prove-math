@@ -128,54 +128,13 @@ class SocketHandler(WebSocketHandler):
 			print(ball['message'])
 
 		elif ball['command'] == 'open':
-			global all_nodes
-			global our_DAG
-			learned_ids = []
-
-
-			user = User(ball['identifier'])
-			if user: # is logged in
-				learned_ids = user.dict['learned_node_ids']
-				if learned_ids:
-					ids_to_send = our_DAG.absolute_dominion(learned_ids)
-					H = our_DAG.subgraph(ids_to_send)
-				else:
-					H = our_DAG.subgraph(['vertex'])
-			else:
-				H = our_DAG.subgraph(['vertex'])
-
-
-			dict_graph = H.as_complete_dict(all_nodes)
-			self.write_message({
-				'command': 'load-graph',
-				'new_graph': dict_graph,
-			})
-
-
-
-
+			self.send_absolute_dominion(ball)
 
 		elif ball['command'] == 'learn-node':
 			user = User(ball['identifier'])
 			user.learn_node(ball['node_id'])
 			if ball['mode'] == 'learn':
-				learnable_ids = [ball['node_id']] # a list
-				# find the successors of the node
-				global our_DAG
-				successor_ids = set(our_DAG.successors(ball['node_id']))
-				for successor_id in successor_ids:
-					predecessor_ids = set(our_DAG.predecessors(successor_id))
-					# if ALL its predecessors are known, then:
-					if predecessor_ids <= set(user.dict['learned_node_ids']): # set containment
-						learnable_ids.append(successor_id)
-				# use list to make subgraph
-				H = our_DAG.subgraph(learnable_ids) # i think this has same flaw.  What about connections betwwen H and OTHER stuff on ON SCREEN graph.  they won't appear in subgraph!
-				global all_nodes
-				dict_graph = H.as_complete_dict(all_nodes)
-				self.write_message({
-					'command': 'load-graph',
-					'new_graph': dict_graph,
-				})
+				self.send_absolute_dominion(ball)
 
 		elif ball['command'] == 'unlearn-node':
 			user = User(ball['identifier'])
@@ -222,6 +181,29 @@ class SocketHandler(WebSocketHandler):
 					'new_graph': dict_graph,
 				})
 
+	def send_absolute_dominion(self, ball):
+		global all_nodes
+		global our_DAG
+		learned_ids = []
+
+		user = User(ball['identifier'])
+		if user.logged_in:
+			learned_ids = user.dict['learned_node_ids']
+			if learned_ids:
+				ids_to_send = our_DAG.absolute_dominion(learned_ids)
+				H = our_DAG.subgraph(ids_to_send)
+			else:
+				# they've learned nothing so far.  send them a starting point
+				H = our_DAG.subgraph(['vertex']) # SET???
+		else:
+			# same line as above
+			H = our_DAG.subgraph(['vertex']) # SET???
+
+		dict_graph = H.as_complete_dict(all_nodes)
+		self.write_message({
+			'command': 'load-graph',
+			'new_graph': dict_graph,
+		})
 
 
 	def on_close(self):

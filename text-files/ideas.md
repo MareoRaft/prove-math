@@ -66,3 +66,8 @@ Andrew stuff
 consider switching to Taggle --> http://sean.is/poppin/tags
 67. it doesn't really make sense to underline negations, synonyms etc.  Instead, let's make the BLINDS put underlines automatically on READ mode!
 68. there is a weird glitch with latex rendering. see the exercise based on vertex. --> its caused by marked things withn dollars!  such as _ within dollars being interpreted as italic!
+69. We should USE BLINDS for the PREFERENCES.  we built it.  now use it.
+
+If we need it: For preferences form and for controlling browsers back button, etc, there is this library: https://jquerytools.github.io/release-notes/index.html#form --> documentation: http://jquerytools.github.io/documentation/validator/index.html
+70. add ACTUAL nodes for the dependencies in pre-json_to_mongo
+

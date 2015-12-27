@@ -40,6 +40,7 @@ for pre_node in new_data_dictionary['nodes']:
 				"target_name": node.name,
 			})
 	except:
+		# the dependency does not exist (or won't exist until later on in the loop)
 		print('skipping (perhaps partially) node: '+node.id)
 
 print('Transfer complete!!!!')

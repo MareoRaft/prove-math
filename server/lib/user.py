@@ -10,8 +10,9 @@ class User: # there's really no point in storing users ephemerally, other than t
 		if initial_identifier['account_type'] in ['google', 'facebook', 'github', 'linkedin']:
 			self.account_type = initial_identifier['account_type']
 			self.account_id = initial_identifier['account_id']
+			self.logged_in = True
 		else:
-			raise ValueError('Account type not supported.')
+			self.logged_in = False
 
 	@property
 	def dict(self):
@@ -43,7 +44,7 @@ class User: # there's really no point in storing users ephemerally, other than t
 			},
 			'learned_node_ids': [],
 			'prefs': {
-				'display_name_capitalization': "title", # can be null, "sentence", or "title"
+				'display_name_capitalization': None, # can be null, "sentence", or "title"
 				'underline_definitions': False, # can be true or false # do you want definitions to be underlined in the DAG view?
 				'show_description_on_hover': False, # can be true or false
 			},

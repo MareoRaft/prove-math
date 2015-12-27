@@ -30,6 +30,22 @@ responds to texts, rarely responds to email
 ali.haider.ismail@rutgers.edu
 
 
+
+
+coworkers
+--------------
+Sid Patel
+been w/ KA a little while
+siddharthpat3l@gmail.com
+wrote a python program for replacements.
+google hangouts
+
+
+
+
+
+
+
 professors
 ----------
 Kahn, Jeffry
