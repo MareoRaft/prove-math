@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'check-types', 'profile'], function($, _, check, undefined) {
+define(['jquery', 'underscore', 'profile'], function($, _, undefined) {
 
 
 /////////////////////////////////// HELPERS ///////////////////////////////////

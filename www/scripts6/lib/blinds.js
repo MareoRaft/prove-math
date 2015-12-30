@@ -1,4 +1,4 @@
-define( ["jquery", "underscore", "profile", "check-types"], function($, _, undefined, check){
+define( ["jquery", "underscore", "profile", "check-types"], function($, _, undefined, is){
 
 let blinds = {}
 function init(input) {
@@ -40,11 +40,11 @@ function open({
 	blinds.object = object
 	let iterable = (keys === 'own')? blinds.object: keys
 	for( let key in iterable ){
-		if( check.array(iterable) ) key = iterable[key] // for the keys array, grab the STRINGS, not the INDECIS
+		if( is.array(iterable) ) key = iterable[key] // for the keys array, grab the STRINGS, not the INDECIS
 		let expand_array = (blinds.expand_array && !_.contains(collapse_array_keys, key)) || _.contains(expand_array_keys, key)
 		if( hasOwnPropertyOrGetter(blinds.object, key) ){
 			// nonarrays:
-			if( check.not.array(blinds.object[key]) ){
+			if( is.not.array(blinds.object[key]) ){
 				if( blinds.object[key] !== null ) {
 					_openBlind({
 						key: key,
@@ -65,7 +65,7 @@ function open({
 			else {
 				// for collapse arrays, show an append when its empty:
 				if( !expand_array ){
-					if( check.not.emptyArray(blinds.object[key]) ) {
+					if( is.not.emptyArray(blinds.object[key]) ) {
 						_openBlind({
 							key: key,
 							display_key: key,
@@ -108,9 +108,9 @@ function close() {
 }
 
 function _openBlind({ parent_object=blinds.object, key, expand_array, display_key, $before }) { // at this point, expand_array represents whether we should expand for THIS key specifically.
-	if( expand_array && check.array(blinds.object[key]) ) {
+	if( expand_array && is.array(blinds.object[key]) ) {
 		let array = blinds.object[key]
-		// if( check.emptyArray(array) && blinds.open_empty_blind ) array.push('') // empty arrays get a single empty string element
+		// if( is.emptyArray(array) && blinds.open_empty_blind ) array.push('') // empty arrays get a single empty string element
 		_.each(array, function(array_element, index) {
 			_openBlind({
 				parent_object: blinds.object[key],
@@ -129,7 +129,7 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 				parent_object: parent_object,
 				key: key,
 				display_key: display_key,
-				mode: (blinds.chosen && check.array(parent_object[key]) )? 'chosen': 'standard',
+				mode: (blinds.chosen && is.array(parent_object[key]) )? 'chosen': 'standard',
 			})
 			_displayBlind(blind, $before)
 			_enableRenderToggling(blind)
@@ -139,7 +139,7 @@ function _openBlind({ parent_object=blinds.object, key, expand_array, display_ke
 }
 
 function _openAppendBlind({ key, display_key, expand_array, is_one_time_only }) {
-	let parent_object = (check.array(blinds.object[key]) && expand_array)? blinds.object[key]: blinds.object
+	let parent_object = (is.array(blinds.object[key]) && expand_array)? blinds.object[key]: blinds.object
 	let blind = new Blind({
 		parent_object: parent_object,
 		key: key, // there is no key since there is no value
@@ -187,7 +187,7 @@ function _toggleBlind(blind) {
 function _appendValueOrCollapsedBlind(blind, expand_array) {
 	let $this = $('#'+blind.id)
 	let key = undefined
-	if( check.array(blind.parent_object) ){
+	if( is.array(blind.parent_object) ){
 		if( expand_array ){
 			blind.parent_object.push('')
 			key = blind.parent_object.length - 1
@@ -196,7 +196,7 @@ function _appendValueOrCollapsedBlind(blind, expand_array) {
 			die('If the parent object is an array, then it should ALWAYS be expand_array.  Because if it is not expand_array, then the PARENT OBJECT should be the bigger dictionary containing the array instead.')
 		}
 	}
-	else if( check.array(blind.parent_object[blind.key]) ){
+	else if( is.array(blind.parent_object[blind.key]) ){
 		if( !expand_array ){
 			key = blind.key // this is the collapse array case
 		}
@@ -342,11 +342,11 @@ class Blind {
 		if( this.mode === 'append' ) classes.push('blind-append')
 		for( let class_name in blinds.blind_class_conditions ){
 			let value = blinds.blind_class_conditions[class_name]
-			if( check.function(value) ){
+			if( is.function(value) ){
 				let bool_func = value
 				if( bool_func(blinds.object, this.display_key, this.key) ) classes.push(class_name)
 			}
-			else if( check.boolean(value) ){
+			else if( is.boolean(value) ){
 				let bool = value
 				if( bool ) classes.push(class_name)
 			}
@@ -384,7 +384,7 @@ class Blind {
 	}
 
 	get value_htmlified() {
-		let value_string = check.array(this.value)? this.value.join(', '): this.value
+		let value_string = is.array(this.value)? this.value.join(', '): this.value
 		if(this.state === 'write'){
 			if( this.mode === 'chosen' ) return as_select_html(this.value)
 			else return value_string

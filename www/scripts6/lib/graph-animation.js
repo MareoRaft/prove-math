@@ -1,4 +1,4 @@
-define(["jquery", "check-types", "profile", "d3", "user"], function($, check, undefined, d3, user){
+define(["jquery", "check-types", "profile", "d3", "user"], function($, is, undefined, d3, user){
 
 let gA = {} // for graphAnimation
 function init(input) {

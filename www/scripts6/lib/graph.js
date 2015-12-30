@@ -1,5 +1,5 @@
 define(["underscore", "check-types", "graph-animation", /*"jsnetworkx"*/],
-function(_,            check,         graphAnimation/*, jsNetworkX*/) {
+function(_,            is,            graphAnimation/*, jsNetworkX*/) {
 
 let graph = {
 	nodes: {},
@@ -65,8 +65,8 @@ function _removeNodes(nodes) {
 }
 
 // function findObjectById(array, id){ // delete THIS WHEN SWITCHING TO HASH
-// 	check.assert.array(array)
-// 	check.assert.string(id)
+// 	is.assert.array(array)
+// 	is.assert.string(id)
 // 	for( let i in array )if( array[i].id === id ) return array[i]
 // 	die('id not found.')
 // }
@@ -94,7 +94,7 @@ function _addLinksHereAndJSNetworkX(links) {
 		// link.source = findObjectById(graph.nodes, link.source)
 		// link.target = findObjectById(graph.nodes, link.target)
 	})
-	check.assert.array.of.object(links)
+	is.assert.array.of.object(links)
 }
 
 function _removeLinks() {

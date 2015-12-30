@@ -1,4 +1,4 @@
-define(["underscore", "check-types", "profile", "user"], function(_, check, undefined, user) {
+define(["underscore", "check-types", "profile", "user"], function(_, is, undefined, user) {
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
 function _removeParenthesizedThing(string){ // not yet correctly integrated into project
@@ -99,7 +99,7 @@ class Node {
 	}
 
 	set gA_display_name(new_name) {
-		if( !check.string(new_name) ) die('gA_display_name must be a string.')
+		if( !is.string(new_name) ) die('gA_display_name must be a string.')
 		this._gA_display_name = new_name
 	}
 
@@ -109,7 +109,7 @@ class Node {
 	}
 
 	// set display_name(string) { // well we may never need to set it, if we check user pref object every time
-	// 	if( !check.string(string) ) die("A node's display_name must be a string.")
+	// 	if( !is.string(string) ) die("A node's display_name must be a string.")
 	// 	this._display_name = string
 	// }
 

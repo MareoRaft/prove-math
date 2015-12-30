@@ -49,7 +49,7 @@ require( [
 	$,
 	_,
 	browser,
-	check,
+	is,
 	katex,
 	mathjax,
 	undefined,
@@ -65,7 +65,7 @@ require( [
 /////////////////////////// INITIALIZATION ///////////////////////////
 let user_dict_json_string = $('body').attr('data-user-dict-json-string')
 let user_dict = JSON.parse(user_dict_json_string)
-if( check.emptyObject(user_dict) ){
+if( is.emptyObject(user_dict) ){
 	loginInit()
 	show('#login')
 }
@@ -137,7 +137,7 @@ blinds.init({
 		'node-attribute': true,
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
-		empty: (node, display_key, key) => check.null(node[key]) || (check.array(node[key]) && (check.emptyArray(node[key]) || check.emptyString(node[key][0]))),
+		empty: (node, display_key, key) => is.null(node[key]) || (is.array(node[key]) && (is.emptyArray(node[key]) || is.emptyString(node[key][0]))),
 	},
 	chosen: true,
 })
