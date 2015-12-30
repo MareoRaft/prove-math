@@ -137,7 +137,7 @@ blinds.init({
 		'node-attribute': true,
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
-		empty: (node, display_key, key) => check.null(node[key]) || (check.array(node[key]) && (check.emptyArray(node[key]) || !check.nonEmptyString(node[key][0]))),
+		empty: (node, display_key, key) => check.null(node[key]) || (check.array(node[key]) && (check.emptyArray(node[key]) || check.emptyString(node[key][0]))),
 	},
 	chosen: true,
 })

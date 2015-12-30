@@ -59,7 +59,6 @@ Andrew stuff
 60. deal with rogue empty plurals.  what have i done!!!
 61. create vertical centering for key and value-block if possible.
 62. after next push to server, check all cookie and oauth things to make sure they work right.
-63. update check-types to 5.  change !nonEmptyString() to emptyString()
 64. When pulling up the node-template, give it FOCUS so that arrow-up and arrow-down scroll it.
 65. instead of synonyms, what if name was expandable to show all possible names, w/ same upvote/downvote stuff, and the winner is shown as the name?
 66. (and then, make sure the new one is a correct collapse style too (mode)) --> so there is a glitch with CHOSEN because there are more than one of them.  Perhaps we need to give them separate IDS.  There is also a glitch with one_time_only only working for the FIRST append blind that is clicked.  I think THAT glitch may be related to the CHOSEN glitch, so resolve the CHOSEN glitch first, and see if the other one gets resolved on its own.
@@ -70,4 +69,5 @@ consider switching to Taggle --> http://sean.is/poppin/tags
 
 If we need it: For preferences form and for controlling browsers back button, etc, there is this library: https://jquerytools.github.io/release-notes/index.html#form --> documentation: http://jquerytools.github.io/documentation/validator/index.html
 70. add ACTUAL nodes for the dependencies in pre-json_to_mongo
-
+71. the weird expanding problem may be the result of the JIGGLE.  If we reduce the alpha number as small as possible for the jiggle, we may reduce the expansion!  Also, it looks like the graph jiggles when we learn a node EVEN IF WE DON"T get new content sent over (need to verify this).  If so, we need to make sure jiggle is only triggered when new nodes come in.
+72. it looks like nodes don't have synonyms.  we should probably add this in node.py and/or update DB
