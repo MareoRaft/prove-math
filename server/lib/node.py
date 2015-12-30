@@ -79,11 +79,13 @@ def reduce_string(string):
 def create_appropriate_node(dic):
 	# for writers that use shortcut method, we must seek out the type:
 	if not 'type' in dic:
-		dic['type'] = find_key(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
-		dic['description'] = move_attribute(dic, {'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
+		dic['type'] = find_key(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
+		dic['description'] = move_attribute(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
 
 	if dic['type'] in {'definition', 'defn', 'def'}:
 		return Definition(dic)
+	elif dic['type'] == 'axiom':
+		return Axiom(dic)
 	elif dic['type'] in {'theorem', 'thm'}:
 		return Theorem(dic)
 	elif dic['type'] == 'exercise':
@@ -117,7 +119,7 @@ class Node:
 		for key in empty_keys:
 			del dic[key]
 
-		self.description = move_attribute(dic, {'description', 'content'}, strict=True)
+		self.description = move_attribute(dic, {'description', 'content'}, strict=False)
 		self.dependencies = move_attribute(dic, {'dependencies'}, strict=False)
 		self.importance = move_attribute(dic, {'importance', 'weight'}, strict=False)
 		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
@@ -185,6 +187,8 @@ class Node:
 		clean_type = check_type_and_clean(new_type, str)
 		if clean_type in {'definition', 'defn', 'def'}:
 			self._type = 'definition'
+		elif clean_type in {'axiom'}:
+			self._type = 'axiom'
 		elif clean_type in {'theorem', 'thm'}:
 			self._type = 'theorem'
 		elif clean_type in {'exercise'}:
@@ -281,7 +285,8 @@ class Definition(Node):
 		self.negation = move_attribute(dic, {'negation'}, strict=False)
 		if self.importance is None:
 			self.importance = 4
-		assert dunderscore_count(self.description) >=2
+		if self.description is not None:
+			assert dunderscore_count(self.description) >=2
 		if self.name is None:
 			self.name = get_contents_of_dunderscores(self.description)
 
@@ -291,7 +296,7 @@ class Definition(Node):
 	@plurals.setter
 	def plurals(self, new_plurals):
 		if new_plurals is None:
-			self._plurals = None
+			self._plurals = []
 		else:
 			cleaned_plurals = check_type_and_clean(new_plurals, str, list_of=True)
 			for p in cleaned_plurals:
@@ -314,6 +319,32 @@ class Definition(Node):
 	def description(self, new_description):
 		assert dunderscore_count(new_description) >= 2
 		Node.description.fset(self, new_description)
+
+
+class Axiom(Definition):
+
+
+	def __init__(self, dic):
+		super().__init__(dic)
+		self.type = "axiom"
+
+	@property
+	def dependencies(self):
+		raise KeyError('Axioms cannot have dependencies!')
+	@dependencies.setter
+	def dependencies(self, new_deps):
+		if new_deps is None:
+			self._dependencies = []
+		else:
+			raise KeyError('Axioms cannot have dependencies!')
+
+	@Node.description.setter
+	def description(self, new_description):
+		if new_description is None:
+			self._description = None
+		else:
+			assert dunderscore_count(new_description) >= 2
+			Node.description.fset(self, new_description)
 
 
 class PreTheorem(Node):

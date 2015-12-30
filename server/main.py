@@ -191,13 +191,15 @@ class SocketHandler(WebSocketHandler):
 			learned_ids = user.dict['learned_node_ids']
 			if learned_ids:
 				ids_to_send = our_DAG.absolute_dominion(learned_ids)
+				# should SOURCES be included in the absolute dominion???
+				ids_to_send = ids_to_send + list(our_DAG.sources())
 				H = our_DAG.subgraph(ids_to_send)
 			else:
 				# they've learned nothing so far.  send them a starting point
-				H = our_DAG.subgraph(['vertex']) # SET???
+				H = our_DAG.subgraph(list(our_DAG.sources()))
 		else:
 			# same line as above
-			H = our_DAG.subgraph(['vertex']) # SET???
+			H = our_DAG.subgraph(list(our_DAG.sources()))
 
 		dict_graph = H.as_complete_dict(all_nodes)
 		self.write_message({

@@ -1377,23 +1377,27 @@
 // // }
 
 // // chapter 2
-// {
-// 	"def": "A multigraph is __cyclic__ if it has a at least one cycle.",
-// }
+{
+	"def": "A multigraph is __cyclic__ if it has a at least one cycle.",
+	"dependencies": ["multigraph", "cycle"],
+}
 
-// {
-// 	"def":"A multigraph is __acyclic__ if it is not cyclic.",
-// 	"intuition": "If it has no cycles.",
-// }
+{
+	"def":"A multigraph is __acyclic__ if it is not cyclic.",
+	"intuition": "If it has no cycles.",
+	"dependencies": ["multigraph", "cyclic"],
+}
 
-// {
-// 	"def":"A __forest__ is an acyclic graph.",
-// }
+{
+	"def":"A __forest__ is an acyclic graph.",
+	"dependencies": ["acyclic"],
+}
 
-// {
-// 	"def":"A __tree__ is a connected forest.",
-// 	"intuition":"A forest is one or more trees.  That is, each component of a forest is a tree.",
-// }
+{
+	"def":"A __tree__ is a connected forest.",
+	"intuition":"A forest is one or more trees.  That is, each component of a forest is a tree.",
+	"dependencies": ["connected (graph)", "forest"],
+}
 
 // {
 // 	"thm":"Given any tree $T=(V,E)$ and vertices $a,b \in V$, there is a unique $a$,$b$-path.",
