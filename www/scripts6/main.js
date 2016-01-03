@@ -1,36 +1,4 @@
-require.config({
-	urlArgs: "bust=" + (new Date()).getTime(),
-	baseUrl: "scripts/lib", // the default base is the directory of the INDEX.HTML file
-	paths: { // other paths we want to access
-		jquery: "http://code.jquery.com/jquery-1.11.2.min",
-		underscore: "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
-		d3: "d3-for-development", // if we add patches separately, then we can just use https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min
-		katex: "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", // or 0.2.0
-		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
-		// marked: "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min", // disabled for consistent development
-		chosen: "https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min",
-		jsnetworkx: "https://raw.githubusercontent.com/fkling/JSNetworkX/v0.3.4/jsnetworkx", //actually we maybe should download this
-	},
-	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
-		underscore: { exports: "_" },
-		chosen: { deps: ["jquery"] },
-		mathjax: {
-			exports: "MathJax",
-			init: function (){
-				MathJax.Hub.Config({
-					tex2jax: {
-						inlineMath: [['$','$'], ['\\(','\\)']],
-						processEscapes: true, // this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
-					},
-				});
-				MathJax.Hub.Startup.onload();
-				return MathJax;
-			}
-		},
-	},
-});
-
-require( [
+define( [
 	"jquery",
 	"underscore",
 	"browser-detect",
@@ -160,11 +128,14 @@ let ws = ('WebSocket' in window)? new WebSocket("ws://"+host+"/websocket"): unde
 if( !def(ws) ) die('Your browser does not support websockets, which are essential for this program.')
 
 ws.jsend = function(raw_object) {
+	$.extend(raw_object, {identifier: user.get_identifier()})
+	alert(JSON.stringify(raw_object))
+	alert('cacheing?')
 	ws.send(JSON.stringify(raw_object))
 }
 ws.onopen = function() {
 	alert(JSON.stringify(user.get_identifier()))
-	ws.jsend({command: 'open', identifier: user.get_identifier()})
+	ws.jsend({command: 'open'})
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -201,7 +172,7 @@ $(document).on('add-links', function(Event) {
 	})
 })
 $(document).on('request-node', function(Event) {
-	ws.jsend({command: 'request-node', node_id: Event.message, identifier: user.identifier})
+	ws.jsend({command: 'request-node', node_id: Event.message})
 })
 
 ////////////////////////// LOGIN/LOGOUT STUFF //////////////////////////
@@ -336,4 +307,4 @@ function delete_cookie() {
   document.cookie = 'mycookie=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
-}); // end require
+}) // end define

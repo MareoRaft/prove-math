@@ -3,6 +3,7 @@ __pycache__/
 www/scripts/main.js
 www/scripts/main-optimized.min.js
 www/scripts/tests.js
+www/scripts/config.js
 www/scripts/lib/blinds.js
 www/scripts/lib/user.js
 www/scripts/lib/profile.js

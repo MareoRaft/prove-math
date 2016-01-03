@@ -35,7 +35,7 @@ function learnNode(node) {
 	user.learned_node_ids.push(node.id)
 	$.event.trigger({
 		type: 'jsend',
-		message: { command: 'learn-node', identifier: identifier(), node_id: node.id, mode: 'learn' },
+		message: { command: 'learn-node', node_id: node.id, mode: 'learn' },
 	})
 }
 
@@ -44,7 +44,7 @@ function unlearnNode(node) {
 	user.learned_node_ids = _.without(user.learned_node_ids, node.id)
 	$.event.trigger({
 		type: 'jsend',
-		message: { command: 'unlearn-node', identifier: identifier(), node_id: node.id },
+		message: { command: 'unlearn-node', node_id: node.id },
 	})
 }
 
@@ -58,7 +58,7 @@ function setPref(dic) {
 	// if there was a change...
 	$.event.trigger({
 		type: 'jsend',
-		message: { command: 'set-pref', identifier: identifier(), pref_dict: dic },
+		message: { command: 'set-pref', pref_dict: dic },
 	})
 }
 
