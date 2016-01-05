@@ -22,7 +22,11 @@ ignore/
 email-backup/
 siteground-chat.txt
 
-# TeX things
+# TeX output files that get generated from the .tex files:
 Output/
 *.pdf
 *.synctex.gz
+*.aux
+*.fdb_latexmk
+*.fls
+*.toc

@@ -5,7 +5,7 @@
 We will denote from now on the real numbers as \( \R \).
 
 \begin{definition}[Inductive Set]
-	A subset, \( A \), of real numbers that satisfies: 
+	A subset, \( A \), of real numbers that satisfies:
 	\begin{enumerate}
 		\item \( 1 \in A \)
 		\item if \( x \in A \) then \( x + 1 \in A \)
@@ -17,7 +17,7 @@ We will denote from now on the real numbers as \( \R \).
 \begin{definition}
 	The smallest inductive set is called the set of {\em positive integers} or {\em natural
 	numbers} denoted by \( \N \).
-	\label{naturalnumbers} 
+	\label{naturalnumbers}
 \end{definition}
 
 \begin{note}
@@ -27,7 +27,7 @@ We will denote from now on the real numbers as \( \R \).
 
 \begin{definition}
 	Integers are denoted \( \Z \) and are equal to \( \N \cup -\N \cup \left\{ 0 \right\} \),
-	where \( - \N = \left\{ -n | n \in \N \right\} \). 
+	where \( - \N = \left\{ -n | n \in \N \right\} \).
 	\label{Integers}
 \end{definition}
 
@@ -46,7 +46,7 @@ We will denote from now on the real numbers as \( \R \).
 	\begin{enumerate}
 		\item \( n = d*c \), then \( d \) {\em divides} \( n \), i.e. is a divisor of \( n \)
 		\item \( n \) is {\em prime} if \( n > 1 \) and the only positive divisors are \( n
-			\) and \( 1 \). 
+			\) and \( 1 \).
 	\end{enumerate}
 	\label{naturalproperties}
 \end{definition}
@@ -71,10 +71,10 @@ We will denote from now on the real numbers as \( \R \).
 					as a product of primes \( \rightarrow \) so can \( n \).
 			\end{enumerate}
 	\end{enumerate}
-	Now we prove uniquness. Assume that \( n = d_1 d_2 \dots d_s = c_1 c_2 \dots c_t \) for 
-	\( d_i, c_j \) are primes. We want to show \( s=t \) and that \( \forall i, \exists ! j, d_i = c_j \), 
-	We have 
-	\[ 
+	Now we prove uniquness. Assume that \( n = d_1 d_2 \dots d_s = c_1 c_2 \dots c_t \) for
+	\( d_i, c_j \) are primes. We want to show \( s=t \) and that \( \forall i, \exists ! j, d_i = c_j \),
+	We have
+	\[
 		d_1d_2 \dots d_s = c_1 c_2 \dots c_t.
 	\]
 	\( d_1 \) divides the right hand side, hence it divides one of the factors because it is
@@ -84,7 +84,7 @@ We will denote from now on the real numbers as \( \R \).
 		\frac{n}{d_1} = d_2 d_3 \dots d_s = c_2 c_3 \dots c_t
 	\]
 	Note that \( 2 < \frac{n}{d_1} < n \), therefore from our inductive assumption we conclude
-	that \( s = t \) and \( d_i = c_j \) for \( i = 2 \dots s \) and \( j = 2 \dots t \). 
+	that \( s = t \) and \( d_i = c_j \) for \( i = 2 \dots s \) and \( j = 2 \dots t \).
 \end{proof}
 
 \begin{theorem}[Infinite Primes - Euclid]
@@ -94,13 +94,13 @@ We will denote from now on the real numbers as \( \R \).
 
 \begin{proof}
 	We prove this using contradiction. Assume to contrary that there are m primes \( 2, 3 \dots
-	n_m\) where \( n_m \) is the largest prime. Coniser \( n = 2 * 3 \dots n_m + 1 \). 
+	n_m\) where \( n_m \) is the largest prime. Coniser \( n = 2 * 3 \dots n_m + 1 \).
 	\( n \) cannot be prime because \( n > n_m \). Hence \( n \) is a product of primes, but \(
 	n \) cannot be divides by an primes because it leaves a remainder of 1. Contradiction.
 \end{proof}
 
 \begin{definition}[Rational Numbers]
-	{\em Rational Numbers}  are quotients of integers \( \frac{m}{n}, n \not = 0 \) denoted as
+	__Rational Numbers__ are quotients of integers \( \frac{m}{n}, n \not = 0 \) denoted as
 	\( \Q \).
 	\label{Rational}
 \end{definition}
@@ -109,7 +109,7 @@ We will denote from now on the real numbers as \( \R \).
 	The following are properties of Rational Numbers.
 	\begin{enumerate}[]
 		\item \( \frac{a+b}{2} \) is rational if \( a \in Q \) and \( b \in Q \).
-		\item between any two rational there are infinitely many rationals. 
+		\item between any two rational there are infinitely many rationals.
 	\end{enumerate}
 	\label{RationalProperties}
 \end{corollary}
@@ -121,7 +121,7 @@ We will denote from now on the real numbers as \( \R \).
 \begin{solution}
 	We solve \( p^2 - 2 = 0 \). Assume by contradiction that there is a rational root and let it
 	be represented as \( \frac{m}{n} \in \Q \) such that \( \frac{m}{n}^2 = 2 \). We can choose
-	\( m,n \) such that they are coprime (i.e. they have no common factor).  Then we get 
+	\( m,n \) such that they are coprime (i.e. they have no common factor).  Then we get
 	\( m^2 = 2n^2 \Rightarrow m^2 \) is even \( \Rightarrow m \) is even. Thus it follows that
 	\( m = 2p \Rightarrow 4p^2 = 2n^2 \Rightarrow 2p^2 = n^2 \). Hence \( n^2 \) is even \(
 	\Rightarrow n \) is even. Therefore we have that \( m \) and \( n \) are both even.
@@ -142,7 +142,7 @@ We will denote from now on the real numbers as \( \R \).
 \end{example}
 
 \begin{solution}
-	We recall from Calc 2 that 
+	We recall from Calc 2 that
 	\[
 		e^x = \sum_{n=1}^{\infty} \frac{x^n}{n!}
 	\]
@@ -154,21 +154,21 @@ We will denote from now on the real numbers as \( \R \).
 	\[
 		e^{-1} = \sum_{n=1}^{\infty} \frac{(-1)^n}{n!}
 	\]
-	and define \( S_m = \sum_{n=1}^{m} \frac{(-1)^n}{n!} \). It is clear that 
+	and define \( S_m = \sum_{n=1}^{m} \frac{(-1)^n}{n!} \). It is clear that
 	\[
 		0 < e^{-1} - S_{2k-1} < \frac{1}{(2k)!}
 	\]
-	which leads us to 
+	which leads us to
 	\[
 		0 < (2k-1)! (e^{-1}-S_{2k-1}) < \frac{1}{2k} < \frac{1}{2}
 	\]
 
 	\( (2k-1)!S_{2k-1} \in \Z \),
 	\attention{in fact it is positive because the error term is postive}.
-	If \( e^{-1} \) was rational, we can choose \( k \) large enough such that 
+	If \( e^{-1} \) was rational, we can choose \( k \) large enough such that
 	\( (2k-1)!e^{-1} \) is in \( \N \) because \( e^{-1} = \frac{p}{q}, q \divides
 	(2k-1)! \) if \( k \) is large enough. We conclude \( (2k-1)!(e^{-1}-S_{2k-1}) \in \Z \) but
-	this is not possible because there are no integers between \( 0 \) and 
+	this is not possible because there are no integers between \( 0 \) and
 	\( \frac{1}{2} \).
 \end{solution}
 

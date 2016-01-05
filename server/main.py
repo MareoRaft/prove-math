@@ -123,33 +123,45 @@ class SocketHandler(WebSocketHandler):
 	def on_message(self, message):
 		print('got message: ' + message)
 		ball = json.loads(message)
+		user = User(ball['identifier'])
+
 
 		if ball['command'] == 'print':
 			print(ball['message'])
 
 		elif ball['command'] == 'open':
-			self.send_absolute_dominion(ball)
+			self.send_absolute_dominion(ball, user)
 
 		elif ball['command'] == 'learn-node':
-			user = User(ball['identifier'])
 			user.learn_node(ball['node_id'])
 			if ball['mode'] == 'learn':
-				self.send_absolute_dominion(ball)
+				self.send_absolute_dominion(ball, user)
 
 		elif ball['command'] == 'unlearn-node':
-			user = User(ball['identifier'])
 			user.unlearn_node(ball['node_id'])
+
 		elif ball['command'] == 'set-pref':
-			user = User(ball['identifier'])
 			user.set_pref(ball['pref_dict'])
+
 		elif ball['command'] == 'save-node': # hopefully this can handle both new nodes and changes to nodes
 			node_dict = ball['node_dict']
 			if 'importance' in node_dict.keys():
 				node_dict['importance'] = int(node_dict['importance'])
-			node_obj = node.create_appropriate_node(node_dict)
-			print('node made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...')
-			global our_mongo
-			our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
+			try:
+				node_obj = node.create_appropriate_node(node_dict)
+				print('node made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...')
+				global our_mongo
+				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
+			except Exception as error:
+				# stuff didn't work, send error back to user
+				print('ERROR: '+str(error))
+				self.write_message({
+					'command': 'display-error',
+					'message': str(error),
+				})
+			# TODO: UPDATE THE LOCAL NETWORX GRAPH
+			# we need a way to detect a new link
+
 		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors
 			global our_DAG
@@ -161,17 +173,13 @@ class SocketHandler(WebSocketHandler):
 				'command': 'load-graph',
 				'new_graph': dict_graph,
 			})
+
 		elif ball['command'] == 'request-node':
 			global our_DAG
 			global all_nodes # this is a list of dictionaries
 			if ball['node_id'] not in [node['_id'] for node in all_nodes]: # this is temp for debugging
 				raise ValueError('The node_id "'+ball['node_id']+'" does not exist.')
 			else:
-				# this needs to be replace with....
-				# client sends all nodes ON SCREEN through websocket to here, in addition to node_id.  We take the neighbors
-				# of node_id and ITERSECT them with the ON SCREEN NODES, then use THAT for the subgraph.  This guarantees
-				# that any links between node_id and things on screen will appear when node_id comes.
-				user = User(ball['identifier'])
 				learned_ids = user.dict['learned_node_ids'] # so we get the links to all learned nodes too...
 				learned_ids.append(ball['node_id'])
 				H = our_DAG.subgraph(learned_ids)
@@ -181,12 +189,11 @@ class SocketHandler(WebSocketHandler):
 					'new_graph': dict_graph,
 				})
 
-	def send_absolute_dominion(self, ball):
+	def send_absolute_dominion(self, ball, user):
 		global all_nodes
 		global our_DAG
 		learned_ids = []
 
-		user = User(ball['identifier'])
 		if user.logged_in:
 			learned_ids = user.dict['learned_node_ids']
 			if learned_ids:

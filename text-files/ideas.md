@@ -71,3 +71,5 @@ If we need it: For preferences form and for controlling browsers back button, et
 70. add ACTUAL nodes for the dependencies in pre-json_to_mongo
 71. the weird expanding problem may be the result of the JIGGLE.  If we reduce the alpha number as small as possible for the jiggle, we may reduce the expansion!  Also, it looks like the graph jiggles when we learn a node EVEN IF WE DON"T get new content sent over (need to verify this).  If so, we need to make sure jiggle is only triggered when new nodes come in.
 72. it looks like nodes don't have synonyms.  we should probably add this in node.py and/or update DB
+
+when they save to DB, IT ACTUALLY DOES.
