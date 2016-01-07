@@ -1,0 +1,46 @@
+// Q: Does __equatable__ need its own definition, or can its meaning be taken for granted?
+// A: Let's give it a definition for clarity! In doing so, we'll take the meaning of *type* for granted.
+{
+    "def": "Any thing of a given type $T$ is considered __equatable__ if it can be checked for *equality* with another thing of type $T$: two things of type $T$ are considered *equal* if they are the same thing according to type $T$. When $x$ and $y$ are of the same type and the notion of [their type's] equality is inferable from context, we say that $x$ is *equatable to* $y$; furthermore, when $x$ and $y$ are equal, we use the notation $x = y$.",
+    "note": [
+        "Equal things of type $T$ are interchangeable with each other anywhere that a thing of type $T$ is expected.",
+        "Equality over a given type is a transitive, reflexive, and antisymmetric relationship.",
+    ],
+    "intuition": "If you cannot tell two things (of a given type) apart, they must be equal!",
+    "example": [
+        "$32 = 32$ when both are considered as integers. Similarly, equality holds when both sides are considered as real numbers or even as constant polynomials.",
+        "$\\{4\\} = \\{4, 4\\}$ when both are considered as sets (regardless of the element's type as long as that type has an associated notion of equality).",
+        "$(x \\mapsto x^2) = (y \\mapsto \\sqrt{y^4})$ when both are considered as mathematical functions from real numbers to real numbers.",
+    ],
+    "counterexample": [
+        "The integer $32$ is not equatable to the real number $32$, because they both have different types. However, when the former is *embedded* as a real number (via the canonical inclusion mapping from integers to reals), the embedded value (corresponding to integer $32$) is equal to the real number $32$.",
+        "$\\{4\\} \\ne \\{4, 4\\}$ when both are considered as multisets; the left side has an element of multiplicity one, yet the right side has an element of multiplicity two. Pay attention to the type!",
+        "Does $4+1$ equal $3+2$? When considered as syntactic sequences of symbols, they are unequal because they have different symbols in the first and third positions. But when considered as integer expressions, they both evaluate to equal values. In general, when we say that $4+1 = 3+2$ is true, mathematicians casually interpret equality in terms of the evaluated values.",
+        "$\\lim_{n \\to \\infty} (-1)^n$ is not equatable, because it is not even a defined limit!",
+    ],
+}
+
+{
+    "def": "An __object__ is *any* equatable thing (of a given type).",
+    "note": [
+        "Any common or proper noun (or noun phrase) can be considered an object, as long as its type and notion of equality are inferable from context.",
+    ],
+    "intuition": "If you can unambiguously identify it (and its type), it must be an object!",
+    "example": [
+        "The integer $-34$ (using the canonical notion of integer equality)",
+        "The set of nonnegative real numbers",
+        "The time 10:42 PM (within clock arithmetic modulo $24$ hours)",
+    ],
+    "counterexample": [
+        "$\\{7, 7\\}$, without any additional context. We can't infer if its type is a set or if its type is a multiset!",
+        "$\\frac{0^{+}}{0^{+}}$ considered as an indeterminate form in the context of calculus limits. It is not entirely clear from context what notion of equality we can attribute to indeterminate forms.",
+    ],
+    "dependencies": ["equatable"],
+}
+
+{
+    "weight": 1,
+    "type": "exercise",
+    "content": "The multiset $\\{3, 3, 5\\}$ <<is|is not>> an object that <<is|is not>> equatable to the multiset $\\{3, 5\\}$. The syntactic expression $5+4$ <<is|is not>> an object that <<is not equatable to|is equatable and unequal to|is equatable and equal to>> to the integer evaluated from $5+4$. $\infty^\infty$ <<is not|is>> an object because [[it is not clear from context what the type of infinity is and/or what the type of exponentiation is]].",
+    "dependencies": ["equatable", "object"],
+}
