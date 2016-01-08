@@ -31,8 +31,7 @@ define( [
 ){
 
 /////////////////////////// INITIALIZATION ///////////////////////////
-let user_dict_json_string = $('body').attr('data-user-dict-json-string')
-let user_dict = JSON.parse(user_dict_json_string)
+let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'))
 if( is.emptyObject(user_dict) ){
 	loginInit()
 	show('#login')
@@ -131,12 +130,10 @@ if( !def(ws) ) die('Your browser does not support websockets, which are essentia
 
 ws.jsend = function(raw_object) {
 	$.extend(raw_object, {identifier: user.get_identifier()})
-	alert(JSON.stringify(raw_object))
-	alert('cacheing?')
 	ws.send(JSON.stringify(raw_object))
 }
 ws.onopen = function() {
-	alert(JSON.stringify(user.get_identifier()))
+	alert('user is '+JSON.stringify(user.get_identifier()))
 	ws.jsend({command: 'open'})
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
@@ -155,11 +152,14 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
 		})
 		let ready_graph = raw_graph
-        // alert(JSON.stringify(ready_graph.nodes))
+        alert('nodes being added: '+JSON.stringify(ready_graph.nodes))
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,
 		})
+	}
+	else if( ball.command === 'display-error' ) {
+		alert('error: '+ball.message)
 	}
 	else die('Unrecognized command '+ball.command+'.')
 }

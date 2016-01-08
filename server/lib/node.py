@@ -333,7 +333,7 @@ class Axiom(Definition):
 		raise KeyError('Axioms cannot have dependencies!')
 	@dependencies.setter
 	def dependencies(self, new_deps):
-		if new_deps is None:
+		if new_deps is None or (isinstance(new_deps, list) and not new_deps):
 			self._dependencies = []
 		else:
 			raise KeyError('Axioms cannot have dependencies!')
