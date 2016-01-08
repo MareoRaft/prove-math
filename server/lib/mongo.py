@@ -1,5 +1,7 @@
 import pymongo
 # from passlib.context import CryptContext
+# Set up a text index db.nodes.createIndex( { _id:"text", _plural:"text", _negation:"text", _description:"text" }, {weights:{ _id:10, _plural:5, _negation:5,_description:5}, name:"Provemath_Search_Index" } )
+#Search bar issues include blocking the way when node arises, back button issues, doesn't search all nodes?
 
 
 class Mongo:
@@ -59,8 +61,8 @@ class Mongo:
     def upsert(self, query, update):
         self.address[self.database][self.collection].update(query, update, upsert=True)
 
-    def find(self, dict_fields=None):
-        return self.address[self.database][self.collection].find(dict_fields)
+    def find(self, dict_fields=None,projection=None):
+        return self.address[self.database][self.collection].find(dict_fields,projection)
 
     def delete_many(self, dict_fields):
         # This will delete from all fields which match the parameter!!

@@ -18,6 +18,7 @@ from tornado.web import Finish
 #from tornado.escape import xhtml_escape
 # from tornado.log import enable_pretty_logging
 
+import pymongo
 from lib.mongo import Mongo
 from lib.user import User
 import networkx as nx
@@ -27,6 +28,7 @@ from lib import auth
 from lib import node
 # this and relevant code should eventually be migrated into auth module
 import xml.etree.ElementTree as ET
+
 
 ################################# HELPERS #####################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
@@ -180,7 +182,11 @@ class SocketHandler(WebSocketHandler):
 					'command': 'load-graph',
 					'new_graph': dict_graph,
 				})
-
+		elif ball['command']=='search':
+			global our_mongo
+			search_results=our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
+			print(list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)))
+				
 	def send_absolute_dominion(self, ball):
 		global all_nodes
 		global our_DAG
