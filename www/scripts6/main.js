@@ -161,6 +161,10 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	else if( ball.command === 'display-error' ) {
 		alert('error: '+ball.message)
 	}
+        else if(ball.command === 'search-results'){
+	    alert('Search results: '+JSON.stringify(ball.results))
+	}
+        
 	else die('Unrecognized command '+ball.command+'.')
 }
 
