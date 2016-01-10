@@ -1,59 +1,74 @@
-// Q: Does __equatable__ need its own definition, or can its meaning be taken for granted?
-// A: Let's give it a definition for clarity! In doing so, we'll take the meaning of *type* for granted.
+// Q: Does __type__, __equal__, and/or __equatable__ need their own definitions, or can their meanings be taken for granted?
+// A: Let's give each a definition for clarity! In doing so, we'll take the meaning of concepts such as *thing*, *classification*, *statement*, *occurrence*, and *truth* for granted.
 {
-    "def": "Any thing of a given type $T$ is considered __equatable__ if it can be checked for *equality* with another thing of type $T$: two things of type $T$ are considered *equal* if they are the same thing according to type $T$. When $x$ and $y$ are of the same type and the notion of [their type's] equality is inferable from context, we say that $x$ is *equatable to* $y$; furthermore, when $x$ and $y$ are equal, we use the notation $x = y$.",
-    // (comments refer to above:) The first sentence (everything before the colon) seems to be the definition of equatable (yay!).  I think you meant to say that T is equatable if it can be checked for equality with ALL other things of type T, not just one other ("another") thing.  But maybe I'm wrong!
-    // Everything after the colon may be extraneous.  Those things may belong in separate places:
-    // 1. If *equal*, *equality*, and *equatable* are SO similar that you believe they should share a node, that is okay.  In which case, the root EQUAL should get the definition, and the related EQUALITY and EQUATABLE should be introduced after.  Typically, separate words will each get their own node.
-    // The __dunderscores__ are reserved for defining things.  So if you indeed are going to define all three in one node, then you should dunderscore all three.
-    "note": [
-        "Equal things of type $T$ are interchangeable with each other anywhere that a thing of type $T$ is expected.",
-        "Equality over a given type is a transitive, reflexive, and antisymmetric relationship.",
-        // if equality gets defined as this, then this should be in the definition.  In which case, 'transitive', 'reflexive', and 'antisymmetric' are dependencies and should be listed.
-        // on the other hand, if this is merely an automatic result of the definition of equality, then this statement is in fact a theorem
-    ],
-    "intuition": "If you cannot tell two things (of a given type) apart, they must be equal!",
-    // this is a hint that you are really defining "equal", not "equatable".  This is a good intuition.  I like how you simplified things for the lay-user.
+    "name": "equatable",
+    "def": "Given any two things $x, y$ and given any classification of things, we say that $x$ is __equatable to__ $y$ according to the classification if $x$ and $y$ are interchangeable with each other as any occurrence within any statement that uses the occurrence as a representative of the classification. Alternatively, we say that $x$ and $y$ are __equatable__ things.",
     "example": [
-        "$32 = 32$ when both are considered as integers. Similarly, equality holds when both sides are considered as real numbers or even as constant polynomials.",
-        "$\\{4\\} = \\{4, 4\\}$ when both are considered as sets (regardless of the element's type as long as that type has an associated notion of equality).",
-        // as a convenience, pre-json form allows single escaping \.  It will be converted to \\ for you; with the exception of \n, which eventually gets converted to a newline; \t, which eventually gets converted to a tab; and anything of the form u[0-9a-f]{4} such as \u003a, which eventually gets converted to its unicode character.
-        "$(x \\mapsto x^2) = (y \\mapsto \\sqrt{y^4})$ when both are considered as mathematical functions from real numbers to real numbers.",
+        "A ripe apple is equatable to a rotten orange according to the classification *fruit*. To illustrate, the statement \"I ate a ripe apple for breakfast\" uses its occurrence of \"a ripe apple\" as a *fruit* just as the statement \"I ate a rotten orange for breakfast\" uses its occurrence of \"a rotten orange\" as a *fruit*.",
+        "The color green is equatable to the word edible according to the classification *adjective*. To illustrate, the famous statement \"Colorless green ideas sleep furiously\" uses its occurrence of \"green\" as an *adjective* just the statement \"Colorless edible ideas sleep furiously\" uses its occurrence of \"edible\" as an *adjective*, even though both statements are nonsensical in meaning.",
+        "The *integer* 43 is equatable with the *integer* 15. To illustrate, the statement \"43 is odd and 43 is prime\" uses its second occurrence of \"43\" as an *integer* just as the statement \"43 is odd and 15 is prime\" uses its occurrence of \"15\" as an *integer*, even though the former statement is true yet the latter statement is false. Notice that first occurrence of \"43\" remains unaltered across both statements, demonstrating that we are allowed to interchange just some of the occurrences with equatable things.",
     ],
     "counterexample": [
-        "The integer $32$ is not equatable to the real number $32$, because they both have different types. However, when the former is *embedded* as a real number (via the canonical inclusion mapping from integers to reals), the embedded value (corresponding to integer $32$) is equal to the real number $32$.",
-        "$\\{4\\} \\ne \\{4, 4\\}$ when both are considered as multisets; the left side has an element of multiplicity one, yet the right side has an element of multiplicity two. Pay attention to the type!",
-        "Does $4+1$ equal $3+2$? When considered as syntactic sequences of symbols, they are unequal because they have different symbols in the first and third positions. But when considered as integer expressions, they both evaluate to equal values. In general, when we say that $4+1 = 3+2$ is true, mathematicians casually interpret equality in terms of the evaluated values.",
-        "$\\lim_{n \\to \\infty} (-1)^n$ is not equatable, because it is not even a defined limit!",
-        // Some of these examples depend on higher level concepts that may in fact depend on the definition of equal/equatable.  This is permissible, but I would recommend avoiding things that are overly complex or require too much deep or outside knowledge.  Be careful not to alienate the learner.
+        "A ripe apple is not equatable to a rotten orange according to the classification *apples*. To illustrate, the statement \"I ate a ripe apple for breakfast\" uses its occurrence of \"a ripe apple\" as an item of *apples*, yet the statement \"I ate a rotten orange for breakfast\" does not use its occurrence of \"a rotten orange\" as an item of *apples*.",
     ],
 }
 
 {
-    "def": "An __object__ is *any* equatable thing (of a given type).",
-    "note": [
-        "Any common or proper noun (or noun phrase) can be considered an object, as long as its type and notion of equality are inferable from context.",
-        // i think this note is confusing.  "proper noun"s and "noune phrase"s as part of the English language are not clearly defined.  I think nuanced things should be avoided.  Also, this would be difficult for people who speak English as a second language.  Stick with something more clear-cut.
-    ],
-    "intuition": "If you can unambiguously identify it (and its type), it must be an object!",
+    "name": "type",
+    "def": "A __type__ is a classification of things that are all equatable to each other according to the classification. We say that a thing $x$ __has type__ $T$ if $x$ is classified under $T$; alternatively, we may say that $x$ is __of type__ $T$, or we may directly say that $x$ *is a(n)* $T$, or we may consider $x$ *as a(n)* $T$, or we may even succintly say a $T$ $x$ when clear to do so.",
+    "note": "A type will be often denoted in italics whenever a type is used as a *type*. However, beware that not every *italics text* denotes a type.",
     "example": [
-        "The integer $-34$ (using the canonical notion of integer equality)",
-        "The set of nonnegative real numbers",
-        // or maybe just the real numbers?  Or maybe both, doing the simpler one first?
-        "The time 10:42 PM (within clock arithmetic modulo $24$ hours)",
-        // a little complicated because ppl won't necessarily understand what you mean by "clock arithmetic".  But if not for that issue, this would be a very good example.
+        "Both a ripe apple and a rotten orange have type *fruit*",
+        "The color green is of type *adjective* just as is the word edible.",
+        "The *integer* 43 has been explicitly typed as an *integer* and it is equatable to every integer (including itself).",
     ],
     "counterexample": [
-        "$\\{7, 7\\}$, without any additional context. We can't infer if its type is a set or if its type is a multiset!",
-        "$\\frac{0^{+}}{0^{+}}$ considered as an indeterminate form in the context of calculus limits. It is not entirely clear from context what notion of equality we can attribute to indeterminate forms.",
+        "An orange is not of type *apples*. To quote a famous idiom: you can't compare *apples* to *oranges*.",
     ],
     "dependencies": ["equatable"],
 }
 
 {
+    "name": "equal",
+    "def": "Two things $x, y$ of type $T$ are __equal__ if they are interchangeable with each other as any occurrence within any statement that uses the occurrence as a $T$ *such that statement's truth value does not change*. When we can infer from context that two things $x, y$ have the same type and are considered equal according to their type, we say that $x$ is __equal to__ $y$ and denote this statement as $x = y$, where $x$ occurs on the left side and $y$ occurs on the right side; alternatively, we may say that $x$ __equals__ $y$. The negation of $x = y$ is denoted as $x \\ne y$.",
+    "negation": "unequal",
+    "intuition": "If you cannot at all tell two things (of a given type) apart, they must be equal!",
+    "note": [
+        // I want to emphasize this abuse in a note rather than a(n) (counter)example, even though this note illustrates a(n) (counter)example (because I use it as an example of *abuse* and not a(n) (counter)example of *equal*).
+        "Both mathematicians and laypeople very often abuse the notion of *equal* with a different-yet-related concept. To illustrate, $4+1$ does not equal $3+2$ when both are considered as *arithmetic expressions*; the reasons are (1) that arithmetic expressions are syntactic constructs and (2) that the $4+1$ and $3+2$ as *syntactic constructs* have different symbols in the first and third positions. When people say that $4+1 = 3+2$, people really mean that both sides *result in* equal values (i.e. the *arithmetic expressions* $4+1$ and $3+2$ both result in the *number* $5$). In order to prevent misunderstandings, we will try to avoid such inexplicit intentions.",
+    ],
+    "example": [
+        "$32 = 32$ when each side is an *integer*. To illustrate, the statement \"32 is even\" has the same truth value as the statement \"32 is even\". Similarly, the statement \"32 is prime\" has the same truth value as the statement \"32 is prime\".",
+        "The *rational number* $\\frac{3}{5}$ is equal to the *rational number* $\\frac{6}{10}$. Note that equal rational numbers may have multiple syntactic representations, just as equal numbers may result from multiple arithmetic expressions.",
+        "$\{4\} = \{4, 4\}$ when each side is considered as a *set* of *integers* (where a *set* is a collection in which an element's occurrence is accounted at most once).",
+    ],
+    "counterexample": [
+        "The *integer* $43$ is not equal to the *integer* $15$. To illustrate, the statement '43 is odd and 43 is prime' is true yet the statement '43 is odd and 15 is prime' is false.",
+        "$\\frac{3}{5}$ is unequal to the $\\frac{6}{10}$ as *syntactic representations*, because they use different symbols in the upper and lower positions. (The type really matters!)",
+        "$\{4\} \\ne \{4, 4\}$ when each side is considered as a *multiset* of *integers* (where a *multiset* is a collection in which an element's occurrence might be accounted multiple times).",
+    ],
+    "dependencies": ["type"],
+}
+
+{
+    "def": "An __object__ is any thing of any type.",
+    "note": [
+        "Any person, place, thing, or idea can be considered an object, as long as its type is inferable from context. In mathematics, we usually study mathematical constructs as objects.",
+    ],
+    "intuition": "If you can unambiguously identify it (and its type), it must be an object!",
+    "example": [
+        "The *integer* $-34$.",
+        "The *collection* of all integers.",
+        "The *time* 10:42 PM.",
+    ],
+    "counterexample": [
+        "$\\{7, 7\\}$, without any additional context. We can't infer if its type is a *set* or a *multiset* or something else entirely!",
+    ],
+    "dependencies": ["type"],
+}
+
+{
     "weight": 1,
-    "type": "exercise",
-    "content": "The multiset $\\{3, 3, 5\\}$ <<is|is not>> an object that <<is|is not>> equatable to the multiset $\\{3, 5\\}$. The syntactic expression $5+4$ <<is|is not>> an object that <<is not equatable to|is equatable and unequal to|is equatable and equal to>> to the integer evaluated from $5+4$. $\infty^\infty$ <<is not|is>> an object because [[it is not clear from context what the type of infinity is and/or what the type of exponentiation is]].",
-    // when using <<this|that>>, remember to denote which choice is CORRECT by actually writing <<[this]|that>> instead.  this is correct.
-    "dependencies": ["equatable", "object"],
+    "exercise": "The *multiset* $\\{3, 3, 5\\}$ <<[is]|is not>> an object that <<[is]|is not>> equatable to the *multiset* $\\{3, 5\\}$. The *syntactic expression* $5+4$ <<[is]|is not>> an object that <<[is not equatable to]|is equatable and unequal to|is equatable and equal to>> to the *integer* evaluated from $5+4$. $\infty^\infty$ <<is|[is not]>> an object because [[it is not clear from context what the type of infinity is and/or what the type of exponentiation is]]. *Body parts* as a *type* <<is not equatable to|is equatable and unequal to|[is equatable and equal to]>> the *parts of body* as a *type* [[by definition of type because both are interchangeable with each other without affecting the truth values of statements]].",
+    "dependencies": ["equatable", "type", "equal", "object"],
 }
