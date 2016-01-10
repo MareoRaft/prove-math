@@ -2,7 +2,7 @@
 // A: Let's give each a definition for clarity! In doing so, we'll take the meaning of concepts such as *thing*, *classification*, *statement*, *occurrence*, and *truth* for granted.
 {
     "name": "equatable",
-    "def": "Given any two things $x, y$ and given any classification of things, we say that $x$ is __equatable to__ $y$ according to the classification if $x$ and $y$ are interchangeable with each other as any occurrence within any statement that uses the occurrence as a representative of the classification. Alternatively, we say that $x$ and $y$ are __equatable__ things.",
+    "def": "Given any two things $x, y$ and given any classification of things, we say that $x$ is __equatable to__ $y$ according to the classification if $x$ and $y$ are interchangeable with each other when used as any occurrence within any statement that uses the occurrence as a representative of the classification. Alternatively, we say that $x$ and $y$ are __equatable__ things.",
     "example": [
         "A ripe apple is equatable to a rotten orange according to the classification *fruit*. To illustrate, the statement \"I ate a ripe apple for breakfast\" uses its occurrence of \"a ripe apple\" as a *fruit* just as the statement \"I ate a rotten orange for breakfast\" uses its occurrence of \"a rotten orange\" as a *fruit*.",
         "The color green is equatable to the word edible according to the classification *adjective*. To illustrate, the famous statement \"Colorless green ideas sleep furiously\" uses its occurrence of \"green\" as an *adjective* just the statement \"Colorless edible ideas sleep furiously\" uses its occurrence of \"edible\" as an *adjective*, even though both statements are nonsensical in meaning.",
@@ -30,7 +30,7 @@
 
 {
     "name": "equal",
-    "def": "Two things $x, y$ of type $T$ are __equal__ if they are interchangeable with each other as any occurrence within any statement that uses the occurrence as a $T$ *such that statement's truth value does not change*. When we can infer from context that two things $x, y$ have the same type and are considered equal according to their type, we say that $x$ is __equal to__ $y$ and denote this statement as $x = y$, where $x$ occurs on the left side and $y$ occurs on the right side; alternatively, we may say that $x$ __equals__ $y$. The negation of $x = y$ is denoted as $x \\ne y$.",
+    "def": "Two things $x, y$ of type $T$ are __equal__ if they are interchangeable with each other when used as any occurrence within any statement that uses the occurrence as a $T$ *such that statement's truth value does not change*. When we can infer from context that two things $x, y$ have the same type and are considered equal according to their type, we say that $x$ is __equal to__ $y$ and denote this statement as $x = y$, where $x$ occurs on the left side and $y$ occurs on the right side; alternatively, we may say that $x$ __equals__ $y$. The negation of $x = y$ is denoted as $x \\ne y$.",
     "negation": "unequal",
     "intuition": "If you cannot at all tell two things (of a given type) apart, they must be equal!",
     "note": [
@@ -40,12 +40,10 @@
     "example": [
         "$32 = 32$ when each side is an *integer*. To illustrate, the statement \"32 is even\" has the same truth value as the statement \"32 is even\". Similarly, the statement \"32 is prime\" has the same truth value as the statement \"32 is prime\".",
         "The *rational number* $\\frac{3}{5}$ is equal to the *rational number* $\\frac{6}{10}$. Note that equal rational numbers may have multiple syntactic representations, just as equal numbers may result from multiple arithmetic expressions.",
-        "$\{4\} = \{4, 4\}$ when each side is considered as a *set* of *integers* (where a *set* is a collection in which an element's occurrence is accounted at most once).",
     ],
     "counterexample": [
         "The *integer* $43$ is not equal to the *integer* $15$. To illustrate, the statement '43 is odd and 43 is prime' is true yet the statement '43 is odd and 15 is prime' is false.",
         "$\\frac{3}{5}$ is unequal to the $\\frac{6}{10}$ as *syntactic representations*, because they use different symbols in the upper and lower positions. (The type really matters!)",
-        "$\{4\} \\ne \{4, 4\}$ when each side is considered as a *multiset* of *integers* (where a *multiset* is a collection in which an element's occurrence might be accounted multiple times).",
     ],
     "dependencies": ["type"],
 }
@@ -58,7 +56,6 @@
     "intuition": "If you can unambiguously identify it (and its type), it must be an object!",
     "example": [
         "The *integer* $-34$.",
-        "The *collection* of all integers.",
         "The *time* 10:42 PM.",
     ],
     "counterexample": [
@@ -68,7 +65,93 @@
 }
 
 {
+    "name": "Types are objects",
+    "theorem": "All types are objects.",
+    "proof": {
+        "type": "by definition",
+        "content": "
+            Overview:
+                We will prove this theorem in two parts.
+                Firstly, we will show that any type $T$ is a thing.
+                Secondly, we will show that any type $T$ itself has a type.
+
+            First Part:
+                By definition of type, any type $T$ is a particular classification of things.
+                A classification is itself a thing.
+                Therefore, any type $T$ is a thing.
+
+            Second Part:
+                It will suffice to show that there is a classification of things that characterizes any type $T$.
+                Observe that, from any definition $d$ of a word $w$ that is also a noun, there is a corresponding classification of things that characterizes the word $w$: namely, the classification of all things that meet the criteria of definition $d$.
+                Also observe that the word \"type\" is a noun that has a definition.
+                Therefore, there is a classification of all things that meet the criteria of being a type.
+                In other words, the word \"type\" is a classification of things that characterizes the criteria of being a type.
+                Therefore, by definition of type, any type $T$ is a *type*.
+
+            Conclusion:
+                Because any type $T$ is a thing and because any type $T$ has a type (namely: *type*), it follows by definition of object that any type $T$ is an object.
+        ",
+    },
+    "dependencies": ["type", "object"],
+}
+
+{
     "weight": 1,
-    "exercise": "The *multiset* $\\{3, 3, 5\\}$ <<[is]|is not>> an object that <<[is]|is not>> equatable to the *multiset* $\\{3, 5\\}$. The *syntactic expression* $5+4$ <<[is]|is not>> an object that <<[is not equatable to]|is equatable and unequal to|is equatable and equal to>> to the *integer* evaluated from $5+4$. $\infty^\infty$ <<is|[is not]>> an object because [[it is not clear from context what the type of infinity is and/or what the type of exponentiation is]]. *Body parts* as a *type* <<is not equatable to|is equatable and unequal to|[is equatable and equal to]>> the *parts of body* as a *type* [[by definition of type because both are interchangeable with each other without affecting the truth values of statements]].",
+    "exercise": "The *multiset* $\{3, 3, 5\}$ <<[is]|is not>> an object because [[it is a thing and its type is explicitly mentioned, so this statement follows from the definition of __object__]]. Furthermore, it <<[is]|is not>> equatable to the *multiset* $\\{3, 5\\}$ because [[they both have the same type]]. The *syntactic expression* $5+4$ <<[is]|is not>> an object that <<[is not equatable to]|is equatable and unequal to|is equatable and equal to>> to the *integer* evaluated from $5+4$ [[because it is not clear what type to use for classifying both $5+4$ and $9$ consistently with the context]]. $\infty^\infty$ <<is|[is not]>> an object because [[it is not clear from context what the type of infinity is and/or what the type of exponentiation is]]. *Body parts* as a *type* <<is not equatable to|is equatable and unequal to|[is equatable and equal to]>> the *parts of body* as a *type* [[by definition of __type__ because both are interchangeable with each other without affecting the truth values of statements]].",
     "dependencies": ["equatable", "type", "equal", "object"],
+}
+
+{
+    "def": "A type $T$ is __dependent__ on an object $p$ if the classification of a thing $x$ as a type of $T$ is contingent on the object $p$.",
+    "dependencies": ["type", "object"],
+}
+
+{
+    "def": "When a type $T$ is dependent on an object $p$, we call $p$ a type __parameter__.",
+    "dependencies": ["type", "dependent", "object"],
+}
+
+{
+    "name": "collection",
+    "def": "Given a type $T$, a __$T$-collection__ is a type, dependent on parameter $T$, characterizing any particular selection of potentially-repeated things of type $T$.",
+    "dependencies": ["type", "dependent", "parameter", "Types are objects"],
+}
+
+{
+    "def": "Given two objects $x$ and $y$, a __relationship__ is a type, dependent on parameters $x$ and $y$, characterizing a particular connection from $x$ to $y$.",
+    "dependencies": ["object", "type", "dependent", "parameter"],
+}
+
+{
+    "name": "morphism",
+    "def": "Given two objects $x$ and $y$ that are of the same type $T$, a __$T$-morphism__ is any *relationship* from $x$ to $y$. When the type $T$ is inferable or ignorable from context, we alternatively call any such relationship a $morphism$ from $x$ to $y$.",
+    "dependencies": ["object", "type", "relationship"],
+}
+
+{
+    "def": "Given a morphism $f$ from objects $x$ to $y$, the __domain__ of a $f$ is $x$, denoted by $\dom f = x$.",
+    "dependencies": ["morphism"],
+}
+
+{
+    "def": "Given a morphism $f$ from objects $x$ to $y$, the __codomain__ of a $f$ is $y$, denoted by $\cod f = y$.",
+    "dependencies": ["morphism"],
+}
+
+{
+    "name": "composable pair",
+    "def": "Given a type $T$, a __$T$-composable pair__ is a type, dependent on parameter $T$, characterizing pairs of $T$-morphisms $f$ and $g$ such that $\cod f = \dom g$. We denote a composable pair by $\\langle f, \\rangle g$.",
+    "dependencies": ["type", "dependent", "parameter", "Types are objects", "morphism", "domain", "codomain"],
+}
+
+// TODO: Describe what a "functional mapping" means.
+{
+    "def": "Given two types $S$ and $T$, an __operation__ is a type, dependent on parameters $S$ and $T$, characterizing any *functional mapping* from an $S$-collection to a $T$-collection. We denote such such a type as $S-collection \\to T-collection$.",
+    "dependencies": ["type", "dependent", "parameter", "Types are objects", "collection"],
+}
+
+// TODO: Define associativity, define identity. Maybe actually change this definition to __composition candidate__ that doesn't actually enforce associativity or identity.
+{
+    "def": "Given a type $T$, a __composition__ is an operation of type $(T-composable\ pair)-collection \\to (T-morphism)-collection$ such that ...",
+    "dependencies": ["type", "operation", "composable pair", "collection", "morphism"],
 }
