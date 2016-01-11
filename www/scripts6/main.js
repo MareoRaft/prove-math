@@ -35,11 +35,13 @@ let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'))
 if( is.emptyObject(user_dict) ){
 	loginInit()
 	show('#login')
+        hide('#search')
 }
 else{
 	$("#avatar").attr("src", user_dict["profile_pic"])
 	// document.getElementById("display_name").innerHTML=user_dict["id_name"] // add this back in when we have a drop down
 	show('#overlay-loggedin')
+        //show('#search')
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 
@@ -159,6 +161,10 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	else if( ball.command === 'display-error' ) {
 		alert('error: '+ball.message)
 	}
+        else if(ball.command === 'search-results'){
+	    alert('Search results: '+JSON.stringify(ball.results))
+	}
+        
 	else die('Unrecognized command '+ball.command+'.')
 }
 
@@ -232,8 +238,14 @@ function login() {
 function logout(){
 	delete_cookie()
 	hide('#overlay-loggedin')
+        hide('#search')
 	show('#login')
 }
+//////////////////////////// SEARCH BAR ///////////////////////////
+$('#search-button').click(function(){
+ //alert($('#search-box').val())
+ ws.jsend({ command: 'search', search_term:$('#search-box').val()})
+})
 
 
 //////////////////////////// ACTION STUFF ////////////////////////////

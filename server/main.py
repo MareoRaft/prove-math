@@ -60,7 +60,6 @@ class IndexHandler(BaseHandler):
 		authorization_code = self.get_argument("code", default=None, strip=False)
 		if self.get_secure_cookie("mycookie"):
 			user_dict=json.loads(str(self.get_secure_cookie("mycookie"),'UTF-8'))
-			print("Welcome back user "+ user_dict['_id'])
 
 		elif method is not None and authorization_code is not None:
 			print('got params!!!!')
@@ -190,9 +189,15 @@ class SocketHandler(WebSocketHandler):
 					'command': 'load-graph',
 					'new_graph': dict_graph,
 				})
-
-	def send_absolute_dominion(self, ball, user):
-		print('starting to dominate')
+		elif ball['command']=='search':
+			global our_mongo
+			search_results=our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
+			self.write_message({
+					'command': 'search-results',
+					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10))
+			})
+				
+	def send_absolute_dominion(self, ball,user):
 		global all_nodes
 		global our_DAG
 		learned_ids = []

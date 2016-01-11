@@ -18,17 +18,18 @@ class User: # there's really no point in storing users ephemerally, other than t
 	def dict(self):
 		# if user exists, retrieve their dictionary
 		user_dicts = list(self.USERS.find(self._identifier_dict()))
+		user_dict = None
 		if len(user_dicts) > 1:
 			raise Exception('REDUNDANT USER INFORMATION!')
 		elif len(user_dicts) == 1:
 			user_dict = user_dicts[0]
-			user_dict['_id'] = str(user_dict['_id'])
-			return user_dict
 		else:
 			# otherwise, make a new dictionary and store it into the db
-			temp_dict = self._default_dict()
-			self.USERS.insert_one(temp_dict)
-			return temp_dict
+			user_dict = self._default_dict()
+			self.USERS.insert_one(user_dict)
+		del user_dict['_id'] # delete the ObjectId('94569463') thing because it is not JSON serializable
+		return user_dict
+			
 
 	def _identifier_dict(self):
 		return {
