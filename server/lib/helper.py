@@ -15,3 +15,17 @@ def json_export(json_list, file_path):
 	except TypeError:
 		print("List is not in Json format.")
 		print("Pass in object as example.__dict__")
+
+class DictToObject:
+	def __init__(self, dic):
+		for key, value in dic.items():
+			setattr(self, key, value)
+	def __eq__(self, other):
+		return self.id == other.id
+	def __ne__(self, other):
+		return not self.__eq__(other)
+	def __hash__(self): # this makes the objects "hashable"!
+		return hash(self.__dict__.values())
+	def __repr__(self): # this is just for convenience when outputting stuff to the terminal
+		return 'DictToObject(' + str(self.__dict__) + ')'
+

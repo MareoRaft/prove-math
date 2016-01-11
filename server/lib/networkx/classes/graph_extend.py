@@ -31,16 +31,8 @@ class _GraphExtended (nx.Graph):
 				break
 		return n
 
-# for key in _GraphExtended.__dict__:
 for key, value in _GraphExtended.__dict__.items():
 	try:
-		# nx.Graph.is_nonnull = _GraphExtended.is_nonnull
 		setattr(nx.Graph, key, value)
 	except TypeError:
 		pass
-
-
-# nx.Graph.is_nonnull = _GraphExtended.is_nonnull
-# print(_GraphExtended.__dict__)
-# except TypeError as e:
-# 	print(str(e))

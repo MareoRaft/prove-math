@@ -2,37 +2,43 @@
 import sys
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
+
+from lib.helper import DictToObject
 ###############################################################################
 
 import networkx as nx
 
-
+s1 = DictToObject({"name":"sarah", "id":"s"})
+s2 = DictToObject({"name":"frederick", "id":"s"})
+# t = DictToObject({"name":"toby", "id":"t"})
 
 M = nx.DiGraph()
-M.add_edge('s', 't')
+M.add_edge(s1, s2)
+print(M.nodes())
+
 
 # print(M.is_nonnull())
 
 
-DG = nx.DiGraph() # in particular, our graph will be a DIRECTED ACYCLIC GRAPH (DAG)
+# DG = nx.DiGraph() # in particular, our graph will be a DIRECTED ACYCLIC GRAPH (DAG)
 # that is, the term DAG by definition means directed adirectedcyclic graph.  cycles are ok.  directed cycles are not.
 
-DG.add_edges_from([
-	('a', 'c'),
-	('b', 'c'),
-])
+# DG.add_edges_from([
+# 	('a', 'c'),
+# 	('b', 'c'),
+# ])
 # FG.add_weighted_edges_from([(1,2,0.125),(1,3,0.75),(2,4,1.2),(3,4,0.375)]) # weighted edges!
 
 # addition to the methods Graph.nodes(), Graph.edges(), and Graph.neighbors(), iterator versions (e.g. Graph.edges_iter()) can
 # DH = DG.subgraph(['a', 'c'])
 # print(DH.edges())
 
-DG.add_edges_from([
-	('c', 'd'), ('c', 'd2'), ('d', 'e'),
-	('g', 'h'),
-	('h', 'i'),
-	('w', 'x'),
-])
+# DG.add_edges_from([
+# 	('c', 'd'), ('c', 'd2'), ('d', 'e'),
+# 	('g', 'h'),
+# 	('h', 'i'),
+# 	('w', 'x'),
+# ])
 
 # a --> c --> d
 # b -->
@@ -124,7 +130,7 @@ DG.add_edges_from([
 
 # # there is also a DiGraph.has_successor('a', 'b') if you only want to see if a directed path from 'a' to 'b' exists.
 # print('the shortest path from a to d is: ')
-print(nx.shortest_path(DG, source='a', target='d')) # this finds shortest DIRECTED path
+# print(nx.shortest_path(DG, source='a', target='d')) # this finds shortest DIRECTED path
 
 
 # # shortest_anydirectional_path(DG, source=None, target=None):

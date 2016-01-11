@@ -6,11 +6,7 @@ from lib.networkx.classes import dag
 #################################### MAIN #####################################
 def test_validate():
 	DAG = nx.DAG()
-	DAG.add_edges_from([
-		['a', 'b'],
-		['b', 'c'],
-		['c', 'd'],
-	])
+	DAG.add_path(['a', 'b', 'c', 'd'])
 	assert DAG.validate()
 
 	DAG.add_edge('d', 'a')
@@ -24,11 +20,7 @@ def test_source():
 	DAG = nx.DAG()
 	assert DAG.source() == None
 
-	DAG.add_edges_from([
-		['a', 'b'],
-		['b', 'c'],
-		['c', 'd'],
-	])
+	DAG.add_path(['a', 'b', 'c', 'd'])
 	assert DAG.source() == 'a'
 	assert DAG.source() != 'd'
 
@@ -36,11 +28,7 @@ def test_sources():
 	DAG = nx.DAG()
 	assert DAG.sources() == set()
 
-	DAG.add_edges_from([
-		['a', 'b'],
-		['b', 'c'],
-		['c', 'd'],
-	])
+	DAG.add_path(['a', 'b', 'c', 'd'])
 	assert DAG.sources() == {'a'}
 
 	DAG.add_edge('z', 'd')
@@ -48,10 +36,8 @@ def test_sources():
 
 def test_common_descendant_sources():
 	DAG = nx.DAG()
-	DAG.add_edges_from([
-		['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'z'],
-		['c', 't'], ['t', 'w'], ['w', 'x'], ['x', 'y'], ['y', 'z'],
-	])
+	DAG.add_path(['a', 'b', 'c', 'd', 'z'])
+	DAG.add_path(          ['c', 't', 'w', 'x', 'y', 'z'])
 	assert DAG.common_descendant_sources('a', 'c') == {'d', 't'}
 	assert DAG.common_descendant_sources('d', 't') == {'z'}
 
@@ -70,7 +56,7 @@ def test_remove_redundant_edges():
 	DAG = nx.DAG()
 	DAG.add_edges_from([
 		['a', 'b'], ['b', 'c'],
-		['a', 'c'], # redundant!
+		['a',             'c'], # redundant!
 	])
 	DAG.remove_redundant_edges()
 	assert ('a', 'b') in DAG.edges()
@@ -81,7 +67,7 @@ def test_remove_redundant_edges():
 	DAG = nx.DAG()
 	DAG.add_edges_from([
 		['a', 'b'], ['b', 'c'], ['c', 'd'],
-		['a', 'd'], # redundant!
+		['a',                         'd'], # redundant!
 	])
 	DAG.remove_redundant_edges()
 	assert {('a', 'b'), ('b', 'c'), ('c', 'd')} <= set(DAG.edges())
@@ -92,7 +78,7 @@ def test_remove_redundant_edges():
 	DAG.add_edges_from([
 		('a', 'b'), ('b', 'd'),
 		('a', 'c'), ('c', 'd'),
-		('a', 'd'), # redundant!
+		('a',             'd'), # redundant!
 	])
 	DAG.remove_redundant_edges()
 	assert {('a', 'b'), ('b', 'd'), ('a', 'c'), ('c', 'd')} <= set(DAG.edges())
@@ -111,11 +97,47 @@ def test_remove_redundant_edges():
 	assert {('a', 'b'), ('b', 'c'), ('c', 'd'), 			('d', 'z'),
 									('c', 't'), ('t', 'y'), ('y', 'z'),} == set(DAG.edges())
 
-def test_single_source_shortest_path_lengths():
-	G=nx.DAG()
-	G.add_path([0,1,2,3,4,5,6,7,8,9])
-	x=G.single_source_shortest_path_length(5,3)
-	assert len(x)==7
-	assert x=={3: 2, 4: 1, 5: 0, 6: 1, 7: 2, 8: 3, 2: 3}
+# def test_short_sighted_depth_first_unlearned_sources():
+# 	G = nx.DAG()
+# 	G.add_path(['1left', '2left', '3left', 'left'])
+# 	G.add_path(['a', 'b', 'left'])
+# 	G.add_path(['a', 'b', 'right'])
+# 	G.add_path(['1right', '2right', 'right']) # this is less effort to learm, so 1right should be returned
+# 	assert G.short_sighted_depth_first_unlearned_sources(['a', 'b']) == ['1right']
 
+# 	# now do the same test, but reverse the order of adding stuff onto graph
+# 	G = nx.DAG()
+# 	G.add_path(['1right', '2right', 'right']) # this is less effort to learm, so 1right should be returned
+# 	G.add_path(['a', 'b', 'right'])
+# 	G.add_path(['a', 'b', 'left'])
+# 	G.add_path(['1left', '2left', '3left', 'left'])
+# 	assert G.short_sighted_depth_first_unlearned_sources(['a', 'b']) == ['1right']
+
+# 	# edge cases, empty graph?  null graph?
+
+
+def test_short_sighted_deepest_successors():
+	G = nx.DAG()
+	G.add_path(['a', 'b', 'c'])
+	axioms = ['a']
+	nodes = ['a', 'b']
+	assert G.short_sighted_deepest_successors(axioms, nodes) == {2: ['c']}
+
+	G = nx.DAG()
+	G.add_path(['a', 'b', 'c'])
+	G.add_path(['s', 't', 'c'])
+	axioms = ['a', 't']
+	nodes = ['a', 't']
+	assert G.short_sighted_deepest_successors(axioms, nodes) == {1: ['b', 'c']}
+
+	G = nx.DAG()
+	G.add_path(['a', 'b', 'c'])
+	G.add_path(['s', 't', 'c'])
+	G.add_path(['p', 't', 'a'])
+	axioms = ['a', 's']
+	nodes = ['p', 'a', 'b']
+	assert G.short_sighted_deepest_successors(axioms, nodes) == {
+		1: ['t'],
+		2: ['c']
+	}
 

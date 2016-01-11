@@ -136,6 +136,8 @@ class SocketHandler(WebSocketHandler):
 			user.learn_node(ball['node_id'])
 			if ball['mode'] == 'learn':
 				self.send_absolute_dominion(ball, user)
+			else:
+				raise Exception('mode is not learn')
 
 		elif ball['command'] == 'unlearn-node':
 			user.unlearn_node(ball['node_id'])
@@ -190,6 +192,7 @@ class SocketHandler(WebSocketHandler):
 				})
 
 	def send_absolute_dominion(self, ball, user):
+		print('starting to dominate')
 		global all_nodes
 		global our_DAG
 		learned_ids = []
@@ -197,22 +200,35 @@ class SocketHandler(WebSocketHandler):
 		if user.logged_in:
 			learned_ids = user.dict['learned_node_ids']
 			if learned_ids:
+				print('LEARNED IDS are: ')
+				print(str(learned_ids))
 				ids_to_send = our_DAG.absolute_dominion(learned_ids)
 				# should SOURCES be included in the absolute dominion???
-				ids_to_send = ids_to_send + list(our_DAG.sources())
+				ids_to_send = ids_to_send + self.other_nodes_of_interest()
 				H = our_DAG.subgraph(ids_to_send)
 			else:
+				print('LEARNED NOTHING')
 				# they've learned nothing so far.  send them a starting point
-				H = our_DAG.subgraph(list(our_DAG.sources()))
+				H = our_DAG.subgraph(self.starting_nodes())
 		else:
 			# same line as above
-			H = our_DAG.subgraph(list(our_DAG.sources()))
+			H = our_DAG.subgraph(self.starting_nodes())
 
 		dict_graph = H.as_complete_dict(all_nodes)
 		self.write_message({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
+
+	def other_nodes_of_interest(self):
+		global our_DAG
+		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
+		axioms = ['set', 'multiset', 'vertex']
+		return [our_DAG.short_sighted_depth_first_unlearned_source(axioms, learned_ids)]
+		return list(our_DAG.sources())
+
+	def starting_nodes(self):
+		return ['vertex', 'multiset']
 
 
 	def on_close(self):

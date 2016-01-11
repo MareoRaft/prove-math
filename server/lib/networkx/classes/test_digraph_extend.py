@@ -133,13 +133,47 @@ def test_absolute_dominion():
 		['t', 'c'], ['c', 'd'],
 	])
 	assert DG.absolute_dominion(['y']) == ['y']
-	assert DG.absolute_dominion(['y', 't']) == ['c', 'y', 't']
-	assert DG.absolute_dominion(['y', 'c']) == ['L', 'd', 'y', 'c']
+	assert set(DG.absolute_dominion(['y', 't'])) == {'c', 'y', 't'}
+	assert set(DG.absolute_dominion(['y', 'c'])) == {'L', 'd', 'y', 'c'}
 
 	DG = nx.DiGraph()
 	DG.add_edges_from([
 		['a', 'b'], ['b', 'c'],
 		['x', 'c'],
 	])
-	assert DG.absolute_dominion(['a', 'x']) == ['b', 'a', 'x']
+	assert set(DG.absolute_dominion(['a', 'x'])) == {'b', 'a', 'x'}
+
+def test_single_source_shortest_anydirectional_path_length():
+	G = nx.DiGraph()
+	G.add_path([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+	x = G.single_source_shortest_anydirectional_path_length(5, 3)
+	assert len(x) == 7
+	assert x == {3: 2, 4: 1, 5: 0, 6: 1, 7: 2, 8: 3, 2: 3}
+
+def test_multiple_sources_shortest_path_length():
+	G = nx.DiGraph()
+	G.add_path([0, 1, 2, 3, 4, 5, 6])
+	d = G.multiple_sources_shortest_path_length([3], 2)
+	assert d == {3:0, 4:1, 5:2}
+
+	G = nx.DiGraph()
+	G.add_path([0, 1, 2, 3, 4, 5, 6])
+	d = G.multiple_sources_shortest_path_length([3, 4], 2)
+	assert d == {3:0, 4:0, 5:1, 6:2}
+
+	G = nx.DiGraph()
+	G.add_path(['a', 'y', 'd'])
+	G.add_path(['a', 'l', 'x'])
+	G.add_path(['a', 'c'])
+	G.add_path(['b', 'c'])
+	G.add_path(['b', 'd', 'l'])
+	G.add_path(['b', 't', 'x'])
+	d = G.multiple_sources_shortest_path_length(['a', 'b'])
+	assert d == {
+		'a': 0, 'b': 0,
+		'c': 1, 'y': 1, 'd': 1, 'l': 1, 't': 1,
+		'x': 2,
+	}
+
+
 

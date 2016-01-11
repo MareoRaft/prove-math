@@ -72,7 +72,7 @@ class _DiGraphExtended (nx.DiGraph):
 		return shortest_path_helper(DG, source, target)
 
 	def shortest_anydirectional_path(self, source=None, target=None):
-		DG = self.to_undirected()
+		DG = self.to_undirected() # if we need this, we should optimize it.
 		return shortest_path_helper(DG, source, target)
 
 	def ancestors(self, nbunch):
@@ -98,6 +98,23 @@ class _DiGraphExtended (nx.DiGraph):
 					 seen[v]=level # set the level of vertex v
 					 neighbors=nx.all_neighbors(self,v)
 					 nextlevel.update(dict.fromkeys(neighbors)) # add neighbors of v
+			 if (cutoff is not None and cutoff <= level):  break
+			 level=level+1
+		 return seen  # return all path lengths as dictionary
+
+	def multiple_sources_shortest_path_length(self, sources, cutoff=None):
+		 seen={}                  # level (number of hops) when seen in BFS
+		 level=0                  # the current level
+		 nextlevel={}  # dict of nodes to check at next level
+		 for source in sources:
+		 	nextlevel[source] = 1
+		 while nextlevel:
+			 thislevel=nextlevel  # advance to next level
+			 nextlevel={}         # and start a new list (fringe)
+			 for v in thislevel:
+				 if v not in seen:
+					 seen[v]=level # set the level of vertex v
+					 nextlevel.update(self[v]) # add neighbors of v
 			 if (cutoff is not None and cutoff <= level):  break
 			 level=level+1
 		 return seen  # return all path lengths as dictionary

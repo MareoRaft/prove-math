@@ -6,26 +6,34 @@
 
 
 {
-	"def":"An occurence of a property is __unique__ if the property occurs exactly $1$ time.",
+	"def":"Something satisfying conditions is __unique__ if it is the only thing satisfying those conditions.",
+	"intuition":"The prefix \"uni\" means \"one\".  Something is *unique* if it is the only one of its kind.",
+	"examples": [
+		"Sarah is the unique daughter of Henry.  This means that Henry has exactly one daughter, and her name is Sarah.",
+		"The unique set that is a superset of ${5, 8}$ and a subset of ${5, 8}$ is ${5,8}$.  As you can see, the conditions here are being a superset of ${5,8}$ and a subset of ${5,8}$.  There is only one set that satisfies these conditions, ${5,8}$.  Therefore, we call ${5,8}$ *unique*.  The uniqueness of ${5,8}$ only has meaning with respect to the conditions.",
+	],
 }
 
 {
 	"definition":"A __vertex__ is a fundamental unit used to create graphs.",
 	"plural":"__vertices__",
 	"note":"Vertices are often drawn as a dot.  They are also called *nodes*.",
+	"example":"The following image represents a graph.  <img24>  The graph has $5$ vertices.",
 }
 
 {
 	"definition":"An __edge__ is a multiset ${a,b}$ where $a$ and $b$ are vertices.",
 	"note":"It is possible that $a=b$.",
 	"intuition":"Edges are usually drawn as a line or curve connecting two vertices.  In the case that $a=b$, the edge is drawn as a small loop that connects $a$ to itself.",
+	"example":"The following image represents a graph.  <img25>  The graph has $7$ edges.",
 	"dependencies": ["multiset", "vertex"],
 }
 
 {
-	"definition":"A __loop__ is an edge ${a,a}$ for any vertex $a$.",
+	"definition":"A __loop__ is an edge of the form ${a,a}$ for some vertex $a$.",
 	"intuition":"A **loop** is an edge that connects a vertex to itself.",
 	"dependencies": ["edge"],
+	"example":"The following image represents a graph.  <img26>  The graph has $3$ edges, one of which is a loop.",
 }
 
 {

@@ -73,3 +73,5 @@ If we need it: For preferences form and for controlling browsers back button, et
 72. it looks like nodes don't have synonyms.  we should probably add this in node.py and/or update DB
 
 when they save to DB, IT ACTUALLY DOES.
+
+when somebody adds a new dependency, we have to verify that when we add the edge, the graph is STILL A DAG.  If it is not, we must reject the change.
