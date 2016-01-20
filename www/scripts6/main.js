@@ -129,7 +129,6 @@ ws.jsend = function(raw_object) {
 	ws.send(JSON.stringify(raw_object))
 }
 ws.onopen = function() {
-	alert('user is '+JSON.stringify(user.get_identifier()))
 	ws.jsend({command: 'open'})
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
@@ -143,16 +142,20 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		show('#overlay-loggedin')
 	}
 	else if( ball.command === 'load-graph' ) {
-		// alert('data: '+event.data)
 		let raw_graph = ball.new_graph
 		_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
 			raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
 		})
 		let ready_graph = raw_graph
-        // alert('nodes being added: '+JSON.stringify(ready_graph.nodes))
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,
+		})
+	}
+	else if( ball.command === 'remove-edges' ) {
+		graph.removeLinks({
+			node_id: ball.node_id,
+			dependency_ids: ball.dependency_ids,
 		})
 	}
 	else if( ball.command === 'display-error' ) {
@@ -169,7 +172,6 @@ $(document).on('jsend', function(Event) {
 	ws.jsend(Event.message)
 })
 $(document).on('add-links', function(Event) {
-	alert('addlinks triggered, links: '+JSON.stringify(Event.message))
 	graph.addNodesAndLinks({
 		links: Event.message,
 	})
@@ -244,8 +246,7 @@ function logout(){
 }
 //////////////////////////// SEARCH BAR ///////////////////////////
 $('#search-button').click(function(){
- //alert($('#search-box').val())
- ws.jsend({ command: 'search', search_term:$('#search-box').val()})
+	ws.jsend({ command: 'search', search_term:$('#search-box').val()})
 })
 
 
@@ -317,7 +318,7 @@ function loginInit() {
 }
 
 function delete_cookie() {
-  document.cookie = 'mycookie=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	document.cookie = 'mycookie=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
 }
 
 }) // end define

@@ -200,7 +200,17 @@ function addNodesAndLinks({ nodes=[], links=[] }) {
 function removeNodes(nodes) {
 	_.each(nodes, function(node) {
 		_.each(gA.nodes, function(gA_node, index) {
-			if( node.id === gA_node.id ) remove(gA.nodes, index)
+			if( node.id === gA_node.id ) remove(gA.nodes, index) // but if we have to remove more than one, i'm afraid the index will get off
+		})
+	})
+	update()
+	_start()
+}
+
+function removeLinks(links) {
+	_.each(links, function(link) {
+		_.each(gA.links, function(gA_link, index) {
+			if( link.source.id === gA_link.source.id && link.target.id === gA_link.target.id ) remove(gA.links, index)
 		})
 	})
 	update()
@@ -211,6 +221,7 @@ return {
 	init: init,
 	addNodesAndLinks: addNodesAndLinks,
 	removeNodes: removeNodes,
+	removeLinks: removeLinks,
 	update: update,
 }
 

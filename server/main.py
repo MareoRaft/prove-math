@@ -28,12 +28,19 @@ from lib.networkx.classes import dag
 from lib import user
 from lib import auth
 from lib import node
+import random
 # this and relevant code should eventually be migrated into auth module
 import xml.etree.ElementTree as ET
 
 ################################# HELPERS #####################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
+
+def random_string(length):
+	word = ''
+	for i in range(length):
+		word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789')
+	return word
 
 ################################## MAIN #######################################
 
@@ -89,7 +96,7 @@ class IndexHandler(BaseHandler):
 						 'account_id': account_id})
 				#print("logged_in.dict is: " + str(user.dict))
 				user_dict = provider.id_and_picture(request_root, user.dict)
-				print("logged in dict is:"+ str(user_dict))
+				print("logged in dict is:"+ str(user_dict)+"\n")
 				self.set_secure_cookie("mycookie", json.dumps(user_dict))
 			except Exception as e:
 				print('Login failed')
@@ -123,7 +130,7 @@ class SocketHandler(WebSocketHandler):
 			'url_dict': auth.auth_url_dict(),
 		})
 	def on_message(self, message):
-		print('got message: ' + message)
+		print('got message: ' + message+"\n")
 		ball = json.loads(message)
 		user = User(ball['identifier'])
 
@@ -150,28 +157,36 @@ class SocketHandler(WebSocketHandler):
 			node_dict = ball['node_dict']
 			if 'importance' in node_dict.keys():
 				node_dict['importance'] = int(node_dict['importance'])
-			# try:
+			try:
 				node_obj = node.create_appropriate_node(node_dict)
 				print('\nnode made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...\n')
 				# take a look at the dependencies now
+
+				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []
 				previous_dependency_ids = [node.reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
 				print('prev deps are: '+str(previous_dependency_ids))
-				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
-				# take a look at the current dependencies
-				current_dependency_ids = [node.reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
+				current_dependency_ids = node_obj.dependency_ids
 				print('curr deps are: '+str(current_dependency_ids))
+				new_dependency_ids = set(current_dependency_ids) - set(previous_dependency_ids)
+				removed_dependency_ids = set(previous_dependency_ids) - set(current_dependency_ids)
+
+
+				# TODO.  VERIFY THAT THE GRAPH WITH THESE NEW ARCS IS STILL ACYCLIC
+
+
+				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
 				update_our_DAG()
-				# send an update of the graph to the user if there is a new dependency:
-				for new_dependency in set(current_dependency_ids) - set(previous_dependency_ids):
-					self.request_node(new_dependency, ball, user)
-				# OR IF THE SAVED NODE IS A BRAND NEW NODE, we have to include all the deps
-			# except Exception as error:
-			# 	# stuff didn't work, send error back to user
-			# 	print('ERROR: '+str(error))
-			# 	self.write_message({
-			# 		'command': 'display-error',
-			# 		'message': str(error),
-			# 	})
+
+				# send an update of the graph to the user if there are new dependencies:
+				self.request_nodes(new_dependency_ids, ball, user)
+				self.remove_client_edges(node_obj.id, removed_dependency_ids)
+			except Exception as error:
+				# stuff didn't work, send error back to user
+				print('ERROR: '+str(error))
+				self.write_message({
+					'command': 'display-error',
+					'message': str(error),
+				})
 
 		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors
@@ -184,7 +199,7 @@ class SocketHandler(WebSocketHandler):
 			})
 
 		elif ball['command'] == 'request-node':
-			self.request_node(ball['node_id'], ball, user)
+			self.request_nodes([ball['node_id']], ball, user)
 
 		elif ball['command'] == 'search':
 			search_results = our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
@@ -193,17 +208,24 @@ class SocketHandler(WebSocketHandler):
 					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
 
-	def request_node(self, node_id, ball, user):
-		if node_id not in our_DAG.nodes():
-			raise ValueError('The node_id "'+node_id+'" does not exist.')
-		else:
-			ids = set(user.dict['learned_node_ids']).union(set(ball['client_node_ids'])).union(set([node_id]))
-			H = our_DAG.subgraph(list(ids))
-			dict_graph = H.as_complete_dict()
-			self.write_message({
-				'command': 'load-graph',
-				'new_graph': dict_graph,
-			})
+	def request_nodes(self, node_ids, ball, user):
+		for node_id in node_ids:
+			if node_id not in our_DAG.nodes():
+				raise ValueError('The node_id "'+node_id+'" does not exist.')
+		ids = set(user.dict['learned_node_ids']).union(set(ball['client_node_ids'])).union(set(node_ids))
+		H = our_DAG.subgraph(list(ids))
+		dict_graph = H.as_complete_dict()
+		self.write_message({
+			'command': 'load-graph',
+			'new_graph': dict_graph,
+		})
+
+	def remove_client_edges(self, node_id, dependency_ids):
+		self.write_message({
+			'command': 'remove-edges',
+			'node_id': node_id,
+			'dependency_ids': list(dependency_ids),
+		})
 
 	def send_absolute_dominion(self, ball, user):
 		if user.logged_in:
@@ -260,14 +282,12 @@ def make_app():
 		],
 		# settings:
 		debug=True,
-		cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__"
+		cookie_secret=random_string(99)
 	)
 
 def make_app_and_start_listening():
 	# enable_pretty_logging()
 	application = make_app()
-	# by listening on the http port (default for all browsers that i know of),
-	# user will not have to type "http://" or ":80" in the URL
 	application.listen(80)
 	# other stuff
 	IOLoop.current().start()
@@ -283,12 +303,13 @@ def update_our_DAG():
 		try:
 			node = create_appropriate_node(strip_underscores(node_dict))
 		except Exception as e:
-			print('\nerror.  node_dict was: '+str(strip_underscores(node_dict)))
+			print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
 		our_DAG.add_n(node)
 	for node_id in our_DAG.nodes():
 		node = our_DAG.n(node_id)
 		for dependency_id in node.dependency_ids:
 			our_DAG.add_edge(dependency_id, node_id)
+	our_DAG.validate() # make sure it's still Acyclic
 	print('Node array loaded with length: ' + str(len(our_DAG.nodes())))
 	print('Edge array loaded with length: ' + str(len(our_DAG.edges())))
 	our_DAG.remove_redundant_edges()

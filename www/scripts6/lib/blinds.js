@@ -1,4 +1,4 @@
-define( ["jquery", "underscore", "profile", "check-types"], function($, _, undefined, is){
+define( ["jquery", "underscore", "profile", "check-types", "graph"], function($, _, undefined, is, graph){
 
 let blinds = {}
 function init(input) {
@@ -236,7 +236,6 @@ function _startReadMode(blind, $value) {
 	$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit.svg')
 	blinds.post_render()
 
-	alert('save-node triggering:')
 	$.event.trigger({
 		type: 'save-node', // request-node will happen on the server side
 	})
@@ -442,14 +441,20 @@ class BlindValue {
 }
 
 ////////////////////////////// HELPERS //////////////////////////////
-function as_select_html(array) {
+function as_select_html(array_selected) {
+	let client_node_names = graph.nodeNamesList()
+
 	let string = '<select class="tags" multiple>'
-	_.each(array, function(el){
-		string = string + '<option value="'+el+'" selected>'+el+'</option>' // we set property selected to true, so that everything is pre-selected
-		// we can add other options to the list by grabbing other node names, but don't use selected for these
+	_.each(client_node_names, function(el){
+		string = string + '<option value="'+el+'" '+selected(array_selected, el)+'>'+el+'</option>'
 	})
 	string = string + '</select>'
 	return string
+}
+
+function selected(array_selected, el){
+	if( _.contains(array_selected, el) ) return 'selected' // we set property selected to true, so it's pre-selected
+	return ''
 }
 
 ////////////////////////////// EXPORTS //////////////////////////////
