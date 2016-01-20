@@ -335,7 +335,10 @@ class Axiom(Definition):
 		if new_deps is None or (isinstance(new_deps, list) and not new_deps):
 			self._dependencies = []
 		else:
-			raise KeyError('Axioms cannot have dependencies!')
+			if "justification" in dic:
+				Node.dependencies.fset(self, new_deps)
+			else:
+				raise KeyError('Axioms cannot have dependencies!')
 
 	@Node.description.setter
 	def description(self, new_description):
