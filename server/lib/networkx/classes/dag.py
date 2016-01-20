@@ -18,6 +18,12 @@ class _DAG (nx.DiGraph):
 			raise TypeError('Not a Directed A(dir)cyclcic Graph!')
 		return True
 
+	def n(self, node_id):
+		return self.node[node_id]["custom_object"]
+
+	def add_n(self, node):
+		self.add_node(node.id, attr_dict={"custom_object": node})
+
 	def source(self): # finds any source in Directed A(dir)cyclic Graph
 		self.validate() # it's important that there are no cycles!
 		if not self.nodes():
@@ -49,59 +55,59 @@ class _DAG (nx.DiGraph):
 			if not self.has_path(edge[0], edge[1]):
 				self.add_edge(edge[0], edge[1])
 
-	def short_sighted_deepest_successors(self, axioms, learned_nodes):
-		distance_dict = self.multiple_sources_shortest_path_length(axioms)
-		# nodes that are NOT successors of the axioms will not appear in distance_dict.  This OK.
+	#def short_sighted_deepest_successors(self, axioms, learned_nodes):
+	#	distance_dict = self.multiple_sources_shortest_path_length(axioms)
+	#	# nodes that are NOT successors of the axioms will not appear in distance_dict.  This is OK.
 
-		successor_ids = self.hanging_dominion(learned_nodes)
-		# now build a reverse dictionary with these...
-		distance_to_successor_ids = dict()
-		for successor_id in successor_ids:
-			distance_to_successor_ids[distance_dict[successor_id]] = [] # initialize as array
-		for successor_id in successor_ids:
-			distance_to_successor_ids[distance_dict[successor_id]].append(successor_id) # actually add the values
+	#	successors = self.hanging_dominion(learned_nodes)
+	#	# now build a reverse dictionary with these...
+	#	distance_to_successors = dict()
+	#	for successor in successors:
+	#		distance_to_successors[distance_dict[successor]] = [] # initialize as array
+	#	for successor in successors:
+	#		distance_to_successors[distance_dict[successor]].append(successor) # actually add the values
 
-		return distance_to_successor_ids
+	#	return distance_to_successors
 
-	def unlearned_dependency_tree(self, node, learned_nodes):
-		unlearned_nodes = set(node)
-		for predecessor in self.predecessors(node):
-			if predecessor is not in learned_nodes:
-				unlearned_nodes = unlearned_nodes + self.unlearned_dependency_tree(predecessor)
-		return unlearned_nodes
+	#def unlearned_dependency_tree(self, node, learned_nodes):
+	#	unlearned_nodes = set(node)
+	#	for predecessor in self.predecessors(node):
+	#		if predecessor not in learned_nodes:
+	#			unlearned_nodes = unlearned_nodes + self.unlearned_dependency_tree(predecessor)
+	#	return unlearned_nodes
 
-	def short_sighted_depth_first_unlearned_source(self, axioms, learned_node_ids, graph_node_dict): # not necessarily a source, as it is
-		if learned_node_ids not a subset of self:
-			raise Exception('Nodes not part of graph.')
-		distance_to_successor_ids = self.short_sighted_deepest_successors(axioms, learned_node_ids)
+	#def short_sighted_depth_first_unlearned_source(self, axioms, learned_nodes): # not necessarily a source, as it is
+	#	if learned_nodes not a subset of self.nodes():
+	#		raise Exception('Nodes not part of graph.')
+	#	distance_to_successors = self.short_sighted_deepest_successors(axioms, learned_nodes)
 
-		# take the successor w/ minimum learn_count, and IMPORTANCE to break a tie, then ALPHABETICAL
-		graph = self
-		def sorter_learn_count(successor_id):
-			# the keys are ids, so we can get the node...
-			return (graph.learn_count(successor_id, learned_node_ids), -graph_node_dict[successor_id].importance)
+	#	# take the successor w/ minimum learn_count, and IMPORTANCE to break a tie, then ALPHABETICAL
+	#	graph = self
+	#	def sorter_learn_count(successor):
+	#		# the keys are ids, so we can get the node...
+	#		return (graph.learn_count(successor, learned_nodes), -successor.importance) # or -self.n(successor).importance
 
-		def sorter_depth(node_id):
-			return (depth_dict[node_id], graph_node_dict[node_id].importance)
+	#	def sorter_depth(node):
+	#		return (depth_dict[node.id], node.importance) # or self.n(node).importance
 
-		for depth, successor_ids in sorted(distance_to_successor_ids, key=distance_to_successor_ids.get, reverse=True).items():
-			for successor_id in sorted(successor_ids, key=sorter_learn_count):
-				unlearned_dependency_tree, depth_dict = self.unlearned_dependency_tree(successor_id, learned_node_ids) # this INCLUDES the successor_id itself.  Remember, these are UNLEARNED successor_ids
-				for guy_to_learn in sorted(depth_dict, key=sorter_depth, reverse=True):
-					return guy_to_learn
-
-
-		#deepest_successors_dict = dict()
-		#for key in short_sighted_deepest_successors:
-		#	deepest_successors_dict[key] = self.learn_count(key) # we can make a learn count and sources so that we don't have to re-find the sources later.  this can be a future optimization
-		#node = take the min
-		## finally, return the sources of our node
-		#dep_tree = self.dependency_tree(node)
-		#return self.sources(dep_tree)
+	#	for depth, successors in sorted(distance_to_successors, key=distance_to_successors.get, reverse=True).items():
+	#		for successor in sorted(successors, key=sorter_learn_count):
+	#			unlearned_dependency_tree, depth_dict = self.unlearned_dependency_tree(successor, learned_nodes) # this INCLUDES the successor itself.  Remember, these are UNLEARNED successors
+	#			for guy_to_learn in sorted(depth_dict, key=sorter_depth, reverse=True):
+	#				return guy_to_learn
 
 
-	# def short_sighted_depth_first_unlearned_source(self, axioms, learned_node_ids, graph_node_dict):
-	# 	unlearned_sources = self.short_sighted_depth_first_unlearned_source(axioms, learned_node_ids)
+	#	#deepest_successors_dict = dict()
+	#	#for key in short_sighted_deepest_successors:
+	#	#	deepest_successors_dict[key] = self.learn_count(key) # we can make a learn count and sources so that we don't have to re-find the sources later.  this can be a future optimization
+	#	#node = take the min
+	#	## finally, return the sources of our node
+	#	#dep_tree = self.dependency_tree(node)
+	#	#return self.sources(dep_tree)
+
+
+	# def short_sighted_depth_first_unlearned_source(self, axioms, learned_nodes):
+	# 	unlearned_sources = self.short_sighted_depth_first_unlearned_source(axioms, learned_nodes)
 	# 	if unlearned_sources:
 	# 		return unlearned_sources[0]
 	# 	else:

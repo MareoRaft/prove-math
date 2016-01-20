@@ -18,6 +18,9 @@ from tornado.web import Finish
 #from tornado.escape import xhtml_escape
 # from tornado.log import enable_pretty_logging
 
+from networkx.readwrite import json_graph
+from lib.helper import strip_underscores
+from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 from lib.user import User
 import networkx as nx
@@ -37,6 +40,7 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 
 class BaseHandler(RequestHandler):
 
+
 	def prepare(self):
 		if self.request.host != 'provemath.org' and self.request.host != 'localhost':
 			self.redirect('http://provemath.org', self.request.uri)
@@ -53,13 +57,14 @@ class BaseHandler(RequestHandler):
 
 class IndexHandler(BaseHandler):
 
+
 	def get(self):
 		user_dict = {}
 
 		method = self.get_argument("method", default=None, strip=False)
 		authorization_code = self.get_argument("code", default=None, strip=False)
 		if self.get_secure_cookie("mycookie"):
-			user_dict=json.loads(str(self.get_secure_cookie("mycookie"),'UTF-8'))
+			user_dict=json.loads(str(self.get_secure_cookie("mycookie"), 'UTF-8'))
 
 		elif method is not None and authorization_code is not None:
 			print('got params!!!!')
@@ -85,7 +90,7 @@ class IndexHandler(BaseHandler):
 				#print("logged_in.dict is: " + str(user.dict))
 				user_dict = provider.id_and_picture(request_root, user.dict)
 				print("logged in dict is:"+ str(user_dict))
-				self.set_secure_cookie("mycookie",json.dumps(user_dict))
+				self.set_secure_cookie("mycookie", json.dumps(user_dict))
 			except Exception as e:
 				print('Login failed')
 				print(e) # user_dict is still {}
@@ -98,13 +103,10 @@ class IndexHandler(BaseHandler):
 
 class JSONHandler(BaseHandler):
 
+
 	def get(self):
 		# get appropriate subgraph from NewtorkX!
-		global all_nodes
-		global our_DAG
-		json_graph = our_DAG.as_complete_json(all_nodes)
-
-		# send to the user!
+		json_graph = our_DAG.as_complete_json() # TODO write this method
 		self.write(json_graph)
 
 
@@ -113,6 +115,7 @@ class JSONHandler(BaseHandler):
 # this browser compatibility table on Wikipedia:
 # http://en.wikipedia.org/wiki/WebSockets#Browser_support
 class SocketHandler(WebSocketHandler):
+
 
 	def open(self):
 		self.write_message({
@@ -123,7 +126,6 @@ class SocketHandler(WebSocketHandler):
 		print('got message: ' + message)
 		ball = json.loads(message)
 		user = User(ball['identifier'])
-
 
 		if ball['command'] == 'print':
 			print(ball['message'])
@@ -148,93 +150,93 @@ class SocketHandler(WebSocketHandler):
 			node_dict = ball['node_dict']
 			if 'importance' in node_dict.keys():
 				node_dict['importance'] = int(node_dict['importance'])
-			try:
+			# try:
 				node_obj = node.create_appropriate_node(node_dict)
-				print('node made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...')
-				global our_mongo
+				print('\nnode made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...\n')
+				# take a look at the dependencies now
+				previous_dependency_ids = [node.reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
+				print('prev deps are: '+str(previous_dependency_ids))
 				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
-			except Exception as error:
-				# stuff didn't work, send error back to user
-				print('ERROR: '+str(error))
-				self.write_message({
-					'command': 'display-error',
-					'message': str(error),
-				})
-			# TODO: UPDATE THE LOCAL NETWORX GRAPH
-			# we need a way to detect a new link
+				# take a look at the current dependencies
+				current_dependency_ids = [node.reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
+				print('curr deps are: '+str(current_dependency_ids))
+				update_our_DAG()
+				# send an update of the graph to the user if there is a new dependency:
+				for new_dependency in set(current_dependency_ids) - set(previous_dependency_ids):
+					self.request_node(new_dependency, ball, user)
+				# OR IF THE SAVED NODE IS A BRAND NEW NODE, we have to include all the deps
+			# except Exception as error:
+			# 	# stuff didn't work, send error back to user
+			# 	print('ERROR: '+str(error))
+			# 	self.write_message({
+			# 		'command': 'display-error',
+			# 		'message': str(error),
+			# 	})
 
 		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors
-			global our_DAG
-			global all_nodes
 			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1)
 			H = our_DAG.subgraph(list(neighbors.keys()))
-			dict_graph = H.as_complete_dict(all_nodes)
+			dict_graph = H.as_complete_dict()
 			self.write_message({
 				'command': 'load-graph',
 				'new_graph': dict_graph,
 			})
 
 		elif ball['command'] == 'request-node':
-			global our_DAG
-			global all_nodes # this is a list of dictionaries
-			if ball['node_id'] not in [node['_id'] for node in all_nodes]: # this is temp for debugging
-				raise ValueError('The node_id "'+ball['node_id']+'" does not exist.')
-			else:
-				learned_ids = user.dict['learned_node_ids'] # so we get the links to all learned nodes too...
-				learned_ids.append(ball['node_id'])
-				H = our_DAG.subgraph(learned_ids)
-				dict_graph = H.as_complete_dict(all_nodes)
-				self.write_message({
-					'command': 'load-graph',
-					'new_graph': dict_graph,
-				})
-		elif ball['command']=='search':
-			global our_mongo
-			search_results=our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
+			self.request_node(ball['node_id'], ball, user)
+
+		elif ball['command'] == 'search':
+			search_results = our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
 			self.write_message({
 					'command': 'search-results',
-					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10))
+					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
-				
-	def send_absolute_dominion(self, ball,user):
-		global all_nodes
-		global our_DAG
-		learned_ids = []
 
+	def request_node(self, node_id, ball, user):
+		if node_id not in our_DAG.nodes():
+			raise ValueError('The node_id "'+node_id+'" does not exist.')
+		else:
+			ids = set(user.dict['learned_node_ids']).union(set(ball['client_node_ids'])).union(set([node_id]))
+			H = our_DAG.subgraph(list(ids))
+			dict_graph = H.as_complete_dict()
+			self.write_message({
+				'command': 'load-graph',
+				'new_graph': dict_graph,
+			})
+
+	def send_absolute_dominion(self, ball, user):
 		if user.logged_in:
+			print('LOGGED IN')
 			learned_ids = user.dict['learned_node_ids']
-			if learned_ids:
-				print('LEARNED IDS are: ')
-				print(str(learned_ids))
+			ids = list(set(learned_ids).union(set(ball['client_node_ids'])))
+			if ids:
 				ids_to_send = our_DAG.absolute_dominion(learned_ids)
 				# should SOURCES be included in the absolute dominion???
-				ids_to_send = ids_to_send + self.other_nodes_of_interest()
-				H = our_DAG.subgraph(ids_to_send)
+				ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest()))
+				H = our_DAG.subgraph(list(ids_to_send))
 			else:
-				print('LEARNED NOTHING')
 				# they've learned nothing so far.  send them a starting point
 				H = our_DAG.subgraph(self.starting_nodes())
 		else:
+			print('NOT LOGGED IN')
 			# same line as above
 			H = our_DAG.subgraph(self.starting_nodes())
+			print('H nodes are: '+str(H.nodes()))
 
-		dict_graph = H.as_complete_dict(all_nodes)
+		dict_graph = H.as_complete_dict()
 		self.write_message({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
 
 	def other_nodes_of_interest(self):
-		global our_DAG
 		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
-		axioms = ['set', 'multiset', 'vertex']
-		return [our_DAG.short_sighted_depth_first_unlearned_source(axioms, learned_ids)]
 		return list(our_DAG.sources())
+		return [our_DAG.short_sighted_depth_first_unlearned_source(axioms, learned_ids)]
 
 	def starting_nodes(self):
-		return ['vertex', 'multiset']
-
+		return axioms
 
 	def on_close(self):
 		print('A websocket has been closed.')
@@ -261,7 +263,6 @@ def make_app():
 		cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__"
 	)
 
-
 def make_app_and_start_listening():
 	# enable_pretty_logging()
 	application = make_app()
@@ -271,23 +272,35 @@ def make_app_and_start_listening():
 	# other stuff
 	IOLoop.current().start()
 
+def update_our_DAG():
+	# 1. grab nodes and edges from database
+	all_node_dicts = list(Mongo("provemath", "nodes").find())
+
+	# 2. create a networkx graph with the info...
+	global our_DAG
+	our_DAG = nx.DAG()
+	for node_dict in all_node_dicts:
+		try:
+			node = create_appropriate_node(strip_underscores(node_dict))
+		except Exception as e:
+			print('\nerror.  node_dict was: '+str(strip_underscores(node_dict)))
+		our_DAG.add_n(node)
+	for node_id in our_DAG.nodes():
+		node = our_DAG.n(node_id)
+		for dependency_id in node.dependency_ids:
+			our_DAG.add_edge(dependency_id, node_id)
+	print('Node array loaded with length: ' + str(len(our_DAG.nodes())))
+	print('Edge array loaded with length: ' + str(len(our_DAG.edges())))
+	our_DAG.remove_redundant_edges()
 
 if __name__ == "__main__":
 	# 0. create a global mongo object for later use (for upserts in the future)
 	our_mongo = Mongo("provemath", "nodes")
 
-	# 1. grab nodes and edges from database
-	all_nodes = list(Mongo("provemath", "nodes").find())
-	all_edges = list(Mongo("provemath", "edges").find())
+	# 1 and 2
+	update_our_DAG()
 
-	# 2. create a networkx graph with the info...
-	our_DAG = nx.DAG()
-	our_DAG.add_nodes_from([node['_id'] for node in all_nodes])
-	our_DAG.add_edges_from([(edge['source'], edge['target'])
-							for edge in all_edges])
-	print('Node array loaded with length: ' + str(len(our_DAG.nodes())))
-	print('Edge array loaded with length: ' + str(len(our_DAG.edges())))
-	our_DAG.remove_redundant_edges()
+	axioms = [our_DAG.n(node_id) for node_id in ['set', 'multiset', 'vertex']]
 
 	# 3. launch!
 	make_app_and_start_listening()

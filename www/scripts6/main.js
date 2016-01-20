@@ -119,17 +119,13 @@ $('#unlearn').click(function(){
 	current_node.learned = false
 	graphAnimation.update()
 })
-$('#save').click(function(){
-	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
-})
-
 
 let host = $('body').attr('data-host')
 let ws = ('WebSocket' in window)? new WebSocket("ws://"+host+"/websocket"): undefined;
 if( !def(ws) ) die('Your browser does not support websockets, which are essential for this program.')
 
 ws.jsend = function(raw_object) {
-	$.extend(raw_object, {identifier: user.get_identifier()})
+	$.extend(raw_object, {identifier: user.get_identifier(), client_node_ids: graph.nodeIdsList()})
 	ws.send(JSON.stringify(raw_object))
 }
 ws.onopen = function() {
@@ -147,12 +143,13 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		show('#overlay-loggedin')
 	}
 	else if( ball.command === 'load-graph' ) {
+		// alert('data: '+event.data)
 		let raw_graph = ball.new_graph
 		_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
 			raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
 		})
 		let ready_graph = raw_graph
-        alert('nodes being added: '+JSON.stringify(ready_graph.nodes))
+        // alert('nodes being added: '+JSON.stringify(ready_graph.nodes))
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,
@@ -164,7 +161,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
         else if(ball.command === 'search-results'){
 	    alert('Search results: '+JSON.stringify(ball.results))
 	}
-        
+
 	else die('Unrecognized command '+ball.command+'.')
 }
 
@@ -180,6 +177,10 @@ $(document).on('add-links', function(Event) {
 $(document).on('request-node', function(Event) {
 	ws.jsend({command: 'request-node', node_id: Event.message})
 })
+$(document).on('save-node', function(){
+	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
+})
+
 
 ////////////////////////// LOGIN/LOGOUT STUFF //////////////////////////
 var oauth_url_dict = undefined

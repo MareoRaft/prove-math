@@ -16,6 +16,13 @@ def json_export(json_list, file_path):
 		print("List is not in Json format.")
 		print("Pass in object as example.__dict__")
 
+def strip_underscores(dictionary):
+	for key, value in dictionary.items():
+		if key[0] == '_':
+			del dictionary[key]
+			dictionary[key[1:]] = value
+	return dictionary
+
 class DictToObject:
 	def __init__(self, dic):
 		for key, value in dic.items():

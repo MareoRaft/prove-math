@@ -128,19 +128,6 @@ class Node:
 		self.notes = move_attribute(dic, {'note', 'notes'}, strict=False)
 		self.name = move_attribute(dic, {'name'}, strict=False)
 
-	# def __getattr__(self, name):
-	# 	if name not in self.ALLOWED_ATTRIBUTES:
-	# 		raise AttributeError('Attribute "'+name+'" not allowed')
-	# 	else:
-	# 		return self.__dict__[name]
-
-	# def __setattr__(self, name, value):
-	# 	# if name not in (self.ALLOWED_ATTRIBUTES or ['_'+a for a in self.ALLOWED_ATTRIBUTES]):
-	# 	if name not in self.ALLOWED_ATTRIBUTES:
-	# 		raise AttributeError('Attribute "'+name+'" not allowed')
-	# 	else:
-	# 		self.__dict__[name] = value
-
 	@property
 	def weight(self): # delete this if we get above to work
 		pass
@@ -153,6 +140,18 @@ class Node:
 
 	def __str__(self):
 		return str(self.__dict__)
+
+	def __repr__(self):
+		return 'Node(' + self.__str__() + ')'
+
+	def __hash__(self):
+		return hash(self.__dict__.values())
+
+	def __eq__(self, other):
+		return self.id == other.id
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
 
 	def clone(self):
 		return copy.deepcopy(self)
@@ -330,7 +329,7 @@ class Axiom(Definition):
 
 	@property
 	def dependencies(self):
-		raise KeyError('Axioms cannot have dependencies!')
+		return []
 	@dependencies.setter
 	def dependencies(self, new_deps):
 		if new_deps is None or (isinstance(new_deps, list) and not new_deps):
@@ -367,7 +366,6 @@ class PreTheorem(Node):
 		good_type_proofs = check_type_and_clean(new_proofs, dict, list_of=True)
 		assert is_content_clean(good_type_proofs)
 		for proof in good_type_proofs:
-			print('proof is '+str(proof))
 			proof['description'] = move_attribute(proof, {'description', 'content'}, strict=True)
 			assert dunderscore_count(proof['description']) == 0
 			assert 'type' in proof

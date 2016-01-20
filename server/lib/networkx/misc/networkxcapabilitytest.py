@@ -7,14 +7,18 @@ from lib.helper import DictToObject
 ###############################################################################
 
 import networkx as nx
+from lib.networkx.classes import dag
 
 s1 = DictToObject({"name":"sarah", "id":"s"})
 s2 = DictToObject({"name":"frederick", "id":"s"})
 # t = DictToObject({"name":"toby", "id":"t"})
 
-M = nx.DiGraph()
+M = nx.DAG()
 M.add_edge(s1, s2)
 print(M.nodes())
+print(M.nodes())
+print(M.nodes())
+print(M.successor(s1))
 
 
 # print(M.is_nonnull())

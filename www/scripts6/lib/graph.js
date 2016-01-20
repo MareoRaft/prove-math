@@ -14,6 +14,10 @@ function init(nodes=[], links=[]) {
 	})
 }
 
+function nodeIdsList() {
+	return Object.keys(graph.nodes)
+}
+
 function addNode(node) {
 	addNodesAndLinks({
 		nodes: [node],
@@ -23,9 +27,14 @@ function addNode(node) {
 function addNodesAndLinks({ nodes=[], links=[] }) {
 	_.each(nodes, function(node){ if (node === undefined) die('before. undefined node in graph.addNodesAndLinks') })
 	_addNodesHereAndJSNetworkX(nodes)
+	alert('between')
 	_addLinksHereAndJSNetworkX(links)
 	// see from JSNetworkX which things we should add to the animation:
 	_.each(nodes, function(node){ if (node === undefined) die('after. undefined node in graph.addNodesAndLinks') })
+	_.each(links, function(link){
+		if (link.source === undefined) die('graph link no source. link: '+JSON.stringify(link))
+	})
+
 	graphAnimation.addNodesAndLinks({
 		nodes: nodes,
 		links: links,
@@ -41,13 +50,16 @@ function _addNodesHereAndJSNetworkX(nodes) {
 
 	_.each(nodes, function(node) {
 		if( node.remove ){
+			if( node.id === 'multigraph' ) alert('removing multigraph')
 			_removeNodes([node])
 		}
 		else{
 			if( node.id in graph.nodes ){
+				if( node.id === 'multigraph' ) alert('ignoring already extant multigraph')
 				//die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
 			}
 			else{
+				if( node.id === 'multigraph' ) alert('adding the multigraph to graph.nodes')
 				graph.nodes[node.id] = node
 			}
 		}
@@ -57,19 +69,13 @@ function _addNodesHereAndJSNetworkX(nodes) {
 
 function _removeNodes(nodes) {
 	_.each(nodes, function(node) {
+		if( node.id === 'multigraph' ) alert('deleting multigraph :(')
 		if( !(node.id in graph.nodes) ) die("You are trying to remove a node that isn't in the graph.nodes hash.")
 	})
 	graphAnimation.removeNodes(nodes)
 	// remove nodes (using node.id) from JSNetworkX (and any incident links will automatically go away)
 	_.each(nodes, function(node){ delete graph.nodes[node.id] })
 }
-
-// function findObjectById(array, id){ // delete THIS WHEN SWITCHING TO HASH
-// 	is.assert.array(array)
-// 	is.assert.string(id)
-// 	for( let i in array )if( array[i].id === id ) return array[i]
-// 	die('id not found.')
-// }
 
 function _addLinksHereAndJSNetworkX(links) {
 	// add links to JSNetworkX
@@ -79,9 +85,11 @@ function _addLinksHereAndJSNetworkX(links) {
 	_.each(links, function(link){
 		let source_key = link.source
 		let target_key = link.target
+		if( source_key === 'multigraph' ) alert('source_key is '+source_key)
 
 		let source_before = link.source
 		link.source = graph.nodes[link.source]
+		if( source_key === 'multigraph' ) alert('link.source is '+JSON.stringify(link.source))
 		link.target = graph.nodes[link.target]
 		if( !def(link.source) ){
 			alert('bad source key is: '+source_key+'.  Sending request!')
@@ -91,8 +99,6 @@ function _addLinksHereAndJSNetworkX(links) {
 			})
 		}
 		if(!def(link.target)) die('bad target key is: '+target_key)
-		// link.source = findObjectById(graph.nodes, link.source)
-		// link.target = findObjectById(graph.nodes, link.target)
 	})
 	is.assert.array.of.object(links)
 }
@@ -106,6 +112,7 @@ return {
 	addNode: addNode,
 	addNodesAndLinks: addNodesAndLinks,
 	nodes: graph.nodes,
+	nodeIdsList: nodeIdsList,
 }
 
 }) // end define

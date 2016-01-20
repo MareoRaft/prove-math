@@ -6,7 +6,7 @@ function init(input) {
 		// window_id, // due to select() issue having to use 'body'
 		nodes: [],
 		links: [],
-		node_id: function(node){ if( !def(node) ) die('got undefined node.'); return node.id },
+		node_id: function(node){ if( !def(node) ) die('got undefined node..'); return node.id },
 		node_label: '',
 		node_radius: node => node.r,
 		circle_class_conditions: {},
@@ -113,7 +113,13 @@ function update() { // this function gets called AGAIN when new nodes come in
 	// x.domain([0, d3.max(_.pluck(nodes, 'x'))]) // not sure where in the flow this belongs...
 
 // it was a LINK ISSUE!  you need to go over entire link importation stuff to verify it makes sense
-	let link = gA.svg.selectAll('.link').data(gA.force.links(), link => gA.node_id(link.source) + '--->' + gA.node_id(link.target)) // links before nodes so that lines in SVG appear *under* nodes
+	let link = gA.svg.selectAll('.link').data(gA.force.links(),
+		function(link){
+			if(link.source === undefined) alert('source undefined'+link.source)
+			if(link.target === undefined) alert('target undefined')
+			return gA.node_id(link.source) + '--->' + gA.node_id(link.target)
+		}
+	) // links before nodes so that lines in SVG appear *under* nodes
 	link.enter().append('line')
 		.classed('link', true)
 		.attr('marker-end', 'url(#arrow-head)') // add in the marker-end defined above
@@ -174,17 +180,21 @@ function updateSize() {
 }
 
 function addNodesAndLinks({ nodes=[], links=[] }) {
+	_.each(links, function(link){
+		if (link.source === undefined) die(' original link no source. link: '+JSON.stringify(link))
+	})
+
 	// $.extend(gA.nodes, nodes) // but this is no good for duplicates. switch to hash soon
 	_.each(nodes, function(node){ if (node === undefined) die('before. undefined node in gA.addNodesAndLinks') })
 	pushArray(gA.nodes, nodes)
 	// $.extend(gA.links, links)
 	pushArray(gA.links, links)
 	// maybe get smart here and detect whether there actually was a change or not.  can d3 do this?
-	_.each(gA.nodes, function(node){ if (node === undefined) die('after. undefined node in gA.addNodesAndLinks') })
+	_.each(gA.links, function(link){
+		if (link.source === undefined) die('link no source. link: '+JSON.stringify(link))
+	})
 	update()
-	_.each(gA.nodes, function(node){ if (node === undefined) die('bwt update n start. undefined node in gA.addNodesAndLinks') })
 	_start()
-	_.each(gA.nodes, function(node){ if (node === undefined) die('END. undefined node in gA.addNodesAndLinks') })
 }
 
 function removeNodes(nodes) {

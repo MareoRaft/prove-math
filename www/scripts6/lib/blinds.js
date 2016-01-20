@@ -224,25 +224,7 @@ function _startReadMode(blind, $value) {
 		$('#'+blind.id+' > .value > .tags').children().each(function(){
 			if( $(this).prop('selected') ) selected_elements.push($(this).val())
 		})
-		// put them in an array and give it to blind.value
-		let old_elements = blind.value
 		blind.value = selected_elements
-
-		//TEST:
-		selected_elements.push('multigraph')
-
-		// the FOLLOWING IS FOR DEPENDENCIES ONLY, and SHOULD be PASSED in as a FUNCTION to blinds
-		let new_links = []
-		_.each(selected_elements, function(dependency) {
-			if( !_.contains(old_elements, dependency) ){
-				new_links.push({source: reduce_string(dependency), target: blinds.object.id})
-			}
-		})
-		$.event.trigger({
-			type: 'add-links',
-			message: new_links,
-		})
-
 	}
 	else if( blind.mode === 'standard' ){
 		$value.prop('contenteditable', false)
@@ -253,6 +235,11 @@ function _startReadMode(blind, $value) {
 	$value.html(blind.value_htmlified)
 	$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit.svg')
 	blinds.post_render()
+
+	alert('save-node triggering:')
+	$.event.trigger({
+		type: 'save-node', // request-node will happen on the server side
+	})
 }
 
 function _startWriteMode(blind, $value) {

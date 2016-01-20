@@ -119,20 +119,18 @@ class _DiGraphExtended (nx.DiGraph):
 			 level=level+1
 		 return seen  # return all path lengths as dictionary
 
-	def as_complete_dict(self, list_of_complete_nodes):
+	def as_complete_dict(self):
 		graph = dict()
-		graph['nodes'] = [find_dict_from_id(list_of_complete_nodes, dict_id) for dict_id in self.nodes()]
+		graph['nodes'] = [self.n(node_id).__dict__ for node_id in self.nodes()]
 		graph['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
 		return graph
 
-	# needs test
 	def hanging_dominion(self, nodes):
 		hanging_dominion_and_extra = set()
 		for node in nodes:
 			hanging_dominion_and_extra = hanging_dominion_and_extra.union(set(self.successors(node)))
 		return hanging_dominion_and_extra - set(nodes)
 
-	# needs test
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
 		hanging_dominion = self.hanging_dominion(nodes)
 		hanging_absolute_dominion = []
