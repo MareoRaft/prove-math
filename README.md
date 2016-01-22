@@ -32,7 +32,7 @@ Programming to make this work
 
 Credits
 ------------
-Matthew Lancellotti - founder
-Theodore Siu - programmer
-Ali Ismail - content
-Sara Jeffries - provided some icons from the Noun Project
+  - Matthew Lancellotti - founder
+  - Theodore Siu - programmer
+  - Ali Ismail - content
+  - Sara Jeffries - provided some icons from the Noun Project
