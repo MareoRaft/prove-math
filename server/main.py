@@ -171,8 +171,12 @@ class SocketHandler(WebSocketHandler):
 				removed_dependency_ids = set(previous_dependency_ids) - set(current_dependency_ids)
 
 
-				# TODO.  VERIFY THAT THE GRAPH WITH THESE NEW ARCS IS STILL ACYCLIC
-
+				# VERIFY THAT THE GRAPH WITH THESE NEW ARCS IS STILL ACYCLIC:
+				H = our_DAG.copy()
+				for new_dependency_id in new_dependency_ids:
+					print('from '+str(our_DAG.n(new_dependency_id))+' to '+str(node_obj))
+					H.add_edge(new_dependency_id, node_obj.id)
+				H.validate(node_obj.name + ' cannot depend on ' + our_DAG.n(new_dependency_id).name + ' because ' + our_DAG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
 
 				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
 				update_our_DAG()
@@ -244,7 +248,6 @@ class SocketHandler(WebSocketHandler):
 			print('NOT LOGGED IN')
 			# same line as above
 			H = our_DAG.subgraph(self.starting_nodes())
-			print('H nodes are: '+str(H.nodes()))
 
 		dict_graph = H.as_complete_dict()
 		self.write_message({
@@ -254,7 +257,7 @@ class SocketHandler(WebSocketHandler):
 
 	def other_nodes_of_interest(self):
 		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
-		return list(our_DAG.sources())
+		return axioms
 		return [our_DAG.short_sighted_depth_first_unlearned_source(axioms, learned_ids)]
 
 	def starting_nodes(self):
@@ -320,8 +323,7 @@ if __name__ == "__main__":
 
 	# 1 and 2
 	update_our_DAG()
-
-	axioms = [our_DAG.n(node_id) for node_id in ['set', 'multiset', 'vertex']]
+	axioms = ['set', 'multiset', 'vertex']
 
 	# 3. launch!
 	make_app_and_start_listening()

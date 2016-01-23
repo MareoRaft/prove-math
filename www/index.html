@@ -40,37 +40,27 @@
 					<div class="image-wrapper"><img src="images/social-icons/linkedin.png" alt="LinkedIn" /></div>
 				</label>
 			</div>
-<!-- 			<select id="account-type" class="account-type" data-placeholder="account type"> <!-- the class is to grab the relevant chosen container for css changes ->
-				<option></option> <!-- blank option in order to get data-placeholder support ->
-				<option value="facebook">Facebook</option>
-				<option value="google">Google+</option>
-				<option value="github">GitHub</option>
-				<option value="linkedin">LinkedIn</option>
-			</select>
--->
-<!-- 			<br />
-			<input type="text" id="username" placeholder="username" />
 			<br /><br />
-			<input type="password" id="password" placeholder="password" />
- -->			<br /><br />
 			<button type="button" id='login-button'>Login!</button>
 		</div>
 	</div>
 </section>
 <section id='node-template'>
 	<header>
-		<span id='back'>Back</span><pre>    </pre>
-		<span id='learn'>I learned it!</span><pre>    </pre>
-		<span id='unlearn'>Unlearn</span><pre>    </pre>
+		<img id='back' src='images/arrow-left.svg'>
+		<div id='toggle-learn-state'></div>
 	</header>
 	<section id='node-template-blinds'>
 	</section>
 </section>
-<!-- svg should appear here (populated by JS) -->
 <section id='banner'>
 	<div id='explanation'>ProveMath is a growing <a href='http://github.com/ProveMath/prove-math'>project</a>.  If you are interested in collaborating or just want to say hello, feel free to <a href='mailto:support@provemath.org'>contact</a> us.</div>
 </section>
 <section id='overlay-loggedin'>
+	<div id='search-wrapper'>
+		<div id='search-image-wrapper'><img src='images/search.png'></div>
+		<input id="search-box" type="text" placeholder="node search">
+	</div>
 	<img id='avatar' src='images/smiley-face.png'>
 	<div id='logout-circle'>logout</div>
 	<img id="add-node" src="images/add.svg">
@@ -78,13 +68,7 @@
 <section id='overlay-loggedout'>
 	<div id='login-circle'>login</div>
 </section>
-<section id='search'>
-  <form>
-    Search Nodes<br>
-    <input type="text" id="search-box"><br>
-    <button type="button" id="search-button"> Search!</button>
-  </form>
-</section>
+<!-- svg should appear here (populated by JS) -->
 
 </body>
 </html>

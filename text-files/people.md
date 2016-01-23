@@ -13,6 +13,10 @@ http://www.math.ucla.edu/people/visiting/tova
 
 students
 ----------
+Elliot
+glaze240@gmail.com
+maybe a junior, undergrad
+
 Tom Gill
 thomas.gill@rutgers.edu
 (302) 530-4481
@@ -57,7 +61,7 @@ does graph theory
 János Komlos
 does graph theory
 
-Doron Zeilberger --> email sent --> is interested but not until his sabbatical ends Jan 23, 2016.
+Doron Zeilberger --> loves the idea!
 zeilberg at math
 the math computers guy
 704
@@ -100,6 +104,10 @@ Theo Siu
 theodoresiu7@gmail.com
 available: weekdays 8am - 5pm.
 might learn Python. learning programming.
+
+Apoorv Verma (AP)
+avdaredevil@gmail.com
+@avdaredevil
 
 
 

@@ -13,9 +13,9 @@ import json
 class _DAG (nx.DiGraph):
 
 
-	def validate(self):
+	def validate(self, error_message=None):
 		if not nx.is_directed_acyclic_graph(self):
-			raise TypeError('Not a Directed A(dir)cyclcic Graph!')
+			raise TypeError('Not a Directed A(dir)cyclcic Graph! ' + str(error_message))
 		return True
 
 	def n(self, node_id):

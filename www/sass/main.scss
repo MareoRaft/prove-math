@@ -21,7 +21,6 @@
 #login {
 	overflow: hidden;
 	scroll: none;
-	// background-color: rgba(lightblue, 0.5);
 	z-index: 1;
 	@include hide;
 	background: radial-gradient(white, transparent);
@@ -31,14 +30,11 @@
 	& > div {
 		width: 40%;
 		height: 40%;
-		// background-color: rgba(pink, 0.5);
-		// border: 2px solid $white;
 		display: flex;
 		justify-content: space-around;
 		align-items: center;
 		& > div {
 			width: 70%;
-			// background-color: purple;
 			input {
 				width: 100%;
 			}
@@ -109,11 +105,40 @@ svg {
 
 
 ///////////////////////// HOVER THINGS ///////////////////////////
-@mixin side-hover-option {
+@mixin side-hover {
 	position: absolute;
 	margin: 20px;
 	pointer-events: auto;
+}
+@mixin side-hover-option {
+	@include side-hover;
 	@include hover-opacity;
+}
+
+#search-wrapper {
+	@include side-hover;
+	display: flex;
+	border: 4px solid $eggshell;
+	height: 50px;
+}
+#search-image-wrapper {
+	display: flex;
+	height: 100%;
+	padding: 10px;
+	& > img {
+		height: 100%;
+	}
+}
+#search-box {
+	font: 300 normal 26px Helvetica, Tahoma, Arial, sans-serif;
+	height: 100%;
+	border: none;
+	width: 300px; // this needs to be set for transition to function
+	transition: width 1s ease;
+	&:focus {
+		width: 800px; // ditto as above
+		outline: none;
+	}
 }
 
 #banner {
@@ -196,4 +221,24 @@ svg {
 .invalid {
 	border-style: solid;
 	border-color: $yellow !important; // soft red: rgba( 255, 51, 0, 0.9 )
+}
+
+@mixin center-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#node-template > header {
+	display: flex;
+}
+#node-template > header > * {
+	@include center-content;
+	margin: 0;
+	height: 60px;
+	padding: 0 30px;
+	@include hover-opacity;
+}
+#back {
+	@include hover-opacity;
 }

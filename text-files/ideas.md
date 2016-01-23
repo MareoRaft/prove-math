@@ -75,3 +75,10 @@ If we need it: For preferences form and for controlling browsers back button, et
 when they save to DB, IT ACTUALLY DOES.
 
 when somebody adds a new dependency, we have to verify that when we add the edge, the graph is STILL A DAG.  If it is not, we must reject the change.
+
+
+Simon's Foundation   ---->  apply for a grant
+
+
+
+think about eliminating uneceeaary edges permamnently in MongoDB

@@ -335,7 +335,7 @@
 {
 	"name": "size (graph)",
 	"def": "The __size__ of a graph $G=(V,E)$ is the size of the set $V$.",
-	"dependencies": ["size (set)"],
+	"dependencies": ["size (set)", "multigraph"],
 }
 
 { // 3

@@ -35,13 +35,11 @@ let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'))
 if( is.emptyObject(user_dict) ){
 	loginInit()
 	show('#login')
-        hide('#search')
 }
 else{
 	$("#avatar").attr("src", user_dict["profile_pic"])
 	// document.getElementById("display_name").innerHTML=user_dict["id_name"] // add this back in when we have a drop down
 	show('#overlay-loggedin')
-        //show('#search')
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 
@@ -111,14 +109,18 @@ blinds.init({
 	chosen: true,
 })
 let current_node = {}
-$('#learn').click(function(){
-	current_node.learned = true // does it grab current_node from outside scope? // YES
+$('#toggle-learn-state').click(function(){
+	current_node.learned = !current_node.learned
+	updateNodeTemplateLearnedState()
 	graphAnimation.update()
 })
-$('#unlearn').click(function(){
-	current_node.learned = false
-	graphAnimation.update()
-})
+function updateNodeTemplateLearnedState(){
+	if( current_node.learned ){
+		$('#toggle-learn-state').html('<img src="images/light-on.png">learned!')
+	}else{
+		$('#toggle-learn-state').html('<img src="images/light-off.png">not learned')
+	}
+}
 
 let host = $('body').attr('data-host')
 let ws = ('WebSocket' in window)? new WebSocket("ws://"+host+"/websocket"): undefined;
@@ -241,13 +243,14 @@ function login() {
 function logout(){
 	delete_cookie()
 	hide('#overlay-loggedin')
-        hide('#search')
 	show('#login')
 }
+
+
 //////////////////////////// SEARCH BAR ///////////////////////////
-$('#search-button').click(function(){
-	ws.jsend({ command: 'search', search_term:$('#search-box').val()})
-})
+$('#search-box').keypress(function(event) { if(event.which === 13 /* Enter */) {
+	ws.jsend({ command: 'search', search_term: $('#search-box').val() })
+}})
 
 
 //////////////////////////// ACTION STUFF ////////////////////////////
@@ -259,9 +262,12 @@ $('#add-node').click(function(){
 //////////////////////////// TOGGLE STUFF ////////////////////////////
 $(document).on('node-click', function(Event){
 	current_node = graph.nodes[Event.message] // graph.nodes is a DICTIONARY of nodes
+	updateNodeTemplateLearnedState()
 	blinds.open({
 		object: current_node,
 	})
+	hide('svg')
+	hide('#overlay-loggedin')
 	show('#node-template')
 	if( false /*mode !== 'learn'*/){
 		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
@@ -281,6 +287,8 @@ function fromBlindsToGraphAnimation(){
 }
 function toggleToGraphAnimation() {
 	hide('#node-template')
+	show('svg')
+	show('#overlay-loggedin')
 	blinds.close()
 }
 

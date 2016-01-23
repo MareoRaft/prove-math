@@ -24,7 +24,7 @@ function init(input) {
 		.links(gA.links)
 		.size([gA.width(), gA.height()])
 		.charge(-400) // all of these can be FUNCTIONS, which act on each node or link, depending on the property :)
-		// .linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
+		.linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
 		.linkStrength(0.2)
 		.gravity(0.05)
 		.alpha(0.2)
