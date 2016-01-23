@@ -30,3 +30,9 @@ Programming to make this work
   * Javascript on the client side w/ jQuery, JSNetworkX, bundled together with RequireJS.  We are using LaTeX for math typesetting and MathJax to render it.
   * We have a GitHub at https://github.com/ProveMath/prove-math
 
+Credits
+------------
+  - Matthew Lancellotti - founder
+  - Theodore Siu - programmer
+  - Ali Ismail - content
+  - Sara Jeffries - provided some icons from the Noun Project
