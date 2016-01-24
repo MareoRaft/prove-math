@@ -134,7 +134,7 @@ svg {
 	height: 100%;
 	border: none;
 	width: 300px; // this needs to be set for transition to function
-	transition: width 1s ease;
+	transition: width 0.8s ease;
 	&:focus {
 		width: 800px; // ditto as above
 		outline: none;

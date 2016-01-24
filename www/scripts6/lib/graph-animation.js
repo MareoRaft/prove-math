@@ -24,7 +24,7 @@ function init(input) {
 		.links(gA.links)
 		.size([gA.width(), gA.height()])
 		.charge(-400) // all of these can be FUNCTIONS, which act on each node or link, depending on the property :)
-		.linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
+		// .linkDistance(120) // this is too "fixed". better to use other variables to make the spacing self-create
 		.linkStrength(0.2)
 		.gravity(0.05)
 		.alpha(0.2)
@@ -73,7 +73,7 @@ function init(input) {
 
 function _start() {
 	gA.force.start()
-	gA.force.alpha(0.11) // rejiggle graph
+	// gA.force.alpha(0.11) // rejiggle graph
 }
 
 function _tick(){
@@ -108,18 +108,17 @@ function cartesianDistance(P1, P2) {
 	return Math.sqrt( Math.pow(P1[0]-P2[0], 2) + Math.pow(P1[1]-P2[1], 2) )
 }
 
+function generateLinkId(link) {
+	if(link.source === undefined) alert('source undefined')
+	if(link.target === undefined) alert('target undefined')
+	return gA.node_id(link.source) + '--->' + gA.node_id(link.target)
+}
 
 function update() { // this function gets called AGAIN when new nodes come in
 	// x.domain([0, d3.max(_.pluck(nodes, 'x'))]) // not sure where in the flow this belongs...
 
-// it was a LINK ISSUE!  you need to go over entire link importation stuff to verify it makes sense
-	let link = gA.svg.selectAll('.link').data(gA.force.links(),
-		function(link){
-			if(link.source === undefined) alert('source undefined'+link.source)
-			if(link.target === undefined) alert('target undefined')
-			return gA.node_id(link.source) + '--->' + gA.node_id(link.target)
-		}
-	) // links before nodes so that lines in SVG appear *under* nodes
+	// it was a LINK ISSUE!  you need to go over entire link importation stuff to verify it makes sense
+	let link = gA.svg.selectAll('.link').data(gA.force.links(), generateLinkId) // links before nodes so that lines in SVG appear *under* nodes
 	link.enter().append('line')
 		.classed('link', true)
 		.attr('marker-end', 'url(#arrow-head)') // add in the marker-end defined above
@@ -180,19 +179,34 @@ function updateSize() {
 }
 
 function addNodesAndLinks({ nodes=[], links=[] }) {
-	_.each(links, function(link){
-		if (link.source === undefined) die(' original link no source. link: '+JSON.stringify(link))
+	// WE HAVE TO DO THIS BECAUSE d3 force directed graph makes us use an internal array :(((
+	let gA_node_ids = _.map(gA.nodes, node => node.id)
+	let new_nodes = []
+	_.each(nodes, function(node){
+		if( node === undefined ){
+			die('before. undefined node in gA.addNodesAndLinks')
+		}else if( _.contains(gA_node_ids, node.id) ){
+			// pass, because we already have that node (but does that mean the node doesn't get updated, if somebody else changed it on the server? :(
+		}else{
+			new_nodes.push(node)
+		}
 	})
+	pushArray(gA.nodes, new_nodes)
 
-	// $.extend(gA.nodes, nodes) // but this is no good for duplicates. switch to hash soon
-	_.each(nodes, function(node){ if (node === undefined) die('before. undefined node in gA.addNodesAndLinks') })
-	pushArray(gA.nodes, nodes)
-	// $.extend(gA.links, links)
-	pushArray(gA.links, links)
-	// maybe get smart here and detect whether there actually was a change or not.  can d3 do this?
-	_.each(gA.links, function(link){
-		if (link.source === undefined) die('link no source. link: '+JSON.stringify(link))
+	// SAME IDEA, but for links :)
+	let gA_link_ids = _.map(gA.links, generateLinkId)
+	let new_links = []
+	_.each(links, function(link){
+		if( link === undefined ){
+			die('before. undefined link in gA.addNodesAndLinks')
+		}else if( _.contains(gA_link_ids, generateLinkId(link)) ){
+			// pass, because we already have that link
+		}else{
+			new_links.push(link)
+		}
 	})
+	pushArray(gA.links, new_links)
+
 	update()
 	_start()
 }
