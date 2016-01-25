@@ -30,16 +30,24 @@ define( [
 	user
 ){
 
+
+////////////////////////////// GLOBALS ///////////////////////////////
+let css_show_hide_array = ['#avatar', '#login-circle', '#logout-circle']
+
+
 /////////////////////////// INITIALIZATION ///////////////////////////
 let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'))
 if( is.emptyObject(user_dict) ){
+	// not logged in:
 	loginInit()
 	show('#login')
 }
 else{
-	$("#avatar").attr("src", user_dict["profile_pic"])
-	// document.getElementById("display_name").innerHTML=user_dict["id_name"] // add this back in when we have a drop down
-	show('#overlay-loggedin')
+	// logged in:
+		// $("#display_name").html(user_dict["id_name"]) // add this back in when we have a drop down
+		$("#avatar").attr("src", user_dict["profile_pic"])
+		hide('#login-circle')
+	show('#overlay')
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 
@@ -141,7 +149,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	else if( ball.command === 'load-user' ) {
 		user.init(ball.user_dict)
 		hide('#login')
-		show('#overlay-loggedin')
+		show('#overlay')
 	}
 	else if( ball.command === 'load-graph' ) {
 		let raw_graph = ball.new_graph
@@ -191,10 +199,13 @@ var oauth_url_dict = undefined
 
 $('#x').click(function() {
 	hide('#login')
-	show('#overlay-loggedout')
+		hide('#avatar')
+		hide('#logout-circle')
+		show('#login-circle')
+	show('#overlay')
 })
 $('#login-circle').click(function() {
-	hide('#overlay-loggedout')
+	hide('#overlay')
 	show('#login')
 })
 $('#login-button').click(login)
@@ -214,12 +225,7 @@ $('#logout-circle').click(logout)
 
 function login() {
 	if( !def(oauth_url_dict) ) alert('oauth login broken.')
-	// let account_type = $('#account-type').val()
 	let account_type = $('input[type=radio][name=provider]:checked').val()
-	// let username = $('#username').val()
-	// let password = $('#password').val()
-	// if any field is empty, complain
-	// if( !def(account_type) || account_type === '' || username === '' || password === '' ){
 	if( !def(account_type) || account_type === '' ){
 		if( !def(account_type) ){
 			$('.image-wrapper').addClass('invalid')
@@ -227,27 +233,18 @@ function login() {
 		if( account_type === '' ){
 			$('#social-icon-container > img').addClass('invalid')
 		}
-		// if( username === '' ){
-		// 	$('#username').addClass('invalid')
-		// }
-		// if( password === '' ){
-		// 	$('#password').addClass('invalid')
-		// }
 	} else {
-		// ws.jsend({ command: 'login', account_type: account_type, username: username, password: password })
-		// display SWoD?
 		location.href = oauth_url_dict[account_type]
 	}
 }
-
 function logout(){
 	delete_cookie()
-	hide('#overlay-loggedin')
+	hide('#overlay')
 	show('#login')
 }
 
 
-//////////////////////////// SEARCH BAR ///////////////////////////
+///////////////////////////// SEARCH BAR /////////////////////////////
 $('#search-box').keypress(function(event) { if(event.which === 13 /* Enter */) {
 	ws.jsend({ command: 'search', search_term: $('#search-box').val() })
 }})
@@ -267,7 +264,7 @@ $(document).on('node-click', function(Event){
 		object: current_node,
 	})
 	hide('svg')
-	hide('#overlay-loggedin')
+	hide('#overlay')
 	show('#node-template')
 	if( false /*mode !== 'learn'*/){
 		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
@@ -288,23 +285,32 @@ function fromBlindsToGraphAnimation(){
 function toggleToGraphAnimation() {
 	hide('#node-template')
 	show('svg')
-	show('#overlay-loggedin')
+	show('#overlay')
 	blinds.close()
 }
 
 ////////////////////////////// HELPERS //////////////////////////////
 function hide(css_selector) {
 	let $selected = $(css_selector)
-	$selected.css('height', '0')
-	$selected.css('width', '0')
-	$selected.css('overflow', 'hidden')
+	if( !_.contains(css_show_hide_array, css_selector) ){
+		$selected.css('height', '0')
+		$selected.css('width', '0')
+		$selected.css('overflow', 'hidden')
+	}else{
+		// $selected.addClass('hidden')
+		$selected.css('visibility', 'hidden')
+	}
 }
-
 function show(css_selector) { // this stuff fails for svg when using .addClass, so we can just leave show and hide stuff in the JS.
 	let $selected = $(css_selector)
-	$selected.css('height', '100%')
-	$selected.css('width', '100%')
-	$selected.css('overflow', 'scroll')
+	if( !_.contains(css_show_hide_array, css_selector) ){
+		$selected.css('height', '100%')
+		$selected.css('width', '100%')
+		$selected.css('overflow', 'scroll')
+	}else{
+		// $selected.removeClass('hidden')
+		$selected.css('visibility', 'visible')
+	}
 }
 
 function keyToDisplayKey(word, node) {

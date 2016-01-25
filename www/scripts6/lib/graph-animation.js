@@ -73,7 +73,7 @@ function init(input) {
 
 function _start() {
 	gA.force.start()
-	// gA.force.alpha(0.11) // rejiggle graph
+	gA.force.alpha(0.11) // rejiggle graph
 }
 
 function _tick(){

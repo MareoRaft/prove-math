@@ -46,8 +46,16 @@ def is_content_clean(value):
 def check_type_and_clean(value, value_type, list_of=False):
 	if list_of:
 		if type(value) is list:
+			clean_value = []
 			for el in value:
-				assert type(el) is value_type
+				if type(el) is value_type:
+					if value_type is not str or el != '': # if value_type is str, we still exclude ''
+						clean_value.append(el)
+				elif (el is None or el == '') and value_type != 'NoneType' and value_type is not None:
+					pass # ignore the blank entry
+				else:
+					raise Exception('Element '+str(el)+' is not of type '+str(value_type))
+			value = clean_value
 		elif value is None:
 			value = []
 		else:
@@ -218,9 +226,9 @@ class Node:
 	def intuitions(self):
 		return self._intuitions
 	@intuitions.setter
-	def intuitions(self, new_intuition):
-		assert is_content_clean(new_intuition)
-		clean_intuitions = check_type_and_clean(new_intuition, str, list_of=True)
+	def intuitions(self, new_intuitions):
+		clean_intuitions = check_type_and_clean(new_intuitions, str, list_of=True)
+		assert is_content_clean(clean_intuitions)
 		for x in clean_intuitions:
 			assert dunderscore_count(x) == 0
 		self._intuitions = clean_intuitions
@@ -244,8 +252,8 @@ class Node:
 		return self._examples
 	@examples.setter
 	def examples(self, new_examples):
-		assert is_content_clean(new_examples)
 		cleaned_examples = check_type_and_clean(new_examples, str, list_of=True)
+		assert is_content_clean(cleaned_examples)
 		for x in cleaned_examples:
 			assert dunderscore_count(x) == 0
 		self._examples = cleaned_examples
@@ -254,9 +262,9 @@ class Node:
 	def counterexamples(self):
 		return self._counterexamples
 	@counterexamples.setter
-	def counterexamples(self, new_examples):
-		assert is_content_clean(new_examples)
-		cleaned_counterexamples = check_type_and_clean(new_examples, str, list_of=True)
+	def counterexamples(self, new_counterexamples):
+		cleaned_counterexamples = check_type_and_clean(new_counterexamples, str, list_of=True)
+		assert is_content_clean(cleaned_counterexamples)
 		for x in cleaned_counterexamples:
 			assert dunderscore_count(x) == 0
 		self._counterexamples = cleaned_counterexamples
@@ -266,8 +274,8 @@ class Node:
 		return self._notes
 	@notes.setter
 	def notes(self, new_notes):
-		assert is_content_clean(new_notes)
 		cleaned_notes = check_type_and_clean(new_notes, str, list_of=True)
+		assert is_content_clean(cleaned_notes)
 		# notes may mention a synonym, so we will allow dunderscores (open to discussion)
 		self._notes = cleaned_notes
 
@@ -298,8 +306,6 @@ class Definition(Node):
 			self._plurals = []
 		else:
 			cleaned_plurals = check_type_and_clean(new_plurals, str, list_of=True)
-			for p in cleaned_plurals:
-				assert dunderscore_count(p) >= 2
 			self._plurals = cleaned_plurals
 
 	@property

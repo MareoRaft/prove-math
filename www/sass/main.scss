@@ -154,7 +154,7 @@ svg {
 	background-color: rgba( white, 0.7 );
 }
 
-#overlay-loggedin {
+#overlay {
 	@include hide;
 	z-index: 3;
 	pointer-events: none;
@@ -167,6 +167,20 @@ svg {
 	height: 60px;
 	width: 60px;
 	border-radius: 50%;
+}
+#login-circle {
+	@include side-hover-option;
+	top: 0;
+	right: 0;
+
+	height: 60px;
+	width: 60px;
+	background-color: black;
+	color: white;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 #logout-circle {
 	@include side-hover-option;
@@ -190,25 +204,6 @@ svg {
 	height: 40px;
 }
 
-#overlay-loggedout {
-	@include hide;
-	z-index: 3;
-	pointer-events: none;
-}
-#login-circle {
-	@include side-hover-option;
-	top: 0;
-	right: 0;
-
-	height: 60px;
-	width: 60px;
-	background-color: black;
-	color: white;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
 
 #section-1 {
 	background-color: pink;

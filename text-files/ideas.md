@@ -78,7 +78,3 @@ when somebody adds a new dependency, we have to verify that when we add the edge
 
 
 Simon's Foundation   ---->  apply for a grant
-
-
-
-think about eliminating uneceeaary edges permamnently in MongoDB

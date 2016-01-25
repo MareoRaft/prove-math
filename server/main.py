@@ -176,7 +176,7 @@ class SocketHandler(WebSocketHandler):
 				for new_dependency_id in new_dependency_ids:
 					print('from '+str(our_DAG.n(new_dependency_id))+' to '+str(node_obj))
 					H.add_edge(new_dependency_id, node_obj.id)
-				H.validate(node_obj.name + ' cannot depend on ' + our_DAG.n(new_dependency_id).name + ' because ' + our_DAG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
+					H.validate(node_obj.name + ' cannot depend on ' + our_DAG.n(new_dependency_id).name + ' because ' + our_DAG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
 
 				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
 				update_our_DAG()
