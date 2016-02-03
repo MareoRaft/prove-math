@@ -79,7 +79,7 @@
 							border-radius: 50%; // see below comment for why this isn't imposed on all image-wrappers always
 							background-color: index-to-color($n, 0.8) !important;
 							img {
-								@include filter(brightness(25500%));
+								@include filter(brightness(25500%)); // multiplies brightness by 255, in attempt to make image white.  However, if any of the R G B components is 0, it will remain 0!
 							}
 						}
 					}
