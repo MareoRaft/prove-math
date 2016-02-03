@@ -1,0 +1,35 @@
+GET USERS
+==============
+
+Use your target audience to come up with ideas for getting users.  Target audience should be specific.  Think of other possible target audiences.
+
+Math Majors
+-----------------
+  * RU mailing list for math majors
+  * RU graph theory and combinatorics courses --> ask professors to give info to students and/or put provemath.org on course website / syllabus
+  * meet w/ undergrad profs in general to tell them about provemath and see what they think about integrating it into a course
+  * Try spending 1 week per strategy and measure the results closely of how effective each one is
+  * social media --> see if there are MATH groups and post there
+
+Other
+-------------
+  * ads --> not a good idea at this point
+  * social media --> get a lot of followers by posting 2wice a day over the course of months
+
+
+
+KEEP USERS
+================
+
+Good first impression
+-----------------------------
+  * Landing page is welcoming, says "ProveMath", has a short blurb about what this is, and then a TUTORIAL VIDEO.  login to play!
+  * put a field for email address when ppl login.  store the address and then send a one-time email to users asking for feedback
+  * email some sort of weekly newsletter: "Here's a cool proof!" sort of thing. --> use MailChimp.
+
+
+
+GET HELP
+==============
+
+  * build up a list of ppl you want to keep in the loop over time (Zeilberger, Nidhi, Naumovitz, Kev Glynn, etc).  Send out a monthly letter to the list explaining your current progress and what challenges you are facing.
