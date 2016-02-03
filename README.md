@@ -34,5 +34,6 @@ Credits
 ------------
   - Matthew Lancellotti - founder
   - Theodore Siu - programmer
+  - Tim Naumovitz - The combinatorics material is based on his lectures
   - Ali Ismail - content
   - Sara Jeffries - provided some icons from the Noun Project
