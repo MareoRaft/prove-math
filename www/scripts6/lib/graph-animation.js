@@ -73,7 +73,7 @@ function init(input) {
 
 function _start() {
 	gA.force.start()
-	// gA.force.alpha(0.11) // rejiggle graph
+	gA.force.alpha(0.11) // rejiggle graph
 }
 
 function _tick(){
@@ -149,6 +149,7 @@ function mousedown(node) {
 	node.time_before = getShortTime(new Date())
 	node.client_x_before = d3.event.clientX
 	node.client_y_before = d3.event.clientY
+	// d3.event.stopPropagation() // need cancelBubble for MS
 }
 function mouseup(node) {
 	if( mod(getShortTime(new Date()) - node.time_before, 60) < 0.85

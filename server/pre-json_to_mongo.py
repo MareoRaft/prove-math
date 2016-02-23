@@ -18,10 +18,6 @@ collection = input('Which collection should we store the nodes in? (nodes): ')
 if collection == '':
 	collection = 'nodes'
 db_nodes = Mongo("provemath", collection)
-collection = input('Which collection should we store the edges in? (edges): ')
-if collection == '':
-	collection = 'edges'
-db_edges = Mongo("provemath", collection)
 
 nodes = dict() # this is just to keep track of what we do and do not add to the DB.  A smarter way would be to do away with this completely and check mongo directly.
 for pre_node in new_data_dictionary['nodes']:
@@ -48,13 +44,6 @@ for pre_node in new_data_dictionary['nodes']:
 			})
 			nodes[dependency_node.id] = dependency_node
 			db_nodes.insert_one(dependency_node.__dict__)
-		db_edges.insert_one({
-			"source": node.dependency_ids[i],
-			"target": node.id,
-			"_id": 'SOURCE:' + node.dependency_ids[i] + ',' + 'TARGET:' + node.id,
-			"source_name": node.dependencies[i],
-			"target_name": node.name,
-		})
 
 
 print('Transfer complete!!!!')

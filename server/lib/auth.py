@@ -17,11 +17,10 @@ linkedin_client_secret = secret_array[2]
 github_client_secret = secret_array[3]
 
 ############################## Methods ##################################
-def auth_url_dict():
+def auth_url_dict(host):
 	url_dict = {}
-	# for provider_name, provider in provider_dict.items():
 	for provider_name in provider_dict.keys():
-		url_dict[provider_name] = get_new_provider(provider_name).auth_url
+		url_dict[provider_name] = get_new_provider(provider_name, host=host).auth_url
 	return url_dict
 
 def facebook_id_and_pic(self, user_info, user_dict):
@@ -38,7 +37,7 @@ def linkedin_id_and_pic(self, user_info, user_dict):
 
 def google_id_and_pic(self, user_info, user_dict):
 	user_dict['id_name']=user_info['given_name']
-	url=self.oauth_obj.get('https://www.googleapis.com/plus/v1/people/'+user_info['id']+'?fields=image&key='+provider.oauth_obj.client_id)
+	url=self.oauth_obj.get('https://www.googleapis.com/plus/v1/people/'+user_info['id']+'?fields=image&key='+self.oauth_obj.client_id)
 	user_dict['profile_pic']=json.loads(url.text)['image']['url']
 	return user_dict
 
@@ -54,7 +53,13 @@ class Provider:
 
 
 	def __init__(self, name, client_id, redirect_uri, auth_url, token_url, request_url, secret, id_and_picture,
-				 compliance_fix=(lambda x: x), scope=None, auth_url_params={}, request_format='json'):
+				 compliance_fix=(lambda x: x), scope=None, auth_url_params={}, request_format='json', host='localhost'):
+
+		print('HOST IS: '+host)
+		print('REDIRECT URI IS: '+str(redirect_uri))
+		print()
+		if redirect_uri is not None:
+			redirect_uri = redirect_uri.replace(r'localhost', host)
 
 		oauth2session = OAuth2Session(
 			client_id=client_id,
@@ -71,18 +76,6 @@ class Provider:
 		self.request_url = request_url
 		self.request_format = request_format
 		self.id_and_picture = lambda user_info, user_dict: id_and_picture(self, user_info, user_dict)
-
-		# self.is_token_fetched = False
-
-	# def fetch_token(self): # not sure about this.  this would tie the provider to one persons account.  Then the provider could never be used for other people.
-	# 	if self.is_token_fetched:
-	# 		raise Exception('You should only fetch the token once.')
-	# 	self.oauth_obj.fetch_token(
-	# 		self.token_url,
-	# 		client_secret=self.secret,
-	# 		authorization_response=redirect_response
-	# 	)
-	# 	self.is_token_fetched = True
 
 	@property
 	def auth_url(self):
@@ -106,7 +99,7 @@ provider_dict = {
 		'request_url': 'https://graph.facebook.com/me?',
 		'secret': fb_client_secret,
 		'compliance_fix': facebook_compliance_fix,
-		'id_and_picture': facebook_id_and_pic
+		'id_and_picture': facebook_id_and_pic,
 	},
 	'github': {
 		'name': 'github',
@@ -116,7 +109,7 @@ provider_dict = {
 		'token_url': 'https://github.com/login/oauth/access_token',
 		'request_url': 'https://api.github.com/user',
 		'secret': github_client_secret,
-		'id_and_picture': github_id_and_pic
+		'id_and_picture': github_id_and_pic,
 	},
 	'linkedin': {
 		'name': 'linkedin',
@@ -128,7 +121,7 @@ provider_dict = {
 		'secret': linkedin_client_secret,
 		'compliance_fix': linkedin_compliance_fix,
 		'request_format': 'xml',
-		'id_and_picture': linkedin_id_and_pic
+		'id_and_picture': linkedin_id_and_pic,
 	},
 	'google': {
 		'name': 'google',
@@ -146,16 +139,11 @@ provider_dict = {
 			'access_type': "offline",
 			'approval_prompt': "force",
 		},
-		'id_and_picture': google_id_and_pic
+		'id_and_picture': google_id_and_pic,
 	},
 }
 
-# def get_provider(name):
-# 	if name == 'fb':
-# 		name = 'facebook'
-# 	return provider_dict[name]
-
-def get_new_provider(name):
+def get_new_provider(name, host):
 	if name == 'fb':
 		name = 'facebook'
-	return Provider(**provider_dict[name])
+	return Provider(host=host, **provider_dict[name])

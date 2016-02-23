@@ -15,8 +15,6 @@ from tornado.websocket import WebSocketHandler
 # other
 from tornado.web import Application
 from tornado.web import Finish
-#from tornado.escape import xhtml_escape
-# from tornado.log import enable_pretty_logging
 
 from networkx.readwrite import json_graph
 from lib.helper import strip_underscores
@@ -77,7 +75,7 @@ class IndexHandler(BaseHandler):
 			print('got params!!!!')
 			redirect_response = 'https://' + self.request.host + \
 				'/index?method=' + method + '&code=' + authorization_code
-			provider = auth.get_new_provider(method)
+			provider = auth.get_new_provider(method, host=self.request.host)
 			try:
 				provider.oauth_obj.fetch_token(
 					provider.token_url,
@@ -94,12 +92,11 @@ class IndexHandler(BaseHandler):
 					account_id = request_root.find('id').text
 				user = User({'account_type': provider.name,
 						 'account_id': account_id})
-				#print("logged_in.dict is: " + str(user.dict))
 				user_dict = provider.id_and_picture(request_root, user.dict)
 				print("logged in dict is:"+ str(user_dict)+"\n")
 				self.set_secure_cookie("mycookie", json.dumps(user_dict))
 			except Exception as e:
-				print('Login failed')
+				print('Login failed.  Exception message below:')
 				print(e) # user_dict is still {}
 
 		self.render("../www/index.html",
@@ -127,7 +124,7 @@ class SocketHandler(WebSocketHandler):
 	def open(self):
 		self.write_message({
 			'command': 'populate-oauth-urls',
-			'url_dict': auth.auth_url_dict(),
+			'url_dict': auth.auth_url_dict(host=self.request.host),
 		})
 	def on_message(self, message):
 		print('got message: ' + message+"\n")
@@ -176,7 +173,7 @@ class SocketHandler(WebSocketHandler):
 				for new_dependency_id in new_dependency_ids:
 					print('from '+str(our_DAG.n(new_dependency_id))+' to '+str(node_obj))
 					H.add_edge(new_dependency_id, node_obj.id)
-				H.validate(node_obj.name + ' cannot depend on ' + our_DAG.n(new_dependency_id).name + ' because ' + our_DAG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
+					H.validate(node_obj.name + ' cannot depend on ' + our_DAG.n(new_dependency_id).name + ' because ' + our_DAG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
 
 				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
 				update_our_DAG()

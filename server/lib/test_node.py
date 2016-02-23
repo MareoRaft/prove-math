@@ -182,7 +182,7 @@ def test_definition_setters_getters():
   assert node.type == "definition"
   assert node.importance == 1
   assert node.description == "A __triangle__ is a 3 sided polygon."
-  assert node.plural == "__triangles__"
+  assert node.plurals == ["__triangles__"]
   assert node.examples == ["Long Long Long Example 1", "text text text Example 2"]
 
 
@@ -205,6 +205,22 @@ def test_definition_bad_attributes():
   with pytest.raises(ValueError):
     node.type = "Something Weird"
 
+def test_definition_blank_elements_in_lists():
+  sample_definition = {
+    "name": "Triangle",
+    "weight": 1,
+    "definition": "A __triangle__ is a 3 sided polygon.",
+    "intuition": "A simple explanation",
+    "examples": ["Long Long Long Example 1", "text text text Example 2", "", '', None],
+    "plural": ["one", "", "two"],
+  }
+  node = create_appropriate_node(sample_definition)
+
+  assert node.intuitions == ["A simple explanation"]
+  assert node.examples == ["Long Long Long Example 1", "text text text Example 2"]
+  assert node.plurals == ["one", "two"]
+
+
 ############################ DUNDERSCORE, WEIGHT TESTS ##########################################
 
 def test_definition_dunderscore_exists_content():
@@ -223,8 +239,6 @@ def test_definition_dunderscore_exists_content():
     node.description = "A triangle is a 3 sided polygon."
   with pytest.raises(AssertionError): # because we will automatically add the dunderscores to the names (of definitions) on the fly (this will be an optional setting for users, since some would not prefer the clutter of the underlines in the DAG itself
     node.name = "__DunderScore__"
-  with pytest.raises(AssertionError): # because this *should* have dunderscores
-    node.plural = "Triangles"
 
 def test_theorem_no_dunderscore():
   pre_node = {
