@@ -1,5 +1,6 @@
 __pycache__/
 .sass-cache/
+.cache/
 www/scripts/main.js
 www/scripts/main-optimized.min.js
 www/scripts/tests.js

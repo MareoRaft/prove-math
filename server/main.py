@@ -327,4 +327,3 @@ if __name__ == "__main__":
 
 	# 3. launch!
 	make_app_and_start_listening()
-	# This is a test comment!

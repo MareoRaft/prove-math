@@ -116,28 +116,28 @@ def test_remove_redundant_edges():
 # 	# edge cases, empty graph?  null graph?
 
 
-def test_short_sighted_deepest_successors():
-	G = nx.DAG()
-	G.add_path(['a', 'b', 'c'])
-	axioms = ['a']
-	nodes = ['a', 'b']
-	assert G.short_sighted_deepest_successors(axioms, nodes) == {2: ['c']}
-
-	G = nx.DAG()
-	G.add_path(['a', 'b', 'c'])
-	G.add_path(['s', 't', 'c'])
-	axioms = ['a', 't']
-	nodes = ['a', 't']
-	assert G.short_sighted_deepest_successors(axioms, nodes) == {1: ['b', 'c']}
-
-	G = nx.DAG()
-	G.add_path(['a', 'b', 'c'])
-	G.add_path(['s', 't', 'c'])
-	G.add_path(['p', 't', 'a'])
-	axioms = ['a', 's']
-	nodes = ['p', 'a', 'b']
-	assert G.short_sighted_deepest_successors(axioms, nodes) == {
-		1: ['t'],
-		2: ['c']
-	}
+# def test_short_sighted_deepest_successors():
+	# G = nx.DAG()
+	# G.add_path(['a', 'b', 'c'])
+	# axioms = ['a']
+	# nodes = ['a', 'b']
+	# assert G.short_sighted_deepest_successors(axioms, nodes) == {2: ['c']}
+# 
+	# G = nx.DAG()
+	# G.add_path(['a', 'b', 'c'])
+	# G.add_path(['s', 't', 'c'])
+	# axioms = ['a', 't']
+	# nodes = ['a', 't']
+	# assert G.short_sighted_deepest_successors(axioms, nodes) == {1: ['b', 'c']}
+# 
+	# G = nx.DAG()
+	# G.add_path(['a', 'b', 'c'])
+	# G.add_path(['s', 't', 'c'])
+	# G.add_path(['p', 't', 'a'])
+	# axioms = ['a', 's']
+	# nodes = ['p', 'a', 'b']
+	# assert G.short_sighted_deepest_successors(axioms, nodes) == {
+		# 1: ['t'],
+		# 2: ['c']
+	# }
 
