@@ -30,6 +30,12 @@ class _GraphExtended (nx.Graph):
 				self.add_node(n)
 				break
 		return n
+	
+	def n(self, node_id):
+		return self.node[node_id]["custom_object"]
+
+	def add_n(self, node):
+		self.add_node(node.id, attr_dict={"custom_object": node})
 
 for key, value in _GraphExtended.__dict__.items():
 	try:
