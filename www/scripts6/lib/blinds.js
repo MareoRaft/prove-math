@@ -2,43 +2,40 @@ define( ["jquery", "underscore", "profile", "check-types", "graph"], function($,
 
 let blinds = {}
 
-function string_parser(){
-var string_test='Here is a test <img1> and here is a question A tree << [is]|is not>> an object and the answer is [[10]].Here is << [exists]| does not exist>> another picture <img2>. Check this one out too [[true]]'
+function string_parser(string_test){
+//var string_test='Here is a test <img1> and here is a question A tree << [is]|is not>> an object and the answer is [[10]].Here is << [exists]| does not exist>> another picture <img2>. Check this one out too [[true]]'
 
-var string_test1='There is nothing to replace here'
+//var string_test1='There is nothing to replace here'
 
 var path='path/to/the/image/'
 
 if(string_test.match(/<img[0-9]*>/)){
  var res1=string_test.match(/<img[0-9]*>/g)
- alert(res1)
  for (var i=0;i<res1.length;i++){
  im_file1=path.concat(res1[i],'.jpg').replace('<','').replace('>','')
  string_test=string_test.replace(res1[i],im_file1)
  }
 }
 
-alert(string_test)
+
 if(string_test.match(/\[\[.*\]\]/)){
  var res2 = string_test.match(/\[\[[^\]]*\]\]/gi)
- alert(res2)
  for(var i=0;i<res2.length;i++){
  string_test=string_test.replace(res2[i],'test2')
  }
 }
 
-alert(string_test)
+
 
 
 if(string_test.match(/<<.*>>/g)){ 
  var res3 = string_test.match((/<<[^>]*>>/gi))
- alert(res3)
  for (var i=0;i<res3.length;i++){
  var choice=res3[i].replace('<<','').replace('>>','').split("|")
  string_test=string_test.replace(res3[i],choice)
  }
 }
-alert(string_test)
+
 
 }
 
