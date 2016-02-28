@@ -18,12 +18,6 @@ class _DAG (nx.DiGraph):
 			raise TypeError('Not a Directed A(dir)cyclcic Graph! ' + str(error_message))
 		return True
 
-	def n(self, node_id):
-		return self.node[node_id]["custom_object"]
-
-	def add_n(self, node):
-		self.add_node(node.id, attr_dict={"custom_object": node})
-
 	def source(self): # finds any source in Directed A(dir)cyclic Graph
 		self.validate() # it's important that there are no cycles!
 		if not self.nodes():

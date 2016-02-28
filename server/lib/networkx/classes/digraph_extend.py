@@ -139,6 +139,25 @@ class _DiGraphExtended (nx.DiGraph):
 				hanging_absolute_dominion.append(candidate)
 		return hanging_absolute_dominion + nodes
 
+	def common_ancestors(self, nbunchA, nbunchB):
+		return set.intersection(self.ancestors(nbunchA), self.ancestors(nbunchB))
+
+	def most_important(self, number, nodes):
+		if number <= 0:
+			raise ValueError('Must give number > 0')
+		if len(nodes) < number:
+			return nodes
+			#or raise ValueError('Must provide at least <number> nodes')?
+		else:
+			#sort nodes by importance and return the first <number> of them
+			important_nodes = sorted(nodes, key=lambda node: -1*(self.n(node).importance))
+			return important_nodes[:number]
+				
+
+	def unlearned_dependency_tree(self, target, learned_nodes):
+		dependencies = self.ancestors(target)
+		return dependencies - set(learned_nodes)
+
 for key, value in _DiGraphExtended.__dict__.items():
 	try:
 		setattr(nx.DiGraph, key, value)

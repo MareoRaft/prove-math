@@ -2,6 +2,9 @@
 import networkx as nx
 
 from lib.networkx.classes import digraph_extend
+#for test_most_important:
+#from lib.networkx.classes import dag
+from lib.node import create_appropriate_node, Node
 
 #################################### MAIN #####################################
 def test_is_nonnull(): # this is here really to make sure DiGraph inherited is_nonnull from Graph
@@ -175,5 +178,90 @@ def test_multiple_sources_shortest_path_length():
 		'x': 2,
 	}
 
+def test_common_ancestors():
+	#remember to try other edge cases
+	#possibly reimplement for better efficiency
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'x'])
+	DG.add_path(['b', 'y'])
+	d = DG.common_ancestors('x', 'y')
+	assert d == set([])
+	
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'x'])
+	DG.add_node('y')
+	d = DG.common_ancestors('x', 'y')
+	assert d == set([])
+	
+	DG = nx.DiGraph()
+	DG.add_node('x')
+	DG.add_node('y')
+	d = DG.common_ancestors('x', 'y')
+	assert d == set([])
+	
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'x'])
+	DG.add_path(['b', 'x'])
+	DG.add_path(['b', 'y'])
+	DG.add_path(['c', 'y'])
+	d = DG.common_ancestors('x', 'y')
+	assert d == set(['b']) #{'b'} but using {} for empty set will give a dict, use set() instead
+	
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'x'])
+	DG.add_path(['b', 'x'])
+	DG.add_path(['b', 'y'])
+	DG.add_path(['c', 'y'])
+	DG.add_path(['d', 'b'])
+	d = DG.common_ancestors('x', 'y')
+	assert d == set(['b','d'])
+	
+	#test empty set as an arg
+	#test sets of nodes as args
+	#test node that doesn't exist as arg
 
+def test_most_important():
+#prenodes need "type","def","description","name","importance"
+	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"K","importance":2}
+	# a = create_appropriate_node(pre_a)
+	a = Node(pre_a)
+	# pre_b = {"type":"def","content":"This is node b","importance":5}
+	# b = create_appropriate_node(pre_b)
+	# pre_c = {"type":"def","content":"This is node c","importance":8}
+	# c = create_appropriate_node(pre_c)
+	# pre_d = {"type":"def","content":"This is node d","importance":8}
+	# d = create_appropriate_node(pre_d)
+	# 
+	DG = nx.DiGraph()
+	DG.add_n(a)
+#	assert DG.most
+	# DG.add_n(b)
+	# DG.add_n(c)
+	# DG.add_n(d)
+# 
+
+def test_unlearned_dependency_tree():
+	DG = nx.DiGraph()
+
+	#need to fix this one!
+#	DG.add_path(['l1','t'])
+#	assert DG.unlearned_dependency_tree('t',['11']) == set([])
+	
+	DG.add_path(['l1', 'u1', 't']) #learned, unlearned, target
+	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1'])
+	
+	assert DG.unlearned_dependency_tree('t',[]) == set(['l1','u1'])
+#	assert DG.unlearned_dependency_tree('',['l1') == ???
+	
+	DG.add_path(['u1', 'u2', 'u1'])
+	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1', 'u2'])
+	assert DG.unlearned_dependency_tree('t', []) == set(['u1', 'u2', 'l1'])
+	assert DG.unlearned_dependency_tree('t', ['l1', 'u1']) == set(['u2'])
+	DG.remove_edge('u2','u1')
+	assert DG.unlearned_dependency_tree('u1', ['l1']) == set([])
+	DG.add_path(['l1','u2','t'])
+	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1','u2'])
+	
+	#test with more than one learned node
+	#test with more than one target?
 

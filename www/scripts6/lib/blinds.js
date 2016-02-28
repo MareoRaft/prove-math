@@ -1,6 +1,45 @@
 define( ["jquery", "underscore", "profile", "check-types", "graph"], function($, _, undefined, is, graph){
 
 let blinds = {}
+
+function string_parser(string_test){
+//var string_test='Here is a test <img1> and here is a question A tree << [is]|is not>> an object and the answer is [[10]].Here is << [exists]| does not exist>> another picture <img2>. Check this one out too [[true]]'
+
+//var string_test1='There is nothing to replace here'
+
+var path='path/to/the/image/'
+
+if(string_test.match(/<img[0-9]*>/)){
+ var res1=string_test.match(/<img[0-9]*>/g)
+ for (var i=0;i<res1.length;i++){
+ im_file1=path.concat(res1[i],'.jpg').replace('<','').replace('>','')
+ string_test=string_test.replace(res1[i],im_file1)
+ }
+}
+
+
+if(string_test.match(/\[\[.*\]\]/)){
+ var res2 = string_test.match(/\[\[[^\]]*\]\]/gi)
+ for(var i=0;i<res2.length;i++){
+ string_test=string_test.replace(res2[i],'test2')
+ }
+}
+
+
+
+
+if(string_test.match(/<<.*>>/g)){ 
+ var res3 = string_test.match((/<<[^>]*>>/gi))
+ for (var i=0;i<res3.length;i++){
+ var choice=res3[i].replace('<<','').replace('>>','').split("|")
+ string_test=string_test.replace(res3[i],choice)
+ }
+}
+
+
+}
+
+
 function init(input) {
 	blinds = _.defaults(input, {
 		window_id: 'blinds',
