@@ -66,8 +66,8 @@ function nodesAndPrefs() {}
 
 function identifier(){
 	return {
-		account_type: user.account.type,
-		account_id: user.account.id,
+		type: user.account.type,
+		id: user.account.id,
 	}
 }
 

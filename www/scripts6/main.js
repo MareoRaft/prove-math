@@ -37,6 +37,8 @@ let css_show_hide_array = ['#avatar', '#login-circle', '#logout-circle']
 
 /////////////////////////// INITIALIZATION ///////////////////////////
 let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'))
+log('user dict is...')
+logj(user_dict)
 if( is.emptyObject(user_dict) ){
 	// not logged in:
 	loginInit()

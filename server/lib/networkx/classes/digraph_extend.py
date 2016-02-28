@@ -22,7 +22,7 @@ def create_t_pointing_from_target(DG, target):
 		DG.add_edge(node, t)
 	return t
 
-def shortest_path_helper(DG, source, target):
+def shortest_path_helper(DG, source, target): # the REASON why this function is NEEDED is because it allows "source" and "target" to be SETS (or any iterables) of nodes.  This enables our shortest path function to find the shortest path between any two SETS of nodes! :)
 	s = create_s_pointing_to_source(DG, source)
 	t = create_t_pointing_from_target(DG, target)
 

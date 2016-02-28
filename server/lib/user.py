@@ -7,17 +7,19 @@ class User: # there's really no point in storing users ephemerally, other than t
 	USERS = Mongo("provemath", "users")
 
 	def __init__(self, initial_identifier):
-		if initial_identifier['account_type'] in ['google', 'facebook', 'github', 'linkedin']:
-			self.account_type = initial_identifier['account_type']
-			self.account_id = initial_identifier['account_id']
+		if initial_identifier['type'] in ['google', 'facebook', 'github', 'linkedin']:
+			self.account_type = initial_identifier['type']
+			self.account_id = initial_identifier['id']
 			self.logged_in = True
 		else:
+			self.account_type = 'local'
+			self.account_id = 'local account, no id set yet'
 			self.logged_in = False
 
 	@property
 	def dict(self):
 		# if user exists, retrieve their dictionary
-		user_dicts = list(self.USERS.find(self._identifier_dict()))
+		user_dicts = list(self.USERS.find(self._mongo_identifier_dict()))
 		user_dict = None
 		if len(user_dicts) > 1:
 			raise Exception('REDUNDANT USER INFORMATION!')
@@ -29,9 +31,12 @@ class User: # there's really no point in storing users ephemerally, other than t
 			self.USERS.insert_one(user_dict)
 		del user_dict['_id'] # delete the ObjectId('94569463') thing because it is not JSON serializable
 		return user_dict
-			
 
-	def _identifier_dict(self):
+	@property
+	def identifier(self):
+		return self.dict['account']
+
+	def _mongo_identifier_dict(self):
 		return {
 			'account.type': self.account_type,
 			'account.id': self.account_id,
@@ -52,12 +57,12 @@ class User: # there's really no point in storing users ephemerally, other than t
 		}
 
 	def learn_node(self, node_id):
-		self.USERS.update(self._identifier_dict(), {'$addToSet': {'learned_node_ids': node_id}}, False)
+		self.USERS.update(self._mongo_identifier_dict(), {'$addToSet': {'learned_node_ids': node_id}}, False)
 		# send info down to all other clients (if user is logged in on multiple computers)
 		# tornado.websockethandler.send_to_multiple_accounts({ command: 'learn-node', node_id: node_id })
 
 	def unlearn_node(self, node_id):
-		self.USERS.update(self._identifier_dict(), {'$pull': {'learned_node_ids': node_id}}, False)
+		self.USERS.update(self._mongo_identifier_dict(), {'$pull': {'learned_node_ids': node_id}}, False)
 		# send info down to other clients....
 
 	def set_pref(self, pref_dict):
@@ -68,5 +73,5 @@ class User: # there's really no point in storing users ephemerally, other than t
 			value = pref_dict[key]
 			# same thing, but replace current pref value in database with pref_dict value
 			# for example, pref_dict could be { underline_definitions: true }
-			self.USERS.update(self._identifier_dict(), {'$set': {('prefs.'+key): value}}, False)
+			self.USERS.update(self._mongo_identifier_dict(), {'$set': {('prefs.'+key): value}}, False)
 			one_pref_set = True

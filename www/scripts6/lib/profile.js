@@ -39,4 +39,11 @@ window.def = function(input) {
 	return typeof(input) !== 'undefined'
 }
 
+window.log = function(thing) {
+	console.log(thing)
+}
+window.logj = function(thing) {
+	log(JSON.stringify(thing))
+}
+
 }) // end of define
