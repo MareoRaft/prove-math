@@ -27,6 +27,11 @@ from lib import user
 from lib import auth
 from lib import node
 import random
+import inspect
+import traceback
+import logging
+import chromalog
+from chromalog.mark.helpers.simple import important
 # this and relevant code should eventually be migrated into auth module
 import xml.etree.ElementTree as ET
 
@@ -65,11 +70,17 @@ class IndexHandler(BaseHandler):
 
 	def get(self):
 		user_dict = {}
-
 		method = self.get_argument("method", default=None, strip=False)
 		authorization_code = self.get_argument("code", default=None, strip=False)
-		if self.get_secure_cookie("mycookie"):
-			user_dict=json.loads(str(self.get_secure_cookie("mycookie"), 'UTF-8'))
+
+		cookie = self.get_secure_cookie("mycookie")
+		if cookie:
+			print('COOKIE IS: '+str(cookie))
+			user_identifier = json.loads(str(cookie, 'UTF-8'))
+			print('user identifier IS: '+str(user_identifier))
+			user = User(user_identifier)
+			user_dict = user.dict # WHAT ABOUT THE PICTURE? maybe...
+			# user_dict = provider.id_and_picture(request_root, user.dict)
 
 		elif method is not None and authorization_code is not None:
 			print('got params!!!!')
@@ -90,14 +101,22 @@ class IndexHandler(BaseHandler):
 				else:
 					request_root = ET.fromstring(user_info.text)
 					account_id = request_root.find('id').text
-				user = User({'account_type': provider.name,
-						 'account_id': account_id})
+				user = User({
+					'type': provider.name,
+					'id': account_id
+				})
 				user_dict = provider.id_and_picture(request_root, user.dict)
 				print("logged in dict is:"+ str(user_dict)+"\n")
-				self.set_secure_cookie("mycookie", json.dumps(user_dict))
+				self.set_secure_cookie("mycookie", json.dumps(user.identifier))
 			except Exception as e:
 				print('Login failed.  Exception message below:')
 				print(e) # user_dict is still {}
+				# inspect.stack()
+				(typ, val, tb) = sys.exc_info()
+				traceback.print_tb(tb)
+
+		else:
+			pass # user not logged in
 
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
@@ -127,7 +146,8 @@ class SocketHandler(WebSocketHandler):
 			'url_dict': auth.auth_url_dict(host=self.request.host),
 		})
 	def on_message(self, message):
-		print('got message: ' + message+"\n")
+		log.warning('got message: ' + message+"\n")
+		print('GOT')
 		ball = json.loads(message)
 		user = User(ball['identifier'])
 
@@ -230,7 +250,8 @@ class SocketHandler(WebSocketHandler):
 
 	def send_absolute_dominion(self, ball, user):
 		if user.logged_in:
-			print('LOGGED IN')
+			print('LOGGED IN AS')
+			print(str(user.identifier))
 			learned_ids = user.dict['learned_node_ids']
 			ids = list(set(learned_ids).union(set(ball['client_node_ids'])))
 			if ids:
@@ -243,6 +264,7 @@ class SocketHandler(WebSocketHandler):
 				H = our_DAG.subgraph(self.starting_nodes())
 		else:
 			print('NOT LOGGED IN')
+			print(str(user.dict))
 			# same line as above
 			H = our_DAG.subgraph(self.starting_nodes())
 
@@ -315,6 +337,15 @@ def update_our_DAG():
 	our_DAG.remove_redundant_edges()
 
 if __name__ == "__main__":
+	# setup logging:
+	# chromalog.basicConfig(level=logging.DEBUG)
+	chromalog.basicConfig(level=logging.DEBUG, format='%(asctime)s   %(filename)s line %(lineno)d   %(levelname)s:   %(message)s', datefmt='%Y-%m-%d at %I:%M %p and %S secs')
+	# log.basicConfig(filename='main.py.log', level=log.DEBUG) # format='%(asctime)s   %(filename)s line %(lineno)d   %(levelname)s:   %(message)s', datefmt='%Y-%m-%d at %I:%M %p and %S secs')
+	log = logging.getLogger()
+	log.info('this is a regular info message')
+	log.debug('this message is for %s purposes', important('debugging'))
+	log.warning('this message is some warning')
+
 	# 0. create a global mongo object for later use (for upserts in the future)
 	our_mongo = Mongo("provemath", "nodes")
 

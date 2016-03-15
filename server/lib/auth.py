@@ -24,26 +24,26 @@ def auth_url_dict(host):
 	return url_dict
 
 def facebook_id_and_pic(self, user_info, user_dict):
-	r=json.loads(self.oauth_obj.get('https://graph.facebook.com/me?fields=first_name').text)
-	user_dict['id_name']=r['first_name']
-	user_dict['profile_pic']='https://graph.facebook.com/'+r['id']+'/picture'
+	r = json.loads(self.oauth_obj.get('https://graph.facebook.com/me?fields = first_name').text)
+	user_dict['id_name'] = r['first_name']
+	user_dict['profile_pic'] = 'https://graph.facebook.com/'+r['id']+'/picture'
 	return user_dict
 
 def linkedin_id_and_pic(self, user_info, user_dict):
-	user_dict['id_name']=user_info.find('first-name').text
-	pic_content=self.oauth_obj.get('https://api.linkedin.com/v1/people/~/picture-url')
-	user_dict['profile_pic']= ET.fromstring(pic_content.text).text
+	user_dict['id_name'] = user_info.find('first-name').text
+	pic_content = self.oauth_obj.get('https://api.linkedin.com/v1/people/~/picture-url')
+	user_dict['profile_pic'] = ET.fromstring(pic_content.text).text
 	return user_dict
 
 def google_id_and_pic(self, user_info, user_dict):
-	user_dict['id_name']=user_info['given_name']
-	url=self.oauth_obj.get('https://www.googleapis.com/plus/v1/people/'+user_info['id']+'?fields=image&key='+self.oauth_obj.client_id)
-	user_dict['profile_pic']=json.loads(url.text)['image']['url']
+	user_dict['id_name'] = user_info['given_name']
+	url = self.oauth_obj.get('https://www.googleapis.com/plus/v1/people/'+user_info['id']+'?fields = image&key = '+self.oauth_obj.client_id)
+	user_dict['profile_pic'] = json.loads(url.text)['image']['url']
 	return user_dict
 
 def github_id_and_pic(self, user_info, user_dict):
-	user_dict['id_name']=user_info['login']
-	user_dict['profile_pic']=user_info['avatar_url']
+	user_dict['id_name'] = user_info['login']
+	user_dict['profile_pic'] = user_info['avatar_url']
 	return user_dict
 
 ################################## Provider ###################################
@@ -55,9 +55,6 @@ class Provider:
 	def __init__(self, name, client_id, redirect_uri, auth_url, token_url, request_url, secret, id_and_picture,
 				 compliance_fix=(lambda x: x), scope=None, auth_url_params={}, request_format='json', host='localhost'):
 
-		print('HOST IS: '+host)
-		print('REDIRECT URI IS: '+str(redirect_uri))
-		print()
 		if redirect_uri is not None:
 			redirect_uri = redirect_uri.replace(r'localhost', host)
 
