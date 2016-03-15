@@ -13,6 +13,7 @@ def string_unique():
 
 class _GraphExtended (nx.Graph):
 
+	ACCEPTABLE_ITERABLES = [list, set]	#dict, nx.Graph later
 
 	def is_nonnull(self):
 		return bool(self.nodes())
@@ -36,6 +37,9 @@ class _GraphExtended (nx.Graph):
 
 	def add_n(self, node):
 		self.add_node(node.id, attr_dict={"custom_object": node})
+	
+	def acceptable_iterable(self, nbunch):
+		return type(nbunch) in self.ACCEPTABLE_ITERABLES
 
 for key, value in _GraphExtended.__dict__.items():
 	try:
