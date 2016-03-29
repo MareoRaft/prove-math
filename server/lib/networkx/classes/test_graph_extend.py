@@ -34,4 +34,11 @@ def test_add_node_unique():
 		G.add_node_unique()
 	assert len(G.nodes()) == 1000
 
-
+def test_acceptable_iterable():
+	G = nx.Graph()
+	assert G.acceptable_iterable('single_node') == False
+	assert G.acceptable_iterable(['this', 'is', 'a', 'list']) == True 
+	assert G.acceptable_iterable({'this', 'is', 'a', 'set'}) == True
+	assert G.acceptable_iterable({'test': 'dict'}) == False
+	assert G.acceptable_iterable(1) == False
+	

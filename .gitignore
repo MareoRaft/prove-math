@@ -9,9 +9,11 @@ server/data/*.json
 ignore/
 email-backup/
 octave-core
-# emacs temp files"
+# emacs temp files:
 *~
 #*#
+# mergetool files:
+*.orig
 
 # python things
 __pycache__/

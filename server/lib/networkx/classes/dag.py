@@ -70,7 +70,7 @@ class _DAG (nx.DiGraph):
 	#			unlearned_nodes = unlearned_nodes + self.unlearned_dependency_tree(predecessor)
 	#	return unlearned_nodes
 
-	#def short_sighted_depth_first_unlearned_source(self, axioms, learned_nodes): # not necessarily a source, as it is
+###	#def short_sighted_depth_first_unlearned_source(self, axioms, learned_nodes): # not necessarily a source, as it is
 	#	if learned_nodes not a subset of self.nodes():
 	#		raise Exception('Nodes not part of graph.')
 	#	distance_to_successors = self.short_sighted_deepest_successors(axioms, learned_nodes)

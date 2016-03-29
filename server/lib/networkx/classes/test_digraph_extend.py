@@ -1,5 +1,6 @@
 ################################## IMPORTS ####################################
 import networkx as nx
+import pytest
 
 from lib.networkx.classes import digraph_extend
 #for test_most_important:
@@ -91,33 +92,170 @@ def test_shortest_anydirectional_path():
 
 def test_ancestors():
 	DG = nx.DiGraph()
-	DG.add_edges_from([
-		['y', 'c'], ['c', 'L'],
-		['t', 'c'], ['c', 'd'],
-	])
-	assert DG.ancestors('t') == set() # b/c it typically returns a SET, it will return the empty set when there are no ancestors
+	DG.add_path(['x', 'y', 'z'])
+	
+	#testing nonexistent inputs:
+	with pytest.raises(nx.NetworkXError):
+		DG.ancestors('NotANode')
+	with pytest.raises(nx.NetworkXError):
+		DG.ancestors(['NotANode'])
+	with pytest.raises(nx.NetworkXError):
+		DG.ancestors(['x', 'NotANode', 'z'])
+	with pytest.raises(ValueError):
+		DG.ancestors([])
+	
+	#existing inputs:
+	assert DG.ancestors('z') == {'x', 'y'}
+	assert DG.ancestors('y') == {'x'}
+	assert DG.ancestors('x') == set()
+	assert DG.ancestors(['x']) == set()
 
-def test_descendants():
+	DG = nx.DiGraph()
+	DG.add_path(['x', 'y', 'z'])
+	DG.add_edges_from([
+		['a', 'x'], ['b', 'y'], ['c', 'z']
+	])
+	assert DG.ancestors('z') == {'y', 'x', 'c', 'b', 'a'}
+	assert DG.ancestors('y') == {'x', 'b', 'a'}
+	assert DG.ancestors(['y', 'x']) == {'b', 'a'}
+	
+	DG = nx.DiGraph()
+	DG.add_path(['x', 'y', 'z'])
+	DG.add_path(['a', 'b', 'c'])	#disconnected paths
+	assert DG.ancestors(['c', 'z']) == {'b', 'a', 'y', 'x'}
+	assert DG.ancestors(['a', 'x']) == set()
+	assert DG.ancestors(['a', 'y']) == {'x'}
+	DG.add_path(['x', 'b'])
+	assert DG.ancestors(['c', 'z']) == {'b', 'a', 'y', 'x'}	
+
+def test_common_ancestors():
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'x'])
+	DG.add_path(['b', 'y'])
+
+	#testing nonexistent inputs:
+	with pytest.raises(nx.NetworkXError):
+		DG.common_ancestors(['NotANode'], 'y')
+	with pytest.raises(nx.NetworkXError):
+		DG.common_ancestors('NotANode','StillNotANode')
+	with pytest.raises(ValueError):
+		DG.common_ancestors([],'y')
+	#existing inputs:
+	assert DG.common_ancestors('x', 'y') == set()
+	assert DG.common_ancestors(['x', 'y'], 'x') == {'a'}
+
+	DG = nx.DiGraph()
+	DG.add_nodes_from(['x', 'y'])
+	assert DG.common_ancestors('x', 'y') == set()
+	
+	DG = nx.DiGraph()	
+	DG.add_edges_from([['a', 'x'], ['c', 'y']])
+	assert DG.common_ancestors('x', 'y') == set()
+
 	DG = nx.DiGraph()
 	DG.add_edges_from([
-		['y', 'c'], ['c', 'L'],
-		['t', 'c'], ['c', 'd'],
+		['a', 'x'], ['b', 'x'], ['b', 'y'], ['c', 'y']
 	])
-	assert DG.descendants('t') == {'c', 'L', 'd'}
+	assert DG.common_ancestors('x', 'y') == {'b'}
+	
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['a', 'x'], ['b', 'x'], 
+		['b', 'y'], ['c', 'y'], 
+		['d', 'b']
+	])
+	assert DG.common_ancestors('x', 'y') == {'b','d'}
+	
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['a', 'x'], ['b', 'y'],
+		['b', 'z'], ['c', 'z']
+	])
+	assert DG.common_ancestors(['x', 'y'], 'z') == {'b'}
+	DG.add_edge('a', 'z')
+	assert DG.common_ancestors(['x', 'y'], 'z') == {'a', 'b'}
+	
+def test_descendants():
+	DG = nx.DiGraph()
+	DG.add_path(['x', 'y', 'z'])
+
+	#testing nonexistent inputs:
+	with pytest.raises(nx.NetworkXError):
+		DG.descendants('NotANode')
+	with pytest.raises(nx.NetworkXError):
+		DG.descendants(['NotANode'])
+	with pytest.raises(nx.NetworkXError):
+		DG.descendants(['x', 'NotANode', 'z']);
+
+	#existing inputs:
+	assert DG.descendants('x') == {'y', 'z'}
+	assert DG.descendants('y') == {'z'}
+	assert DG.descendants('z') == set()
+	
+	DG = nx.DiGraph()
+	DG.add_path(['x', 'y', 'z'])
+	DG.add_edges_from([
+			['x', 'a'], ['y', 'b'], ['z', 'c']
+	])
+	assert DG.descendants('x') == {'y', 'z', 'a', 'b', 'c'}
+	assert DG.descendants('y') == {'z', 'b', 'c'}
+	
+	DG = nx.DiGraph()
+	DG.add_path(['x', 'y', 'z'])
+	DG.add_path(['a', 'b', 'c'])
+	assert DG.descendants(['a', 'z']) == {'b', 'c'}
+	assert DG.descendants(['c', 'z']) == set()
+	DG.add_path(['x', 'b'])
+	assert DG.descendants(['a', 'z']) == {'b', 'c'}
 
 def test_common_descendants():
 	DG = nx.DiGraph()
+	DG.add_path(['x', 'a'])
+	DG.add_path(['y', 'b'])
+
+	#testing nonexistent inputs:
+	with pytest.raises(nx.NetworkXError):
+		DG.common_descendants(['NotANode'], 'y')
+	with pytest.raises(nx.NetworkXError):
+		DG.common_descendants('NotANode','StillNotANode')
+	with pytest.raises(ValueError):
+		DG.common_descendants([],'y')
+	#existing inputs:
+	assert DG.common_descendants('x', 'y') == set()
+	assert DG.common_descendants(['x', 'y'], 'x') == {'a'}
+
+	DG = nx.DiGraph()
+	DG.add_nodes_from(['x', 'y'])
+	assert DG.common_descendants('x', 'y') == set()
+	
+	DG = nx.DiGraph()	
+	DG.add_edges_from([['x', 'a'], ['y', 'c']])
+	assert DG.common_descendants('x', 'y') == set()
+
+	DG = nx.DiGraph()
 	DG.add_edges_from([
-		['y', 'c'], ['c', 'L'],
-		['t', 'c'], ['c', 'd'],
+		['x', 'a'], ['x', 'b'], ['y', 'b'], ['y', 'c']
 	])
-	assert DG.common_descendants('y', 't') == {'c', 'd', 'L'}
-	assert DG.common_descendants('y', 'c') == {'d', 'L'}
-	assert DG.common_descendants('d', 'd') == set()
-
-	# assert DG.common_descendants({'y', 'c'}, 't') == {'d', 'L'}
-	# assert DG.common_descendants('y', {'c', 't'}) == {'d', 'L'}
-
+	assert DG.common_descendants('x', 'y') == {'b'}
+	
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['x', 'a'], ['x', 'b'], 
+		['y', 'b'], ['y', 'c'], 
+		['b', 'd']
+	])
+	assert DG.common_descendants('x', 'y') == {'b','d'}
+	
+	DG = nx.DiGraph()
+	DG.add_edges_from([
+		['x', 'a'], ['y', 'b'],
+		['z', 'b'], ['z', 'c']
+	])
+	assert DG.common_descendants(['x', 'y'], 'z') == {'b'}
+	DG.add_edge('z', 'a')
+	assert DG.common_descendants(['x', 'y'], 'z') == {'a', 'b'}
+	
+	
 def test_hanging_dominion():
 	DG = nx.DiGraph()
 	DG.add_edges_from([
@@ -186,90 +324,141 @@ def test_multiple_sources_shortest_path_length():
 		'x': 2,
 	}
 
-def test_common_ancestors():
-	#remember to try other edge cases
-	#possibly reimplement for better efficiency
-	DG = nx.DiGraph()
-	DG.add_path(['a', 'x'])
-	DG.add_path(['b', 'y'])
-	d = DG.common_ancestors('x', 'y')
-	assert d == set([])
 
-	DG = nx.DiGraph()
-	DG.add_path(['a', 'x'])
-	DG.add_node('y')
-	d = DG.common_ancestors('x', 'y')
-	assert d == set([])
-
-	DG = nx.DiGraph()
-	DG.add_node('x')
-	DG.add_node('y')
-	d = DG.common_ancestors('x', 'y')
-	assert d == set([])
-
-	DG = nx.DiGraph()
-	DG.add_path(['a', 'x'])
-	DG.add_path(['b', 'x'])
-	DG.add_path(['b', 'y'])
-	DG.add_path(['c', 'y'])
-	d = DG.common_ancestors('x', 'y')
-	assert d == set(['b']) #{'b'} but using {} for empty set will give a dict, use set() instead
-
-	DG = nx.DiGraph()
-	DG.add_path(['a', 'x'])
-	DG.add_path(['b', 'x'])
-	DG.add_path(['b', 'y'])
-	DG.add_path(['c', 'y'])
-	DG.add_path(['d', 'b'])
-	d = DG.common_ancestors('x', 'y')
-	assert d == set(['b','d'])
-
-	#test empty set as an arg
-	#test sets of nodes as args
-	#test node that doesn't exist as arg
-
-def test_most_important():
-#prenodes need "type","def","description","name","importance"
-	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"K","importance":2}
-	# a = create_appropriate_node(pre_a)
-	a = Node(pre_a)
-	# pre_b = {"type":"def","content":"This is node b","importance":5}
-	# b = create_appropriate_node(pre_b)
-	# pre_c = {"type":"def","content":"This is node c","importance":8}
-	# c = create_appropriate_node(pre_c)
-	# pre_d = {"type":"def","content":"This is node d","importance":8}
-	# d = create_appropriate_node(pre_d)
-	#
-	DG = nx.DiGraph()
-	DG.add_n(a)
-#	assert DG.most
-	# DG.add_n(b)
-	# DG.add_n(c)
-	# DG.add_n(d)
-#
 
 def test_unlearned_dependency_tree():
 	DG = nx.DiGraph()
-
-	#need to fix this one!
-#	DG.add_path(['l1','t'])
-#	assert DG.unlearned_dependency_tree('t',['11']) == set([])
-
+	DG.add_path(['l1', 't'])
+	assert DG.unlearned_dependency_tree('t', ['l1']) == set()
+	
+	DG = nx.DiGraph()
 	DG.add_path(['l1', 'u1', 't']) #learned, unlearned, target
-	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1'])
+	with pytest.raises(nx.NetworkXError):
+		DG.unlearned_dependency_tree('NotANode', ['l1'])
+	with pytest.raises(nx.NetworkXError):
+		DG.unlearned_dependency_tree(['t'], ['l1'])
+#	with pytest.raises(nx.NetworkXError):
+#		print('\n',DG.unlearned_dependency_tree('t', ['NotANode']),'\n')
+	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1'}
+	assert DG.unlearned_dependency_tree('t', []) == {'l1', 'u1'}
 
-	assert DG.unlearned_dependency_tree('t',[]) == set(['l1','u1'])
-#	assert DG.unlearned_dependency_tree('',['l1') == ???
+	DG = nx.DiGraph()
+	DG.add_path(['l1', 'u1', 't'])
+	DG.add_path(['u2', 'u1'])
+	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1', 'u2'}
+	assert DG.unlearned_dependency_tree('t', []) == {'u1', 'u2', 'l1'}
+	assert DG.unlearned_dependency_tree('t', ['l1', 'u1']) == set()
+	
+	DG = nx.DiGraph()
+	DG.add_path(['l1', 'u1', 't'])
+	DG.add_edge('u2', 't')
+	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1', 'u2'}
+	
+	DG = nx.DiGraph()
+	DG.add_path(['l1', 'u1', 't'])
+	DG.add_edge('u3', 'l1')
+	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1'}
+	
+	DG = nx.DiGraph()
+	DG.add_path(['l1', 'u1', 't'])
+	DG.add_path(['u4', 'l2', 't'])
+	assert DG.unlearned_dependency_tree('t', ['l1', 'l2']) == {'u1'}
 
-	DG.add_path(['u1', 'u2', 'u1'])
-	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1', 'u2'])
-	assert DG.unlearned_dependency_tree('t', []) == set(['u1', 'u2', 'l1'])
-	assert DG.unlearned_dependency_tree('t', ['l1', 'u1']) == set(['u2'])
-	DG.remove_edge('u2','u1')
-	assert DG.unlearned_dependency_tree('u1', ['l1']) == set([])
-	DG.add_path(['l1','u2','t'])
-	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1','u2'])
+#def test_get_all_successors:
+	#
 
-	#test with more than one learned node
-	#test with more than one target?
+#def test_get_all_predecessors:
+	#
 
+#def test_most_important_weight:
+	#
+
+def test_most_important():
+	print("\n")
+#prenodes need "type","def","description","name","importance"
+	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":2}
+	# a = create_appropriate_node(pre_a)
+	a = Node(pre_a)
+	pre_b = {"type":"theorem","description":"This is node bbbbbbbbbb","name":"B","importance":4}
+	b = create_appropriate_node(pre_b)
+	pre_c = {"type":"theorem","description":"This is node cccccccccc","name":"C","importance":4}
+	c = create_appropriate_node(pre_c)
+	pre_d = {"type":"theorem","description":"This is node dddddddddd","name":"D","importance":6}
+	d = create_appropriate_node(pre_d)
+	
+	#testing sort by node's own importance and id
+	DG = nx.DiGraph()
+	with pytest.raises(ValueError):
+		DG.most_important(1, [])
+	DG.add_n(a)
+	node_list = DG.nodes()
+	assert DG.most_important(1, node_list) == ['a']
+	with pytest.raises(ValueError):
+		DG.most_important(-1, node_list)
+	DG.add_n(b)
+	node_list = DG.nodes()
+	assert DG.most_important(1, node_list) == ['b']
+	assert DG.most_important(2, node_list) == ['b', 'a']
+	with pytest.raises(ValueError):
+		DG.most_important(4, node_list) == ['b', 'a']
+	DG.add_n(c)
+	node_list = DG.nodes()
+	assert DG.most_important(2, node_list) == ['c', 'b'] #sorts alphabetically, but remember we use reverse=True to sort by numerical importance so the alphabetical sort is reversed too
+	DG.add_n(d)
+	node_list = DG.nodes()
+	assert DG.most_important(1, node_list) == ['d']
+	assert DG.most_important(2, node_list) == ['d', 'c']
+	assert DG.most_important(3, node_list) == ['d', 'c', 'b']
+	
+	#testing sort by weighted importance of neighbors when node's own importance is a tie
+	DG = nx.DiGraph()
+	DG.add_n(a)
+	DG.add_n(b)
+	DG.add_n(c)
+	DG.add_n(d)
+	DG.add_edges_from([
+			['a', 'c'], ['d', 'b']	#d is a more important neighbor than a, so b should be more important than c
+	])
+	node_list = ['b', 'c']
+	assert DG.most_important(2, node_list) == ['b', 'c']
+
+	DG = nx.DiGraph()
+	DG.add_n(a)
+	DG.add_n(b)
+	DG.add_n(c)
+	DG.add_n(d)
+	DG.add_edges_from([
+			['c', 'a'], ['b', 'd']
+	])
+	node_list = ['b', 'c']
+	assert DG.most_important(2, node_list) == ['b', 'c']
+
+	DG = nx.DiGraph()
+	DG.add_n(a)
+	DG.add_n(b)
+	DG.add_n(c)
+	DG.add_n(d)
+	DG.add_edges_from([
+			['c', 'a'], ['d', 'b']
+	])
+	node_list = ['b', 'c']
+	assert DG.most_important(2, node_list) == ['b', 'c']
+
+	#remember that when the nodes being compared are neighbors with each other, we will get some shared common neighbors, although they have different distances to the two compared nodes
+	DG = nx.DiGraph()
+	DG.add_n(a)
+	DG.add_n(b)
+	DG.add_n(c)
+	DG.add_n(d)
+	DG.add_edge('b', 'c')
+	assert DG.most_important(2, node_list) == ['c', 'b']
+	
+	DG = nx.DiGraph()
+	DG.add_n(a)
+	DG.add_n(b)
+	DG.add_n(c)
+	DG.add_n(d)
+	DG.add_edges_from([
+		['c', 'a'], ['d', 'b']
+	])
+	assert DG.most_important(2, node_list) == ['b', 'c']

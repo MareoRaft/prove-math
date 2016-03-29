@@ -7,7 +7,8 @@ from warnings import warn
 
 ################################## HELPERS ####################################
 def create_s_pointing_to_source(DG, source):
-	if not hasattr(source, '__iter__'): # although strings are iterable, they don't have __iter__.  My goal is that "scalar" values will get stuffed into a list.  But lists and sets will not.
+	#This line originally took advantage of the '__iter__' attribute, which lists and sets have but lists do not
+	if not DG.acceptable_iterable(source): # My goal is that "scalar" values will get stuffed into a list.  But lists and sets will not.
 		source = [source]
 	s = DG.add_node_unique()
 	for node in source:
@@ -15,7 +16,7 @@ def create_s_pointing_to_source(DG, source):
 	return s
 
 def create_t_pointing_from_target(DG, target):
-	if not hasattr(target, '__iter__'):
+	if not DG.acceptable_iterable(target):
 		target = [target]
 	t = DG.add_node_unique()
 	for node in target:
@@ -76,12 +77,47 @@ class _DiGraphExtended (nx.DiGraph):
 		return shortest_path_helper(DG, source, target)
 
 	def ancestors(self, nbunch):
-		return nx.ancestors(self, nbunch) # returns a SET
+		if not self.acceptable_iterable(nbunch):	#single input node
+			return nx.ancestors(self, nbunch)
+		else:
+			if len(nbunch) == 0:	#empty iterable
+				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+			elif len(nbunch) == 1:	#still a single node
+				return nx.ancestors(self, nbunch[0])
+			else:	#multiple input nodes
+				#make sure all the nodes exist:
+				if False in [self.has_node(node) for node in nbunch]:
+					raise nx.NetworkXError('One of the listed nodes is not in the graph')
+				DG = self.copy()
+				t = DG.add_node_unique()
+				for node in nbunch:
+					DG.add_edge(node, t) # this automatically adds t to DG too
+				return nx.ancestors(DG, t) - set(nbunch) # returns a SET
 
+	def common_ancestors(self, nbunchA, nbunchB):
+		#possibly reimplement for better efficiency
+		return set.intersection(self.ancestors(nbunchA), self.ancestors(nbunchB))
+		
 	def descendants(self, nbunch):
-		return nx.descendants(self, nbunch)
+		if not self.acceptable_iterable(nbunch):	#single input node
+			return nx.descendants(self, nbunch)
+		else:
+			if len(nbunch) == 1:	#still a single node
+				return nx.descendants(self, nbunch[0])
+			elif len(nbunch) == 0:	#empty iterable
+				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+			else:	#multiple input nodes
+				#make sure all the nodes exist:
+				if False in [self.has_node(node) for node in nbunch]:
+					raise nx.NetworkXError('One of the listed nodes is not in the graph')
+				DG = self.copy()
+				s = DG.add_node_unique()
+				for node in nbunch:
+					DG.add_edge(s, node) # this automatically adds t to DG too
+				return nx.descendants(DG, s) - set(nbunch) # returns a SET
 
 	def common_descendants(self, nbunchA, nbunchB):
+		#possibly reimplement for better efficiency
 		descA = self.descendants(nbunchA)
 		descB = self.descendants(nbunchB)
 		return set.intersection(descA, descB)
@@ -139,24 +175,65 @@ class _DiGraphExtended (nx.DiGraph):
 				hanging_absolute_dominion.append(candidate)
 		return hanging_absolute_dominion + nodes
 
-	def common_ancestors(self, nbunchA, nbunchB):
-		return set.intersection(self.ancestors(nbunchA), self.ancestors(nbunchB))
+	def unlearned_dependency_tree(self, target, learned_nodes):
+		DG = self.copy()
+		DG.remove_nodes_from(learned_nodes)
+		return nx.ancestors(DG, target)
 
-	def most_important(self, number, nodes):
+	def get_all_successors(self, nbunch):	#works for multiple input nodes
+		#inefficient, can make a copy and remove nodes in succ as we go along
+		succ = set()
+		for node in nbunch:
+			succ = set.union(succ, set(self.successors(node)))
+		return succ
+
+	def get_all_predecessors(self, nbunch):	#works for multiple input nodes
+		#inefficient, can make a copy and remove nodes in pred as we go along
+		pred = set()
+		for node in nbunch:
+			pred = set.union(pred, set(self.predecessors(node)))
+		return pred
+
+	def get_all_neighbors(self, nbunch):
+		return set.union(self.get_all_successors(nbunch), self.get_all_predecessors(nbunch))
+		
+	def most_important(self, number, nbunch):
+		#note - there might be a way more efficient way to do this, since using a sorting key
+		#calls the weight function on every node, whereas it is only necessary to sort nodes with the same importance
+		def most_important_weight(node):
+			# return (self.n(node).importance, 0, self.n(node).id)
+			distance_from_node = 0
+			current_depth_nodes = {node}
+			already_counted_nodes = {node} #needed in case there are any cycles
+#			successors = {node}
+#			predecessors = {node}
+			avg_importances = [] #average of the nodes in each depth level
+			while distance_from_node < 2:
+				distance_from_node += 1
+#				successors = self.get_all_successors(successors)
+#				predecessors = self.get_all_predecessors(predecessors)
+#				current_depth_nodes = set.union(successors, predecessors)
+				current_depth_nodes = self.get_all_neighbors(current_depth_nodes) - already_counted_nodes	#needed in case there are any cycles
+				if len(current_depth_nodes) == 0:	#no more neighbors, don't look any further
+					avg_importances.append(0)
+#					print("\nFound no neighbors\n")
+					break
+				current_importances = [self.n(n).importance for n in current_depth_nodes]
+#				print("\nNode:", node, "current_depth_nodes:", current_depth_nodes, "current_importances:", current_importances, sep=" ")
+				current_avg = sum(current_importances) / len(current_importances)
+				avg_importances.append(current_avg)
+				already_counted_nodes = set.union(already_counted_nodes, current_depth_nodes)
+			weighted_avgs = [(avg/(index+1)**2) for index, avg in enumerate(avg_importances)]	#average of the nodes in each depth level, weighted against distance from node
+			neighbors_weight = sum(weighted_avgs)
+#			print("Node:", str(node), "importance:", self.n(node).importance, "neighbors_weight:", neighbors_weight, "unweighted_avgs", avg_importances, "weighted avgs", weighted_avgs, sep=" ")
+			return (self.n(node).importance, neighbors_weight, self.n(node).id)
+		
 		if number <= 0:
 			raise ValueError('Must give number > 0')
-		if len(nodes) < number:
-			return nodes
-			#or raise ValueError('Must provide at least <number> nodes')?
-		else:
-			#sort nodes by importance and return the first <number> of them
-			important_nodes = sorted(nodes, key=lambda node: -1*(self.n(node).importance))
-			return important_nodes[:number]
-				
-
-	def unlearned_dependency_tree(self, target, learned_nodes):
-		dependencies = self.ancestors(target)
-		return dependencies - set(learned_nodes)
+		if len(nbunch) < number:
+			raise ValueError('Asked for more nodes than you provided')
+		nodes_by_importance = sorted(nbunch, key=most_important_weight, reverse=True)
+		return nodes_by_importance[:number]
 
 for key, value in _DiGraphExtended.__dict__.items():
 	try:
