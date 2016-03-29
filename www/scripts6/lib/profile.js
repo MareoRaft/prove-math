@@ -42,8 +42,13 @@ window.def = function(input) {
 window.log = function(thing) {
 	console.log(thing)
 }
-window.logj = function(thing) {
-	log(JSON.stringify(thing))
+window.logj = function(one, two) {
+	if( def(two) ){
+		log(one + JSON.stringify(two))
+	}
+	else{
+		log(JSON.stringify(one))
+	}
 }
 
 }) // end of define

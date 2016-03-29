@@ -151,7 +151,15 @@ def test_single_source_shortest_anydirectional_path_length():
 	G.add_path([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 	x = G.single_source_shortest_anydirectional_path_length(5, 3)
 	assert len(x) == 7
-	assert x == {3: 2, 4: 1, 5: 0, 6: 1, 7: 2, 8: 3, 2: 3}
+	assert x == {
+		2: 3,
+		3: 2,
+		4: 1,
+		5: 0,
+		6: 1,
+		7: 2,
+		8: 3,
+	}
 
 def test_multiple_sources_shortest_path_length():
 	G = nx.DiGraph()
@@ -186,19 +194,19 @@ def test_common_ancestors():
 	DG.add_path(['b', 'y'])
 	d = DG.common_ancestors('x', 'y')
 	assert d == set([])
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['a', 'x'])
 	DG.add_node('y')
 	d = DG.common_ancestors('x', 'y')
 	assert d == set([])
-	
+
 	DG = nx.DiGraph()
 	DG.add_node('x')
 	DG.add_node('y')
 	d = DG.common_ancestors('x', 'y')
 	assert d == set([])
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['a', 'x'])
 	DG.add_path(['b', 'x'])
@@ -206,7 +214,7 @@ def test_common_ancestors():
 	DG.add_path(['c', 'y'])
 	d = DG.common_ancestors('x', 'y')
 	assert d == set(['b']) #{'b'} but using {} for empty set will give a dict, use set() instead
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['a', 'x'])
 	DG.add_path(['b', 'x'])
@@ -215,7 +223,7 @@ def test_common_ancestors():
 	DG.add_path(['d', 'b'])
 	d = DG.common_ancestors('x', 'y')
 	assert d == set(['b','d'])
-	
+
 	#test empty set as an arg
 	#test sets of nodes as args
 	#test node that doesn't exist as arg
@@ -231,14 +239,14 @@ def test_most_important():
 	# c = create_appropriate_node(pre_c)
 	# pre_d = {"type":"def","content":"This is node d","importance":8}
 	# d = create_appropriate_node(pre_d)
-	# 
+	#
 	DG = nx.DiGraph()
 	DG.add_n(a)
 #	assert DG.most
 	# DG.add_n(b)
 	# DG.add_n(c)
 	# DG.add_n(d)
-# 
+#
 
 def test_unlearned_dependency_tree():
 	DG = nx.DiGraph()
@@ -246,13 +254,13 @@ def test_unlearned_dependency_tree():
 	#need to fix this one!
 #	DG.add_path(['l1','t'])
 #	assert DG.unlearned_dependency_tree('t',['11']) == set([])
-	
+
 	DG.add_path(['l1', 'u1', 't']) #learned, unlearned, target
 	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1'])
-	
+
 	assert DG.unlearned_dependency_tree('t',[]) == set(['l1','u1'])
 #	assert DG.unlearned_dependency_tree('',['l1') == ???
-	
+
 	DG.add_path(['u1', 'u2', 'u1'])
 	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1', 'u2'])
 	assert DG.unlearned_dependency_tree('t', []) == set(['u1', 'u2', 'l1'])
@@ -261,7 +269,7 @@ def test_unlearned_dependency_tree():
 	assert DG.unlearned_dependency_tree('u1', ['l1']) == set([])
 	DG.add_path(['l1','u2','t'])
 	assert DG.unlearned_dependency_tree('t', ['l1']) == set(['u1','u2'])
-	
+
 	#test with more than one learned node
 	#test with more than one target?
 

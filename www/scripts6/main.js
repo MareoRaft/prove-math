@@ -141,12 +141,16 @@ ws.jsend = function(raw_object) {
 	ws.send(JSON.stringify(raw_object))
 }
 ws.onopen = function() {
-	ws.jsend({command: 'open'})
+	ws.jsend({command: 'first-steps'})
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
+	logj('got message: ', ball)
 	if( ball.command === 'populate-oauth-urls' ) {
 		oauth_url_dict = ball.url_dict
+	}
+	else if( ball.command === 'update-user' ){
+		user.update_identifier(ball['identifier'])
 	}
 	else if( ball.command === 'load-user' ) {
 		user.init(ball.user_dict)
@@ -177,7 +181,6 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	    alert('Search results: '+JSON.stringify(ball.results))
 	    document.getElementById("search_results_return").innerHTML = JSON.stringify(ball.results);
 	}
-
 	else die('Unrecognized command '+ball.command+'.')
 }
 

@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'profile'], function($, _, undefined) {
+define(['jquery', 'underscore', 'profile', 'check-types'], function($, _, undefined, is) {
 
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
@@ -6,7 +6,7 @@ define(['jquery', 'underscore', 'profile'], function($, _, undefined) {
 let user = {
 	account: {
 		type: "local",
-		id: undefined,
+		id: null,
 	},
 	prefs: {
 		display_name_capitalization: null, // can be null, "sentence", or "title"
@@ -71,6 +71,21 @@ function identifier(){
 	}
 }
 
+function update_identifier(identifier){
+	log("idenfitier IS: "); logj(identifier)
+	if( identifier ){
+		if( identifier['type'] !== 'local' ){
+			die('New identifier is not local!')
+		}
+		else if( is.not.null(user.account.id) && user.account.id !== identifier['id'] ){
+			die('New id is different than defined old id!')
+		}
+		else{
+			user.account.id = identifier['id']
+		}
+	}
+}
+
 return {
 	init: init,
 	accountType: user.account_type,
@@ -81,6 +96,7 @@ return {
 	hasLearned: hasLearned,
 	setPref: setPref,
 	get_identifier: identifier,
+	update_identifier: update_identifier,
 }
 
 }) // end of define

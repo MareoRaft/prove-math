@@ -1,6 +1,23 @@
-__pycache__/
+# general things to ignore:
+*.log
+server/dictionary_maker.py
+text-files/things-to-go-over-with-theo.txt
+server/data/*.json
 .sass-cache/
 .cache/
+*secrets.txt
+ignore/
+email-backup/
+octave-core
+# emacs temp files"
+*~
+#*#
+
+# python things
+__pycache__/
+*.pyc
+
+# javascript 5 things (we are using scripts6 and babel to overwrite these things)
 www/scripts/main.js
 www/scripts/main-optimized.min.js
 www/scripts/tests.js
@@ -11,16 +28,9 @@ www/scripts/lib/profile.js
 www/scripts/lib/graph.js
 www/scripts/lib/graph-animation.js
 www/scripts/lib/node.js
+
+# css things (we are using sass and compass to overwrite these)
 www/stylesheets
-server/data/*.json
-server/dictionary_maker.py
-text-files/things-to-go-over-with-theo.txt
-*~
-#*#
-*.pyc
-*secrets.txt
-ignore/
-email-backup/
 
 # TeX output files that get generated from the .tex files:
 Output/

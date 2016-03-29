@@ -137,38 +137,52 @@ class JSONHandler(BaseHandler):
 # implements the "hixie-76" and "hybi-10" versions of the protocol. See
 # this browser compatibility table on Wikipedia:
 # http://en.wikipedia.org/wiki/WebSockets#Browser_support
-class SocketHandler(WebSocketHandler):
+class SocketHandler (WebSocketHandler):
 
+
+	def __init__(self, application, request, **kwargs):
+		WebSocketHandler.__init__(self, application, request, **kwargs)
+		self.user = None
+
+	def jsend(self, dic):
+		if self.user:
+			user_identifier = self.user.dict['account']
+			dic['identifier'] = user_identifier
+		else:
+			dic['identifier'] = None
+		self.write_message(dic)
 
 	def open(self):
-		self.write_message({
+		# this happens BEFORE first-steps
+		self.jsend({
 			'command': 'populate-oauth-urls',
 			'url_dict': auth.auth_url_dict(host=self.request.host),
 		})
+
 	def on_message(self, message):
-		log.warning('got message: ' + message+"\n")
-		print('GOT')
+		log.debug('got message: ' + message+"\n")
 		ball = json.loads(message)
-		user = User(ball['identifier'])
 
 		if ball['command'] == 'print':
 			print(ball['message'])
 
-		elif ball['command'] == 'open':
-			self.send_absolute_dominion(ball, user)
+		elif ball['command'] == 'first-steps':
+			self.user = User(ball['identifier'])
+			self.jsend({'command': 'update-user'})
+			self.send_absolute_dominion(ball)
 
 		elif ball['command'] == 'learn-node':
-			user.learn_node(ball['node_id'])
+			self.user.learn_node(ball['node_id'])
 			if ball['mode'] == 'learn':
-				self.send_absolute_dominion(ball, user)
+				self.send_absolute_dominion(ball)
 			else:
 				raise Exception('mode is not learn')
 
 		elif ball['command'] == 'unlearn-node':
-			user.unlearn_node(ball['node_id'])
+			self.user.unlearn_node(ball['node_id'])
 
 		elif ball['command'] == 'set-pref':
-			user.set_pref(ball['pref_dict'])
+			self.user.set_pref(ball['pref_dict'])
 
 		elif ball['command'] == 'save-node': # hopefully this can handle both new nodes and changes to nodes
 			node_dict = ball['node_dict']
@@ -176,14 +190,14 @@ class SocketHandler(WebSocketHandler):
 				node_dict['importance'] = int(node_dict['importance'])
 			try:
 				node_obj = node.create_appropriate_node(node_dict)
-				print('\nnode made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...\n')
+				log.debug('\nnode made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...\n')
 				# take a look at the dependencies now
 
 				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []
 				previous_dependency_ids = [node.reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
-				print('prev deps are: '+str(previous_dependency_ids))
+				log.debug('prev deps are: '+str(previous_dependency_ids))
 				current_dependency_ids = node_obj.dependency_ids
-				print('curr deps are: '+str(current_dependency_ids))
+				log.debug('curr deps are: '+str(current_dependency_ids))
 				new_dependency_ids = set(current_dependency_ids) - set(previous_dependency_ids)
 				removed_dependency_ids = set(previous_dependency_ids) - set(current_dependency_ids)
 
@@ -199,12 +213,12 @@ class SocketHandler(WebSocketHandler):
 				update_our_DAG()
 
 				# send an update of the graph to the user if there are new dependencies:
-				self.request_nodes(new_dependency_ids, ball, user)
+				self.request_nodes(new_dependency_ids, ball)
 				self.remove_client_edges(node_obj.id, removed_dependency_ids)
 			except Exception as error:
 				# stuff didn't work, send error back to user
-				print('ERROR: '+str(error))
-				self.write_message({
+				log.warning('ERROR: '+str(error))
+				self.jsend({
 					'command': 'display-error',
 					'message': str(error),
 				})
@@ -214,62 +228,55 @@ class SocketHandler(WebSocketHandler):
 			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1)
 			H = our_DAG.subgraph(list(neighbors.keys()))
 			dict_graph = H.as_complete_dict()
-			self.write_message({
+			self.jsend({
 				'command': 'load-graph',
 				'new_graph': dict_graph,
 			})
 
 		elif ball['command'] == 'request-node':
-			self.request_nodes([ball['node_id']], ball, user)
+			self.request_nodes([ball['node_id']], ball)
 
 		elif ball['command'] == 'search':
 			search_results = our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
-			self.write_message({
+			self.jsend({
 					'command': 'search-results',
 					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
 
-	def request_nodes(self, node_ids, ball, user):
+	def request_nodes(self, node_ids, ball):
 		for node_id in node_ids:
 			if node_id not in our_DAG.nodes():
 				raise ValueError('The node_id "'+node_id+'" does not exist.')
-		ids = set(user.dict['learned_node_ids']).union(set(ball['client_node_ids'])).union(set(node_ids))
+		ids = set(self.user.dict['learned_node_ids']).union(set(ball['client_node_ids'])).union(set(node_ids))
 		H = our_DAG.subgraph(list(ids))
 		dict_graph = H.as_complete_dict()
-		self.write_message({
+		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
 
 	def remove_client_edges(self, node_id, dependency_ids):
-		self.write_message({
+		self.jsend({
 			'command': 'remove-edges',
 			'node_id': node_id,
 			'dependency_ids': list(dependency_ids),
 		})
 
-	def send_absolute_dominion(self, ball, user):
-		if user.logged_in:
-			print('LOGGED IN AS')
-			print(str(user.identifier))
-			learned_ids = user.dict['learned_node_ids']
-			ids = list(set(learned_ids).union(set(ball['client_node_ids'])))
-			if ids:
-				ids_to_send = our_DAG.absolute_dominion(learned_ids)
-				# should SOURCES be included in the absolute dominion???
-				ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest()))
-				H = our_DAG.subgraph(list(ids_to_send))
-			else:
-				# they've learned nothing so far.  send them a starting point
-				H = our_DAG.subgraph(self.starting_nodes())
+	def send_absolute_dominion(self, ball):
+		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
+		learned_ids = self.user.dict['learned_node_ids']
+		ids = list(set(learned_ids).union(set(ball['client_node_ids'])))
+		if ids:
+			ids_to_send = our_DAG.absolute_dominion(learned_ids)
+			# should SOURCES be included in the absolute dominion???
+			ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest()))
+			H = our_DAG.subgraph(list(ids_to_send))
 		else:
-			print('NOT LOGGED IN')
-			print(str(user.dict))
-			# same line as above
+			# they've learned nothing so far.  send them a starting point
 			H = our_DAG.subgraph(self.starting_nodes())
 
 		dict_graph = H.as_complete_dict()
-		self.write_message({
+		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
@@ -338,12 +345,10 @@ def update_our_DAG():
 
 if __name__ == "__main__":
 	# setup logging:
-	# chromalog.basicConfig(level=logging.DEBUG)
 	chromalog.basicConfig(level=logging.DEBUG, format='%(asctime)s   %(filename)s line %(lineno)d   %(levelname)s:   %(message)s', datefmt='%Y-%m-%d at %I:%M %p and %S secs')
-	# log.basicConfig(filename='main.py.log', level=log.DEBUG) # format='%(asctime)s   %(filename)s line %(lineno)d   %(levelname)s:   %(message)s', datefmt='%Y-%m-%d at %I:%M %p and %S secs')
 	log = logging.getLogger()
-	log.info('this is a regular info message')
 	log.debug('this message is for %s purposes', important('debugging'))
+	log.info('this is a regular info message')
 	log.warning('this message is some warning')
 
 	# 0. create a global mongo object for later use (for upserts in the future)

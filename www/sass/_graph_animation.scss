@@ -19,6 +19,11 @@ svg {
 	}
 	.definition-circle {
 		@include bright-and-unbright-fill-and-opacity($green);
+		$col: red;
+		box-shadow: 3px 3px 10px $col;
+		-webkit-box-shadow: 3px 3px 10px $col;
+		box-shadow: 3px 3px 4px $col;
+		fill: orange;
 	}
 	.theorem-circle {
 		@include bright-and-unbright-fill-and-opacity(blue);
