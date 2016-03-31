@@ -40,37 +40,61 @@
 	"name": "simple (edge)",
 	"definition":"An edge is __simple__ if it is not a loop.",
 	"dependencies": ["edge", "loop"],
+	"example":"The edge circled in the image <img27> is simple.",
+	"counterexample":"The edge circle in the image <img28> is *not* simple.",
 }
 
 {
 	"name": "adjacent (vertices)",
 	"definition":"Vertices $a$ and $b$ are __adjacent__, denoted $a \sim b$, if there is an edge ${a,b}$.",
+	"note":"It is also phrased \"$a$ is adjacent to $b$\".",
 	// "denotation":"$a \sim b$", // let's keep the denotations in the definitions
 	"dependencies": ["vertex", "edge"],
+	"example":"In the image <img29>, vertices $t$ and $z$ are adjacent.",
+	"counterexample":"In the image <img29>, vertices $m$ and $z$ are *not* adjacent.",
 }
 
 {
 	"definition":"An edge $e$ and a vertex $v$ are __incident__ iff $v \in $e$.",
-	"intuition":"A loop is considered to be incident to its vertex at both ends.",
+	"intuition":"An edge is *incident* to a vertex if it touches that vertex.  A loop, for example, is considered to be incident to its vertex at both ends.",
 	"dependencies": ["edge", "vertex"],
+	"example":"In the image <img30>, vertex $t$ is incident to edge $e$.",
+	"counterexample":"In the image <img30>, vertex $z$ is *not* incident to edge $e$.",
 }
 
 {
 	"name": "adjacent (edges)",
 	"def":"Two edges are __adjacent__ if there is a vertex that they are both incident to.",
+	"note":"For edges $a$ and $b$, it is also phrased \"$a$ is adjacent to $b$\".",
 	"dependencies": ["edge", "vertex", "incident"],
+	"example":"In the image <img30>, edge $e$ is adjacent to edge $f$.",
+	"counterexample":"In the image <img31>, edge $b$ is *not* adjacent to edge $f$.",
 }
 
 {
 	"name": "on (edges on vertices)",
 	"definition":"A set of edges $E$ is __on__ a set of vertices $V$ iff every edge in $E$ is incident to only vertices in $V$.",
 	"dependencies": ["edge", "vertex", "set", "incident"],
+	"examples": [
+		"In image <img31>, there is a set of vertices $\{l, m, t, z\}$ and a set of edges $\{b, e, f\}$ on those vertices.",
+		"In image <img31>, the set of edges $\{b, e}\$ is on the set of vertices $\{l, m, f\}$.",
+		"In image <img31>, the set of edges $\{b, e}\$ is on the set of vertices $\{l, m, f, z\}$.",
+	],
+	"counterexample":"In image <img31>, the set of edges $\{b, e}\$ is *not* on the set of vertices $\{l, m\}$.",
 }
 
 { // THIS IS THE GENERAL VERSION
 	"definition":"A __multigraph__ is an ordered pair $(V,E)$ where $V$ is a set of vertices and $E$ is a multiset of edges on $V$.",
 	"intuition":"$E$ is a multiset, so a pair of vertices could have more than one edge incident to them!  Also, there can be loops!",
 	"dependencies":["ordered pair", "multiset", "on (edges on vertices)"],
+	"examples": [
+		"If $M = (A, B)$ where $A = \{x, y\}$ and $B = \{e\}$ where $e=\{x, y\}$, then $M$ is a multigraph.",
+		"The image <img32> represents a multigraph if each dot represents a vertex and each line segment represents an edge incident to the two vertices it touches.",
+	],
+	"counterexamples": [
+		"If $M=\{A, B\}$ where $A = \{x, y\}$ and $B = \{e\}$ where $e=\{x, y\}$, then $M$ is *not* a multigraph.  The problem here is that $M$ is the *set* containing $A$ and $B$ instead of the *ordered pair* $(A,B)$.  Sets are not ordered, so we have know way of knowing which of the elements $A$ and $B$ is the set of vertices, and which one is the set of edges.",
+		"If $M = (A, B)$ where $A = \{x, y\}$ and $B = \{e\}$ where $e=\{x, t\}$ and $t\neq x$ and t\neq y$, then $M$ is *not* a multigraph.  The problem is that edge $e$ is incident to a vertex which is *not* in $A$.",
+	],
 }
 
 {
@@ -78,26 +102,44 @@
 	"definition":"The vertices $a$ and $b$ have __multiple__ edges if there is more than one edge ${a,b}$.",
 	"note":"$a$ and $b$ need not be distinct.",
 	"dependencies": ["edge", "vertex"],
+	"example": "In the graph depicted by <img33>, $x$ and $y$ have multiple edges.",
+	"counterexample": "In the graph depicted by <img33>, $z$ and $y$ do *not* have multiple edges.",
 }
 
 {
 	"name":"multiple (loops)",
 	"def":"Vertex $a$ has __multiple__ loops if there is more than one loop ${a}$.",
 	"dependencies":["vertex", "loop"],
+	"example": "In the graph depicted by <img34>, $z$ has multiple loops.",
+	"counterexample": "In the graph depicted by <img34>, $x$ does *not* have multiple loops.",
 }
 
 {
 	"name": "simple (graph)",
 	"definition":"A multigraph $G = (V,E)$ is __simple__ if $E$ is a set that contains no loops.",
-	"note":"Here, $E$ is a set, so multiple edges do not occur either.",
-	"note":"Multigraphs are more general than simple graphs.",
-	"note":"Instead of saying 'simple multigraph', we say 'simple graph' because there is no nature of 'multipleness' in the graph.",
+	"note": [
+		"Here, $E$ is a set, so multiple edges do not occur either.",
+		"Multigraphs are more general than simple graphs.",
+		"Instead of saying 'simple multigraph', we say 'simple graph' because there is no nature of 'multipleness' in the graph.",
+	],
 	"dependencies":["multigraph", "loop"],
+	"example": [
+		"The graph depicted by <img32> is simple.",
+		"The graph depicted by <img21> is simple.",
+		"The graph depicted by <img17> is simple.",
+	],
+	"counterexamples": [
+		"The graph depicted by <img35> is *not* simple.",
+		"The graph depicted by <img36> is *not* simple.",
+		"The graph depicted by <img34> is *not* simple.",
+	],
 }
 
 {
 	"name": "null (multigraph)",
 	"def":"The __null__ multigraph is the multigraph with 0 vertices.",
+	"intuition": "The null multigraph is $(\{\}, \{\})$.  That is, it has no vertices and no edges.",
+	"note": "Because the null multigraph is also a simple graph, it is usually called the *null graph*.",
 	"dependencies":["multigraph"],
 	"negation": "non-null",
 }
@@ -106,12 +148,22 @@
 	"name": "trivial (multigraph)",
 	"def":"A __trivial__ multigraph is a multigraph with exactly 1 vertex.",
 	"dependencies":["multigraph"],
+	"example": [
+		"The multigraph depicted by <img37> is trivial.",
+		"The multigraph depicted by <img36> is trivial.",
+		"The multigraph depicted by <img38> is trivial.",
+	],
+	"counterexample": [
+		"The null graph is *not* trivial.",
+		"The multigraph depicted by <img35> is *not* trivial.",
+		"The multigraph depicted by <img39> is *not* trivial.",
+	],
 }
 
 {
 	"name": "nontrivial (multigraph)",
 	"def":"A __nontrivial__ multigraph is a multigraph with more than 1 vertex.",
-	"note":"This is different from being not trivial, since is discludes the null graph.",
+	"note":"This is different from being not trivial, since it discludes the null graph.",
 	"dependencies":["multigraph"],
 }
 
@@ -120,6 +172,16 @@
 	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
 	"dependencies":["multigraph"],
 	"negation": "nonempty",
+	"example": [
+		"The null graph is empty.",
+		"The multigraph depicted by <img37> is empty.",
+		"The multigraph depicted by <img39> is empty.",
+	],
+	"counterexample": [
+		"The graph depicted by <img36> is nonempty.",
+		"The graph depicted by <img35> is nonempty.",
+		"The graph depicted by <img40> is nonempty.",
+	],
 }
 
 {
@@ -127,45 +189,97 @@
 	"definition":"Given a multigraph $(V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the multiplicity of $v$ in the union of $E$.",
 	// alternatively, we can say that its the: number of edges in $E$ incident to $v$, where loops are counted twice.
 	"intuition":"The degree of vertex $v$ is the number of edge ends that touch it.",
-	"dependencies":["vertex", "incident", "loop"],
+	"dependencies":["vertex", "incident", "loop", "union"],
+	"example": [
+		"The degree of vertex $m$ in <img29> is $1$.",
+		"In the graph depicted by <img29>, vertex $t$ has degree $2$.",
+		"The vertex in <img38> has degree $6$.",
+	],
 }
 
 {
 	"def":"The __minimum degree__ of a graph $G=(V,E)$ is the minimum of the degrees of the vertices in $V$.",
 	"den":"$\delta(G)$",
 	"dependencies":["degree (vertex)", "minimum"],
+	"example": [
+		"The minimum degree of the graph depicted by <img37> is $0$.",
+		"Graph <img29> has minimum degree $1$.",
+		"The minimum degree of the graph depicted by <img40> is $0$.",
+		"The graph depicted by <img41> has minimum degree $4$.",
+	],
 }
 
 {
 	"def":"The __maximum degree__ of a graph $G=(V,E)$ is the maximum of the degrees of the vertices in $V$.",
 	"den":"$\Delta(G)$",
 	"dependencies":["degree (vertex)", "maximum"],
+	"example": [
+		"Graph <img29> has maximum degree $2$.",
+		"The maximum degree of the graph depicted by <img40> is $1$.",
+		"The maximum degree of the graph depicted by <img37> is $0$.",
+		"The graph depicted by <img41> has maximum degree $4$.",
+	],
 }
 
 {
 	"definition":"A __walk__ is an alternating sequence of vertices and edges which starts and ends on a vertex, and satisfies the following condition:  For every edge ${a,b}$ in the sequence, the vertices adjacent to it in the sequence are $a$ and $b$.",
-	"intuition":"Pretend you are an ant on the graph.  You begin at a vertex.  You cross edge incident to you and arrive at the other side of that edge: another vertex.  You continue this process, going any way you please, and eventually stop at a vertex.",
+	"intuition":"Pretend you are an ant on the graph.  You begin at a vertex.  You cross an edge incident to you and arrive at the other side of that edge: another vertex.  You continue this process, going any way you please, and eventually stop at a vertex.",
 	"dependencies":["sequence", "vertex", "edge"],
+	"example": [
+
+	],
 }
 
 {
 	"def":"A multiset of vertices and edges where *no edge is repeated* satisfies the __trail condition__.",
 	"dependencies":["multiset", "edge"],
+	"example": [
+		"In the graph depicted by <img42>, the multiset $\{a, w_1, b, w_2, d\}$ satisfies the trail condition.",
+		"In the graph depicted by <img42>, the multiset $\{w_1, w_3, w_5\}$ satisfies the trail condition.",
+		"In the graph depicted by <img42>, the multiset $\{a, w_1, a, w_3, w_5\}$ satisfies the trail condition.",
+	],
+	"counterexample": [
+		"In the graph depicted by <img42>, the multiset $\{a, w_1, b, w_1, a\}$ does *not* satisfy the trail condition.",
+		"In the graph depicted by <img42>, the multiset $\{w_4, w_5, w_2, w_4\}$ does *not* satisfy the trail condition.",
+		"In the graph depicted by <img42>, the multiset $\{w_1, w_2, w_5, w_2\}$ does *not* satisfy the trail condition.",
+	],
 }
 
 {
 	"definition":"A __trail__ is a walk that satisfies the trail condition.",
 	"dependencies":["walk", "trail condition"],
+	"example": [
+		"In the graph depicted by <img42>, the walk $(a, w_1, b, w_2, d)$ is a trail.",
+		"In the graph depicted by <img42>, the sequence $(c, w_4, b, w_2, d, w_3, e)$ is a trail.",
+		"In the graph depicted by <img42>, the following sequence is a trail: $(e, w_3, d, w_5, c, w_4, b, w_2, d)$",
+	],
+	"counterexample": [
+		"In the graph depicted by <img42>, the walk $(b, w_2, d, w_2, b)$ is *not* a trail.",
+		"In the graph depicted by <img42>, the walk $(b, w_2, d, w_5, c, w_4, b, w_2, d)$ is *not* a trail.",
+		"In the graph depicted by <img42>, the sequence $(a, b, w_2, d)$ is *not* a trail (because it is not a walk).",
+	],
 }
 
 {
-	"def":"A multiset of vertices and edges where *no vertex is repeated* satisfies the __path condition__.",
+	"def":"A multiset of vertices and edges where *no vertex is repeated* and *no edge is repeated* satisfies the __path condition__.",
 	"dependencies":["multiset", "edge"],
+	"example": [
+		"In the graph depicted by <img42>, the multiset $\{b, w_2, d, w_3, e\}$ satisfies the path condition.",
+		"In the graph depicted by <img42>, the multiset $\{a, w_3, e, c, w_4, w_2\}$ satisfies the path condition.",
+		"In the graph depicted by <img42>, the multiset $\{b, w_5, c, a, d\}$ satisfies the path condition.",
+	],
+	"counterexample": [
+		"In the graph depicted by <img42>, the multiset $\{c, w_3, e, c, w_4, w_2\}$ does not satisfy the path condition.",
+		"In the graph depicted by <img42>, the multiset $\{c, w_4, e, a, w_4, w_2\}$ does not satisfy the path condition.",
+		"In the graph depicted by <img42>, the multiset $\{a, w_3, e, t\}$ does not satisfy the path condition (because $t$ is not a vertex nor an edge, therefore we do not have a multiset of vertices and edges).",
+	],
 }
 
 {
 	"definition":"A __path__ is a trail that satisfies the path condition.",
 	"dependencies":["trail", "path condition"],
+	"example": [
+	],
 }
 
 {
@@ -354,65 +468,73 @@
 	"dependencies":["laplacian (of a graph)", "cofactor", "spanning (tree)"],
 }
 
-// {
-// 	"name": "Bipartite iff no odd cycles",
-// 	"weight": 3,
-// 	"type": "thm",
-// 	"content": "A graph is bipartite iff it has no odd cycles.",
-// }
+{
+	"name": "Bipartite iff no odd cycles",
+	"weight": 3,
+	"type": "thm",
+	"content": "A graph is bipartite iff it has no odd cycles.",
+	"dependencies":["odd", "cycle"],
+}
 
-// {
-// 	"name": "Cayley's Theorem",
-// 	"weight": 5,
-// 	"type": "thm",
-// 	"content": "The number of trees with vertex set $[n]$ is $n^{n-2}$.",
-// 	"proof": {
-// 		"type": [],
-// 		"content": "There is a bijection between trees and Pr\u{00fc}fer sequences.  Trees with $n$ vertices has Pr\u{00fc}fer sequences of length $n-2$, and each entry can be any number from $1$ to $n$.  Therefore, there are $n^{n-2}$ possible Pr\u{00fc}fer sequences.",
-// 	},
-// }
+{
+	"name": "Cayley's Theorem",
+	"weight": 5,
+	"type": "thm",
+	"content": "The number of trees with vertex set $[n]$ is $n^{n-2}$.", // what do we call [n]?? that should be a dependency
+	"proof": {
+		"type": [],
+		"content": "There is a bijection between trees and Pr\u{00fc}fer sequences.  Trees with $n$ vertices has Pr\u{00fc}fer sequences of length $n-2$, and each entry can be any number from $1$ to $n$.  Therefore, there are $n^{n-2}$ possible Pr\u{00fc}fer sequences.",
+	},
+	"dependencies":["tree"],
+}
 
-// {
-// 	"def": "A __clique__ is a set $S$ of vertices such that for every pair $a,b\in S$, $a~b$.",
-// 	"intuition": "A clique is a bunch of vertices where all edges between them are filled.  Everybody is adjacent to everybody.",
-// }
+{
+	"def": "A __clique__ is a set $S$ of vertices such that for every pair $a,b\in S$, $a~b$.",
+	"intuition": "A clique is a bunch of vertices where all edges between them are filled.  Everybody is adjacent to everybody.",
+	"dependencies":["vertex", "adjacent"],
+}
 
-// {
-// 	"name": "Clique Number",
-// 	"type": "def",
-// 	"content": "The __clique number__ of a graph $G$, denoted $\omega(G)$, is the number of vertices in a maximum clique in $G$.",
-// 	"intuition": "Find the largest clique in $G$.  The number of vertices in that clique is the clique number.",
-// }
+{
+	"name": "Clique Number",
+	"type": "def",
+	"content": "The __clique number__ of a graph $G$, denoted $\omega(G)$, is the number of vertices in a maximum clique in $G$.",
+	"intuition": "Find the largest clique in $G$.  The number of vertices in that clique is the clique number.",
+	"dependencies":["multigraph", "maximum (clique)"],
+}
 
-// {
-// 	"type": "def",
-// 	"content": "The __chromatic number__ of a graph $G$, denoted $\chi(G)$, is the minimum natural number $\chi$ such that $G$ is $\chi$-partite.",
-// 	"intuition": "The chromatic number of $G$ is the minimum number of colors needed to color the vertices of $G$ so that no two adjacent vertices are the same color.",
-// }
+{
+	"type": "def",
+	"content": "The __chromatic number__ of a graph $G$, denoted $\chi(G)$, is the minimum natural number $\chi$ such that $G$ is $\chi$-partite.",
+	"intuition": "The chromatic number of $G$ is the minimum number of colors needed to color the vertices of $G$ so that no two adjacent vertices are the same color.",
+	"dependencies":["natural number", "partite (multigraph)"],
+}
 
-// {
-// 	"name": "Clique coloring",
-// 	"weight": 3,
-// 	"type": "thm",
-// 	"content": "For any multigraph $G$, $\chi(G) \geq \omega(G)$.",
-// 	"intuition": "The number of colors needed for the vertices of $G$ is at least the size of the maximum clique in $G$.",
-// }
+{
+	"name": "Clique coloring",
+	"weight": 3,
+	"type": "thm",
+	"content": "For any multigraph $G$, $\chi(G) \geq \omega(G)$.",
+	"intuition": "The number of colors needed for the vertices of $G$ is at least the size of the maximum clique in $G$.",
+	"dependencies":["chromatic number", "clique number", "multigraph"],
+}
 
-// {
-// 	"name": "Brook's theorem",
-// 	"weight": 8,
-// 	"type": "thm",
-// 	"content": "Consider any multigraph $G$.  If it is complete or an odd cycle, then $\chi(G) = \Delta(G)+1$;  otherwise, $\chi(G) \leq \Delta(G)$.",
-// 	"intuition": "Except for two special cases, the chromatic number of a graph is at most its maximum degree!",
-// }
+{
+	"name": "Brook's theorem",
+	"weight": 8,
+	"type": "thm",
+	"content": "Consider any multigraph $G$.  If it is complete or an odd cycle, then $\chi(G) = \Delta(G)+1$;  otherwise, $\chi(G) \leq \Delta(G)$.",
+	"intuition": "Except for two special cases, the chromatic number of a graph is at most its maximum degree!",
+	"dependencies":["multigraph", "odd (cycle)", "chromatic number", "maximum degree"],
+}
 
-// {
-// 	"name": "Vizing's theorem",
-// 	"weight": 7,
-// 	"type": "thm",
-// 	"content": "In every simple graph $G$, $\Delta(G) \leq \chi'(G) \leq \Delta(G)+1$.",
-// 	"intuition": "The minimum number of colors necessary to color the edges of a simple graph (with no two edges of the same color adjacent to each other) is less than or equal to the maximum degree of $G$ plus $1$.",
-// }
+{
+	"name": "Vizing's theorem",
+	"weight": 7,
+	"type": "thm",
+	"content": "In every simple graph $G$, $\Delta(G) \leq \chi'(G) \leq \Delta(G)+1$.",
+	"intuition": "The minimum number of colors necessary to color the edges of a simple graph (with no two edges of the same color adjacent to each other) is less than or equal to the maximum degree of $G$ plus $1$.",
+	"dependencies":["chromatic edge number", "maximum degree"],
+}
 
 
 

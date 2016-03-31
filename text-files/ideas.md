@@ -47,7 +47,6 @@ Victoria Feedback
 -----------------------
 51. the "hover" definitions on the graph-animation are not rendered!
 53. refresh error. (when i reload, it breaks) --> Andrew adds back and forward browser button things.
-53.5 can we remember when somebody is already logged in?
 Continued
 --------------
 54. consider using https://github.com/ftlabs/fastclick to make clicking not laggy on mobile devices, only if needed.
@@ -71,6 +70,10 @@ If we need it: For preferences form and for controlling browsers back button, et
 70. add ACTUAL nodes for the dependencies in pre-json_to_mongo
 71. the weird expanding problem may be the result of the JIGGLE.  If we reduce the alpha number as small as possible for the jiggle, we may reduce the expansion!  Also, it looks like the graph jiggles when we learn a node EVEN IF WE DON"T get new content sent over (need to verify this).  If so, we need to make sure jiggle is only triggered when new nodes come in.
 72. it looks like nodes don't have synonyms.  we should probably add this in node.py and/or update DB
+Theo
+--------
+flashlight lookaheads for the most recent stuff you've learned
+
 
 when they save to DB, IT ACTUALLY DOES.
 

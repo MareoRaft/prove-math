@@ -11,8 +11,17 @@
 
 {
 	"weight": 3,
-	"def": "A set of items are __distinct__ if no two items are identical to each other.",
+	"def": "A multiset of items are __distinct__ if no two items are identical to each other.",
 	"note": "The words *different* and *distinguishable* are synonyms to *distinct*.",
+	"dependencies": ["identical"],
+}
+
+{
+	"weight": 3,
+	"name": "finite (set)",
+	"def": "A set is __finite__ if it has a finite number of elements.",
+	"note": "For any natural number $n$, the notation $[n]$ is used to represent the finite set $\{0, 1, 2, \ldots, n\}$.",
+	"dependencies": ["finite (number)"],
 }
 
 {
@@ -20,6 +29,7 @@
 	"weight": 4,
 	"def": "For any $n \\in \\mathbb{N}$, __$n$ factorial__, denoted $n!$, is $n(n-1)(n-2)\\ldots1$.",
 	"intuition": "$n!$ is just a shorthand notation for $1 \\cdot 2 \\cdots n$, that is, multiplying the numbers from $1$ to $n$ together.",
+	"dependencies": ["times"],
 }
 
 {
@@ -27,6 +37,7 @@
 	"weight": 4,
 	"thm": "Given a set $P$ of size $p$, then the number of bijective functions from $[p]$ to $P$ is $p!$.",
 	"intuition": "If you have $p$ different people, and you want to order them in a line, then there are exactly $p!$ ways to do this.",
+	"dependencies": ["factorial", "finite (set)"],
 }
 
 {
@@ -43,13 +54,14 @@
 			"content": "Left side: We have $n$ puppies.  We choose $k$ of them and color them blue.  We color the rest of them red.  Right side: We have $n$ puppies.  We choose $n-k$ of them and color them red.  We color the rest of them blue.",
 		},
 	],
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
 	"name": "multinomial coefficient",
 	"weight": 4,
 	"def": "Given that $n_1 + n_2 + \\ldots + n_k = n$, then the __multinomial coefficient__, denoted $\\binom{n}{n_1, n_2, \\ldots, n_k}$, is $\\frac{n!}{n_1!n_2!\\ldots n_k!}$.",
-	"intuition": "The binomial coefficient $$, also denoted $$, is the number of ways to choose $$ from $n$ objects.  The multinomial coefficient $$ is the number of ways to choose $$ and $$ from $n$ objects.",
+	"intuition": "The binomial coefficient $\binom nk$ is the number of ways to choose $k$ objects from $n$ objects.  The multinomial coefficient $\\binom{n}{k_1, k_2}$ is the number of ways to choose one group of $k_1$ objects and one group of $k_2$ objects from $n$ objects.",
 	"example": "$6$ workers need to be split up so that $2$ go into each of the following departments: sales, finance, and management.  The number of ways to do this is $\\binom{6}{2,2,2} = \\frac{6!}{2!2!2!} = \\frac{6\\cdot5\\cdot4\\cdot3\\cdot2\\cdot1}{2\\cdot2\\cdot2} = 90$.",
 }
 
@@ -63,6 +75,7 @@
 			"content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee.",
 		},
 	],
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -75,6 +88,7 @@
 			"content": "Left side: We have a commitee of $a_1$ people.  From this committee, we choose a subcommittee of $a_2$ people.  From this subcommittee, we choose a subsubcommittee of $a_3$ people, and so forth.  Right side: We have a committee of $a_1$ people.  From this committee, we choose the submostcommittee of $a_{n+1}$ people.  Then from the remaining $a_1 - a_{n+1}$ people, we choose the remaining $a_n - a_{n+1}$ people of the second deepest subcommittee in order to complete it.  This corresponds to the last factor of the product.  We continue to work backwards in this way, until we choose the first subcommittee.",
 		},
 	],
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -91,6 +105,7 @@
 			"content": "Right side: Choose the point $P$ on the Pascal lattice path grid corresponding to $\\binom nk$.  That is, all paths to it have length $n$, and $k$ of the segments move rightwards.  Left side: We see that every path to $P$ must either travel through the point immediately above and to the left of $P$, which has $\\binom{n-1}{k-1}$ paths leading to it; xor through the point immediately above and to the right of $P$, which has $\\binom{n-1}{k}$ paths leading to it.",
 		},
 	],
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -102,6 +117,7 @@
 		"type": "combinatorial",
 		"content": "Right side: The number of subsets of $[n]$ is $2^n$.  Left side: The number of subsets of $[n]$ of size $k$ is $\\binom nk$.  Sum these amounts over all possible sizes of subsets.",
 	},
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -114,6 +130,7 @@
 		"type": "algebraic",
 		"content": "$1 = 1^n = (p+[1-p])^n = \\sum_{k=0}^{n} \\binom nk p^k(1-p)^{n-k}$",
 	},
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -125,6 +142,7 @@
 		"type": "algebraic",
 		"content": "$0 = (1+(-1))^n = \\sum_{k=0}^{n} \\binom nk (-1)^k$ by the binomial theorem.",
 	},
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -141,6 +159,7 @@
 			"content": "Right side: You have $n+1$ people and you choose $2$ of them.  Left side: Your people are numbered from $0$ to $n$.  For each $k$, count the number of pairs which include person $k$ as the highest indexed person.  Sum over all possible $k$.",
 		},
 	],
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -154,6 +173,7 @@
 			"content": "use same 'largest element' trick as the Summation Formula 1 thm.",
 		},
 	],
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -182,6 +202,7 @@
 		"type": "combinatorial",
 		"content": "Left side: You have people numbered $1$ through $n$, and you choose $3$ of them.  Right side: For each $k$, count the triples of people where person $k$ is the middle indexed person.  The number of such triples is: $(k-1)$ possible people before person $k$, times $n-k$ possible people after person $k$, equals $(k-1)(n-k)$ triples. Finally sum these amounts over all possible values of $k$.",
 	},
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -193,6 +214,7 @@
 		"type": "Pascal lattice",
 		"content": "draw the rectangle lattice.  draw a horizontal line at height min(a,b). sum over each point on the line that the paths might go through.",
 	},
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
@@ -204,13 +226,14 @@
 		"type": "Pascal lattice",
 		"content": "This is just a more specific version of Rectangle Lattice Paths.  Set $a=b$, and use the Choosy Identity to simplify.",
 	},
+	"dependencies": ["multinomial coefficient"],
 }
 
 {
 	"name": "$a$ distinct balls in $x$ distinct boxes",
 	"type": "thm",
 	"weight": 4,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$ is\n\n$x^a$.",
+	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$ is $x^a$.",
 	"intuition": "If you have $a$ distinct balls and $x$ distinct boxes, then the number of ways (functions) to put the balls in the boxes is $x^a$.",
 	"proof": {
 		"type": "combinatorial",
@@ -251,829 +274,829 @@
 	"example": "What are all the partitions of $4$?  They are $1+1+1+1$, $1+1+2$, $1+3$, and $2+2$.  The partition $3+1$, for example, is considered to be the same as $1+3$.",
 }
 
-{
-	"name": "partition natural number $a$ into $x$ parts",
-	"type": "def",
-	"weight": 4,
-	"content": "The number of ways to partition natural number $a$ into $x$ (nonempty) __parts__, denoted $p_x(a)$, is the number of ways to write $a$ as the sum of exactly $x$ positive integers.  A formula for this is unknown!",
-	"note": "The order of the integers does not matter.",
-	"intuition": [
-		"Partitioning an integer is analagous to partitioning a set, except that with sets, the elements you choose to be in each part are distinct.  With integers, the elements are identical, so it only matters how many are in each part.",
-		"Since different ordering of the same $x$ parts are considered only $1$ possibility, it is easiest to keep track by always listing the sums in lexographical order.  For example, the sum $2+1+5$ can be listed as $1+2+5$.",
-	],
-	"example": [
-		"$p_2(5)$ is the number of ways to write $3$ as the sum of $2$ positive integers.  The possible ways are\n\n  1. $1+4$\n  2. $2+3$\n\nTherefore, $p_2(5) = 2$ ways.",
-		"$p_3(10)$ is the number of ways to write $10$ as the sum of $3$ positive integers.  The possible ways are\n\n  1. $1+1+8$\n  2. $1+2+7$\n  3. $1+3+6$\n  4. $1+4+5$\n  5. $2+2+6$\n  6. $2+3+5$\n  7. $2+4+4$\n  8. $3+3+4$\n\nTherefore, $p_3(10) = 8$ ways.",
-	],
-}
-
-{
-	"name": "$a$ identical balls in $x$ identical boxes, at least one each",
-	"type": "thm",
-	"weight": 4,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $A$ and $X$, is $p_x(a)$.",
-	"intuition": "If you have $a$ identical balls and $x$ identical boxes, then the number of ways (functions) to put the balls in the boxes, at least one ball per box (surjective), is $p_x(a)$.",
-	"proof": {
-		"type": "combinatorial",
-		"content": "Placing the $a$ balls in the $x$ boxes, since they are identical and we need at least $1$ ball per box, is the same as partitioning $a$ into $x$ parts.",
-	},
-}
-
-{
-	"name": "$a$ identical balls in $x$ identical boxes",
-	"type": "thm",
-	"weight": 4,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$, up to permutations of $A$ and $X$, is $p_x(a+x)$.",
-	"intuition": "If you have $a$ identical balls and $x$ identical boxes, then the number of ways (functions) to put the balls in the boxes, is $p_x(a+x)$.",
-	"proof": {
-		"type": ["combinatorial", "algebraic"],
-		"content": "For each arrangement of $a$ identical balls in $x$ identical boxes, we can add $1$ more ball to each box, resulting in an arrangement of $a+x$ identical balls in $x$ boxes, *at least one each*.  Because adding $1$ ball to each box is bijective, we have not changed the number of arrangements.  Therefore, by the definition of partitioning a positive integer, the number of arrangements is $p_x(a+x)$.",
-	},
-}
-
-{
-	"name": "$x$ pick $a$",
-	"type": "thm",
-	"weight": 4,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of injective functions from $A$ to $X$ is\n\n$x^\\underline{a}$.",
-	"note": "$x^\\underline{a}$ is also known as $x(x-1)(x-2)\\cdots(x-a+1)$.",
-	"intuition": "We have $x$ distinct boxes and $a$ distinct balls.  We must put the balls in the boxes so that each box has at most $1$ ball.",
-	"proof": {
-		"type": "combinatorial",
-		"content": "We take the $x$ boxes and pick $a$ of them to hold exactly $1$ ball (injective).  The first ball can be in any of the $x$ boxes.  The second ball can be in any of the $(x-1)$ remaining boxes.  We continue this process until we reach the $a^\\text{th}$ ball, which can be in any of the $(x-a+1)$ remaining boxes.  Multiplying these together, we get a total of $x(x-1)\\cdots(x-a+1) = x^\\underline{a}$ possibilities.",
-	},
-}
-
-{
-	"name": "$a$ identical balls in $x$ distinct boxes",
-	"type": "thm",
-	"weight": 4,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{a+x-1}{x-1}$.",
-	"intuition": "If you have $a$ identical balls and $x$ distinct boxes, then the number of ways (functions) to put the balls in the boxes is $\\binom{a+x-1}{x-1}$, which is also equal to $\\binom{a+x-1}{a}$.",
-	"proof": {
-		"type": "combinatorial",
-		"content": "Take the $a$ balls and $x-1$ of the boxes.  That's $a+x-1$ objects.  Then $\\binom{a+x-1}{x-1}$ is the number of ways you can arrange those objects in a vertical line.  Place the $1$ box we originally omitted on the bottom.  For each arrangement, imagine the balls fall downwards until they land in a box.  That is the box they belong in.",
-	},
-}
-
-{
-	"name": "giving $a$ identical parachutes to $x$ distinct skydivers, at most one each",
-	"type": "thm",
-	"weight": 4,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of injective functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{x}{a}$.",
-	"intuition": "Let $a \leq x$.  If you have $a$ identical parachutes and $x$ distinct skydivers, then the number of ways (functions) to give out the parachutes to the skydivers, where each skydiver gets at most $1$ parachute (injective), is $\\binom xa$.",
-	"proof": {
-		"type": "combinatorial",
-		"content": "$a \leq x$, and each skydiver gets at most one parachute.  Therefore, we are simply choosing which skydivers get parachutes.  We have $x$ skydivers, and we choose $a$ of them to get parachutes.  Therefore, $\\binom xa$ possibilities.",
-	},
-}
-
-{
-	"name": "giving $a$ identical parachutes to $x$ distinct skydivers, at least one each",
-	"type": "thm",
-	"weight": 4,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{a-1}{a-x}$.",
-	"intuition": "Let $a \geq x$.  If you have $a$ identical parachutes and $x$ distinct skydivers, then the number of ways (functions) to give out the parachutes to the skydivers, where each skydiver gets at least $1$ parachute (surjective), is $\\binom{a-1}{a-x}$.",
-	"proof": {
-		"type": "combinatorial",
-		"content": "$a \geq x$, and each skydiver gets at least one parachute.  Give $1$ parachute to each skydiver.  There are $a-x$ parachutes left, to be distributed among $x$ skydivers with no constraints.  Plugging this into the $\\ell$ identical balls in $x$ distinct boxes formula, $\\binom{\\ell+x-1}{\\ell} = \\binom{a-x+x-1}{a-x}$, we obtain the answer.",
-	},
-}
-
-// latex for stirling notation:
-// \usepackage{amsmath}% http://ctan.org/pkg/amsmath
-// \DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}}
-{
-	"name": "Stirling numbers of the 2nd kind",
-	"type": "definition",
-	"weight": 5,
-	"content": "A __Stirling Number of the 2nd kind__, denoted $\\bigcurly nk$, is the number of ways of partitioning a set of size $n$ into $k$ sets",
-	"note": "By the definition of *partition*, each of the $k$ sets must be nonempty.",
-}
-
-{
-	"name": "Stirling identity",
-	"type": "thm",
-	"weight": 5,
-	"content": "Stirling Numbers of the 2nd kind can be computed using the equality $ \\stirling nk = \\frac{1}{k!} \\sum_{j=0}^{k} \\binom kj (k-j)^n (-1)^j $.",
-	"intuition": "Partitioning a set containing exactly $n$ (distinct) elements into $k$ (identical) nonempty subsets is the same thing as distributing $n$ distinct balls into $k$ identical boxes, where each box must contain at least $1$ ball.",
-}
-
-{
-	"name": "$a$ distinct balls in $x$ identical boxes, at least one each.",
-	"type": "thm",
-	"weight": 5,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $X$, is\n\n$\\stirling ax$.",
-	"intuition": "$a \\geq x$.  You have $a$ distinct balls, and you want to put them in $x$ identical boxes so that each box has at least $1$ ball.  The number of ways to do this is $\\stirling ax$.",
-}
-
-{
-	"name": "$a$ distinct balls in $x$ identical boxes.",
-	"type": "thm",
-	"weight": 5,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$, up to permutations of $X$, is $\\sum_{j=0}^{x} \\stirling aj$.",
-	"intuition": "You have $a$ distinct balls, and you want to put them in $x$ identical boxes.  The number of ways to do this is $\\sum_{j=0}^{x} \\stirling aj$.",
-	"proof": {
-		"type": "combinatorial",
-		"content": "The number of ways to put $a$ distinct balls into $j$ identical boxes, *at least one each*, is $\\stirling aj$.  For example, if $j=2$, then we are filling $2$ boxes nonemptily with the $a$ balls.  The remaining $x-2$ boxes are empty.  Therefore, if we sum $\\stirling aj$ from $j=0$ to $j=x$, we get every possible amount of empty boxes.  Therefore, we get the number of ways to put $a$ distinct balls into $x$ identical boxes, *without* the nonempty restriction.",
-	},
-}
-
-{
-	"name": "$a$ distinct balls in $x$ distinct boxes, at least one each.",
-	"type": "thm",
-	"weight": 5,
-	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$ is\n\n$x!\\stirling ax$.",
-	"intuition": "$a \\geq x$.  You have $a$ distinct balls, and you want to put them in $x$ distinct boxes so that each box has at least $1$ ball.  The number of ways to do this is $x!\\stirling ax$.",
-	"proof": {
-		"type": "combinatorial",
-		"content": "The number of ways of putting $a$ distinct balls in $x$ *identical* boxes is $\\stirling ax$.  Since the boxes are now distinct, we multiply by the possible orderings of the $x$ boxes, $x!$.  Therefore, we obtain $x!\\stirling ax$ possibilities.",
-	},
-}
-
-{
-	"name": "bounds of factorials",
-	"type": "thm",
-	"weight": 5,
-	"content": "$ 2^{n-1} \\leq n^{\\frac n2} \\leq e\\left(\\frac ne\\right)^n \\leq n! \\leq en\\left(\\frac ne\\right)^n \\leq \\left(\\frac n2\\right)^n \\leq n^n $",
-	"proofs": [
-		{
-			"type": "calculus",
-			"content": "Upper bound: Take $\\ln$ of $n!$.  Bound the sum by the integral of $\\ln(x)$ from $1$ to $n+1$. So that $n! \leq \\frac{(n+1)^{n+1}}{e^n}$.  Finally, write $n! = n(n-1)!$ and apply the formula to $(n-1)!$ to get the more elegant bound.\n\nLower bound: Begin using the same method, but when you have the sum of the natural logarithms, it is greater than $\\int_{t=1}^{n} \\ln(t) dt$, which is $1+n\\ln(n)-n$.  This is equal to $ln\\left(e\\left(\\frac ne\\right)^n\\right)$.",
-		},
-	],
-}
-
-{
-	"name": "bounds of chooses",
-	"type": "thm",
-	"weight": 5,
-	"content": "$ \\left(\\frac{n-k+1}{k}\\right)^k \\leq \\left(\\frac nk\\right)^k \\leq \\binom nk \\leq n^k $",
-	"proofs": [
-		{
-			"type": "calculus",
-			"content": "Take $\\ln$ of $n!$.  Bound the sum by the integral of $\\ln(x)$ from $1$ to $n+1$. So that $n! \leq \\frac{(n+1)^{n+1}}{e^n}$.  Finally, write $n! = n(n-1)!$ and apply the formula to $(n-1)!$ to get the more elegant bound.",
-		},
-	],
-}
-
-// probability stuff...
-// definition of P function:
-// S is all outcomes
-//  P: Powerset(S) --> [0,1]
-//  P(S) = 1
-//  P(set) = prob that outcome is an element of set.
-//  E subset of F
-//  P(E) <= P(F)
-{
-	"name": "discrete probability function",
-	"type": "def",
-	"weight": 3,
-	"content": "Let $U$ be the set of all possible outcomes.  A __discrete probability function__, $P:\\mathcal{P}(U) \\to [0,1]$, satisfies the conditions\n\n1. $P(U) = 1$\n  2. $P(A\\cup B) = $P(A) + P(B)$",
-	"intuition": "$P(A) is the probability that the actual outcome will be an element of $A$.",
-	"example": "We have a fair $6$-sided die.  When it is rolled, exactly one of the numbers faces upwards, and this is the outcome.  Therefore, the set of all possible outcomes, $U$, is ${1,2,3,4,5,6}$.\nBecause the die is fair, the probability of rolling a $1$ is $\\frac16$.  That is, $P({1}) = \\frac16$.  Similarly,\n\n$P({2}) = \\frac16$\n$P({3}) = \\frac16$\n$P({4}) = \\frac16$\n$P({5}) = \\frac16$\n$P({6}) = \\frac16$.\n\nWe also have, for example, that\n\n$P({}) = 0$\n$P({1,2}) = \\frac26$\n$P({2,5}) = \\dfrac26$\n$P({1,3,4}) = \\dfrac36$\n$P({1,2,3,4,5,6}) = 1$",
-	"example": "We are waiting for the bus.  The bus will either arrive on time, arrive late, or never arrive.\n\nThe set of all possible outcomes is ${\\text{arrive on time},\\text{arrive late},\\text{never arrive}}$.  The probabilities are\n\n$P({\\text{arrive on time}}) = 0.3$\n$P({\\text{arrive late}}) = 0.6$\n$P({\\text{never arrive}}) = 0.1$\n\n$P({\\text{arrive on time, arrive late}}) = 0.9$\n$P({\\text{arrive on time, never arrive}}) = 0.4$\n$P({\\text{arrive late, never arrive}}) = 0.7$\n\n$P({\\text{arrive on time, arrive late, never arrive}}) = 1$",
-}
-
-// uniform distribution
-// every outcome equally likely
-{
-	"name": "uniform distribution",
-	"type": "def",
-	"weight": 3,
-	"content": "If we have a set $U$ of all possible outcomes, and every outcome has the same probability $p$ of occuring, then the probabilities form a __uniform distribution__ .  If we give each outcome a label $k$ and graph all the $(k, P(k))$ points on the $kP$-axis, the result is always a horizontal line.",
-	"intuition": "A uniform distribution is when there is an equal chance of getting each outcome.",
-	"example": "We flip a fair coin.  The possible outcomes are **heads** and **tails**.  The probability of getting **heads** is $50\%$.  The probability of getting **tails** is $50\%$.  The outcomes are uniformly distributed.",
-}
-
-// in which case, P(E) = |E| / |S|
-
-
-{
-	"name": "probability of a given b",
-	"type": "def",
-	"weight": 4,
-	"content": "The __probability of $A$ given $B$__, denoted $P(A|B)$, is $\\frac{P(A\\cap B)}{P(B)}$.",
-	"intuition": "Given that the outcome is in $B$, what is the probability that the outcome is in $A$?  That is $P(A|B)$.",
-}
-
-{
-	"name": "independent events",
-	"type": "def",
-	"weight": 4,
-	"content": "Events $A$ and $B$ are __independent__ if $P(A\\cup B) = P(A)P(B)$.", // make equivalent definitions?
-	"content": "Events $A$ and $B$ are __independent__ if $P(A|B) = P(A)$.",
-	"content": "Events $A$ and $B$ are __independent__ if $P(B|A) = P(B)$.",
-	"intuition": "Two event are independent if they do not affect each other.  That is, if we know that event $A$ has occured, the probability that event $B$ happens is the same as it was before.",
-}
-
-{
-	"name": "binomial term",
-	"type": "thm",
-	"weight": 5,
-	"content": "If the probability of event $a$ occuring is $p$, and you repeat the experiment $n$ times, then the probability of event $a$ occuring exactly $k$ times is $\\binom nk p^k(1-p)^{n-k}$.",
-	"intuition": "You have a coin (not necessarily fair), and the probability of flipping heads is $p$.  If you flip the coin $n$ times, then the probability of getting exactly $k$ heads is $\\binom nk p^k(1-p)^{n-k}$.",
-}
-
-{
-	"name": "binomial distribution",
-	"type": "def",
-	"weight": 3,
-	"content": "An experiment has a fixed probability $p$ of being successful.  Given we repeat the experiment $n$ times, if we graph the $P(\\text{$a$ occurs exactly $k$ times})$ on the $kP$-axis, we obtain the __binomial distibution__, denoted $\\text{Bin}(n,p)$.",
-}
-
-// thm: the binomial distibution approaches the normal distribution as n approaches infinity?
-
-{
-	"name": "geometric distribution",
-	"type": "def",
-	"weight": 3,
-	"content": "An experiment has a fixed probability $p$ of being successful.  The experiment is repeated until it is successful, and the number of times it was executed is $k$.  Each value of $k$ has a certain probability of occuring.  If we graph the $(k, P(k))$ points on the $kP$-axis, we obtain the __geometric distribution__, denoted $\\text{Geom}(p)$.",
-}
-
-{
-	"type": "def",
-	"weight": 4,
-	"content": "The __expected value__ of $X$, denoted $\\mathbb{E}(X)$, is $\\sum_{v = possible values of X} v \\cdot P(X=v)$.",
-	"intuition": "$E(X)$ is sometimes denoted $E[X]$ or $E{x}$, but it is just a function nevertheless.",
-}
-
-{
-	"name": "expected values are linear",
-	"type": "thm",
-	"weight": 3,
-	"content": "The expected value function is linear.  That is, $E[X_1+X_2] = E[X_1] + E[X_2]$.",
-	"intuition": "This is true *regardless* of the interdependence of the events causing various $X_1$ and $X_2$ values!",
-}
-
-{
-	"name": "recurrence relation",
-	"type": "def",
-	"weight": 3,
-	"content": "A __recurrence relation__ is an equation $a_n = f(a_{n-1},a_{n-2},,,a_0)$ that recursively defines a sequence or multidimensional array of values, after one or more initial terms are given: each further term of the sequence or array is defined as a function of the preceding terms.",
-	"example": "The Fibonacci numbers are defined like so:  The initial terms are $a_0=0$ and $a_1=1$.  All other terms are defined by the recurrence relation $a_n = a_{n-1}+a_{n-2}$.",
-	"example": "The Towers of Hanoi is a game where you must move $n$ disks from the left side <img> to the right side <img>.  You may move one disk at a time, and a disk can never be placed above a disk larger than itself.  When the tower is $n=1$ tall, it takes $a_1=1$ moves to move the stack.  When the tower is $n$ tall, it takes $a_n = 2a_{n-1}+1$ moves to move the stack, which is a recurrence relation.",
-}
-
-{
-	"name": "linear",
-	"type": "def",
-	"weight": 3,
-	"content": "Given any module $(X,+)$ over a ring $(C,+,\\cdot)$, a function $f$ is __linear__ if it satisfies the properties\n\n  1. $f(x_1+x_2) = f(x_1)+f(x_2)$ for all $x_1,x_2\\in X$\n  2. $f(cx) = cf(x) for all $c\\in C$ and $x\\in X$.",
-	"note": "It is equivalent to check the property $f(cx_1+x_2) = cf(x_1)+f(x_2)$ for all $c\\in C$ and $x\\in X$",
-	"intuition": "Without knowing what a module or ring is, you can think of $X$ as the domain of the function and $C$ as the set of constants you are allowed to multiply by.  Then all you need to do is check that the two properties are true.",
-	"example": "Let $X$ and $C$ both be the real numbers, $\\mathbb R$.  Then the function $f(x) = 7x+2$ is linear because\n\n  1. $f(x_1+x_2) = 12(x_1+x_2)+2...oh wait.  maybe it's not.",
-}
-
-{
-	"type": "def",
-	"weight": 2,
-	"content": "A function $f$ is __homogeneous__ if there exists a $k$ such that for all $t$, $f(tx_1,,,tx_n) = t^kf(x_1,,,x_n)$.",
-	"example": "The function $f(x) = 6x$ is homogeneous because $f(tx) = 6tx = t^16x = t^1f(x)$.",
-	"example": "The function $f(x,y) = 6x+13y$ is homogeneous because $f(tx) = 6tx+13ty = t^1(6x+13y) = t^1f(x,y)$.",
-}
-
-{
-	"name": "characteristic equation method",
-	"type": "thm",
-	"weight": 3,
-	"content": "When a recurrence is of the form $a_n = \\sum_{i=0}^{n-1} k_ia_i$, and the solutions to the equation $x^n = \\sum_{i=0}^{n-1} k_ix^i$ are $x_0,,,x_{n-1}$, then every expression of the form $\\sum_{i=0}^{n-1} c_ix_i^n$ is a solution to the recurrence.  The base cases that determine the specific sequence can be used to solve for the $c$s, giving a closed form formula for the specific sequence.",
-}
-
-{
-	"name": "no consecutive heads recurrence",
-	"type": "exercise",
-	"weight": 2,
-	"content": "Given $n$ consecutive coin flips, let $a_n$ be the number of outcomes that do *not* have consecutive heads.  The base cases for this sequence are [[$a_1 = 2$ and $a_2 = 3$]].  The recurrence relation for this sequence is [[$a_n = a_{n-1}+a_{n-2}$]].",
-	"proof": {
-		"type": "combinatorial",
-		"content": "Consider $n>2$ consecutive coin flips.  How many do not have consecurive heads?  If the first flip is tails, then there are $a_{n-1}$ possibilities for the remaining flips.  If the first flip is heads, then the second flip must be tails, and there are $a_{n-2}$ possibilities for the remaining flips.  This covers all cases, so there are a total of $a_{n-1}+a_{n-2}$ possibilities without consecutive heads.",
-	},
-}
-
-{
-	"name": "no consecutive 1s recurrence",
-	"type": "exercise",
-	"weight": 1,
-	"content": "Given a line of length $n$ of letters from ${J,K,L}$.  Let $a_n$ be the number of possible lines that do *not* have consecutive $J$s.  The base cases for this sequence are [[$a_1 = 3$ and $a_2 = 8$]].  The recurrence relation for this sequence is [[$a_n = 2a_{n-1}+2a_{n-2}$]].",
-	"proof": {
-		"type": "combinatorial",
-		"content": "Consider a line of length $n>2$.  How many do not have consecutive $J$s?  If the first number is $K$ or $L$, then there are $a_{n-1}$ possibilities for the rest of the line.  This makes $2a_{n-1}$ possibilities.  If the first number is $J$, then the second number must be $K$ or $L$, and there are $a_{n-2}$ possibilities for the rest of the line.  This makes $2a_{n-2}$ possibilities.  This covers all cases, so there are a total of $2a_{n-1}+2a_{n-2}$ possibilities without consecutive $J$s.",
-	},
-}
-
-{
-	"name": "filling a 3xn square grid with 1x1 and 2x2 tiles",
-	"type": "exercise",
-	"weight": 1,
-	"content": "Given a $3\\times n$ grid of $1\\times1$ squares, we want to fill it with $1\\times1$ and $2\\times2$ tiles.  Let $a_n$ be the number of ways to do this.  The base cases for this sequence are [[$a_1 = 1$ and $a_2 = 3$]].  The recurrence relation for this sequence is [[$a_n = 2a_{n-1}+2a_{n-2}$]].",
-	"proof": {
-		"type": "combinatorial",
-		"content": "A $3\\times1$ grid can only be filled in $1$ way, that is, with $3$ $1\\times1$ tiles.  So $a_1=1$.  A 3\\times2$ grid can be filled in $3$ ways:\n\n  1. A $2\\times2$ tile on top and $2$ $1\\times1$ tiles on bottom.\n  2. A $2\\times2$ tile on bottom and $2$ $1\\times1$ tiles on top.\n  3. $6$ $1\\times1$ tiles.\n\nSo $a_2=3$.  These are the base cases.\n\nConsider a $3\\times n$ grid where $n>2$.  If the last column is filled with $1\\times1$ tiles, then there are $a_{n-1}$ ways to fill the rest of the grid.  On the other hand, if the last column has part of a $2\\times2$ tile on its bottom, then the second to last column has the other half of the $2\\times2$ in it, and the top of those columns must be filled with $1\\times1$ tiles <img>.  There are $a_{n-2}$ ways to fill the rest of the grid.  Finally, if the last column has half of a $2\\times2$ tile on its top, then we get a symmetrical situation, and again there are $a_{n-2}$ ways to fill the rest of the grid.\n\nThis covers all possible cases, and they are mutually exclusive, so there are a total of $a_{n-1}+2a_{n-2}$ ways to fill the $3\\times n$ grid.  This is the recurrence relation.",
-	},
-}
-
-{
-	"name": "generating function",
-	"type": "def",
-	"weight": 3,
-	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} a_nx^n$.",
-}
-
-{
-	"name": "$e^x$ generating function",
-	"type": "thm",
-	"weight": 3,
-	"content": "The generating function for $e^x$ is $\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}$.",
-	"proofs": [
-		{
-			"type": "calculus",
-			"content": "By definition, the Maclauren series for $e^x$ is $fill in here$.  Since the derivative of $e^x$ is $e^x$, all of the derivatives evaluate to $1$.",
-		},
-		{
-			"type": "magic",
-			"content": "$e^x$ is the *only* increasing function whose derivative is itself.  $\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}$ is increasing because each term is positive and each nonzero power is greater than $1$.  Its derivative, $\\sum_{n=0}^{\\infty} \\frac{nx^{n-1}}{n!} = \\sum_{n=1}^{\\infty} \\frac{x^{n-1}}{(n-1)!} = \\sum_{j=0}^{\\infty} \\frac{x^j}{j!}$, is equal to itself.  Therefore, the infinite sum *must* be $e^x$.",
-		},
-	],
-}
-
-{
-	"name": "number of partitions of a natural number",
-	"type": "thm",
-	"weight": 5,
-	"content": "The number of partitions of a natural number $n$ is the coefficient of $x^n$ in $\\prod_{k=1}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
-	"intuition": "Remember that a partition of $n$ is a sum of natural numbers that add up to $n$.  The order of the numbers does not matter.  The given product can be expressed as a Maclaurin series of the form $a_0x^0 + a_1x^1 + a_2x^2 +++$.  Then $a_n$ is the number of ways to partition $n$.",
-	"proof": {
-		"type": "algebraic",
-		"content": "Given $\\prod_{k=1}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$, each factor $\\frac{1}{1-x^k}$ can be replaced with its power series, $\\sum_{i=0}^{\\infty} x^ki$.\n\nThe result is a product of sums, which looks like $(x^0+x^1+x^2+x^3+++)(x^0+x^2+x^6+x^8+++)(x^0+x^3+x^6+x^9+++)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  The term chosen from the second factor represents the number of $2$s you are using the in the partition, and so forth.  For example, in the second factor, choosing $x^0$ means you are using no $2$s in the partition.  Choosing $x^2$ means you are using one $2$ in the partition.  Or choosing $x^4$ means you are using two $2$s in the partition.\n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$.",
-	}
-}
-
-{
-	"exercise": "Prove that $\\sum_{k=0}^{n} 2^k\\binom nk = 3^n$.",
-	"proof": {
-		"type": "algebraic",
-		"content": "$3^n = (2+1)^n$.  Using the binomial theorem, we know this is equal to $\\sum_{k=0}^{n} \\binom nk 2^k 1^{n-k}$ = $\\sum_{k=0}^{n} 2^k\\binom nk$.",
-	},
-}
-
-{
-	"name": "expected value of geometric variable",
-	"thm": "The expected value for a geometric random variable with probability $p$ is $\\frac 1p$.",
-	"proof": {
-		"type": "algebraic",
-		"content": "The expected value is the sum of (the number of flips it takes to get success \\cdot probability it takes that many) from 0 to infinity.  rewrite those values in terms of q, then distribute and rewrite as two separate sums.  Two of the sums will cancel, with only one left.  The last sum is a power series, so its 1/(1-q).",
-	},
-}
-
-{
-	"exercise": "A $2\\times n$ board can be filled with $1\\times1$ tiles and $L$-shaped tiles (made from $3$ $1\\times1$ squares) <img>.  Let $(a_n)_{n=1}^{\\infty}$ be the sequence of the number of possible tilings.\n\nThe base cases for this sequence are [[$a_1=1, a_2=5, a_3=11$]].  A recurrence relation for this sequence is [[$a_n = a_{n-1} + 4a_{n-2} + 2a_{n-3}$]].",
-}
-
-{
-	"name": "number of partitions of a natural number into odd parts",
-	"type": "exercise",
-	"weight": 3,
-	"content": "The number of partitions of a natural number $n$ into odd parts is the coefficient of $x^n$ in [[$\\prod_{k \\in \\mathbb{N}_\\text{odd}}\\left(\\frac{1}{1-x^k}\\right)$]] when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
-	"intuition": "This is just a variant of counting the number of ways to partition a natural number.  If you understand that proof, you can alter it to consider only odd parts.  That is, each part of the partition must be odd.",
-	"proof": {
-		"type": "algebraic",
-		"content": "Given $\\prod_{k \\in \\mathbb{N}_\\text{odd}}\\left(\\frac{1}{1-x^k}\\right)$, each factor $\\frac{1}{1-x^k}$ can be replaced with its power series, $\\sum_{i=0}^{\\infty} x^ki$.\n\nThe result is a product of sums, which looks like $(x^0+x^1+x^2+x^3+++)(x^0+x^3+x^6+x^9+++)(x^0+x^5+x^{10}+x^{15}+++)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  The term chosen from the second factor represents the number of $3$s you are using the in the partition, and so forth.  For example, in the second factor, choosing $x^0$ means you are using no $3$s in the partition.  Choosing $x^3$ means you are using one $3$ in the partition.  Or choosing $x^6$ means you are using two $3$s in the partition.  You can see that we are only using odd numbers in our partition.  \n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$ into odd parts, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$ into odd parts.",
-	}
-}
-
-{
-	"name": "number of partitions of a natural number into distinct parts",
-	"type": "thm",
-	"weight": 3,
-	"content": "The number of partitions of a natural number $n$ into distinct parts is the coefficient of $x^n$ in $\\prod_{k=1}^{\\infty}\\left(1+x^k)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
-	"intuition": "The parts (numbers) must be distinct, so each number from $1$ to $n$ can either be in the sum or not, and the sum must of course add up to $n$.  No number can appear more than once in the sum.",
-	"proof": {
-		"type": "algebraic",
-		"content": "The generating function given, when written without product notation, looks like $(1+x^1)(1+x^2)(1+x^3)(1+x^4)\\cdots$ or $(x^0+x^1)(x^0+x^2)(x^0+x^3)(x^0+x^4)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  You can either have $0$ ones or $1$ one, but never more than that.  The term chosen from the second factor represents the number of $2$s you are using the in the partition, and so forth.  You can either have $0$ twos or $1$ two, but never more than that, guaranteeing distinctness of parts.  For example, in the fourth factor, choosing $x^0$ means you are using no $4$s in the partition.  Choosing $x^4$ means you are using one $4$ in the partition.\n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$ into distinct parts, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$ into distinct parts.",
-	}
-}
-
-{
-	"name": "Glaisher's theorem for d=2",
-	"thm": "Given any natural number $n$, the number of partitions of $n$ into parts that are odd is equal to the number of partitions of $n$ into parts that are distinct.",
-	"example": "$5$ can be partitioned $7$ ways:
-	  1. $1+1+1+1+1$\n
-	  2. $1+1+1+2$\n
-	  3. $1+1+3$\n
-	  4. $1+2+2$\n
-	  5. $1+4$\n
-	  6. $2+3$\n
-	  7. $5$\n\n
-	  Numbers 5., 6., and 7. have distinct parts.  Numbers 1., 3., 7. have odd parts.  Both ways, there are exactly $3$ partitions that accomplish the goal.",
-	"proof": {
-		"type": "algebraic",
-		"content": "Let $a_n$ be the number of ways to partition $n$ into distinct parts.  The generating function for the sequence $(a_n)_{n=0}^{\\infty}$ is $f(x) = (1+x^1)(1+x^2)(1+x^3)(1+x^4)(1+x^5)\\cdots$.  This can be rewritten in a different form as follows:
-		$f(x) = (1+x^1)(1+x^2)(1+x^3)(1+x^4)(1+x^5)\\cdots$
-		$f(x) = \\left(\\frac{(1+x^1)(1-x^1)}{1-x^1}\\right)\\left(\\frac{(1+x^2)(1-x^2)}{1-x^2}\\right)\\left(\\frac{(1+x^3)(1-x^3)}{1-x^3}\\right)\\left(\\frac{(1+x^4)(1-x^4)}{1-x^4}\\right)\\left(\\frac{(1+x^5)(1-x^5)}{1-x^5}\\right)\\cdots$
-		$f(x) = \\left(\\frac{1-x^2}{1-x^1}\\right)\\left(\\frac{1-x^4}{1-x^2}\\right)\\left(\\frac{1-x^6}{1-x^3}\\right)\\left(\\frac{1-x^8}{1-x^4}\\right)\\left(\\frac{1-x^{10}}{1-x^5}\\right)\\cdots$
-		\n\nThe numerators are all the even powers of $x$, and the denominators are all the powers of $x$.  Since the product goes on forever, we cancel and are left with all the odd powers of $x$ in the denominator.\n\n
-		$f(x) = \\left(\\frac1{1-x}\\right)\\left(\\frac1{1-x^3}\\right)\\left(\\frac1{1-x^5}\\right)\\cdots$
-		$f(x) = \\left(\\frac1{1-x}\\right)\\left(\\frac1{1-x^3}\\right)\\left(\\frac1{1-x^5}\\right)\\cdots$
-		\n\nEach factor can be replaced with its power series representation:\n\n
-		$f(x) = (x^0+x^1+x^2+++)(x^0+x^3+x^6+++)(x^0+x^5+x^10+++)\\cdots$
-		\n\nThis is the generating function for the sequence $(a_n)_{n=0}^{\\infty}$, where $a_n$ is the number of ways to partition $n$ into odd parts.  We conclude that the number of ways to partition $n$ into distinct parts is equal to the number of ways to partition $n$ into odd parts, for all $n$.",
-	},
-}
-
-{
-	"name": "solve recurrences with generating functions",
-	"thm": "Given a sequence $(a_n)_{n=0}^{\\infty}$ defined by base cases and a linear homogeneous recurrence with any constant $a_n = \\sum_{k=0}^{n-1} c_{k}a_{k} + C$, we can find a closed form formula for $a_n$ by rewriting its generating function $\\sum_{n=0}^{\\infty} a_nx^n$ in terms of its recurrence $base cases + \\sum_{n=0}^{\\infty} \\left(\\sum_{k=0}^{n-1} c_{k}a_{k} + C\\right)x^n$ and making algebraic manipulations.",
-	"example": "Let $(a_n)_{n=0}^{\\infty} be defined by $a_0=1$, $a_1=4$, and $a_n = 3a_{n-1} - 2a_{n-2}$.  Then a closed formula for $a_n$ can be found by this method:\n\n
-	$f(x) = \\sum_{n=0}^{\\infty} a_nx^n$
-	$f(x) = 1+4x+\\sum_{n=2}^{\\infty} a_nx^n$
-	$f(x) = 1+4x +\\sum_{n=2}^{\\infty} (3a_{n-1}x^n-2a_{n-2}x^n)$
-	$f(x) = 1+4x + 3x\\left(\\sum_{n=2}^{\\infty} a_{n-1}x^{n-1}\\right) -2x^2\\left(\\sum_{n=2}^{\\infty}a_{n-2}x^{n-2}\\right)$
-	$f(x) = 1+4x + 3x\\left(\\sum_{n=1}^{\\infty} a_{n}x^{n}\\right) -2x^2\\left(\\sum_{n=0}^{\\infty}a_{n}x^{n}\\right)$
-	$f(x) = 1+4x + 3x\\left(\\left(\\sum_{n=0}^{\\infty} a_{n}x^{n}\\right) - a_0x^0\\right) -2x^2\\left(\\sum_{n=0}^{\\infty}a_{n}x^{n}\\right)$
-	$f(x) = 1+4x + 3x\\left(f(x) - 1\\right) -2x^2f(x)$
-	$f(x)(1-3x+2x^2) = 1 + 4x - 3x$
-	$f(x)(1-x)(1-2x) = 1 + x$
-	$f(x) = \\frac{1 + x}{(1-x)(1-2x)}$\n\n
-	Using the method of partial fractions, we can rewrite $f(x)$ as:\n\n
-	$f(x) = -2\\left(\\frac1{1-x}\\right) + 3\\left(\\frac1{1-2x}\\right)$\n\n
-	Each term can be written as a power series:\n\n
-	$f(x) = -2\\sum_{n=0}^{\\infty}x^n + 3\\sum_{n=0}^{\\infty}(2x)^n$
-	$f(x) = \\sum_{n=0}^{\\infty}\\left(-2+3\\cdot2^n\\right)x^n$\n\n
-	Finally, since $f(x)$ is the generating function of $(a_n)_{n=0}^{\\infty}$, we see that $a_n = (3\\cdot2^n-2)$.",
-	"proof": {
-		"type": "algebraic",
-		"content": "$\qquad
-\begin{align}
-f(x) &= \sum_{n=0}^{\infty} a_nx^n \\
-\\
-f(x) &= b\text{ base cases (0 through n-1)} + \sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k} + C\right)x^n \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k} + C\right)x^n\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^n + Cx^n\right)\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^n\right)\right) + \left(\sum_{n=b}^{\infty}\left(\sum_{k=1}^{b} Cx^n\right)\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^{n-k}x^k\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} \left(\sum_{n=b}^{\infty} c_{k}a_{n-k}x^{n-k}x^k\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_{k}x^k\left(\sum_{n=b}^{\infty} a_{n-k}x^{n-k}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left(\sum_{t=b-k}^{\infty} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left(\sum_{t=0}^{\infty} a_{t}x^{t} - \sum_{t=0}^{b-k-1} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left( f(x) - \sum_{t=0}^{b-k-1} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
-\\
-f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k f(x)\right) - \left(\sum_{k=1}^{b} c_kx^k\sum_{t=0}^{b-k-1} a_{t}x^{t}\right) + \left(\sum_{n=b}^{\infty}bCx^n\right)
-\end{align}
-$
-
-From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written as a power series, and the terms $a_n$ of that power series are the terms $a_n$ of the original sequence.",
-	},
-}
-
-{
-	"exercise": "Prove that for any natural number $n$ greater than $2$, $\\sum_{k=2}^{n} \\frac1{\\sqrt{k}} \\leq 2\\sqrt{n} - 2$.",
-	"weight": 3,
-	"proof": {
-		"type": "calculus",
-		"content": "Basically you bound the sum by an integral from 1 to n, then evaluate the integral (do later)",
-	},
-}
-
-{
-	"name": "exponential generating function",
-	"weight": 4,
-	"type": "def",
-	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __exponential generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} \\frac{a_nx^n}{n!}$.",
-	"intuition": "This is the same as a generating function, except that each term is divided by $n!$.",
-}
-
-{
-	"name": "product of generating functions",
-	"weight": 3,
-	"type": "thm",
-	"content": "Given two generating functions, $f$ generates $(a_n)_{n=0}^\\infty$ and $g$ generates $(b_n)_{n=0}^\\infty$, then the generating function $h = f \\cdot g$ of the sequence $(c_n)_{n=0}^\\infty$ has coefficients $c_n = \\sum_{k=0}^n a_kb_{n-k}$.",
-	"intuition": "",
-}
-
-{
-	"name": "product of exponential generating functions",
-	"weight": 3,
-	"type": "thm",
-	"content": "Given two exponential generating functions, $f$ generates $(a_n)_{n=0}^\\infty$ and $g$ generates $(b_n)_{n=0}^\\infty$, then $h = f \\cdot g$ is the generating function of the sequence $(c_n)_{n=0}^\\infty$, where $c_n = \\sum_{k=0}^n \\binom{n}{k} a_kb_{n-k}$.",
-	"example": "A sequence of length $n$ is composed of $0$s and $1$s.  There are $2^n$ ways to make the sequence.  Let $(c_n) = (2^n) from $0$ to $\\infty$ denote the number of ways to make a sequence of length $n$.  Let $(a_n)$ denote the number of ways to make a sequence of length $n$ using only $0$s.  That is, $(a_n) = (1) from $0$ to $\\infty$.  Similarly, let $(b_n)$ denote the number of ways to make a sequence of length $n$ using only $1$s.
-		\n\nIf the exponential generating functions for $(a_n)$, $(b_n)$, and $(c_n)$ are $f$, $g$, and $h$, respectively, then $h = f \\cdot g$.
-		\n\nThis means that if we didn't know the formula for $c_n$, we could have solved for it in this way:
-		\n\n$c_n$ = \\sum_{k=0}^n \\binom{n}{k} a_kb_{n-k} = \\sum_{k=0}^n \\binom{n}{k} = 2^n$.",
-	"example": "We want to make a sequence of length $n$ where each term is an $A$, $B$, or $C$.  Also, we need the total number of $A$s to be even and the total number of $B$s to be even.
-		\n\nLet $(a_n)_{n=0}^\\infty$ be given by $(0,1,0,1,0,1,,,)$ (that is, $a_n = 1+(-1)^n$) be the number of ways to fill a sequence of length $n$ with only $A$s, and there must be an even amount of $A$s.
-		\n\nLet $(b_n)_{n=0}^\\infty$ be given by $(0,1,0,1,0,1,,,)$ (same formula) be the number of ways to fill  a sequence of length $n$ with only $B$s, and there must be an even amount of $B$s.
-		\n\nLet $(c_n)_{n=0}^\\infty$ be given by $(1,1,1,1,1,1,,,)$ be the number of ways to fill  a sequence of length $n$ with only $C$s.
-		Let $f$, $g$, and $h$ be the exponential generating functions for $(a_n)$, $(b_n)$, and $(c_n)$, respectively.  Let $t = fgh$.
-		\n\nIt turns out that $f(x) = \\frac{e^x-e^{-x}}2$ and $g(x)$ is the same.  $h(x) = e^x$.  Finally, we compute $t(x) = f(x)g(x)h(x) = \\left(\\frac{e^x-e^{-x}}2\\right)\\left(\\frac{e^x-e^{-x}}2\\right)\\left(\\e^x\\right)$.  Simplifying, we have that $t(x) = \\frac14(e^{-x}+2e^x+e^{3x})$.  The coefficients of the power series for $t(x)$ is therefore $\\frac14\\left((-1)^n+2+3^n\\right)/n!$.  We conclude that the number of ways to make the original sequence of length $n$ at the beginning of this example is $\\frac14\\left(3^n+2+(-1)^n\\right)$.",
-}
-
-{
-	"weight": 3,
-	"type": "exercise",
-	"content": "The number of sequences of length $n$ that are composed of $0$s and $1$s, where the number of $1$s must be a multiple of $3$, is [[$needs to be solved still$]].  The answer is given as a function of $n$.",
-	"intuition": "[[We can represent this n that as a sequence.  Then create an exponential generating function for each and multiply them together to get the exponential generating function for the desired sequence.]]",
-}
-
-{
-	"name": "deranged sequence",
-	"weight": 3,
-	"type": "def",
-	"content": "A __deranged__ sequence is an ordering of ${1,2,3,,,n}$ where $a_i \\neq i$ for all $i$ in the sequence.",
-	"intuition": "If we took the *arranged* sequence $(1,2,3,,,n)$ and moved the terms around so that no term is left in its original location, the result would be a *deranged* sequence.",
-	"example": "$(2,4,1,3)$",
-	"example": "$(2,3,1)$",
-	"example": "$(3,1,2,6,4,5)$",
-	"counterexample": "$(3,2,1)$ is not deranged because $2$ is in its own position.",
-	"counterexample": "$(5,4,7,2,1,6,3)$",
-}
-
-{
-	"name": "number of deranged sequences",
-	"weight": 4,
-	"type": "thm",
-	"content": "Let $d_n$ be the number of deranged sequences of length $n$.  Then a closed formula for $d_n$ is [[$d_n = n!\\sum_{k=0}^n \\frac{(-1)^k}{k!}$]].",
-	"proofs": [
-		{
-			"type": "combinatorial",
-			"content": "Use the inclusion-exclusion principal to find a formula (somebody please figure it out and post it! :)",
-		},
-		{
-			"type": ["algebraic", "combinatorial"],
-			"content": "$n!$ is the number of sequences of length $n$ whose terms are $1,2,,,n$ in any order.  For any of these sequences, some amount $k$ of the terms will satisfy $a_i=i$, and the remaining $n-k$ terms will form a derangement of length $n-k$.  For each $k$, there are $\\binom nk$ ways to have $k$ terms in place and then, given which terms are in place, $d_{n-k}$ derangements of the remaining terms.  Adding up these possibilities over all possible values of $k$, we get all possible sequences of length $n$:
-				\n\n
-				$n! = \sum_{k=0}^n \binom nk d_{n-k}$
-
-	$n! = \sum_{k=0}^n \frac{n!}{k!(n-k)!} d_{n-k}$
-
-	$1 = \sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}$
-
-	Multiply both sides by $x^n$ and sum them from $n=0$ to $\infty$:
-
-	$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}\right) x^n$
-
-	$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!} \frac{d_{n-k}}{(n-k)!}\right) x^n$
-
-	The right side is recognized as the product of two sums:
-
-	$\sum_{n=0}^\infty x^n = \left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty \frac{d_{n}}{n!} x^n\right) $
-
-	$\sum_{n=0}^\infty x^n = e^x \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
-
-	$e^{-x} \sum_{n=0}^\infty x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
-
-	$\left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty x^n\right) =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
-
-	On the left side we take the product of the two sums:
-
-	$\sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!}\right) x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
-
-	Remove the outer sums and divide by $x^n$:
-
-	$\sum_{k=0}^n \frac{1}{k!} =   \frac{d_{n}}{n!} $
-
-	Solve for $d_n$:
-
-	$d_n = n!\sum_{k=0}^n \frac{1}{k!}  $
-	.
-
-
-			",
-		}
-	],
-}
-
-{
-	"name": "generating function practice",
-	"weight": 3,
-	"type": "exercise",
-	"content": "Let $f(x) = (1+x)^n$ for some fixed $n$ and let $g(x) = \\frac1{1-x}$.  When $k<n$, the coefficient of $x^k$ in $fg$ is [[$\\sum_{j=0}^k \\binom nj$]] (leave this in summation notation), and when $k\\geq n$, the coefficient is [[$2^n$]].",
-}
-
-{
-	"name": "generating function practice 2",
-	"weight": 3,
-	"type": "exercise",
-	"content": "Let $f(x) = e^x$ and $g(x) = \\frac1{1-2x}$.  The coefficient of $x^k$ in $fg$ is [[$\\sum_{j=0}^k 2^{k-j} \\frac{1}{k!}$]] (leave this in summation notation).",
-}
-
-{
-	"name": "generating function practice 3",
-	"weight": 2,
-	"type": "exercise",
-	"content": "Let $a_k$ be the number of ways to choose $k\\geq0$ balls from $n$ *identical* blue balls.  A formula for $a_k$ is [[$a_k = \begin{cases}
-    1,& \text{if } k\leq n\\
-    0,& \text{if } k > n\\
-\end{cases}$]].  Let $b_k$ be the number of ways to choose $k\\geq 0$ balls from $m$ identical red balls.  A formula for $b_k$ is [[the same formula as $a_k$, but with $m$ instead of $n$]].  The generating function $f$ for $(a_n)_{n=0}^\\infty$ is [[$\\sum_{k=0}^n x^k$]].  The generating function $g$ for $(b_n)_{n=0}^\\infty$ is [[the same formula as for $(a_n)$, but with $m$ instead of $n$]].  The product, $fg$, has coefficients $c_k$ given by the formula [[
-$c_k = \begin{cases}
-    k+1,& \text{if } k\leq \\min{n,m}\\
-    \\min{n,m}+1,& \text{if } \\min{n,m} < k \\leq max{n,m}\\
-    0,& \text{if } \\max{n,m} < k\\
-\end{cases}$
-]].  The product is the generating function for the situation [[where you want to know the number of ways to choose $k\\geq 0$ balls from $n$ blue and $m$ red balls.  It matters how many of each color you choose]].",
-}
-
-{
-	"name": "generating functions practice 4. delete gen fun prac names after hooking up edges",
-	"weight": 2,
-	"type": "exercise",
-	"content": "A store sells $a$ distinct $\$1$ lollipops (not $a$ *types* of lollipops, but literally a total of $a$ lollipops), $b$ distinct $\$2$ chocolate bars, and $c$ distinct $\$3$ gummy bear bags.  If you spend exactly $\$n$ on candy, then $s_n$ is the number of ways you could have achieved this.  The generating function for $(s_n)_{n=0}^\\infty$ is [[$\\left(\\binom a0 x^0 + \\binom a1 x^1 +++ \\binom aa x^a\\right)\\left(\\binom b0 x^0 + \\binom b1 x^2 +++ \\binom bb x^{2b}\\right)\\left(\\binom c0 x^0 + \\binom c1 x^3 +++ \\binom cc x^{3c}\\right)$ or $\\left(\\sum_{k=0}^a \\binom ak x^{1k}\\right)\\left(\\sum_{k=0}^b \\binom bk x^{2k}\\right)\\left(\\sum_{k=0}^c \\binom ck x^{3k}\\right)$]].  Any expression equivalent to this is acceptable.",
-	"intuition": "[[This is similar to partitioning the natural number $n$ into the sum of $1$s, $2$s, and $3$s.  The difference is that because all the items are *distinct*, we need to count the *number of ways* to choose $k$ of the $a$ lollipops, for example.  Therefore, the sum corresponding to the lollipops, for example, must include the $\\binom ak$ constants.]]",
-}
-
-{
-	"name": "gen function method for solving a recurrence",
-	"weight": 3,
-	"type": "exercise",
-	"content": "The sequence $(a_n)_{n=0}^\\infty$ is defined by $a_0=1$, $a_1=9$, and $a_n=6a_{n-1}-9a_{n-2}$ for all other terms.  Use the generating function $f(x) = \\sum_{n=0}^\\infty a_nx^n$ to solve for $a_n$ in closed form.  The closed form solution for $f(x)$ without a summation is [[$\\frac{1+3x}{(1-3x)^2}$]].  The closed form solution for $a_n$ is [[$3^n(2n+1)$]].",
-	"proof": {
-		"type": "algebraic",
-		"content": "f(x) = \\sum_{n=0}^\\infty a_nx^n.  pull out the first two terms and plug in base cases.  plug recursive formula into remaining sum.  distribute summation to two pieces.  for each piece, shift n so that it starts at 0, and pull out a term if necessary.  rewrite the sums as something times f(x).  Finally, isolate f(x) to get the closed form for f(x).\n\nf(x) can be rewritten as $\\frac{-1}{1-3x} + 2\\frac{1}{(1-3x)^2}$.  Each term can be written as a power series.  If you don't know the power series for the right term, you can write the power series for $\\frac{1}{1-3x}$ and square it.  Then solve for the coefficient of $x^n$ in the resulting product.  Finally, combine the coefficients so that f(x) is written as one big power series.  The coefficient for x^n is the closed formula for $a_n$.",
-	},
-}
-
-{ // this is from HW 9.
-	"name": "gen function method",
-	"weight": 3,
-	"type": "exercise",
-	"content": "The sequence $(a_n)_{n=0}^\\infty$ is defined by $a_0=1$, $a_1=1$, and $a_n=3a_{n-1}+4a_{n-2}+2^{n-2}$ for all other terms.  Use the generating function $f(x) = \\sum_{n=0}^\\infty a_nx^n$ for $(a_n)$.  The closed form formula for $f(x)$ without a summation is [[$\\frac{1-4x+5x^2}{(1+x)(1-2x)(1-4x)}$]].",
-	"proof": {
-		"type": "algebraic",
-		"content": "f(x) = \\sum_{n=0}^\\infty a_nx^n.  pull out the first two terms and plug in base cases.  plug recursive formula into remaining sum.  distribute summation to two pieces.  for each piece, shift n so that it starts at 0, and pull out a term if necessary.  rewrite the sums as something times f(x).  Finally, isolate f(x) to get the closed form for f(x).\n\nf(x) can be rewritten as $\\frac{-1}{1-3x} + 2\\frac{1}{(1-3x)^2}$.  Each term can be written as a power series.  If you don't know the power series for the right term, you can write the power series for $\\frac{1}{1-3x}$ and square it.  Then solve for the coefficient of $x^n$ in the resulting product.  Finally, combine the coefficients so that f(x) is written as one big power series.  The coefficient for x^n is the closed formula for $a_n$.",
-	},
-}
-
-{ // HW 9 continued
-	"weight": 1,
-	"type": "exercise",
-	"content": "Let $a_n$ be the number of elements in ${0,1}^n$ that do *not* have a $1$ followed by a $0$.  $a_0$ is [[$1$]] and a recurrence for $a_n$ is [[$a_n = a_{n-1}+1$]].  A closed form formula for $a_n$ is [[$a_n = n+1$]].",
-	"intuition": "[[Firstly, the elements of ${0,1}^n$ are just sequences of length $n$ whose terms are $0$s and $1$s.  Since a $1$ cannot be followed by a $0$, then a $1$ must be followed by a $1$.  Therefore, once a $1$ appears in the sequence, then *all* the terms after it must be $1$s too!]]",
-	"example": "[[If $n=4$ for example, the sequences without a $1$ followed by a $0$ are $(0,0,0,0)$, $(0,0,0,1)$, $(0,0,1,1)$, $(0,1,1,1)$, and $(1,1,1,1)$.]]",
-}
-
-{
-	"weight": 2,
-	"type": "exercise",
-	"content": "Let $a_n$ be the number of elements in ${0,1}^n$ that do *not* contain the subsequence $(1,0,1)$.  $a_0$ is [[$1$]], $a_1$ is [[$2$]], $a_2$ is [[$4$]], and a recurrence for $a_n$ is [[$a_n = 2 - a_{n-2} + \\sum_{k=0}^{n-1} a_k$]].",
-	"intuition": "[[Firstly, the elements of ${0,1}^n$ are just sequences of length $n$ whose terms are $0$s and $1$s.]]",
-	"intuition": "[[To find a recurrence, we should look at the end of the sequence and do a case by case breakdown of what it can be.  If the last term is $0$, then there are $a_{n-1}$ ways to fill the other terms.]]  [[If the last term is $1$, then (if the second to last term is $0$...)]]",
-	"example": "[[If $n=4$ for example, the sequences without a $1$ followed by a $0$ are $(0,0,0,0)$, $(0,0,0,1)$, $(0,0,1,1)$, $(0,1,1,1)$, and $(1,1,1,1)$.]]",
-	"proof": {
-		"type": "combinatorial",
-		"content": "If the last term is $0$, then there are $a_{n-1}$ ways to fill the other terms.  If the last term is $1$, then (if the second to last term is $0$, then the third to last term must be $0$, and there are $a_{n-3}$ ways to fill the rest of the terms.  Alternatively, if the second to last term is $1$, then (if the third to last term is $0$, then the fourth to last term must be $0$, and there are $a_{n-4}$ ways to fill the rest of the terms.  Alternatively...and so forth).\n\nWe see a pattern, and continue all the way down to $a_0$, which corresponds to the sequence $(0,0,1,1,1,,,1)$.",
-	},
-} // end of HW 9
-
-{
-	"name": "inclusion-exclusion principle",
-	"weight": 5,
-	"type": "thm",
-	"content": "Given $n\\in\\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\\left|\\cup_{i=1}^{n} A_i\\right| = \\sum_{S\\subset [n]} (-1)^{|S|+1} \\left|\\cap_{j\\in S} A_j\\right|$.",
-	"intuition": "When $n=2$, this theorem just says that $|A_1\\cup A_2| = |A_1|+|A_2|-|A_1\\cap A_2|$.  When $n=3$, this theorem says that $|A_1\\cup A_2\\cup A_3| = |A_1|+|A_2|+|A_3|-|A_1\\cap A_2|-|A_1\\cap A_3|-|A_2\\cap A_3|+|A_1\\cap A_2\\cap A_3|$.  As you can see there is a pattern where you add the individual sets, then subtract the intersections of $2$ sets, then add the intersections of $3$ sets, then subtract the intersections of $4$ sets, and so forth.",
-}
-
-{ // beginning of Midterm
-	"weight": 1,
-	"type": "exercise",
-	"content": "We have a standard deck of $52$ cards.  The number of $5$-card hands that contain either no face cards or all face cards is [[$\\binom{52-4\\cdot3}{5} + \\binom{4\\cdot3}{5}$ or $658800$]].  (A face card is a jack, queen, or king.)",
-}
-
-{
-	"weight": 1,
-	"type": "exercise",
-	"content": "We have a standard deck of $52$ cards.  The number of $5$-card hands that are full-houses is [[$(13\\text{ pick }2)4\\cdot4$ or $13\\cdot12\\cdot4\\cdot4$ or $2496$]].",
-}
-
-{
-	"weight": 1,
-	"type": "exercise",
-	"content": "The number of ways to deal out $52$ cards so that Zahlen gets $2$ cards, Xtehn gets $3$ cards, Vehro gets $5$ cards, Rohre gets $8$ cards, Qxhna gets $13$ cards, and John gets $21$ cards is [[$\\binom{52}{2,3,5,8,13,21}$ or $\\frac{52!}{2!3!5!8!13!21!}$ or $4366577259220841628892568640000$]].",
-	"intuition": "",
-}
-
-{
-	"weight": 2,
-	"type": "exercise",
-	"content": "$x_1$, $x_2$, and $x_3$ must be natural numbers, and $x_1<5$.  The number of solutions to $x_1+x_2+x_3=12$ is [[$\\binom{12+3-1}{3-1}-\\binom{(12-5)+3-1}{3-1}$ or $\\binom{14}{2}-\\binom{9}{2}$ or $55$]].",
-}
-
-{
-	"weight": 1,
-	"type": "exercise",
-	"content": "$x_1$, $x_2$, and $x_3$ must be prime numbers.  The number of solutions to $x_1+x_2+x_3=12$ is [[$3!+3$ or $9$]].",
-}
-
-{
-	"weight": 3,
-	"type": "exercise",
-	"content": "$x_1$, $x_2$, and $x_3$ must be natural numbers less than or equal to $6$.  The number of solutions to $x_1+x_2+x_3=12$ is [[$\\binom{3+3-1}{3-1}$ or $\\binom 52$ or $10$]].",
-	"proof": {
-		"type": "combinatorial",
-		"content": "Let $x_1=x_2=x_3=5$.  The sum $x_1+x_2+x_3$ is $15$.  Now count the number of ways to distribute three $-1$s among the $x$s.  There are $\\binom{3+3-1}{3-1}$ ways to do this.  The three $-1$s bring the sum down to $12$.",
-	},
-}
-
-{
-	"weight": 1,
-	"type": "exercise",
-	"content": "$3$ red balls and $4$ white balls are in an urn.  Balls are randomly removed from the urn one at a time until the urn is empty.  Let $E$ be the event where the first ball removed is red, and let $F$ be the event where the third ball removed is white.  Are $E$ and $F$ independent?  [[No]].",
-}
-
-{
-	"name": "expected value 1",
-	"weight": 2,
-	"type": "exercise",
-	"content": "$3$ red balls and $4$ white balls are in an urn.  Balls are randomly removed from the urn one at a time until the urn is empty.  $X$ is a random variable representing the number of balls drawn until a white ball is drawn (For example, if the first ball is red and the second is white, then $X=2$).  The expected value of $X$ is [[$\\frac85$ or $1.6$]].",
-}
-
-{
-	"weight": 3,
-	"type": "exercise",
-	"content": "$3$ red balls and $4$ white balls are in an urn.  Box $1$ and box $2$ are next to the urn.  One ball is randomly drawn from the urn and randomly placed into one of the boxes.  Another ball is randomly drawn from the urn and randomly placed into one of the boxes.  Given that box $1$ has at least $1$ white ball and no red balls, the probability that both balls drawn were white is [[$\\frac35$]].",
-}
-
-{
-	"weight": 3,
-	"type": "exercise",
-	"content": "A $3\\times n$ board of $1\\times1$ squares must be filled with $3\\times1$ tiles <img> and $L$-tiles <img>.  The $3\\times1$ tiles can only be oriented vertically, but the $L$-tiles can be oriented any way.  Let $a_n$ be the number of tilings for the board.  The base cases for $(a_n)_{n=0}^\\infty$ are [[$a_0=1$ and $a_1$=1.  Alternatively, we can omit $a_0$ from the sequence and use $a_1=1$ and $a_2=3$ as our base cases]].  A recurrence for the sequence is [[$a_n = a_{n-1}+2a_{n-2}]].  A closed form formula for $a_n$ is [[$a_n = \\frac13(-1)^n+\\frac23(2)^n$]].",
-}
-
-{
-	"weight": 3,
-	"type": "exercise",
-	"content": "Let $d_n$ represent the number of ways to make a list of $n$ letters using $A$s, $B$s, and $C$s so that the number of $A$s is even and there is at most $1$ $B$.  If $(a_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $A$s, then an exponential generating function for $(a_n)$ is [[$\\frac{e^x+e^{-x}}{2}$]].  If $(b_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $B$s, then an exponential generating function for $(b_n)$ is [[\\frac{1x^0}{0!}+\\frac{1x^1}{1!}]].  If $(c_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $C$s, then an exponential generating function for $(c_n)$ is [[$e^x$]].  A closed form formula for $d_n$ is [[$d_n = \begin{cases}
-    1,& \text{if } n=0\\
-    2,& \text{if } n=1\\
-    2^{n-1}+n2^{n-2},& \text{if } n>1\\
-\end{cases}$]].",
-}
-
-{
-	"weight": 3,
-	"type": "exercise",
-	"content": "Prove that $\\sum_{k=0}^n k\\binom nk = n2^{n-1}$.",
-	"proofs": [
-		{
-			"type": "combinatorial",
-			"content": "We have $n$ people.  We choose a committee of size $1$ or more from these people.  Then we choose $1$ person from the committee to be the chairperson.  This corresponds to the left side of the equation.  (Note that the sum from $k=0$ to $n$ is equal to the sum from $k=1$ to $n$, so it makes sense to say that the committee has at least $1$ person.)\n\nWe have $n$ people.  We choose $1$ chairperson from those people.  Of the remaining $n-1$ people, there are $2^{n-1}$ possible precommitees.  One will be picked and combined with the chairperson to complete the committee.  This corresponds to the right side of the equation.",
-		},
-		{
-			"type": "algebraic",
-			"content": "Take $(1+x)^n$ and set it equal to its expansion using the binomial theorem.  Then take the derivative of both sides with respect to $x$.  Finally, let $x=1$.",
-		},
-	],
-}
-
-{
-	"weight": 3,
-	"type": "exercise",
-	"content": "Let $(a_n)_{n=0}^\\infty$ be defined by the base case $a_0=4$ and the recurrence $a_n = 4a_{n-1}-3^{n+1}$.  If $a(x)$ is the generating function for $(a_n)$, then a closed form formula for $a(x)$ is [[$\\frac{4-21x}{(1-3x)(1-4x)}$ or $\\frac{9}{1-3x}-\\frac{5}{1-4x}$]].  A closed form formula for $a_n$ is [[$9\\cdot3^n-5\\cdot4^n$ or $3^{n+2}-5\\cdot4^n$]].",
-}// end of midterm probs
-
-//HW 10 below
-{
-	"weight": 2, // question 1
-	"type": "exercise",
-	"content": "Let $a_n$ be the number of ways to choose $3$ elements from a set of size $n$.  The base cases for $a_n$ are [[$a_0=a_1=a_2=0$.  Alternatively, you could define $a_1$ through $a_3$, or $a_2$ through $a_4$, or $a_3$ through $a_5$.  As long as you define $3$ consecutive values starting at $n=3$ or before, then you have defined the base cases.]]  A closed formula for $a_n$ is [[$a_n = \binom nk$]].  The exponential generating function $a(x)$ for $(a_n)_{n=0}^\infty$ is [[$a(x)=\sum_{n=3}^{\infty}\frac1{3!(n-3)!}x^n$]].  A closed formula for $a(x)$ is [[$\frac{x^3e^x}{6}$]].",
-}
-
-{
-	"name": "Chef Torte", // question 3
-	"weight": 3,
-	"type": "exercise",// exponential generating functions
-	"content": "Chef Torte has a line of $n$ plates.  He also has cakes of height $1$ through $k$, and he puts them randomly on the plates (maximum one cake per plate), with the exception that the cakes cannot be in increasing order.  Note that $k$ can be any number from $0$ to $n$.\n\nThe number of ways Chef Torte might arrange the cakes is $c_n$.  We will practice exponential generating functions by solving for $c_n$ a certain way (but feel free to post alternate solutions for $c_n$).\n\nThe number of ways to have $n$ empty plates is $a_n$.  The formula for it is [[$a_n=1$]].  The exponential generating function $a(x)$ for the sequence $(a_n)_{n=0}^{\infty}$ in closed form is [[$a(x) = e^x$]].\n\nThe number of ways to have $n$ plates with cakes of height $1$ through $n$ in Chef Torte's accepted orderings is $b_n$.  The formula is [[$b_n=n!-1$]].  The exponential generating function $b(x)$ for the sequence $(b_n)_{n=0}^{\infty}$ in closed form is [[$b(x) = \frac1{1-x}-e^x$]].\n\nThe exponential generating function $c(x)$ for the sequence $(c_n)_{n=0}^{\infty}$ has the closed-form formula [[$c(x) = \frac{e^x}{1-x}-e^{2x}$]].  By converting this to summation notation, we can find the formula for $c_n$.  It is [[$c_n = n!\left(\sum_{k=0}^{n} \frac1{k!}\right) - 2^n$]].",
-}
-
-// HW 11 below
-{// question 1
-	"name": "inclusion-exclusion", // connect to this
-	"weight": 1,
-	"type": "exercise",
-	"content": "The number of positive integers less than $1000$ that are not multiples of $5$, $6$, nor $8$, is [[$583$.  The function that finds the number of multiples of $x$ less than $1000$ is $m(x)=\floor{\frac{999}{x}}$.  Then the answer is equal to $m(1) - m(5)- m(6)- m(8)+m(5*6)+m(6*8)+m(8*5) - m(5*6*8)$]].",
-}
-
-{// question 2
-	"name": "inclusion-exclusion 2", // connect
-	"weight": 2,
-	"type": "exercise",
-	"content": "The number of ways to order the letters $A$ through $P$ such that we can*not* obtain any of the words $BAD$, $DEAF$, or $APE$ by crossing out some of the letters is [[$16!-\frac{16!}{3!}-\frac{16!}{4!}-\frac{16!}{3!}+0+0+\frac{n!3}{5!}-0$ or $\frac{13n!}{20}$ or $13599813427200$]].",
-}
-
-{// question 3 //connect to derangements!
-	"weight": 3,
-	"type": "exercise",
-	"content": "There are $2$ benches facing each other, each with $n$ seats.  The number of ways that $n$ couples can sit on the benches so that no two members of the same couple are seated opposite each other is [[$(n!)^2\sum_{k=0}^{n} \frac{(-1)^k}{k!}$]].",
-	"intuition": "[[If we fix the order of the people on one bench, then this becomes the number of derangements of the people on the other bench.  Alternatively, we could try using the inclusion-exclusion principle on the couples.]]",
-}
-
-
-// then it's graph theory until we reach pigeonhold princpal or posets...
+// {
+// 	"name": "partition natural number $a$ into $x$ parts",
+// 	"type": "def",
+// 	"weight": 4,
+// 	"content": "The number of ways to partition natural number $a$ into $x$ (nonempty) __parts__, denoted $p_x(a)$, is the number of ways to write $a$ as the sum of exactly $x$ positive integers.  A formula for this is unknown!",
+// 	"note": "The order of the integers does not matter.",
+// 	"intuition": [
+// 		"Partitioning an integer is analagous to partitioning a set, except that with sets, the elements you choose to be in each part are distinct.  With integers, the elements are identical, so it only matters how many are in each part.",
+// 		"Since different ordering of the same $x$ parts are considered only $1$ possibility, it is easiest to keep track by always listing the sums in lexographical order.  For example, the sum $2+1+5$ can be listed as $1+2+5$.",
+// 	],
+// 	"example": [
+// 		"$p_2(5)$ is the number of ways to write $3$ as the sum of $2$ positive integers.  The possible ways are\n\n  1. $1+4$\n  2. $2+3$\n\nTherefore, $p_2(5) = 2$ ways.",
+// 		"$p_3(10)$ is the number of ways to write $10$ as the sum of $3$ positive integers.  The possible ways are\n\n  1. $1+1+8$\n  2. $1+2+7$\n  3. $1+3+6$\n  4. $1+4+5$\n  5. $2+2+6$\n  6. $2+3+5$\n  7. $2+4+4$\n  8. $3+3+4$\n\nTherefore, $p_3(10) = 8$ ways.",
+// 	],
+// }
+
+// {
+// 	"name": "$a$ identical balls in $x$ identical boxes, at least one each",
+// 	"type": "thm",
+// 	"weight": 4,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $A$ and $X$, is $p_x(a)$.",
+// 	"intuition": "If you have $a$ identical balls and $x$ identical boxes, then the number of ways (functions) to put the balls in the boxes, at least one ball per box (surjective), is $p_x(a)$.",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "Placing the $a$ balls in the $x$ boxes, since they are identical and we need at least $1$ ball per box, is the same as partitioning $a$ into $x$ parts.",
+// 	},
+// }
+
+// {
+// 	"name": "$a$ identical balls in $x$ identical boxes",
+// 	"type": "thm",
+// 	"weight": 4,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$, up to permutations of $A$ and $X$, is $p_x(a+x)$.",
+// 	"intuition": "If you have $a$ identical balls and $x$ identical boxes, then the number of ways (functions) to put the balls in the boxes, is $p_x(a+x)$.",
+// 	"proof": {
+// 		"type": ["combinatorial", "algebraic"],
+// 		"content": "For each arrangement of $a$ identical balls in $x$ identical boxes, we can add $1$ more ball to each box, resulting in an arrangement of $a+x$ identical balls in $x$ boxes, *at least one each*.  Because adding $1$ ball to each box is bijective, we have not changed the number of arrangements.  Therefore, by the definition of partitioning a positive integer, the number of arrangements is $p_x(a+x)$.",
+// 	},
+// }
+
+// {
+// 	"name": "$x$ pick $a$",
+// 	"type": "thm",
+// 	"weight": 4,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of injective functions from $A$ to $X$ is\n\n$x^\\underline{a}$.",
+// 	"note": "$x^\\underline{a}$ is also known as $x(x-1)(x-2)\\cdots(x-a+1)$.",
+// 	"intuition": "We have $x$ distinct boxes and $a$ distinct balls.  We must put the balls in the boxes so that each box has at most $1$ ball.",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "We take the $x$ boxes and pick $a$ of them to hold exactly $1$ ball (injective).  The first ball can be in any of the $x$ boxes.  The second ball can be in any of the $(x-1)$ remaining boxes.  We continue this process until we reach the $a^\\text{th}$ ball, which can be in any of the $(x-a+1)$ remaining boxes.  Multiplying these together, we get a total of $x(x-1)\\cdots(x-a+1) = x^\\underline{a}$ possibilities.",
+// 	},
+// }
+
+// {
+// 	"name": "$a$ identical balls in $x$ distinct boxes",
+// 	"type": "thm",
+// 	"weight": 4,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{a+x-1}{x-1}$.",
+// 	"intuition": "If you have $a$ identical balls and $x$ distinct boxes, then the number of ways (functions) to put the balls in the boxes is $\\binom{a+x-1}{x-1}$, which is also equal to $\\binom{a+x-1}{a}$.",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "Take the $a$ balls and $x-1$ of the boxes.  That's $a+x-1$ objects.  Then $\\binom{a+x-1}{x-1}$ is the number of ways you can arrange those objects in a vertical line.  Place the $1$ box we originally omitted on the bottom.  For each arrangement, imagine the balls fall downwards until they land in a box.  That is the box they belong in.",
+// 	},
+// }
+
+// {
+// 	"name": "giving $a$ identical parachutes to $x$ distinct skydivers, at most one each",
+// 	"type": "thm",
+// 	"weight": 4,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of injective functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{x}{a}$.",
+// 	"intuition": "Let $a \leq x$.  If you have $a$ identical parachutes and $x$ distinct skydivers, then the number of ways (functions) to give out the parachutes to the skydivers, where each skydiver gets at most $1$ parachute (injective), is $\\binom xa$.",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "$a \leq x$, and each skydiver gets at most one parachute.  Therefore, we are simply choosing which skydivers get parachutes.  We have $x$ skydivers, and we choose $a$ of them to get parachutes.  Therefore, $\\binom xa$ possibilities.",
+// 	},
+// }
+
+// {
+// 	"name": "giving $a$ identical parachutes to $x$ distinct skydivers, at least one each",
+// 	"type": "thm",
+// 	"weight": 4,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $A$, is\n\n$\\binom{a-1}{a-x}$.",
+// 	"intuition": "Let $a \geq x$.  If you have $a$ identical parachutes and $x$ distinct skydivers, then the number of ways (functions) to give out the parachutes to the skydivers, where each skydiver gets at least $1$ parachute (surjective), is $\\binom{a-1}{a-x}$.",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "$a \geq x$, and each skydiver gets at least one parachute.  Give $1$ parachute to each skydiver.  There are $a-x$ parachutes left, to be distributed among $x$ skydivers with no constraints.  Plugging this into the $\\ell$ identical balls in $x$ distinct boxes formula, $\\binom{\\ell+x-1}{\\ell} = \\binom{a-x+x-1}{a-x}$, we obtain the answer.",
+// 	},
+// }
+
+// // latex for stirling notation:
+// // \usepackage{amsmath}% http://ctan.org/pkg/amsmath
+// // \DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}}
+// {
+// 	"name": "Stirling numbers of the 2nd kind",
+// 	"type": "definition",
+// 	"weight": 5,
+// 	"content": "A __Stirling Number of the 2nd kind__, denoted $\\bigcurly nk$, is the number of ways of partitioning a set of size $n$ into $k$ sets",
+// 	"note": "By the definition of *partition*, each of the $k$ sets must be nonempty.",
+// }
+
+// {
+// 	"name": "Stirling identity",
+// 	"type": "thm",
+// 	"weight": 5,
+// 	"content": "Stirling Numbers of the 2nd kind can be computed using the equality $ \\stirling nk = \\frac{1}{k!} \\sum_{j=0}^{k} \\binom kj (k-j)^n (-1)^j $.",
+// 	"intuition": "Partitioning a set containing exactly $n$ (distinct) elements into $k$ (identical) nonempty subsets is the same thing as distributing $n$ distinct balls into $k$ identical boxes, where each box must contain at least $1$ ball.",
+// }
+
+// {
+// 	"name": "$a$ distinct balls in $x$ identical boxes, at least one each.",
+// 	"type": "thm",
+// 	"weight": 5,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$, up to permutations of $X$, is\n\n$\\stirling ax$.",
+// 	"intuition": "$a \\geq x$.  You have $a$ distinct balls, and you want to put them in $x$ identical boxes so that each box has at least $1$ ball.  The number of ways to do this is $\\stirling ax$.",
+// }
+
+// {
+// 	"name": "$a$ distinct balls in $x$ identical boxes.",
+// 	"type": "thm",
+// 	"weight": 5,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of functions from $A$ to $X$, up to permutations of $X$, is $\\sum_{j=0}^{x} \\stirling aj$.",
+// 	"intuition": "You have $a$ distinct balls, and you want to put them in $x$ identical boxes.  The number of ways to do this is $\\sum_{j=0}^{x} \\stirling aj$.",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "The number of ways to put $a$ distinct balls into $j$ identical boxes, *at least one each*, is $\\stirling aj$.  For example, if $j=2$, then we are filling $2$ boxes nonemptily with the $a$ balls.  The remaining $x-2$ boxes are empty.  Therefore, if we sum $\\stirling aj$ from $j=0$ to $j=x$, we get every possible amount of empty boxes.  Therefore, we get the number of ways to put $a$ distinct balls into $x$ identical boxes, *without* the nonempty restriction.",
+// 	},
+// }
+
+// {
+// 	"name": "$a$ distinct balls in $x$ distinct boxes, at least one each.",
+// 	"type": "thm",
+// 	"weight": 5,
+// 	"content": "Let $A$ be a set of size $a$ and $X$ be a set of size $x$.  The number of surjective functions from $A$ to $X$ is\n\n$x!\\stirling ax$.",
+// 	"intuition": "$a \\geq x$.  You have $a$ distinct balls, and you want to put them in $x$ distinct boxes so that each box has at least $1$ ball.  The number of ways to do this is $x!\\stirling ax$.",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "The number of ways of putting $a$ distinct balls in $x$ *identical* boxes is $\\stirling ax$.  Since the boxes are now distinct, we multiply by the possible orderings of the $x$ boxes, $x!$.  Therefore, we obtain $x!\\stirling ax$ possibilities.",
+// 	},
+// }
+
+// {
+// 	"name": "bounds of factorials",
+// 	"type": "thm",
+// 	"weight": 5,
+// 	"content": "$ 2^{n-1} \\leq n^{\\frac n2} \\leq e\\left(\\frac ne\\right)^n \\leq n! \\leq en\\left(\\frac ne\\right)^n \\leq \\left(\\frac n2\\right)^n \\leq n^n $",
+// 	"proofs": [
+// 		{
+// 			"type": "calculus",
+// 			"content": "Upper bound: Take $\\ln$ of $n!$.  Bound the sum by the integral of $\\ln(x)$ from $1$ to $n+1$. So that $n! \leq \\frac{(n+1)^{n+1}}{e^n}$.  Finally, write $n! = n(n-1)!$ and apply the formula to $(n-1)!$ to get the more elegant bound.\n\nLower bound: Begin using the same method, but when you have the sum of the natural logarithms, it is greater than $\\int_{t=1}^{n} \\ln(t) dt$, which is $1+n\\ln(n)-n$.  This is equal to $ln\\left(e\\left(\\frac ne\\right)^n\\right)$.",
+// 		},
+// 	],
+// }
+
+// {
+// 	"name": "bounds of chooses",
+// 	"type": "thm",
+// 	"weight": 5,
+// 	"content": "$ \\left(\\frac{n-k+1}{k}\\right)^k \\leq \\left(\\frac nk\\right)^k \\leq \\binom nk \\leq n^k $",
+// 	"proofs": [
+// 		{
+// 			"type": "calculus",
+// 			"content": "Take $\\ln$ of $n!$.  Bound the sum by the integral of $\\ln(x)$ from $1$ to $n+1$. So that $n! \leq \\frac{(n+1)^{n+1}}{e^n}$.  Finally, write $n! = n(n-1)!$ and apply the formula to $(n-1)!$ to get the more elegant bound.",
+// 		},
+// 	],
+// }
+
+// // probability stuff...
+// // definition of P function:
+// // S is all outcomes
+// //  P: Powerset(S) --> [0,1]
+// //  P(S) = 1
+// //  P(set) = prob that outcome is an element of set.
+// //  E subset of F
+// //  P(E) <= P(F)
+// {
+// 	"name": "discrete probability function",
+// 	"type": "def",
+// 	"weight": 3,
+// 	"content": "Let $U$ be the set of all possible outcomes.  A __discrete probability function__, $P:\\mathcal{P}(U) \\to [0,1]$, satisfies the conditions\n\n1. $P(U) = 1$\n  2. $P(A\\cup B) = $P(A) + P(B)$",
+// 	"intuition": "$P(A) is the probability that the actual outcome will be an element of $A$.",
+// 	"example": "We have a fair $6$-sided die.  When it is rolled, exactly one of the numbers faces upwards, and this is the outcome.  Therefore, the set of all possible outcomes, $U$, is ${1,2,3,4,5,6}$.\nBecause the die is fair, the probability of rolling a $1$ is $\\frac16$.  That is, $P({1}) = \\frac16$.  Similarly,\n\n$P({2}) = \\frac16$\n$P({3}) = \\frac16$\n$P({4}) = \\frac16$\n$P({5}) = \\frac16$\n$P({6}) = \\frac16$.\n\nWe also have, for example, that\n\n$P({}) = 0$\n$P({1,2}) = \\frac26$\n$P({2,5}) = \\dfrac26$\n$P({1,3,4}) = \\dfrac36$\n$P({1,2,3,4,5,6}) = 1$",
+// 	"example": "We are waiting for the bus.  The bus will either arrive on time, arrive late, or never arrive.\n\nThe set of all possible outcomes is ${\\text{arrive on time},\\text{arrive late},\\text{never arrive}}$.  The probabilities are\n\n$P({\\text{arrive on time}}) = 0.3$\n$P({\\text{arrive late}}) = 0.6$\n$P({\\text{never arrive}}) = 0.1$\n\n$P({\\text{arrive on time, arrive late}}) = 0.9$\n$P({\\text{arrive on time, never arrive}}) = 0.4$\n$P({\\text{arrive late, never arrive}}) = 0.7$\n\n$P({\\text{arrive on time, arrive late, never arrive}}) = 1$",
+// }
+
+// // uniform distribution
+// // every outcome equally likely
+// {
+// 	"name": "uniform distribution",
+// 	"type": "def",
+// 	"weight": 3,
+// 	"content": "If we have a set $U$ of all possible outcomes, and every outcome has the same probability $p$ of occuring, then the probabilities form a __uniform distribution__ .  If we give each outcome a label $k$ and graph all the $(k, P(k))$ points on the $kP$-axis, the result is always a horizontal line.",
+// 	"intuition": "A uniform distribution is when there is an equal chance of getting each outcome.",
+// 	"example": "We flip a fair coin.  The possible outcomes are **heads** and **tails**.  The probability of getting **heads** is $50\%$.  The probability of getting **tails** is $50\%$.  The outcomes are uniformly distributed.",
+// }
+
+// // in which case, P(E) = |E| / |S|
+
+
+// {
+// 	"name": "probability of a given b",
+// 	"type": "def",
+// 	"weight": 4,
+// 	"content": "The __probability of $A$ given $B$__, denoted $P(A|B)$, is $\\frac{P(A\\cap B)}{P(B)}$.",
+// 	"intuition": "Given that the outcome is in $B$, what is the probability that the outcome is in $A$?  That is $P(A|B)$.",
+// }
+
+// {
+// 	"name": "independent events",
+// 	"type": "def",
+// 	"weight": 4,
+// 	"content": "Events $A$ and $B$ are __independent__ if $P(A\\cup B) = P(A)P(B)$.", // make equivalent definitions?
+// 	"content": "Events $A$ and $B$ are __independent__ if $P(A|B) = P(A)$.",
+// 	"content": "Events $A$ and $B$ are __independent__ if $P(B|A) = P(B)$.",
+// 	"intuition": "Two event are independent if they do not affect each other.  That is, if we know that event $A$ has occured, the probability that event $B$ happens is the same as it was before.",
+// }
+
+// {
+// 	"name": "binomial term",
+// 	"type": "thm",
+// 	"weight": 5,
+// 	"content": "If the probability of event $a$ occuring is $p$, and you repeat the experiment $n$ times, then the probability of event $a$ occuring exactly $k$ times is $\\binom nk p^k(1-p)^{n-k}$.",
+// 	"intuition": "You have a coin (not necessarily fair), and the probability of flipping heads is $p$.  If you flip the coin $n$ times, then the probability of getting exactly $k$ heads is $\\binom nk p^k(1-p)^{n-k}$.",
+// }
+
+// {
+// 	"name": "binomial distribution",
+// 	"type": "def",
+// 	"weight": 3,
+// 	"content": "An experiment has a fixed probability $p$ of being successful.  Given we repeat the experiment $n$ times, if we graph the $P(\\text{$a$ occurs exactly $k$ times})$ on the $kP$-axis, we obtain the __binomial distibution__, denoted $\\text{Bin}(n,p)$.",
+// }
+
+// // thm: the binomial distibution approaches the normal distribution as n approaches infinity?
+
+// {
+// 	"name": "geometric distribution",
+// 	"type": "def",
+// 	"weight": 3,
+// 	"content": "An experiment has a fixed probability $p$ of being successful.  The experiment is repeated until it is successful, and the number of times it was executed is $k$.  Each value of $k$ has a certain probability of occuring.  If we graph the $(k, P(k))$ points on the $kP$-axis, we obtain the __geometric distribution__, denoted $\\text{Geom}(p)$.",
+// }
+
+// {
+// 	"type": "def",
+// 	"weight": 4,
+// 	"content": "The __expected value__ of $X$, denoted $\\mathbb{E}(X)$, is $\\sum_{v = possible values of X} v \\cdot P(X=v)$.",
+// 	"intuition": "$E(X)$ is sometimes denoted $E[X]$ or $E{x}$, but it is just a function nevertheless.",
+// }
+
+// {
+// 	"name": "expected values are linear",
+// 	"type": "thm",
+// 	"weight": 3,
+// 	"content": "The expected value function is linear.  That is, $E[X_1+X_2] = E[X_1] + E[X_2]$.",
+// 	"intuition": "This is true *regardless* of the interdependence of the events causing various $X_1$ and $X_2$ values!",
+// }
+
+// {
+// 	"name": "recurrence relation",
+// 	"type": "def",
+// 	"weight": 3,
+// 	"content": "A __recurrence relation__ is an equation $a_n = f(a_{n-1},a_{n-2},,,a_0)$ that recursively defines a sequence or multidimensional array of values, after one or more initial terms are given: each further term of the sequence or array is defined as a function of the preceding terms.",
+// 	"example": "The Fibonacci numbers are defined like so:  The initial terms are $a_0=0$ and $a_1=1$.  All other terms are defined by the recurrence relation $a_n = a_{n-1}+a_{n-2}$.",
+// 	"example": "The Towers of Hanoi is a game where you must move $n$ disks from the left side <img> to the right side <img>.  You may move one disk at a time, and a disk can never be placed above a disk larger than itself.  When the tower is $n=1$ tall, it takes $a_1=1$ moves to move the stack.  When the tower is $n$ tall, it takes $a_n = 2a_{n-1}+1$ moves to move the stack, which is a recurrence relation.",
+// }
+
+// {
+// 	"name": "linear",
+// 	"type": "def",
+// 	"weight": 3,
+// 	"content": "Given any module $(X,+)$ over a ring $(C,+,\\cdot)$, a function $f$ is __linear__ if it satisfies the properties\n\n  1. $f(x_1+x_2) = f(x_1)+f(x_2)$ for all $x_1,x_2\\in X$\n  2. $f(cx) = cf(x) for all $c\\in C$ and $x\\in X$.",
+// 	"note": "It is equivalent to check the property $f(cx_1+x_2) = cf(x_1)+f(x_2)$ for all $c\\in C$ and $x\\in X$",
+// 	"intuition": "Without knowing what a module or ring is, you can think of $X$ as the domain of the function and $C$ as the set of constants you are allowed to multiply by.  Then all you need to do is check that the two properties are true.",
+// 	"example": "Let $X$ and $C$ both be the real numbers, $\\mathbb R$.  Then the function $f(x) = 7x+2$ is linear because\n\n  1. $f(x_1+x_2) = 12(x_1+x_2)+2...oh wait.  maybe it's not.",
+// }
+
+// {
+// 	"type": "def",
+// 	"weight": 2,
+// 	"content": "A function $f$ is __homogeneous__ if there exists a $k$ such that for all $t$, $f(tx_1,,,tx_n) = t^kf(x_1,,,x_n)$.",
+// 	"example": "The function $f(x) = 6x$ is homogeneous because $f(tx) = 6tx = t^16x = t^1f(x)$.",
+// 	"example": "The function $f(x,y) = 6x+13y$ is homogeneous because $f(tx) = 6tx+13ty = t^1(6x+13y) = t^1f(x,y)$.",
+// }
+
+// {
+// 	"name": "characteristic equation method",
+// 	"type": "thm",
+// 	"weight": 3,
+// 	"content": "When a recurrence is of the form $a_n = \\sum_{i=0}^{n-1} k_ia_i$, and the solutions to the equation $x^n = \\sum_{i=0}^{n-1} k_ix^i$ are $x_0,,,x_{n-1}$, then every expression of the form $\\sum_{i=0}^{n-1} c_ix_i^n$ is a solution to the recurrence.  The base cases that determine the specific sequence can be used to solve for the $c$s, giving a closed form formula for the specific sequence.",
+// }
+
+// {
+// 	"name": "no consecutive heads recurrence",
+// 	"type": "exercise",
+// 	"weight": 2,
+// 	"content": "Given $n$ consecutive coin flips, let $a_n$ be the number of outcomes that do *not* have consecutive heads.  The base cases for this sequence are [[$a_1 = 2$ and $a_2 = 3$]].  The recurrence relation for this sequence is [[$a_n = a_{n-1}+a_{n-2}$]].",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "Consider $n>2$ consecutive coin flips.  How many do not have consecurive heads?  If the first flip is tails, then there are $a_{n-1}$ possibilities for the remaining flips.  If the first flip is heads, then the second flip must be tails, and there are $a_{n-2}$ possibilities for the remaining flips.  This covers all cases, so there are a total of $a_{n-1}+a_{n-2}$ possibilities without consecutive heads.",
+// 	},
+// }
+
+// {
+// 	"name": "no consecutive 1s recurrence",
+// 	"type": "exercise",
+// 	"weight": 1,
+// 	"content": "Given a line of length $n$ of letters from ${J,K,L}$.  Let $a_n$ be the number of possible lines that do *not* have consecutive $J$s.  The base cases for this sequence are [[$a_1 = 3$ and $a_2 = 8$]].  The recurrence relation for this sequence is [[$a_n = 2a_{n-1}+2a_{n-2}$]].",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "Consider a line of length $n>2$.  How many do not have consecutive $J$s?  If the first number is $K$ or $L$, then there are $a_{n-1}$ possibilities for the rest of the line.  This makes $2a_{n-1}$ possibilities.  If the first number is $J$, then the second number must be $K$ or $L$, and there are $a_{n-2}$ possibilities for the rest of the line.  This makes $2a_{n-2}$ possibilities.  This covers all cases, so there are a total of $2a_{n-1}+2a_{n-2}$ possibilities without consecutive $J$s.",
+// 	},
+// }
+
+// {
+// 	"name": "filling a 3xn square grid with 1x1 and 2x2 tiles",
+// 	"type": "exercise",
+// 	"weight": 1,
+// 	"content": "Given a $3\\times n$ grid of $1\\times1$ squares, we want to fill it with $1\\times1$ and $2\\times2$ tiles.  Let $a_n$ be the number of ways to do this.  The base cases for this sequence are [[$a_1 = 1$ and $a_2 = 3$]].  The recurrence relation for this sequence is [[$a_n = 2a_{n-1}+2a_{n-2}$]].",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "A $3\\times1$ grid can only be filled in $1$ way, that is, with $3$ $1\\times1$ tiles.  So $a_1=1$.  A 3\\times2$ grid can be filled in $3$ ways:\n\n  1. A $2\\times2$ tile on top and $2$ $1\\times1$ tiles on bottom.\n  2. A $2\\times2$ tile on bottom and $2$ $1\\times1$ tiles on top.\n  3. $6$ $1\\times1$ tiles.\n\nSo $a_2=3$.  These are the base cases.\n\nConsider a $3\\times n$ grid where $n>2$.  If the last column is filled with $1\\times1$ tiles, then there are $a_{n-1}$ ways to fill the rest of the grid.  On the other hand, if the last column has part of a $2\\times2$ tile on its bottom, then the second to last column has the other half of the $2\\times2$ in it, and the top of those columns must be filled with $1\\times1$ tiles <img>.  There are $a_{n-2}$ ways to fill the rest of the grid.  Finally, if the last column has half of a $2\\times2$ tile on its top, then we get a symmetrical situation, and again there are $a_{n-2}$ ways to fill the rest of the grid.\n\nThis covers all possible cases, and they are mutually exclusive, so there are a total of $a_{n-1}+2a_{n-2}$ ways to fill the $3\\times n$ grid.  This is the recurrence relation.",
+// 	},
+// }
+
+// {
+// 	"name": "generating function",
+// 	"type": "def",
+// 	"weight": 3,
+// 	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} a_nx^n$.",
+// }
+
+// {
+// 	"name": "$e^x$ generating function",
+// 	"type": "thm",
+// 	"weight": 3,
+// 	"content": "The generating function for $e^x$ is $\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}$.",
+// 	"proofs": [
+// 		{
+// 			"type": "calculus",
+// 			"content": "By definition, the Maclauren series for $e^x$ is $fill in here$.  Since the derivative of $e^x$ is $e^x$, all of the derivatives evaluate to $1$.",
+// 		},
+// 		{
+// 			"type": "magic",
+// 			"content": "$e^x$ is the *only* increasing function whose derivative is itself.  $\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}$ is increasing because each term is positive and each nonzero power is greater than $1$.  Its derivative, $\\sum_{n=0}^{\\infty} \\frac{nx^{n-1}}{n!} = \\sum_{n=1}^{\\infty} \\frac{x^{n-1}}{(n-1)!} = \\sum_{j=0}^{\\infty} \\frac{x^j}{j!}$, is equal to itself.  Therefore, the infinite sum *must* be $e^x$.",
+// 		},
+// 	],
+// }
+
+// {
+// 	"name": "number of partitions of a natural number",
+// 	"type": "thm",
+// 	"weight": 5,
+// 	"content": "The number of partitions of a natural number $n$ is the coefficient of $x^n$ in $\\prod_{k=1}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
+// 	"intuition": "Remember that a partition of $n$ is a sum of natural numbers that add up to $n$.  The order of the numbers does not matter.  The given product can be expressed as a Maclaurin series of the form $a_0x^0 + a_1x^1 + a_2x^2 +++$.  Then $a_n$ is the number of ways to partition $n$.",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "Given $\\prod_{k=1}^{\\infty}\\left(\\frac{1}{1-x^k}\\right)$, each factor $\\frac{1}{1-x^k}$ can be replaced with its power series, $\\sum_{i=0}^{\\infty} x^ki$.\n\nThe result is a product of sums, which looks like $(x^0+x^1+x^2+x^3+++)(x^0+x^2+x^6+x^8+++)(x^0+x^3+x^6+x^9+++)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  The term chosen from the second factor represents the number of $2$s you are using the in the partition, and so forth.  For example, in the second factor, choosing $x^0$ means you are using no $2$s in the partition.  Choosing $x^2$ means you are using one $2$ in the partition.  Or choosing $x^4$ means you are using two $2$s in the partition.\n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$.",
+// 	}
+// }
+
+// {
+// 	"exercise": "Prove that $\\sum_{k=0}^{n} 2^k\\binom nk = 3^n$.",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "$3^n = (2+1)^n$.  Using the binomial theorem, we know this is equal to $\\sum_{k=0}^{n} \\binom nk 2^k 1^{n-k}$ = $\\sum_{k=0}^{n} 2^k\\binom nk$.",
+// 	},
+// }
+
+// {
+// 	"name": "expected value of geometric variable",
+// 	"thm": "The expected value for a geometric random variable with probability $p$ is $\\frac 1p$.",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "The expected value is the sum of (the number of flips it takes to get success \\cdot probability it takes that many) from 0 to infinity.  rewrite those values in terms of q, then distribute and rewrite as two separate sums.  Two of the sums will cancel, with only one left.  The last sum is a power series, so its 1/(1-q).",
+// 	},
+// }
+
+// {
+// 	"exercise": "A $2\\times n$ board can be filled with $1\\times1$ tiles and $L$-shaped tiles (made from $3$ $1\\times1$ squares) <img>.  Let $(a_n)_{n=1}^{\\infty}$ be the sequence of the number of possible tilings.\n\nThe base cases for this sequence are [[$a_1=1, a_2=5, a_3=11$]].  A recurrence relation for this sequence is [[$a_n = a_{n-1} + 4a_{n-2} + 2a_{n-3}$]].",
+// }
+
+// {
+// 	"name": "number of partitions of a natural number into odd parts",
+// 	"type": "exercise",
+// 	"weight": 3,
+// 	"content": "The number of partitions of a natural number $n$ into odd parts is the coefficient of $x^n$ in [[$\\prod_{k \\in \\mathbb{N}_\\text{odd}}\\left(\\frac{1}{1-x^k}\\right)$]] when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
+// 	"intuition": "This is just a variant of counting the number of ways to partition a natural number.  If you understand that proof, you can alter it to consider only odd parts.  That is, each part of the partition must be odd.",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "Given $\\prod_{k \\in \\mathbb{N}_\\text{odd}}\\left(\\frac{1}{1-x^k}\\right)$, each factor $\\frac{1}{1-x^k}$ can be replaced with its power series, $\\sum_{i=0}^{\\infty} x^ki$.\n\nThe result is a product of sums, which looks like $(x^0+x^1+x^2+x^3+++)(x^0+x^3+x^6+x^9+++)(x^0+x^5+x^{10}+x^{15}+++)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  The term chosen from the second factor represents the number of $3$s you are using the in the partition, and so forth.  For example, in the second factor, choosing $x^0$ means you are using no $3$s in the partition.  Choosing $x^3$ means you are using one $3$ in the partition.  Or choosing $x^6$ means you are using two $3$s in the partition.  You can see that we are only using odd numbers in our partition.  \n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$ into odd parts, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$ into odd parts.",
+// 	}
+// }
+
+// {
+// 	"name": "number of partitions of a natural number into distinct parts",
+// 	"type": "thm",
+// 	"weight": 3,
+// 	"content": "The number of partitions of a natural number $n$ into distinct parts is the coefficient of $x^n$ in $\\prod_{k=1}^{\\infty}\\left(1+x^k)$ when it is written in the form $\\sum_{j=0}^{\\infty} a_jx^j$.",
+// 	"intuition": "The parts (numbers) must be distinct, so each number from $1$ to $n$ can either be in the sum or not, and the sum must of course add up to $n$.  No number can appear more than once in the sum.",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "The generating function given, when written without product notation, looks like $(1+x^1)(1+x^2)(1+x^3)(1+x^4)\\cdots$ or $(x^0+x^1)(x^0+x^2)(x^0+x^3)(x^0+x^4)\\cdots$.  Each term of this product is the result of picking one term from each factor.  The term chosen from the first factor represents the number of $1$s you are using in the partition.  You can either have $0$ ones or $1$ one, but never more than that.  The term chosen from the second factor represents the number of $2$s you are using the in the partition, and so forth.  You can either have $0$ twos or $1$ two, but never more than that, guaranteeing distinctness of parts.  For example, in the fourth factor, choosing $x^0$ means you are using no $4$s in the partition.  Choosing $x^4$ means you are using one $4$ in the partition.\n\nTherefore, each $x^n$ term in the product corresponds to a partition of $n$ into distinct parts, since the chosen powers in each factor add up to $n$.  When like terms are combined, the coefficient of $x^n$ is the total number of partitions of $n$ into distinct parts.",
+// 	}
+// }
+
+// {
+// 	"name": "Glaisher's theorem for d=2",
+// 	"thm": "Given any natural number $n$, the number of partitions of $n$ into parts that are odd is equal to the number of partitions of $n$ into parts that are distinct.",
+// 	"example": "$5$ can be partitioned $7$ ways:
+// 	  1. $1+1+1+1+1$\n
+// 	  2. $1+1+1+2$\n
+// 	  3. $1+1+3$\n
+// 	  4. $1+2+2$\n
+// 	  5. $1+4$\n
+// 	  6. $2+3$\n
+// 	  7. $5$\n\n
+// 	  Numbers 5., 6., and 7. have distinct parts.  Numbers 1., 3., 7. have odd parts.  Both ways, there are exactly $3$ partitions that accomplish the goal.",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "Let $a_n$ be the number of ways to partition $n$ into distinct parts.  The generating function for the sequence $(a_n)_{n=0}^{\\infty}$ is $f(x) = (1+x^1)(1+x^2)(1+x^3)(1+x^4)(1+x^5)\\cdots$.  This can be rewritten in a different form as follows:
+// 		$f(x) = (1+x^1)(1+x^2)(1+x^3)(1+x^4)(1+x^5)\\cdots$
+// 		$f(x) = \\left(\\frac{(1+x^1)(1-x^1)}{1-x^1}\\right)\\left(\\frac{(1+x^2)(1-x^2)}{1-x^2}\\right)\\left(\\frac{(1+x^3)(1-x^3)}{1-x^3}\\right)\\left(\\frac{(1+x^4)(1-x^4)}{1-x^4}\\right)\\left(\\frac{(1+x^5)(1-x^5)}{1-x^5}\\right)\\cdots$
+// 		$f(x) = \\left(\\frac{1-x^2}{1-x^1}\\right)\\left(\\frac{1-x^4}{1-x^2}\\right)\\left(\\frac{1-x^6}{1-x^3}\\right)\\left(\\frac{1-x^8}{1-x^4}\\right)\\left(\\frac{1-x^{10}}{1-x^5}\\right)\\cdots$
+// 		\n\nThe numerators are all the even powers of $x$, and the denominators are all the powers of $x$.  Since the product goes on forever, we cancel and are left with all the odd powers of $x$ in the denominator.\n\n
+// 		$f(x) = \\left(\\frac1{1-x}\\right)\\left(\\frac1{1-x^3}\\right)\\left(\\frac1{1-x^5}\\right)\\cdots$
+// 		$f(x) = \\left(\\frac1{1-x}\\right)\\left(\\frac1{1-x^3}\\right)\\left(\\frac1{1-x^5}\\right)\\cdots$
+// 		\n\nEach factor can be replaced with its power series representation:\n\n
+// 		$f(x) = (x^0+x^1+x^2+++)(x^0+x^3+x^6+++)(x^0+x^5+x^10+++)\\cdots$
+// 		\n\nThis is the generating function for the sequence $(a_n)_{n=0}^{\\infty}$, where $a_n$ is the number of ways to partition $n$ into odd parts.  We conclude that the number of ways to partition $n$ into distinct parts is equal to the number of ways to partition $n$ into odd parts, for all $n$.",
+// 	},
+// }
+
+// {
+// 	"name": "solve recurrences with generating functions",
+// 	"thm": "Given a sequence $(a_n)_{n=0}^{\\infty}$ defined by base cases and a linear homogeneous recurrence with any constant $a_n = \\sum_{k=0}^{n-1} c_{k}a_{k} + C$, we can find a closed form formula for $a_n$ by rewriting its generating function $\\sum_{n=0}^{\\infty} a_nx^n$ in terms of its recurrence $base cases + \\sum_{n=0}^{\\infty} \\left(\\sum_{k=0}^{n-1} c_{k}a_{k} + C\\right)x^n$ and making algebraic manipulations.",
+// 	"example": "Let $(a_n)_{n=0}^{\\infty} be defined by $a_0=1$, $a_1=4$, and $a_n = 3a_{n-1} - 2a_{n-2}$.  Then a closed formula for $a_n$ can be found by this method:\n\n
+// 	$f(x) = \\sum_{n=0}^{\\infty} a_nx^n$
+// 	$f(x) = 1+4x+\\sum_{n=2}^{\\infty} a_nx^n$
+// 	$f(x) = 1+4x +\\sum_{n=2}^{\\infty} (3a_{n-1}x^n-2a_{n-2}x^n)$
+// 	$f(x) = 1+4x + 3x\\left(\\sum_{n=2}^{\\infty} a_{n-1}x^{n-1}\\right) -2x^2\\left(\\sum_{n=2}^{\\infty}a_{n-2}x^{n-2}\\right)$
+// 	$f(x) = 1+4x + 3x\\left(\\sum_{n=1}^{\\infty} a_{n}x^{n}\\right) -2x^2\\left(\\sum_{n=0}^{\\infty}a_{n}x^{n}\\right)$
+// 	$f(x) = 1+4x + 3x\\left(\\left(\\sum_{n=0}^{\\infty} a_{n}x^{n}\\right) - a_0x^0\\right) -2x^2\\left(\\sum_{n=0}^{\\infty}a_{n}x^{n}\\right)$
+// 	$f(x) = 1+4x + 3x\\left(f(x) - 1\\right) -2x^2f(x)$
+// 	$f(x)(1-3x+2x^2) = 1 + 4x - 3x$
+// 	$f(x)(1-x)(1-2x) = 1 + x$
+// 	$f(x) = \\frac{1 + x}{(1-x)(1-2x)}$\n\n
+// 	Using the method of partial fractions, we can rewrite $f(x)$ as:\n\n
+// 	$f(x) = -2\\left(\\frac1{1-x}\\right) + 3\\left(\\frac1{1-2x}\\right)$\n\n
+// 	Each term can be written as a power series:\n\n
+// 	$f(x) = -2\\sum_{n=0}^{\\infty}x^n + 3\\sum_{n=0}^{\\infty}(2x)^n$
+// 	$f(x) = \\sum_{n=0}^{\\infty}\\left(-2+3\\cdot2^n\\right)x^n$\n\n
+// 	Finally, since $f(x)$ is the generating function of $(a_n)_{n=0}^{\\infty}$, we see that $a_n = (3\\cdot2^n-2)$.",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "$\qquad
+// \begin{align}
+// f(x) &= \sum_{n=0}^{\infty} a_nx^n \\
+// \\
+// f(x) &= b\text{ base cases (0 through n-1)} + \sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k} + C\right)x^n \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k} + C\right)x^n\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^n + Cx^n\right)\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^n\right)\right) + \left(\sum_{n=b}^{\infty}\left(\sum_{k=1}^{b} Cx^n\right)\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{n=b}^{\infty} \left(\sum_{k=1}^{b} c_{k}a_{n-k}x^{n-k}x^k\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} \left(\sum_{n=b}^{\infty} c_{k}a_{n-k}x^{n-k}x^k\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_{k}x^k\left(\sum_{n=b}^{\infty} a_{n-k}x^{n-k}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left(\sum_{t=b-k}^{\infty} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left(\sum_{t=0}^{\infty} a_{t}x^{t} - \sum_{t=0}^{b-k-1} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k\left( f(x) - \sum_{t=0}^{b-k-1} a_{t}x^{t}\right)\right) + \left(\sum_{n=b}^{\infty}bCx^n\right) \\
+// \\
+// f(x) &= \left(\sum_{k=0}^{b-1} a_kx^k\right) + \left(\sum_{k=1}^{b} c_kx^k f(x)\right) - \left(\sum_{k=1}^{b} c_kx^k\sum_{t=0}^{b-k-1} a_{t}x^{t}\right) + \left(\sum_{n=b}^{\infty}bCx^n\right)
+// \end{align}
+// $
+
+// From this point, we can solve for $f(x)$.  The result for $f(x)$ can be written as a power series, and the terms $a_n$ of that power series are the terms $a_n$ of the original sequence.",
+// 	},
+// }
+
+// {
+// 	"exercise": "Prove that for any natural number $n$ greater than $2$, $\\sum_{k=2}^{n} \\frac1{\\sqrt{k}} \\leq 2\\sqrt{n} - 2$.",
+// 	"weight": 3,
+// 	"proof": {
+// 		"type": "calculus",
+// 		"content": "Basically you bound the sum by an integral from 1 to n, then evaluate the integral (do later)",
+// 	},
+// }
+
+// {
+// 	"name": "exponential generating function",
+// 	"weight": 4,
+// 	"type": "def",
+// 	"content": "Given a sequence $(a_n)_{n=0}^{\\infty}$, the __exponential generating function__ of that sequence is $f(x) = \\sum_{n=0}^{\\infty} \\frac{a_nx^n}{n!}$.",
+// 	"intuition": "This is the same as a generating function, except that each term is divided by $n!$.",
+// }
+
+// {
+// 	"name": "product of generating functions",
+// 	"weight": 3,
+// 	"type": "thm",
+// 	"content": "Given two generating functions, $f$ generates $(a_n)_{n=0}^\\infty$ and $g$ generates $(b_n)_{n=0}^\\infty$, then the generating function $h = f \\cdot g$ of the sequence $(c_n)_{n=0}^\\infty$ has coefficients $c_n = \\sum_{k=0}^n a_kb_{n-k}$.",
+// 	"intuition": "",
+// }
+
+// {
+// 	"name": "product of exponential generating functions",
+// 	"weight": 3,
+// 	"type": "thm",
+// 	"content": "Given two exponential generating functions, $f$ generates $(a_n)_{n=0}^\\infty$ and $g$ generates $(b_n)_{n=0}^\\infty$, then $h = f \\cdot g$ is the generating function of the sequence $(c_n)_{n=0}^\\infty$, where $c_n = \\sum_{k=0}^n \\binom{n}{k} a_kb_{n-k}$.",
+// 	"example": "A sequence of length $n$ is composed of $0$s and $1$s.  There are $2^n$ ways to make the sequence.  Let $(c_n) = (2^n) from $0$ to $\\infty$ denote the number of ways to make a sequence of length $n$.  Let $(a_n)$ denote the number of ways to make a sequence of length $n$ using only $0$s.  That is, $(a_n) = (1) from $0$ to $\\infty$.  Similarly, let $(b_n)$ denote the number of ways to make a sequence of length $n$ using only $1$s.
+// 		\n\nIf the exponential generating functions for $(a_n)$, $(b_n)$, and $(c_n)$ are $f$, $g$, and $h$, respectively, then $h = f \\cdot g$.
+// 		\n\nThis means that if we didn't know the formula for $c_n$, we could have solved for it in this way:
+// 		\n\n$c_n$ = \\sum_{k=0}^n \\binom{n}{k} a_kb_{n-k} = \\sum_{k=0}^n \\binom{n}{k} = 2^n$.",
+// 	"example": "We want to make a sequence of length $n$ where each term is an $A$, $B$, or $C$.  Also, we need the total number of $A$s to be even and the total number of $B$s to be even.
+// 		\n\nLet $(a_n)_{n=0}^\\infty$ be given by $(0,1,0,1,0,1,,,)$ (that is, $a_n = 1+(-1)^n$) be the number of ways to fill a sequence of length $n$ with only $A$s, and there must be an even amount of $A$s.
+// 		\n\nLet $(b_n)_{n=0}^\\infty$ be given by $(0,1,0,1,0,1,,,)$ (same formula) be the number of ways to fill  a sequence of length $n$ with only $B$s, and there must be an even amount of $B$s.
+// 		\n\nLet $(c_n)_{n=0}^\\infty$ be given by $(1,1,1,1,1,1,,,)$ be the number of ways to fill  a sequence of length $n$ with only $C$s.
+// 		Let $f$, $g$, and $h$ be the exponential generating functions for $(a_n)$, $(b_n)$, and $(c_n)$, respectively.  Let $t = fgh$.
+// 		\n\nIt turns out that $f(x) = \\frac{e^x-e^{-x}}2$ and $g(x)$ is the same.  $h(x) = e^x$.  Finally, we compute $t(x) = f(x)g(x)h(x) = \\left(\\frac{e^x-e^{-x}}2\\right)\\left(\\frac{e^x-e^{-x}}2\\right)\\left(\\e^x\\right)$.  Simplifying, we have that $t(x) = \\frac14(e^{-x}+2e^x+e^{3x})$.  The coefficients of the power series for $t(x)$ is therefore $\\frac14\\left((-1)^n+2+3^n\\right)/n!$.  We conclude that the number of ways to make the original sequence of length $n$ at the beginning of this example is $\\frac14\\left(3^n+2+(-1)^n\\right)$.",
+// }
+
+// {
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "The number of sequences of length $n$ that are composed of $0$s and $1$s, where the number of $1$s must be a multiple of $3$, is [[$needs to be solved still$]].  The answer is given as a function of $n$.",
+// 	"intuition": "[[We can represent this n that as a sequence.  Then create an exponential generating function for each and multiply them together to get the exponential generating function for the desired sequence.]]",
+// }
+
+// {
+// 	"name": "deranged sequence",
+// 	"weight": 3,
+// 	"type": "def",
+// 	"content": "A __deranged__ sequence is an ordering of ${1,2,3,,,n}$ where $a_i \\neq i$ for all $i$ in the sequence.",
+// 	"intuition": "If we took the *arranged* sequence $(1,2,3,,,n)$ and moved the terms around so that no term is left in its original location, the result would be a *deranged* sequence.",
+// 	"example": "$(2,4,1,3)$",
+// 	"example": "$(2,3,1)$",
+// 	"example": "$(3,1,2,6,4,5)$",
+// 	"counterexample": "$(3,2,1)$ is not deranged because $2$ is in its own position.",
+// 	"counterexample": "$(5,4,7,2,1,6,3)$",
+// }
+
+// {
+// 	"name": "number of deranged sequences",
+// 	"weight": 4,
+// 	"type": "thm",
+// 	"content": "Let $d_n$ be the number of deranged sequences of length $n$.  Then a closed formula for $d_n$ is [[$d_n = n!\\sum_{k=0}^n \\frac{(-1)^k}{k!}$]].",
+// 	"proofs": [
+// 		{
+// 			"type": "combinatorial",
+// 			"content": "Use the inclusion-exclusion principal to find a formula (somebody please figure it out and post it! :)",
+// 		},
+// 		{
+// 			"type": ["algebraic", "combinatorial"],
+// 			"content": "$n!$ is the number of sequences of length $n$ whose terms are $1,2,,,n$ in any order.  For any of these sequences, some amount $k$ of the terms will satisfy $a_i=i$, and the remaining $n-k$ terms will form a derangement of length $n-k$.  For each $k$, there are $\\binom nk$ ways to have $k$ terms in place and then, given which terms are in place, $d_{n-k}$ derangements of the remaining terms.  Adding up these possibilities over all possible values of $k$, we get all possible sequences of length $n$:
+// 				\n\n
+// 				$n! = \sum_{k=0}^n \binom nk d_{n-k}$
+
+// 	$n! = \sum_{k=0}^n \frac{n!}{k!(n-k)!} d_{n-k}$
+
+// 	$1 = \sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}$
+
+// 	Multiply both sides by $x^n$ and sum them from $n=0$ to $\infty$:
+
+// 	$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!(n-k)!} d_{n-k}\right) x^n$
+
+// 	$\sum_{n=0}^\infty x^n = \sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!} \frac{d_{n-k}}{(n-k)!}\right) x^n$
+
+// 	The right side is recognized as the product of two sums:
+
+// 	$\sum_{n=0}^\infty x^n = \left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty \frac{d_{n}}{n!} x^n\right) $
+
+// 	$\sum_{n=0}^\infty x^n = e^x \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+
+// 	$e^{-x} \sum_{n=0}^\infty x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+
+// 	$\left(\sum_{n=0}^\infty \frac{1}{n!} x^n\right) \left(\sum_{n=0}^\infty x^n\right) =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+
+// 	On the left side we take the product of the two sums:
+
+// 	$\sum_{n=0}^\infty \left(\sum_{k=0}^n \frac{1}{k!}\right) x^n =  \sum_{n=0}^\infty \frac{d_{n}}{n!} x^n $
+
+// 	Remove the outer sums and divide by $x^n$:
+
+// 	$\sum_{k=0}^n \frac{1}{k!} =   \frac{d_{n}}{n!} $
+
+// 	Solve for $d_n$:
+
+// 	$d_n = n!\sum_{k=0}^n \frac{1}{k!}  $
+// 	.
+
+
+// 			",
+// 		}
+// 	],
+// }
+
+// {
+// 	"name": "generating function practice",
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "Let $f(x) = (1+x)^n$ for some fixed $n$ and let $g(x) = \\frac1{1-x}$.  When $k<n$, the coefficient of $x^k$ in $fg$ is [[$\\sum_{j=0}^k \\binom nj$]] (leave this in summation notation), and when $k\\geq n$, the coefficient is [[$2^n$]].",
+// }
+
+// {
+// 	"name": "generating function practice 2",
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "Let $f(x) = e^x$ and $g(x) = \\frac1{1-2x}$.  The coefficient of $x^k$ in $fg$ is [[$\\sum_{j=0}^k 2^{k-j} \\frac{1}{k!}$]] (leave this in summation notation).",
+// }
+
+// {
+// 	"name": "generating function practice 3",
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "Let $a_k$ be the number of ways to choose $k\\geq0$ balls from $n$ *identical* blue balls.  A formula for $a_k$ is [[$a_k = \begin{cases}
+//     1,& \text{if } k\leq n\\
+//     0,& \text{if } k > n\\
+// \end{cases}$]].  Let $b_k$ be the number of ways to choose $k\\geq 0$ balls from $m$ identical red balls.  A formula for $b_k$ is [[the same formula as $a_k$, but with $m$ instead of $n$]].  The generating function $f$ for $(a_n)_{n=0}^\\infty$ is [[$\\sum_{k=0}^n x^k$]].  The generating function $g$ for $(b_n)_{n=0}^\\infty$ is [[the same formula as for $(a_n)$, but with $m$ instead of $n$]].  The product, $fg$, has coefficients $c_k$ given by the formula [[
+// $c_k = \begin{cases}
+//     k+1,& \text{if } k\leq \\min{n,m}\\
+//     \\min{n,m}+1,& \text{if } \\min{n,m} < k \\leq max{n,m}\\
+//     0,& \text{if } \\max{n,m} < k\\
+// \end{cases}$
+// ]].  The product is the generating function for the situation [[where you want to know the number of ways to choose $k\\geq 0$ balls from $n$ blue and $m$ red balls.  It matters how many of each color you choose]].",
+// }
+
+// {
+// 	"name": "generating functions practice 4. delete gen fun prac names after hooking up edges",
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "A store sells $a$ distinct $\$1$ lollipops (not $a$ *types* of lollipops, but literally a total of $a$ lollipops), $b$ distinct $\$2$ chocolate bars, and $c$ distinct $\$3$ gummy bear bags.  If you spend exactly $\$n$ on candy, then $s_n$ is the number of ways you could have achieved this.  The generating function for $(s_n)_{n=0}^\\infty$ is [[$\\left(\\binom a0 x^0 + \\binom a1 x^1 +++ \\binom aa x^a\\right)\\left(\\binom b0 x^0 + \\binom b1 x^2 +++ \\binom bb x^{2b}\\right)\\left(\\binom c0 x^0 + \\binom c1 x^3 +++ \\binom cc x^{3c}\\right)$ or $\\left(\\sum_{k=0}^a \\binom ak x^{1k}\\right)\\left(\\sum_{k=0}^b \\binom bk x^{2k}\\right)\\left(\\sum_{k=0}^c \\binom ck x^{3k}\\right)$]].  Any expression equivalent to this is acceptable.",
+// 	"intuition": "[[This is similar to partitioning the natural number $n$ into the sum of $1$s, $2$s, and $3$s.  The difference is that because all the items are *distinct*, we need to count the *number of ways* to choose $k$ of the $a$ lollipops, for example.  Therefore, the sum corresponding to the lollipops, for example, must include the $\\binom ak$ constants.]]",
+// }
+
+// {
+// 	"name": "gen function method for solving a recurrence",
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "The sequence $(a_n)_{n=0}^\\infty$ is defined by $a_0=1$, $a_1=9$, and $a_n=6a_{n-1}-9a_{n-2}$ for all other terms.  Use the generating function $f(x) = \\sum_{n=0}^\\infty a_nx^n$ to solve for $a_n$ in closed form.  The closed form solution for $f(x)$ without a summation is [[$\\frac{1+3x}{(1-3x)^2}$]].  The closed form solution for $a_n$ is [[$3^n(2n+1)$]].",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "f(x) = \\sum_{n=0}^\\infty a_nx^n.  pull out the first two terms and plug in base cases.  plug recursive formula into remaining sum.  distribute summation to two pieces.  for each piece, shift n so that it starts at 0, and pull out a term if necessary.  rewrite the sums as something times f(x).  Finally, isolate f(x) to get the closed form for f(x).\n\nf(x) can be rewritten as $\\frac{-1}{1-3x} + 2\\frac{1}{(1-3x)^2}$.  Each term can be written as a power series.  If you don't know the power series for the right term, you can write the power series for $\\frac{1}{1-3x}$ and square it.  Then solve for the coefficient of $x^n$ in the resulting product.  Finally, combine the coefficients so that f(x) is written as one big power series.  The coefficient for x^n is the closed formula for $a_n$.",
+// 	},
+// }
+
+// { // this is from HW 9.
+// 	"name": "gen function method",
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "The sequence $(a_n)_{n=0}^\\infty$ is defined by $a_0=1$, $a_1=1$, and $a_n=3a_{n-1}+4a_{n-2}+2^{n-2}$ for all other terms.  Use the generating function $f(x) = \\sum_{n=0}^\\infty a_nx^n$ for $(a_n)$.  The closed form formula for $f(x)$ without a summation is [[$\\frac{1-4x+5x^2}{(1+x)(1-2x)(1-4x)}$]].",
+// 	"proof": {
+// 		"type": "algebraic",
+// 		"content": "f(x) = \\sum_{n=0}^\\infty a_nx^n.  pull out the first two terms and plug in base cases.  plug recursive formula into remaining sum.  distribute summation to two pieces.  for each piece, shift n so that it starts at 0, and pull out a term if necessary.  rewrite the sums as something times f(x).  Finally, isolate f(x) to get the closed form for f(x).\n\nf(x) can be rewritten as $\\frac{-1}{1-3x} + 2\\frac{1}{(1-3x)^2}$.  Each term can be written as a power series.  If you don't know the power series for the right term, you can write the power series for $\\frac{1}{1-3x}$ and square it.  Then solve for the coefficient of $x^n$ in the resulting product.  Finally, combine the coefficients so that f(x) is written as one big power series.  The coefficient for x^n is the closed formula for $a_n$.",
+// 	},
+// }
+
+// { // HW 9 continued
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "Let $a_n$ be the number of elements in ${0,1}^n$ that do *not* have a $1$ followed by a $0$.  $a_0$ is [[$1$]] and a recurrence for $a_n$ is [[$a_n = a_{n-1}+1$]].  A closed form formula for $a_n$ is [[$a_n = n+1$]].",
+// 	"intuition": "[[Firstly, the elements of ${0,1}^n$ are just sequences of length $n$ whose terms are $0$s and $1$s.  Since a $1$ cannot be followed by a $0$, then a $1$ must be followed by a $1$.  Therefore, once a $1$ appears in the sequence, then *all* the terms after it must be $1$s too!]]",
+// 	"example": "[[If $n=4$ for example, the sequences without a $1$ followed by a $0$ are $(0,0,0,0)$, $(0,0,0,1)$, $(0,0,1,1)$, $(0,1,1,1)$, and $(1,1,1,1)$.]]",
+// }
+
+// {
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "Let $a_n$ be the number of elements in ${0,1}^n$ that do *not* contain the subsequence $(1,0,1)$.  $a_0$ is [[$1$]], $a_1$ is [[$2$]], $a_2$ is [[$4$]], and a recurrence for $a_n$ is [[$a_n = 2 - a_{n-2} + \\sum_{k=0}^{n-1} a_k$]].",
+// 	"intuition": "[[Firstly, the elements of ${0,1}^n$ are just sequences of length $n$ whose terms are $0$s and $1$s.]]",
+// 	"intuition": "[[To find a recurrence, we should look at the end of the sequence and do a case by case breakdown of what it can be.  If the last term is $0$, then there are $a_{n-1}$ ways to fill the other terms.]]  [[If the last term is $1$, then (if the second to last term is $0$...)]]",
+// 	"example": "[[If $n=4$ for example, the sequences without a $1$ followed by a $0$ are $(0,0,0,0)$, $(0,0,0,1)$, $(0,0,1,1)$, $(0,1,1,1)$, and $(1,1,1,1)$.]]",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "If the last term is $0$, then there are $a_{n-1}$ ways to fill the other terms.  If the last term is $1$, then (if the second to last term is $0$, then the third to last term must be $0$, and there are $a_{n-3}$ ways to fill the rest of the terms.  Alternatively, if the second to last term is $1$, then (if the third to last term is $0$, then the fourth to last term must be $0$, and there are $a_{n-4}$ ways to fill the rest of the terms.  Alternatively...and so forth).\n\nWe see a pattern, and continue all the way down to $a_0$, which corresponds to the sequence $(0,0,1,1,1,,,1)$.",
+// 	},
+// } // end of HW 9
+
+// {
+// 	"name": "inclusion-exclusion principle",
+// 	"weight": 5,
+// 	"type": "thm",
+// 	"content": "Given $n\\in\\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\\left|\\cup_{i=1}^{n} A_i\\right| = \\sum_{S\\subset [n]} (-1)^{|S|+1} \\left|\\cap_{j\\in S} A_j\\right|$.",
+// 	"intuition": "When $n=2$, this theorem just says that $|A_1\\cup A_2| = |A_1|+|A_2|-|A_1\\cap A_2|$.  When $n=3$, this theorem says that $|A_1\\cup A_2\\cup A_3| = |A_1|+|A_2|+|A_3|-|A_1\\cap A_2|-|A_1\\cap A_3|-|A_2\\cap A_3|+|A_1\\cap A_2\\cap A_3|$.  As you can see there is a pattern where you add the individual sets, then subtract the intersections of $2$ sets, then add the intersections of $3$ sets, then subtract the intersections of $4$ sets, and so forth.",
+// }
+
+// { // beginning of Midterm
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "We have a standard deck of $52$ cards.  The number of $5$-card hands that contain either no face cards or all face cards is [[$\\binom{52-4\\cdot3}{5} + \\binom{4\\cdot3}{5}$ or $658800$]].  (A face card is a jack, queen, or king.)",
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "We have a standard deck of $52$ cards.  The number of $5$-card hands that are full-houses is [[$(13\\text{ pick }2)4\\cdot4$ or $13\\cdot12\\cdot4\\cdot4$ or $2496$]].",
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "The number of ways to deal out $52$ cards so that Zahlen gets $2$ cards, Xtehn gets $3$ cards, Vehro gets $5$ cards, Rohre gets $8$ cards, Qxhna gets $13$ cards, and John gets $21$ cards is [[$\\binom{52}{2,3,5,8,13,21}$ or $\\frac{52!}{2!3!5!8!13!21!}$ or $4366577259220841628892568640000$]].",
+// 	"intuition": "",
+// }
+
+// {
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "$x_1$, $x_2$, and $x_3$ must be natural numbers, and $x_1<5$.  The number of solutions to $x_1+x_2+x_3=12$ is [[$\\binom{12+3-1}{3-1}-\\binom{(12-5)+3-1}{3-1}$ or $\\binom{14}{2}-\\binom{9}{2}$ or $55$]].",
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "$x_1$, $x_2$, and $x_3$ must be prime numbers.  The number of solutions to $x_1+x_2+x_3=12$ is [[$3!+3$ or $9$]].",
+// }
+
+// {
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "$x_1$, $x_2$, and $x_3$ must be natural numbers less than or equal to $6$.  The number of solutions to $x_1+x_2+x_3=12$ is [[$\\binom{3+3-1}{3-1}$ or $\\binom 52$ or $10$]].",
+// 	"proof": {
+// 		"type": "combinatorial",
+// 		"content": "Let $x_1=x_2=x_3=5$.  The sum $x_1+x_2+x_3$ is $15$.  Now count the number of ways to distribute three $-1$s among the $x$s.  There are $\\binom{3+3-1}{3-1}$ ways to do this.  The three $-1$s bring the sum down to $12$.",
+// 	},
+// }
+
+// {
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "$3$ red balls and $4$ white balls are in an urn.  Balls are randomly removed from the urn one at a time until the urn is empty.  Let $E$ be the event where the first ball removed is red, and let $F$ be the event where the third ball removed is white.  Are $E$ and $F$ independent?  [[No]].",
+// }
+
+// {
+// 	"name": "expected value 1",
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "$3$ red balls and $4$ white balls are in an urn.  Balls are randomly removed from the urn one at a time until the urn is empty.  $X$ is a random variable representing the number of balls drawn until a white ball is drawn (For example, if the first ball is red and the second is white, then $X=2$).  The expected value of $X$ is [[$\\frac85$ or $1.6$]].",
+// }
+
+// {
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "$3$ red balls and $4$ white balls are in an urn.  Box $1$ and box $2$ are next to the urn.  One ball is randomly drawn from the urn and randomly placed into one of the boxes.  Another ball is randomly drawn from the urn and randomly placed into one of the boxes.  Given that box $1$ has at least $1$ white ball and no red balls, the probability that both balls drawn were white is [[$\\frac35$]].",
+// }
+
+// {
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "A $3\\times n$ board of $1\\times1$ squares must be filled with $3\\times1$ tiles <img> and $L$-tiles <img>.  The $3\\times1$ tiles can only be oriented vertically, but the $L$-tiles can be oriented any way.  Let $a_n$ be the number of tilings for the board.  The base cases for $(a_n)_{n=0}^\\infty$ are [[$a_0=1$ and $a_1$=1.  Alternatively, we can omit $a_0$ from the sequence and use $a_1=1$ and $a_2=3$ as our base cases]].  A recurrence for the sequence is [[$a_n = a_{n-1}+2a_{n-2}]].  A closed form formula for $a_n$ is [[$a_n = \\frac13(-1)^n+\\frac23(2)^n$]].",
+// }
+
+// {
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "Let $d_n$ represent the number of ways to make a list of $n$ letters using $A$s, $B$s, and $C$s so that the number of $A$s is even and there is at most $1$ $B$.  If $(a_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $A$s, then an exponential generating function for $(a_n)$ is [[$\\frac{e^x+e^{-x}}{2}$]].  If $(b_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $B$s, then an exponential generating function for $(b_n)$ is [[\\frac{1x^0}{0!}+\\frac{1x^1}{1!}]].  If $(c_n)_{n=0}^\\infty$ is the number of ways to make the list using *only* $C$s, then an exponential generating function for $(c_n)$ is [[$e^x$]].  A closed form formula for $d_n$ is [[$d_n = \begin{cases}
+//     1,& \text{if } n=0\\
+//     2,& \text{if } n=1\\
+//     2^{n-1}+n2^{n-2},& \text{if } n>1\\
+// \end{cases}$]].",
+// }
+
+// {
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "Prove that $\\sum_{k=0}^n k\\binom nk = n2^{n-1}$.",
+// 	"proofs": [
+// 		{
+// 			"type": "combinatorial",
+// 			"content": "We have $n$ people.  We choose a committee of size $1$ or more from these people.  Then we choose $1$ person from the committee to be the chairperson.  This corresponds to the left side of the equation.  (Note that the sum from $k=0$ to $n$ is equal to the sum from $k=1$ to $n$, so it makes sense to say that the committee has at least $1$ person.)\n\nWe have $n$ people.  We choose $1$ chairperson from those people.  Of the remaining $n-1$ people, there are $2^{n-1}$ possible precommitees.  One will be picked and combined with the chairperson to complete the committee.  This corresponds to the right side of the equation.",
+// 		},
+// 		{
+// 			"type": "algebraic",
+// 			"content": "Take $(1+x)^n$ and set it equal to its expansion using the binomial theorem.  Then take the derivative of both sides with respect to $x$.  Finally, let $x=1$.",
+// 		},
+// 	],
+// }
+
+// {
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "Let $(a_n)_{n=0}^\\infty$ be defined by the base case $a_0=4$ and the recurrence $a_n = 4a_{n-1}-3^{n+1}$.  If $a(x)$ is the generating function for $(a_n)$, then a closed form formula for $a(x)$ is [[$\\frac{4-21x}{(1-3x)(1-4x)}$ or $\\frac{9}{1-3x}-\\frac{5}{1-4x}$]].  A closed form formula for $a_n$ is [[$9\\cdot3^n-5\\cdot4^n$ or $3^{n+2}-5\\cdot4^n$]].",
+// }// end of midterm probs
+
+// //HW 10 below
+// {
+// 	"weight": 2, // question 1
+// 	"type": "exercise",
+// 	"content": "Let $a_n$ be the number of ways to choose $3$ elements from a set of size $n$.  The base cases for $a_n$ are [[$a_0=a_1=a_2=0$.  Alternatively, you could define $a_1$ through $a_3$, or $a_2$ through $a_4$, or $a_3$ through $a_5$.  As long as you define $3$ consecutive values starting at $n=3$ or before, then you have defined the base cases.]]  A closed formula for $a_n$ is [[$a_n = \binom nk$]].  The exponential generating function $a(x)$ for $(a_n)_{n=0}^\infty$ is [[$a(x)=\sum_{n=3}^{\infty}\frac1{3!(n-3)!}x^n$]].  A closed formula for $a(x)$ is [[$\frac{x^3e^x}{6}$]].",
+// }
+
+// {
+// 	"name": "Chef Torte", // question 3
+// 	"weight": 3,
+// 	"type": "exercise",// exponential generating functions
+// 	"content": "Chef Torte has a line of $n$ plates.  He also has cakes of height $1$ through $k$, and he puts them randomly on the plates (maximum one cake per plate), with the exception that the cakes cannot be in increasing order.  Note that $k$ can be any number from $0$ to $n$.\n\nThe number of ways Chef Torte might arrange the cakes is $c_n$.  We will practice exponential generating functions by solving for $c_n$ a certain way (but feel free to post alternate solutions for $c_n$).\n\nThe number of ways to have $n$ empty plates is $a_n$.  The formula for it is [[$a_n=1$]].  The exponential generating function $a(x)$ for the sequence $(a_n)_{n=0}^{\infty}$ in closed form is [[$a(x) = e^x$]].\n\nThe number of ways to have $n$ plates with cakes of height $1$ through $n$ in Chef Torte's accepted orderings is $b_n$.  The formula is [[$b_n=n!-1$]].  The exponential generating function $b(x)$ for the sequence $(b_n)_{n=0}^{\infty}$ in closed form is [[$b(x) = \frac1{1-x}-e^x$]].\n\nThe exponential generating function $c(x)$ for the sequence $(c_n)_{n=0}^{\infty}$ has the closed-form formula [[$c(x) = \frac{e^x}{1-x}-e^{2x}$]].  By converting this to summation notation, we can find the formula for $c_n$.  It is [[$c_n = n!\left(\sum_{k=0}^{n} \frac1{k!}\right) - 2^n$]].",
+// }
+
+// // HW 11 below
+// {// question 1
+// 	"name": "inclusion-exclusion", // connect to this
+// 	"weight": 1,
+// 	"type": "exercise",
+// 	"content": "The number of positive integers less than $1000$ that are not multiples of $5$, $6$, nor $8$, is [[$583$.  The function that finds the number of multiples of $x$ less than $1000$ is $m(x)=\floor{\frac{999}{x}}$.  Then the answer is equal to $m(1) - m(5)- m(6)- m(8)+m(5*6)+m(6*8)+m(8*5) - m(5*6*8)$]].",
+// }
+
+// {// question 2
+// 	"name": "inclusion-exclusion 2", // connect
+// 	"weight": 2,
+// 	"type": "exercise",
+// 	"content": "The number of ways to order the letters $A$ through $P$ such that we can*not* obtain any of the words $BAD$, $DEAF$, or $APE$ by crossing out some of the letters is [[$16!-\frac{16!}{3!}-\frac{16!}{4!}-\frac{16!}{3!}+0+0+\frac{n!3}{5!}-0$ or $\frac{13n!}{20}$ or $13599813427200$]].",
+// }
+
+// {// question 3 //connect to derangements!
+// 	"weight": 3,
+// 	"type": "exercise",
+// 	"content": "There are $2$ benches facing each other, each with $n$ seats.  The number of ways that $n$ couples can sit on the benches so that no two members of the same couple are seated opposite each other is [[$(n!)^2\sum_{k=0}^{n} \frac{(-1)^k}{k!}$]].",
+// 	"intuition": "[[If we fix the order of the people on one bench, then this becomes the number of derangements of the people on the other bench.  Alternatively, we could try using the inclusion-exclusion principle on the couples.]]",
+// }
+
+
+// // then it's graph theory until we reach pigeonhold princpal or posets...

@@ -57,7 +57,7 @@ echo 'done updating files on local machine'
 
 if [[ $os != FreeBSD ]]
 	then
-	open -a "Google Chrome" http://localhost
+	# open -a "Google Chrome" http://localhost
 fi
 
 echo 'done.'

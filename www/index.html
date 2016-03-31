@@ -8,16 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
     <script src='scripts/lib/require.js?' data-main='scripts/config'></script>
 </head>
-<body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}">
-<!-- <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-  <defs>
-    <filter id="name-your-filter-here">
-		<feGaussianBlur in="SourceGraphic" stdDeviation="3" />
-		<!-- <feColorMatrix in="SourceGraphic" mode="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" /> ->
-    </filter>
-  </defs>
-</svg>
- -->
+<body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}" data-subjects="{{ subjects }}">
 <section id='login'>
 	<img id='x' src="images/x.svg" />
 	<div>
@@ -65,9 +56,9 @@
 	<img id='avatar' src='images/smiley-face.png'>
 	<div id='login-circle'>login</div> <!-- overlaps avatar.  never should both appear at the same time -->
 	<div id='logout-circle'>logout</div>
+	<div id='get-starting-nodes'>start new subject</div>
 	<img id="add-node" src="images/add.svg">
 </section>
 <!-- svg should appear here (populated by JS) -->
-
 </body>
 </html>

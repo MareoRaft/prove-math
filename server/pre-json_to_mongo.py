@@ -6,8 +6,8 @@ from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 
 file_name = input('What is the name of the pre-json file?: ')
-re.sub(r'^data/', '', file_name)
-re.sub(r'\.pre-json$', '', file_name)
+file_name = re.sub(r'^data/', '', file_name)
+file_name = re.sub(r'\.pre-json$', '', file_name)
 file_path = 'data/' + file_name + '.pre-json'
 subprocess.check_output(['lib/pre-json_to_json.pl', file_path])
 

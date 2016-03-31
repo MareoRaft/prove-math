@@ -61,8 +61,8 @@ class Mongo:
     def upsert(self, query, update):
         self.address[self.database][self.collection].update(query, update, upsert=True)
 
-    def find(self, dict_fields=None,projection=None):
-        return self.address[self.database][self.collection].find(dict_fields,projection)
+    def find(self, dict_fields=None, projection=None):
+        return self.address[self.database][self.collection].find(dict_fields, projection)
 
     def delete_many(self, dict_fields):
         # This will delete from all fields which match the parameter!!

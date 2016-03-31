@@ -310,7 +310,15 @@ def test_relatives_to_distance_dict():
 	G.add_path([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 	x = G.relatives_to_distance_dict(5, 3)
 	assert len(x) == 7
-	assert x == {2: 3, 3: 2, 4: 1, 5: 0, 6: 1, 7: 2, 8: 3}
+	assert x == {
+		2: 3,
+		3: 2,
+		4: 1,
+		5: 0,
+		6: 1,
+		7: 2,
+		8: 3,
+	}
 
 def test_descendants_to_distance_dict():
 	G = nx.DiGraph()
