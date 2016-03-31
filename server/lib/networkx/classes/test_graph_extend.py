@@ -1,5 +1,6 @@
 ################################## IMPORTS ####################################
 import networkx as nx
+import pytest
 
 from lib.networkx.classes import graph_extend
 
@@ -41,4 +42,22 @@ def test_acceptable_iterable():
 	assert G.acceptable_iterable({'this', 'is', 'a', 'set'}) == True
 	assert G.acceptable_iterable({'test': 'dict'}) == False
 	assert G.acceptable_iterable(1) == False
+
+def test_validate_input_nodes():
+	DG = nx.DiGraph()
+	DG.add_path(['x', 'y', 'z'])
 	
+	#testing nonexistent inputs:
+	with pytest.raises(nx.NetworkXError):
+		DG.validate_input_nodes('NotANode')
+	with pytest.raises(nx.NetworkXError):
+		DG.validate_input_nodes(['NotANode'])
+	with pytest.raises(nx.NetworkXError):
+		DG.validate_input_nodes(['x', 'NotANode', 'z'])
+	with pytest.raises(ValueError):
+		DG.validate_input_nodes([])
+	
+	#existing inputs:
+	assert DG.validate_input_nodes('x')
+	assert DG.validate_input_nodes(['x', 'y'])
+

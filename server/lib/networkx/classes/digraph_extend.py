@@ -50,22 +50,6 @@ class _DiGraphExtended (nx.DiGraph):
 			raise TypeError('is_source only accepts DiGraphs as input')
 		return True
 
-	def validate_input_nodes(self, nbunch):
-		#checks that all given inputs exist in the graph
-		if not self.acceptable_iterable(nbunch):
-			nbunch = [nbunch]
-		if len(nbunch) == 0:	#empty iterable
-			raise ValueError('Argument {} is empty'.format(str(nbunch)))
-		elif len(nbunch) == 1:	#single node
-			if not self.has_node(nbunch[0]):
-				raise nx.NetworkXError('The input node {} is not in the graph'.format(str(nbunch[0])))
-			return True
-		else:	#multiple nodes
-			for node in nbunch:
-				if not self.has_node(node):
-					raise nx.NetworkXError('One of the listed nodes is not in the graph')
-			return True
-
 	def predecessor(self, node): # finds any predecessor of a node in a Directed Graph (in the future this should NOT depend on DG.predecessors(node), but instead re-implement the code of .predecessors and stop after finding 1)
 		ps = list(self.predecessors_iter(node))
 		if ps:

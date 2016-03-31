@@ -34,24 +34,6 @@ def test_validate():
 	except AttributeError as e:
 		assert str(e) == "'Graph' object has no attribute 'validate'"
 
-def test_validate_input_nodes():
-	DG = nx.DiGraph()
-	DG.add_path(['x', 'y', 'z'])
-	
-	#testing nonexistent inputs:
-	with pytest.raises(nx.NetworkXError):
-		DG.validate_input_nodes('NotANode')
-	with pytest.raises(nx.NetworkXError):
-		DG.validate_input_nodes(['NotANode'])
-	with pytest.raises(nx.NetworkXError):
-		DG.validate_input_nodes(['x', 'NotANode', 'z'])
-	with pytest.raises(ValueError):
-		DG.validate_input_nodes([])
-	
-	#existing inputs:
-	assert DG.validate_input_nodes('x')
-	assert DG.validate_input_nodes(['x', 'y'])
-
 def test_predecessor():
 	DG = nx.DiGraph()
 	DG.add_edges_from([
