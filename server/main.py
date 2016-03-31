@@ -120,7 +120,8 @@ class IndexHandler(BaseHandler):
 
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
-					host=self.request.host
+					host=self.request.host,
+					subjects=json.dumps(list(axioms.keys()))
 					)
 
 
@@ -169,12 +170,21 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'first-steps':
 			self.user = User(ball['identifier'])
 			self.jsend({'command': 'update-user'})
-			self.send_absolute_dominion(ball)
+			if self.ids(ball):
+				self.send_graph(ball)
+			else: # they've learned nothing yet
+				self.jsend({
+					'command': 'prompt-starting-nodes',
+				})
+
+		elif ball['command'] == 'get-starting-nodes':
+			subject = ball['subject']
+			self.send_graph(ball, subject)
 
 		elif ball['command'] == 'learn-node':
 			self.user.learn_node(ball['node_id'])
 			if ball['mode'] == 'learn':
-				self.send_absolute_dominion(ball)
+				self.send_graph(ball)
 			else:
 				raise Exception('mode is not learn')
 
@@ -262,18 +272,22 @@ class SocketHandler (WebSocketHandler):
 			'dependency_ids': list(dependency_ids),
 		})
 
-	def send_absolute_dominion(self, ball):
-		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
+	def ids(self, ball):
 		learned_ids = self.user.dict['learned_node_ids']
-		ids = list(set(learned_ids).union(set(ball['client_node_ids'])))
+		return list(set(learned_ids).union(set(ball['client_node_ids'])))
+
+	def send_graph(self, ball, subject=None):
+		log.debug('SUBJECT IS: ' + subject)
+		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
+		ids = self.ids(ball)
 		if ids:
+			learned_ids = self.user.dict['learned_node_ids']
 			ids_to_send = our_DAG.absolute_dominion(learned_ids)
-			# should SOURCES be included in the absolute dominion???
-			ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest()))
+			ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest(subject)))
 			H = our_DAG.subgraph(list(ids_to_send))
 		else:
 			# they've learned nothing so far.  send them a starting point
-			H = our_DAG.subgraph(self.starting_nodes())
+			H = our_DAG.subgraph(self.starting_nodes(subject))
 
 		dict_graph = H.as_complete_dict()
 		self.jsend({
@@ -281,13 +295,17 @@ class SocketHandler (WebSocketHandler):
 			'new_graph': dict_graph,
 		})
 
-	def other_nodes_of_interest(self):
+	def other_nodes_of_interest(self, subject=None):
 		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
-		return axioms
+		nodes = []
+		if subject:
+			nodes = nodes + self.starting_nodes(subject)
+		return nodes
+		# for later, add the following too:
 		return [our_DAG.short_sighted_depth_first_unlearned_source(axioms, learned_ids)]
 
-	def starting_nodes(self):
-		return axioms
+	def starting_nodes(self, subject):
+		return axioms[subject]
 
 	def on_close(self):
 		print('A websocket has been closed.')
@@ -356,7 +374,11 @@ if __name__ == "__main__":
 
 	# 1 and 2
 	update_our_DAG()
-	axioms = ['set', 'multiset', 'vertex']
+	axioms = {
+		'graph theory': ['set', 'multiset', 'vertex'],
+		'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
+		'category theory': ['equatable', 'type'],
+	}
 
 	# 3. launch!
 	make_app_and_start_listening()

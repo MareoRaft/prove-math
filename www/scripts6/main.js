@@ -36,6 +36,8 @@ let css_show_hide_array = ['#avatar', '#login-circle', '#logout-circle']
 
 
 /////////////////////////// INITIALIZATION ///////////////////////////
+let subjects = JSON.parse($('body').attr('data-subjects'))
+
 let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'))
 log('user dict is...')
 logj(user_dict)
@@ -157,6 +159,9 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		hide('#login')
 		show('#overlay')
 	}
+	else if( ball.command === 'prompt-starting-nodes' ){
+		// promptStartingNodes(subjects) // but not before x'ing out the login :(
+	}
 	else if( ball.command === 'load-graph' ) {
 		let raw_graph = ball.new_graph
 		_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
@@ -260,6 +265,9 @@ $('#search-box').keypress(function(event) { if(event.which === 13 /* Enter */) {
 $('#add-node').click(function(){
 	graph.addNode(new Node())
 })
+$('#get-starting-nodes').click(function(){
+	promptStartingNodes()
+})
 
 
 //////////////////////////// TOGGLE STUFF ////////////////////////////
@@ -296,6 +304,16 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////////// HELPERS //////////////////////////////
+function promptStartingNodes(){
+	let subjects_clone = _.clone(subjects)
+	let last_subject = subjects_clone.pop()
+	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
+	let default_subject = 'graph theory'
+	let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
+	if( !_.contains(subjects, subject) ) subject = default_subject
+	ws.jsend({'command': 'get-starting-nodes', 'subject': subject})
+}
+
 function hide(css_selector) {
 	let $selected = $(css_selector)
 	if( !_.contains(css_show_hide_array, css_selector) ){

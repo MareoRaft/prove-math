@@ -72,10 +72,9 @@ function identifier(){
 }
 
 function update_identifier(identifier){
-	log("idenfitier IS: "); logj(identifier)
 	if( identifier ){
 		if( identifier['type'] !== 'local' ){
-			die('New identifier is not local!')
+			// pass, since the user must be logged in
 		}
 		else if( is.not.null(user.account.id) && user.account.id !== identifier['id'] ){
 			die('New id is different than defined old id!')
