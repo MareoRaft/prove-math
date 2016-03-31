@@ -13,7 +13,7 @@ def string_unique():
 
 class _GraphExtended (nx.Graph):
 
-	ACCEPTABLE_ITERABLES = [list, set]	#dict, nx.Graph later
+	ACCEPTABLE_ITERABLES = [list, set, type(dict().keys())]	#dict, nx.Graph later
 
 	def is_nonnull(self):
 		return bool(self.nodes())

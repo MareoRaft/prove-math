@@ -7,7 +7,6 @@ from warnings import warn
 
 ################################## HELPERS ####################################
 def create_s_pointing_to_source(DG, source):
-	#This line originally took advantage of the '__iter__' attribute, which lists and sets have but lists do not
 	if not DG.acceptable_iterable(source): # My goal is that "scalar" values will get stuffed into a list.  But lists and sets will not.
 		source = [source]
 	s = DG.add_node_unique()
@@ -51,19 +50,68 @@ class _DiGraphExtended (nx.DiGraph):
 			raise TypeError('is_source only accepts DiGraphs as input')
 		return True
 
+	def validate_input_nodes(self, nbunch):
+		#checks that all given inputs exist in the graph
+		if not self.acceptable_iterable(nbunch):
+			nbunch = [nbunch]
+		if len(nbunch) == 0:	#empty iterable
+			raise ValueError('Argument {} is empty'.format(str(nbunch)))
+		elif len(nbunch) == 1:	#single node
+			if not self.has_node(nbunch[0]):
+				raise nx.NetworkXError('The input node {} is not in the graph'.format(str(nbunch[0])))
+			return True
+		else:	#multiple nodes
+			for node in nbunch:
+				if not self.has_node(node):
+					raise nx.NetworkXError('One of the listed nodes is not in the graph')
+			return True
+
 	def predecessor(self, node): # finds any predecessor of a node in a Directed Graph (in the future this should NOT depend on DG.predecessors(node), but instead re-implement the code of .predecessors and stop after finding 1)
-		ps = self.predecessors(node)
+		ps = list(self.predecessors_iter(node))
 		if ps:
 			return ps[0]
 		else:
 			return None
 
 	def successor(self, node): # should follow the same exact pattern as predecessor
-		ss = self.successors(node)
+		ss = list(self.successors_iter(node))
 		if ss:
 			return ss[0]
 		else:
 			return None
+	
+	def predecessors(self, nbunch):	#works for single or multiple input nodes
+		if not self.acceptable_iterable(nbunch):	#single input node
+			pred = set(self.predecessors_iter(nbunch))
+		else:
+			pred = set()
+			if len(nbunch) == 0:	#empty iterable
+				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+			else:	#multiple input nodes
+			#possibly reimplement for better efficiency
+				for node in nbunch:
+					if not self.has_node(node): #make sure all the nodes exist
+						raise nx.NetworkXError('One of the listed nodes is not in the graph')
+					pred = pred.union(set(self.predecessors_iter(node)))
+		return pred - set(nbunch)
+
+	def successors(self, nbunch):	# should follow the same exact pattern as predecessors
+		if not self.acceptable_iterable(nbunch):	#single input node
+			succ = set(self.successors_iter(nbunch))
+		else:
+			succ = set()
+			if len(nbunch) == 0:	#empty iterable
+				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+			else:	#multiple input nodes
+			#possibly reimplement for better efficiency
+				for node in nbunch:
+					if not self.has_node(node): #make sure all the nodes exist
+						raise nx.NetworkXError('One of the listed nodes is not in the graph')
+					succ = succ.union(set(self.successors_iter(node)))
+		return succ - set(nbunch)
+
+	def anydirectional_neighbors(self, nbunch):
+		return set.union(self.predecessors(nbunch), self.successors(nbunch))
 
 	def is_source(self, node): # checks if a node is a source of a Directed Graph
 		return self.predecessor(node) == None
@@ -77,17 +125,13 @@ class _DiGraphExtended (nx.DiGraph):
 		return shortest_path_helper(DG, source, target)
 
 	def ancestors(self, nbunch):
+		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	#single input node
 			return nx.ancestors(self, nbunch)
 		else:
-			if len(nbunch) == 0:	#empty iterable
-				raise ValueError('Argument {} is empty'.format(str(nbunch)))
-			elif len(nbunch) == 1:	#still a single node
+			if len(nbunch) == 1:	#still a single node
 				return nx.ancestors(self, nbunch[0])
 			else:	#multiple input nodes
-				#make sure all the nodes exist:
-				if False in [self.has_node(node) for node in nbunch]:
-					raise nx.NetworkXError('One of the listed nodes is not in the graph')
 				DG = self.copy()
 				t = DG.add_node_unique()
 				for node in nbunch:
@@ -96,24 +140,22 @@ class _DiGraphExtended (nx.DiGraph):
 
 	def common_ancestors(self, nbunchA, nbunchB):
 		#possibly reimplement for better efficiency
-		return set.intersection(self.ancestors(nbunchA), self.ancestors(nbunchB))
+		ancA = self.ancestors(nbunchA)
+		ancB = self.ancestors(nbunchB)
+		return set.intersection(ancA, ancB)
 		
 	def descendants(self, nbunch):
+		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	#single input node
 			return nx.descendants(self, nbunch)
 		else:
 			if len(nbunch) == 1:	#still a single node
 				return nx.descendants(self, nbunch[0])
-			elif len(nbunch) == 0:	#empty iterable
-				raise ValueError('Argument {} is empty'.format(str(nbunch)))
 			else:	#multiple input nodes
-				#make sure all the nodes exist:
-				if False in [self.has_node(node) for node in nbunch]:
-					raise nx.NetworkXError('One of the listed nodes is not in the graph')
 				DG = self.copy()
 				s = DG.add_node_unique()
 				for node in nbunch:
-					DG.add_edge(s, node) # this automatically adds t to DG too
+					DG.add_edge(s, node) # this automatically adds s to DG too
 				return nx.descendants(DG, s) - set(nbunch) # returns a SET
 
 	def common_descendants(self, nbunchA, nbunchB):
@@ -122,38 +164,51 @@ class _DiGraphExtended (nx.DiGraph):
 		descB = self.descendants(nbunchB)
 		return set.intersection(descA, descB)
 
-	def single_source_shortest_anydirectional_path_length(self, source, cutoff=None):
-		 seen={}                  # level (number of hops) when seen in BFS
-		 level=0                  # the current level
-		 nextlevel={source:1}  # dict of nodes to check at next level
-		 while nextlevel:
-			 thislevel=nextlevel  # advance to next level
-			 nextlevel={}         # and start a new list (fringe)
-			 for v in thislevel:
-				 if v not in seen:
-					 seen[v]=level # set the level of vertex v
-					 neighbors=nx.all_neighbors(self,v)
-					 nextlevel.update(dict.fromkeys(neighbors)) # add neighbors of v
-			 if (cutoff is not None and cutoff <= level):  break
-			 level=level+1
-		 return seen  # return all path lengths as dictionary
+	def relatives_to_distance_dict(self, nbunch, cutoff=None):	#name? relatives? relative?
+		if not self.acceptable_iterable(nbunch):	#single input node
+			source = {nbunch:1}
+		else:
+			if len(nbunch) == 0:	#empty iterable
+				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+			else:
+				source = {}
+				for node in nbunch:
+					source[node] = 1
+		seen = {}                  # level (number of hops) when seen in BFS
+		level = 0                  # the current level
+		nextlevel = source  # set of nodes to check at next level
+		while nextlevel:
+			thislevel = nextlevel  # advance to next level
+			for v in thislevel:
+				if v not in seen:
+					seen[v] = level # set the level of vertex v
+			if (cutoff is not None and cutoff <= level):  break
+			nextlevel = dict.fromkeys(self.anydirectional_neighbors(thislevel.keys()))
+			level += 1
+		return seen  # return all path lengths as dictionary
 
-	def multiple_sources_shortest_path_length(self, sources, cutoff=None):
-		 seen={}                  # level (number of hops) when seen in BFS
-		 level=0                  # the current level
-		 nextlevel={}  # dict of nodes to check at next level
-		 for source in sources:
-		 	nextlevel[source] = 1
-		 while nextlevel:
-			 thislevel=nextlevel  # advance to next level
-			 nextlevel={}         # and start a new list (fringe)
-			 for v in thislevel:
-				 if v not in seen:
-					 seen[v]=level # set the level of vertex v
-					 nextlevel.update(self[v]) # add neighbors of v
-			 if (cutoff is not None and cutoff <= level):  break
-			 level=level+1
-		 return seen  # return all path lengths as dictionary
+	def descendants_to_distance_dict(self, nbunch, cutoff=None):
+		if not self.acceptable_iterable(nbunch):	#single input node
+			source = {nbunch:1}
+		else:
+			if len(nbunch) == 0:	#empty iterable
+				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+			else:
+				source = {}
+				for node in nbunch:
+					source[node] = 1
+		seen = {}                  # level (number of hops) when seen in BFS
+		level = 0                  # the current level
+		nextlevel = source  # set of nodes to check at next level
+		while nextlevel:
+			thislevel = nextlevel  # advance to next level
+			for v in thislevel:
+				if v not in seen:
+					seen[v] = level # set the level of vertex v
+			if (cutoff is not None and cutoff <= level):  break
+			nextlevel = dict.fromkeys(self.successors(thislevel.keys()))
+			level += 1
+		return seen  # return all path lengths as dictionary
 
 	def as_complete_dict(self):
 		graph = dict()
@@ -161,14 +216,8 @@ class _DiGraphExtended (nx.DiGraph):
 		graph['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
 		return graph
 
-	def hanging_dominion(self, nodes):
-		hanging_dominion_and_extra = set()
-		for node in nodes:
-			hanging_dominion_and_extra = hanging_dominion_and_extra.union(set(self.successors(node)))
-		return hanging_dominion_and_extra - set(nodes)
-
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
-		hanging_dominion = self.hanging_dominion(nodes)
+		hanging_dominion = self.successors(nodes)
 		hanging_absolute_dominion = []
 		for candidate in hanging_dominion:
 			if set(self.predecessors(candidate)) <= set(nodes):
@@ -180,53 +229,46 @@ class _DiGraphExtended (nx.DiGraph):
 		DG.remove_nodes_from(learned_nodes)
 		return nx.ancestors(DG, target)
 
-	def get_all_successors(self, nbunch):	#works for multiple input nodes
-		#inefficient, can make a copy and remove nodes in succ as we go along
-		succ = set()
-		for node in nbunch:
-			succ = set.union(succ, set(self.successors(node)))
-		return succ
-
-	def get_all_predecessors(self, nbunch):	#works for multiple input nodes
-		#inefficient, can make a copy and remove nodes in pred as we go along
-		pred = set()
-		for node in nbunch:
-			pred = set.union(pred, set(self.predecessors(node)))
-		return pred
-
-	def get_all_neighbors(self, nbunch):
-		return set.union(self.get_all_successors(nbunch), self.get_all_predecessors(nbunch))
-		
 	def most_important(self, number, nbunch):
-		#note - there might be a way more efficient way to do this, since using a sorting key
-		#calls the weight function on every node, whereas it is only necessary to sort nodes with the same importance
 		def most_important_weight(node):
-			# return (self.n(node).importance, 0, self.n(node).id)
 			distance_from_node = 0
 			current_depth_nodes = {node}
-			already_counted_nodes = {node} #needed in case there are any cycles
-#			successors = {node}
-#			predecessors = {node}
-			avg_importances = [] #average of the nodes in each depth level
-			while distance_from_node < 2:
+			already_counted_nodes = set() #needed in case there are any cycles
+			predecessors = {node}
+			successors = {node}	#kept seperate because descendants are given more weight than ancestors in asessing a node's importance
+			ANCESTORS_DESCENDANTS_WEIGHT_FRACTION = 1/6
+			NEIGHBOR_NORMALIZATION_FRACTION = 1/10 #rescales the sum of all neighbor importances to match the scale of the original node's own importance, i.e. [1,10]
+			EXPECTED_NEIGHBORS_PER_NODE = 3
+			
+			norm_importances = [self.n(node).importance] #normalized importance of the nodes in each depth level
+			SEARCH_DEPTH_LIMIT = 4
+			while distance_from_node < SEARCH_DEPTH_LIMIT:
+				#consider moving the update successors/predecessors step to the end of the loop so that node itself is counted in the first iteration
 				distance_from_node += 1
-#				successors = self.get_all_successors(successors)
-#				predecessors = self.get_all_predecessors(predecessors)
-#				current_depth_nodes = set.union(successors, predecessors)
-				current_depth_nodes = self.get_all_neighbors(current_depth_nodes) - already_counted_nodes	#needed in case there are any cycles
-				if len(current_depth_nodes) == 0:	#no more neighbors, don't look any further
-					avg_importances.append(0)
-#					print("\nFound no neighbors\n")
+				if predecessors:
+					predecessors = self.predecessors(predecessors) - already_counted_nodes	#needed in case there are any cycles
+				else:
+					predecessors = set()
+				if successors:
+					successors = self.successors(successors) - already_counted_nodes
+				else:
+					successors = set()
+				if (len(successors) + len(predecessors)) == 0:	#no more neighbors, don't look any further
+					norm_importances.append(0)
 					break
-				current_importances = [self.n(n).importance for n in current_depth_nodes]
-#				print("\nNode:", node, "current_depth_nodes:", current_depth_nodes, "current_importances:", current_importances, sep=" ")
-				current_avg = sum(current_importances) / len(current_importances)
-				avg_importances.append(current_avg)
-				already_counted_nodes = set.union(already_counted_nodes, current_depth_nodes)
-			weighted_avgs = [(avg/(index+1)**2) for index, avg in enumerate(avg_importances)]	#average of the nodes in each depth level, weighted against distance from node
-			neighbors_weight = sum(weighted_avgs)
-#			print("Node:", str(node), "importance:", self.n(node).importance, "neighbors_weight:", neighbors_weight, "unweighted_avgs", avg_importances, "weighted avgs", weighted_avgs, sep=" ")
-			return (self.n(node).importance, neighbors_weight, self.n(node).id)
+				predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).importance for n in predecessors]
+				successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).importance for n in successors]	#weighted toward descendants
+				current_depth_importances = predecessors_importances + successors_importances
+				
+				current_depth_normalized_sum = sum(current_depth_importances) * NEIGHBOR_NORMALIZATION_FRACTION / (EXPECTED_NEIGHBORS_PER_NODE**distance_from_node)
+				#As distance increases there are exponentially more neighbors.  The 1/(EXPECTED_NEIGHBORS_PER_NODE**distance) term counteracts this.
+				norm_importances.append(current_depth_normalized_sum)
+				
+				already_counted_nodes = already_counted_nodes.union(predecessors)
+				already_counted_nodes = already_counted_nodes.union(successors)
+			weighted_importances = [(importance/(index+1)**2) for index, importance in enumerate(norm_importances)]	#normalized importance of the nodes in each depth level, weighted against distance from node
+			neighbors_weight = sum(weighted_importances)
+			return (neighbors_weight, self.n(node).id)
 		
 		if number <= 0:
 			raise ValueError('Must give number > 0')
