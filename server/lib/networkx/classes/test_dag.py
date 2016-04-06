@@ -97,6 +97,35 @@ def test_remove_redundant_edges():
 	assert {('a', 'b'), ('b', 'c'), ('c', 'd'), 			('d', 'z'),
 									('c', 't'), ('t', 'y'), ('y', 'z'),} == set(DAG.edges())
 
+#########################################################################################
+#########################################################################################
+def test_short_sighted_depth_to_successors_dict():
+	#DAG = nx.DAG()
+	#assert DAG.short_sighted_depth_to_successors_dict(axioms, learned_nodes)
+	return
+
+def test_short_sighted_depth_first_choose_goal():
+	#DAG = nx.DAG()
+	#assert DAG.short_sighted_depth_first_choose_goal(axioms, learned_nodes)
+	return
+
+def test_learnable_prereqs():
+	#DAG = nx.DAG()
+	#assert DAG.learnable_prereqs(goal, learned_nodes)
+	return
+
+def test_choose_next_prereq():
+	#DAG = nx.DAG()
+	#assert DAG.choose_next_prereq(prereqs, learned_nodes)
+	return
+
+def test_user_learn_suggestion():
+	#DAG = nx.DAG()
+	#assert DAG.user_learn_suggestion(axioms, learned_nodes, goal)
+	return
+#########################################################################################
+#########################################################################################
+
 # def test_short_sighted_depth_first_unlearned_sources():
 # 	G = nx.DAG()
 # 	G.add_path(['1left', '2left', '3left', 'left'])

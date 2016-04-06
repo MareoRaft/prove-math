@@ -50,20 +50,12 @@ class _DiGraphExtended (nx.DiGraph):
 			raise TypeError('is_source only accepts DiGraphs as input')
 		return True
 
-	def predecessor(self, node): # finds any predecessor of a node in a Directed Graph (in the future this should NOT depend on DG.predecessors(node), but instead re-implement the code of .predecessors and stop after finding 1)
-		ps = list(self.predecessors_iter(node))
-		if ps:
-			return ps[0]
-		else:
-			return None
+	def predecessor(self, node): # finds any single predecessor of a node in a Directed Graph
+		return next(self.predecessors_iter(node), None)
 
 	def successor(self, node): # should follow the same exact pattern as predecessor
-		ss = list(self.successors_iter(node))
-		if ss:
-			return ss[0]
-		else:
-			return None
-	
+		return next(self.successors_iter(node), None)
+
 	def predecessors(self, nbunch):	#works for single or multiple input nodes
 		if not self.acceptable_iterable(nbunch):	#single input node
 			pred = set(self.predecessors_iter(nbunch))
@@ -72,10 +64,8 @@ class _DiGraphExtended (nx.DiGraph):
 			if len(nbunch) == 0:	#empty iterable
 				raise ValueError('Argument {} is empty'.format(str(nbunch)))
 			else:	#multiple input nodes
-			#possibly reimplement for better efficiency
+#possibly reimplement for better efficiency
 				for node in nbunch:
-					if not self.has_node(node): #make sure all the nodes exist
-						raise nx.NetworkXError('One of the listed nodes is not in the graph')
 					pred = pred.union(set(self.predecessors_iter(node)))
 		return pred - set(nbunch)
 
@@ -87,10 +77,8 @@ class _DiGraphExtended (nx.DiGraph):
 			if len(nbunch) == 0:	#empty iterable
 				raise ValueError('Argument {} is empty'.format(str(nbunch)))
 			else:	#multiple input nodes
-			#possibly reimplement for better efficiency
+#possibly reimplement for better efficiency
 				for node in nbunch:
-					if not self.has_node(node): #make sure all the nodes exist
-						raise nx.NetworkXError('One of the listed nodes is not in the graph')
 					succ = succ.union(set(self.successors_iter(node)))
 		return succ - set(nbunch)
 
@@ -123,7 +111,7 @@ class _DiGraphExtended (nx.DiGraph):
 				return nx.ancestors(DG, t) - set(nbunch) # returns a SET
 
 	def common_ancestors(self, nbunchA, nbunchB):
-		#possibly reimplement for better efficiency
+#possibly reimplement for better efficiency
 		ancA = self.ancestors(nbunchA)
 		ancB = self.ancestors(nbunchB)
 		return set.intersection(ancA, ancB)
@@ -143,7 +131,7 @@ class _DiGraphExtended (nx.DiGraph):
 				return nx.descendants(DG, s) - set(nbunch) # returns a SET
 
 	def common_descendants(self, nbunchA, nbunchB):
-		#possibly reimplement for better efficiency
+#possibly reimplement for better efficiency
 		descA = self.descendants(nbunchA)
 		descB = self.descendants(nbunchB)
 		return set.intersection(descA, descB)
@@ -209,9 +197,21 @@ class _DiGraphExtended (nx.DiGraph):
 		return hanging_absolute_dominion + nodes
 
 	def unlearned_dependency_tree(self, target, learned_nodes):
+		if not self.acceptable_iterable(learned_nodes): #without this, if learned_nodes was a string, then DG.remove_nodes_from(learned_nodes) would cause incorrect behavior
+			raise ValueError('Argument {} is not iterable'.format(str(learned_nodes)))
 		DG = self.copy()
 		DG.remove_nodes_from(learned_nodes)
-		return nx.ancestors(DG, target)
+		return nx.ancestors(DG, target).union({target})
+
+	def learn_count(self, target, learned_nodes):
+		return len(self.unlearned_dependency_tree(target, learned_nodes))
+
+	'''
+	def learn_counts(self, target_bunch, learned_nodes):
+		DG = self.copy()	#lets us bypass calling unlearned_dependency_tree repeatedly
+		DG.remove_nodes_from(learned_nodes)
+		return [len(DG.ancestors(target)) for target in target_bunch]
+	'''
 
 	def most_important(self, number, nbunch):
 		def most_important_weight(node):
@@ -219,7 +219,7 @@ class _DiGraphExtended (nx.DiGraph):
 			current_depth_nodes = {node}
 			already_counted_nodes = set() #needed in case there are any cycles
 			predecessors = {node}
-			successors = {node}	#kept seperate because descendants are given more weight than ancestors in asessing a node's importance
+			successors = {node}	#kept separate because descendants are given more weight than ancestors in asessing a node's importance
 			ANCESTORS_DESCENDANTS_WEIGHT_FRACTION = 1/6
 			NEIGHBOR_NORMALIZATION_FRACTION = 1/10 #rescales the sum of all neighbor importances to match the scale of the original node's own importance, i.e. [1,10]
 			EXPECTED_NEIGHBORS_PER_NODE = 3
@@ -227,7 +227,6 @@ class _DiGraphExtended (nx.DiGraph):
 			norm_importances = [self.n(node).importance] #normalized importance of the nodes in each depth level
 			SEARCH_DEPTH_LIMIT = 4
 			while distance_from_node < SEARCH_DEPTH_LIMIT:
-				#consider moving the update successors/predecessors step to the end of the loop so that node itself is counted in the first iteration
 				distance_from_node += 1
 				if predecessors:
 					predecessors = self.predecessors(predecessors) - already_counted_nodes	#needed in case there are any cycles
