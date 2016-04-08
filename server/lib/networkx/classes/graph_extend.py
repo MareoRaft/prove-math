@@ -13,7 +13,7 @@ def string_unique():
 
 class _GraphExtended (nx.Graph):
 
-	ACCEPTABLE_ITERABLES = [list, set]	#dict, nx.Graph later
+	ACCEPTABLE_ITERABLES = [list, set, type(dict().keys())]	#dict, nx.Graph later
 
 	def is_nonnull(self):
 		return bool(self.nodes())
@@ -40,6 +40,23 @@ class _GraphExtended (nx.Graph):
 	
 	def acceptable_iterable(self, nbunch):
 		return type(nbunch) in self.ACCEPTABLE_ITERABLES
+
+	def validate_input_nodes(self, nbunch):
+		#checks that all given inputs exist in the graph
+		if not self.acceptable_iterable(nbunch):
+			nbunch = [nbunch]
+		if len(nbunch) == 0:	#empty iterable
+			raise ValueError('Argument {} is empty'.format(str(nbunch)))
+		elif len(nbunch) == 1:	#single node
+			if not self.has_node(nbunch[0]):
+				raise nx.NetworkXError('The input node {} is not in the graph'.format(str(nbunch[0])))
+			return True
+		else:	#multiple nodes
+			for node in nbunch:
+				if not self.has_node(node):
+					raise nx.NetworkXError('One of the listed nodes is not in the graph')
+			return True
+
 
 for key, value in _GraphExtended.__dict__.items():
 	try:
