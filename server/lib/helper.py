@@ -1,4 +1,5 @@
 import json
+from itertools import chain
 
 def json_import(file_path):
 	print("Importing from: " + str(file_path))
@@ -23,7 +24,39 @@ def strip_underscores(dictionary):
 			dictionary[key[1:]] = value
 	return dictionary
 
+def flatten_list_of_lists(lis):
+	new_list = []
+	for el in lis:
+		if type(el) == list:
+			new_list = new_list + el
+		else:
+			new_list.append(el)
+	return new_list
+
+def append_value_to_key(dic, key, value, unpack_key=False):
+	"""This is a helper function for reverse_dict."""
+	if not unpack_key:
+		if not key in dic:
+			dic[key] = set()
+		dic[key].add(value)
+	else:
+		for key_el in key:
+			append_value_to_key(dic, key_el, value)
+
+def reverse_dict(dic, unpack_values=False):
+	""" As it is, always returns a dictionary whose values are SETS.
+
+	If a dictionary is interpreted as a MAP from its KEYS to the ELEMENTS of its values, then the inverse of this map is reverse_dict(dictionary).
+	"""
+	inv_dict = dict()
+	for key, value in dic.items():
+		append_value_to_key(inv_dict, value, key, unpack_key=unpack_values) # Notice that key and value are switched on purpose!
+	return inv_dict
+
+
 class DictToObject:
+
+
 	def __init__(self, dic):
 		for key, value in dic.items():
 			setattr(self, key, value)

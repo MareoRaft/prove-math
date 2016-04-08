@@ -274,12 +274,14 @@ $('#get-starting-nodes').click(function(){
 $(document).on('node-click', function(Event){
 	current_node = graph.nodes[Event.message] // graph.nodes is a DICTIONARY of nodes
 	updateNodeTemplateLearnedState()
-	blinds.open({
-		object: current_node,
-	})
-	hide('svg')
-	hide('#overlay')
-	show('#node-template')
+	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
+		blinds.open({
+			object: current_node,
+		})
+		hide('svg')
+		hide('#overlay')
+		show('#node-template')
+	}, 0);
 	if( false /*mode !== 'learn'*/){
 		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
 	}

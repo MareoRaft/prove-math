@@ -33,7 +33,7 @@ Programming to make this work
 Credits
 ------------
   - Matthew Lancellotti - founder
-  - Theodore Siu - programmer
+  - Theodore Siu - Python programmer
   - Tim Naumovitz - The combinatorics material is based on his lectures
-  - Ali Ismail - content
-  - Sara Jeffries - provided some icons from the Noun Project
+  - Greg Mattson - Python NetworkX programmer
+  - Sid Patel - HTML/CSS programmer
