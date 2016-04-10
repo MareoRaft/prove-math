@@ -1,5 +1,6 @@
 import json
 from itertools import chain
+from collections import OrderedDict
 
 def json_import(file_path):
 	print("Importing from: " + str(file_path))
@@ -43,7 +44,7 @@ def append_value_to_key(dic, key, value, unpack_key=False):
 		for key_el in key:
 			append_value_to_key(dic, key_el, value)
 
-def reverse_dict(dic, unpack_values=False):
+def reversed_dict(dic, unpack_values=False):
 	""" As it is, always returns a dictionary whose values are SETS.
 
 	If a dictionary is interpreted as a MAP from its KEYS to the ELEMENTS of its values, then the inverse of this map is reverse_dict(dictionary).

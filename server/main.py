@@ -29,9 +29,7 @@ from lib import node
 import random
 import inspect
 import traceback
-import logging
-import chromalog
-from chromalog.mark.helpers.simple import important
+from lib import log
 # this and relevant code should eventually be migrated into auth module
 import xml.etree.ElementTree as ET
 
@@ -121,7 +119,7 @@ class IndexHandler(BaseHandler):
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
 					host=self.request.host,
-					subjects=json.dumps(list(axioms.keys()))
+					subjects=json.dumps(list(starting_nodes.keys()))
 					)
 
 
@@ -302,10 +300,10 @@ class SocketHandler (WebSocketHandler):
 			nodes = nodes + self.starting_nodes(subject)
 		return nodes
 		# for later, add the following too:
-		return [our_DAG.short_sighted_depth_first_unlearned_source(axioms, learned_ids)]
+		return [our_DAG.short_sighted_depth_first_unlearned_source(starting_nodes, learned_ids)]
 
 	def starting_nodes(self, subject):
-		return axioms[subject]
+		return starting_nodes[subject]
 
 	def on_close(self):
 		print('A websocket has been closed.')
@@ -362,19 +360,12 @@ def update_our_DAG():
 	our_DAG.remove_redundant_edges()
 
 if __name__ == "__main__":
-	# setup logging:
-	chromalog.basicConfig(level=logging.DEBUG, format='%(asctime)s   %(filename)s line %(lineno)d   %(levelname)s:   %(message)s', datefmt='%Y-%m-%d at %I:%M %p and %S secs')
-	log = logging.getLogger()
-	log.debug('this message is for %s purposes', important('debugging'))
-	log.info('this is a regular info message')
-	log.warning('this message is some warning')
-
 	# 0. create a global mongo object for later use (for upserts in the future)
 	our_mongo = Mongo("provemath", "nodes")
 
 	# 1 and 2
 	update_our_DAG()
-	axioms = {
+	starting_nodes = {
 		'graph theory': ['set', 'multiset', 'vertex'],
 		'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
 		'category theory': ['equatable', 'type'],
