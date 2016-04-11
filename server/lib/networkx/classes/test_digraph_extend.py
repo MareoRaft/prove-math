@@ -5,6 +5,27 @@ import pytest
 from lib.networkx.classes import digraph_extend
 from lib.node import create_appropriate_node, Node
 
+################################## HELPERS ####################################
+def fill_sample_custom_nodes():
+	#creates a graph with a handful of our custom node objects, but no edges
+	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":2}
+	a = Node(pre_a)
+	pre_b = {"type":"theorem","description":"This is node bbbbbbbbbb","name":"B","importance":4}
+	b = create_appropriate_node(pre_b)
+	pre_c = {"type":"theorem","description":"This is node cccccccccc","name":"C","importance":4}
+	c = create_appropriate_node(pre_c)
+	pre_d = {"type":"theorem","description":"This is node dddddddddd","name":"D","importance":6}
+	d = create_appropriate_node(pre_d)
+	pre_e = {"type":"theorem","description":"This is node eeeeeeeeee","name":"E","importance":8}
+	e = Node(pre_e)
+	DG = nx.DiGraph()
+	DG.add_n(a)
+	DG.add_n(b)
+	DG.add_n(c)
+	DG.add_n(d)
+	DG.add_n(e)
+	return DG
+
 #################################### MAIN #####################################
 def test_is_nonnull(): # this is here really to make sure DiGraph inherited is_nonnull from Graph
 	nn = nx.DiGraph()
@@ -503,76 +524,53 @@ def test_unlearned_dependency_tree():
 	DG.add_path(['u4', 'l2', 't'])
 	assert DG.unlearned_dependency_tree('t', ['l1', 'l2']) == {'u1', 't'}
 
-#######################################################################################
-#######################################################################################
 def test_learn_count():
-	return
-#######################################################################################
-#######################################################################################
+	DG = nx.DiGraph()
+	DG.add_path(['l1', 'u1', 't'])
+	with pytest.raises(nx.NetworkXError):
+		DG.learn_count('NotANode', ['l1'])
+	with pytest.raises(nx.NetworkXError):
+		DG.learn_count(['t'], ['l1'])
+	with pytest.raises(ValueError):
+		DG.learn_count('t', 'l1')
+	assert DG.learn_count('t', ['NotANode']) == 3
+	assert DG.learn_count('t', []) == 3
+	assert DG.learn_count('t', ['l1']) == 2
+	assert DG.learn_count('t', ['u1']) == 1
 
 def test_most_important():
-#prenodes need "type","def","description","name","importance"
-	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":2}
-	a = Node(pre_a)
-	pre_b = {"type":"theorem","description":"This is node bbbbbbbbbb","name":"B","importance":4}
-	b = create_appropriate_node(pre_b)
-	pre_c = {"type":"theorem","description":"This is node cccccccccc","name":"C","importance":4}
-	c = create_appropriate_node(pre_c)
-	pre_d = {"type":"theorem","description":"This is node dddddddddd","name":"D","importance":6}
-	d = create_appropriate_node(pre_d)
-	
 	#testing sort by node's own importance and id
-	DG = nx.DiGraph()
+	DG = fill_sample_custom_nodes()
 	with pytest.raises(ValueError):
 		DG.most_important(1, [])
-	DG.add_n(a)
-	node_list = DG.nodes()
-	assert DG.most_important(1, node_list) == ['a']
+	assert DG.most_important(1, ['a']) == ['a']
 	with pytest.raises(ValueError):
-		DG.most_important(-1, node_list)
-	DG.add_n(b)
-	node_list = DG.nodes()
-	assert DG.most_important(1, node_list) == ['b']
-	assert DG.most_important(2, node_list) == ['b', 'a']
+		DG.most_important(-1, ['a'])
+	assert DG.most_important(1, ['a', 'b']) == ['b']
+	assert DG.most_important(2, ['a', 'b']) == ['b', 'a']
 	with pytest.raises(ValueError):
-		DG.most_important(4, node_list) == ['b', 'a']
-	DG.add_n(c)
-	node_list = DG.nodes()
-	assert DG.most_important(2, node_list) == ['c', 'b'] #sorts alphabetically, but remember we use reverse=True to sort by numerical importance so the alphabetical sort is reversed too
-	DG.add_n(d)
-	node_list = DG.nodes()
-	assert DG.most_important(1, node_list) == ['d']
-	assert DG.most_important(2, node_list) == ['d', 'c']
-	assert DG.most_important(3, node_list) == ['d', 'c', 'b']
+		DG.most_important(4, ['a', 'b']) == ['b', 'a']
+	assert DG.most_important(2, ['a', 'b', 'c']) == ['c', 'b'] #sorts alphabetically, but remember we use reverse=True to sort by numerical importance so the alphabetical sort is reversed too
+	assert DG.most_important(1, ['a', 'b', 'c', 'd']) == ['d']
+	assert DG.most_important(2, ['a', 'b', 'c', 'd']) == ['d', 'c']
+	assert DG.most_important(3, ['a', 'b', 'c', 'd']) == ['d', 'c', 'b']
 	
 	#testing sort by weighted importance of neighbors when node's own importance is a tie
-	DG = nx.DiGraph()
-	DG.add_n(a)
-	DG.add_n(b)
-	DG.add_n(c)
-	DG.add_n(d)
+	DG = fill_sample_custom_nodes()
 	DG.add_edges_from([
 			['a', 'c'], ['d', 'b']	#d is a more important neighbor than a, so b should be more important than c
 	])
 	node_list = ['b', 'c']
 	assert DG.most_important(2, node_list) == ['b', 'c']
 
-	DG = nx.DiGraph()
-	DG.add_n(a)
-	DG.add_n(b)
-	DG.add_n(c)
-	DG.add_n(d)
+	DG = fill_sample_custom_nodes()
 	DG.add_edges_from([
 			['c', 'a'], ['b', 'd']
 	])
 	node_list = ['b', 'c']
 	assert DG.most_important(2, node_list) == ['b', 'c']
 
-	DG = nx.DiGraph()
-	DG.add_n(a)
-	DG.add_n(b)
-	DG.add_n(c)
-	DG.add_n(d)
+	DG = fill_sample_custom_nodes()
 	DG.add_edges_from([
 			['c', 'a'], ['d', 'b']	#d is a more important neighbor than a but this time a is a descendant while d is only an ancestor; this time c should be more important than b
 	])
@@ -580,11 +578,7 @@ def test_most_important():
 	assert DG.most_important(2, node_list) == ['c', 'b']
 
 	#remember that when the nodes being compared are neighbors with each other, we will get some shared common neighbors, although they have different distances to the two compared nodes
-	DG = nx.DiGraph()
-	DG.add_n(a)
-	DG.add_n(b)
-	DG.add_n(c)
-	DG.add_n(d)
+	DG = fill_sample_custom_nodes()
 	DG.add_edge('b', 'c')
 	node_list = ['b', 'c']
 	assert DG.most_important(2, node_list) == ['b', 'c']	#descendants are given more weight

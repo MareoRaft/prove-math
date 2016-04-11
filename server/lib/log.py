@@ -4,6 +4,7 @@ To use in any module, just type `log.debug('my message')` or `log.warn('my messa
 """
 import chromalog
 import logging
+import time
 
 from lib import decorate
 
@@ -52,6 +53,14 @@ def critical(*args, **kwargs):
 # create some logging decorators :)
 @decorate.transparent
 def elapsed_time(func):
-	# greg's decorator goes here
-	return func
+	def new_func(*args, **kwargs):
+		start_time = time.time()
+		out = func(*args, **kwargs)
+		elapsed_time = time.time() - start_time
+#		log_msg = time.ctime() + '\tFunction: ' + func.__name__ + '\tRuntime: ' + str(elapsed_time)
+		log_msg = 'Function: ' + func.__name__ + '\tRuntime: ' + str(elapsed_time)
+		#print(log_msg)
+		info(log_msg)
+		return out
+	return new_func
 

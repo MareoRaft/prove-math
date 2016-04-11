@@ -2,6 +2,7 @@
 import networkx as nx
 
 from lib.networkx.classes import digraph_extend
+from collections import OrderedDict
 
 import json
 
@@ -57,34 +58,35 @@ class _DAG (nx.DiGraph):
 		# now build a reverse dictionary with these...
 		depth_to_successors_dict = OrderedDict()
 		for depth in sorted(distance_dict.values(), reverse=True):
-			distance_to_successors_dict[depth] = [] # initialize as array
+			depth_to_successors_dict[depth] = [] # initialize as array
 		for successor in successors:
 			depth_to_successors_dict[distance_dict[successor]].append(successor) # actually add the values
-	
+		#need to remove empty lists from the dictionary
+		for depth, nbunch in depth_to_successors_dict.items():
+			if nbunch == []:
+				depth_to_successors_dict.pop(depth)
 		return depth_to_successors_dict
 
 	def short_sighted_depth_first_choose_goal(self, axioms, learned_nodes):
 		#returns one immediate successor to learned_nodes which we should set as the new goal, chosen by depth, then learn count, then importance, then name
 		self.validate_input_nodes(axioms) #do we need this?
 		self.validate_input_nodes(learned_nodes)
-		depth_to_successors_dict = self.short_sighted_deepest_successors_dict(axioms, learned_nodes)
-		deepest_successors = depth_to_successors_dict.items()[0][1]
+		depth_to_successors_dict = self.short_sighted_depth_to_successors_dict(axioms, learned_nodes)
+		deepest_successors = list(depth_to_successors_dict.items())[0][1]
 
 ###	or, use this if we actually want to make short_sighted_deepest_successors_dict() return a NON-ordered dict
 ###		sorted_depths = sorted(depth_to_successors_dict.keys(), reverse=True)
 ###		deepest_successors = depth_to_successors_dict[sorted_depths[0]]
 		
 		#now sort the deepest successors by learn count, then by importance, and finally name to break a tie
-		if len(deepest_successors == 1):
+		if len(deepest_successors) == 1:
 #We can easily get rid of this check
 #Skipping this will just cause learn_count_sorter to run unnecessarily one time, but this is negligable
 			goal = deepest_successors[0]
 		else:
 #if we need better efficiency consider creating DiGraph.learn_counts(targets, learned_nodes)
 			def learn_count_sorter(successor):
-				print('WEIGHT IS')
-				print(self.most_important.most_important_weight(successor))
-				return (self.learn_count(successor, learned_nodes), -self.most_important.most_important_weight(successor))
+				return (self.learn_count(successor, learned_nodes), -self.most_important_weight(successor), self.n(successor).id)
 			goal = sorted(deepest_successors, key=learn_count_sorter)[0]
 		return goal
 
@@ -96,7 +98,7 @@ class _DAG (nx.DiGraph):
 	def choose_next_prereq(self, prereqs, learned_nodes): #choose one from learnable_prereqs
 		#sort by learn count, then by importance, then by name
 		def learn_count_sorter(prereq):
-			return (self.learn_count(prereq, learned_nodes), -self.most_important.most_important_weight(prereq))
+			return (self.learn_count(prereq, learned_nodes), -self.most_important_weight(prereq), self.n(prereq).id)
 		sorted_prereqs = sorted(prereqs, key=learn_count_sorter)
 		return sorted_prereqs[0]
 #technically this calls learn_count_sorter unnecessarily for the case where prereqs only has a single element, but this inefficiency is totally negligable
