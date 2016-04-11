@@ -1,5 +1,6 @@
 ################################## IMPORTS ####################################
 import networkx as nx
+from lib import log
 
 from lib.networkx.classes import graph_extend
 
@@ -39,17 +40,28 @@ def find_dict_from_id(list_of_dics, ID):
 	warn('Could node find dict with ID "' + ID + '" within list_of_dics.')
 	return {"_id": ID, "empty": True, "_importance": 4, "_name": ""}
 
+def log_function_call(func):
+	def new_func(*args, **kwargs):
+		start_time = time.time()
+		out = func(*args, **kwargs)
+		elapsed_time = time.time() - start_time
+		log_msg = time.ctime() + '\tFunction: ' + func.__name__ + '\tRuntime: ' + str(elapsed_time)
+		print(log_msg)
+#		print("Result:", str(out))
+		return out
+	return new_func
 #################################### MAIN #####################################
 
 
 class _DiGraphExtended (nx.DiGraph):
 
-
+	@log.elapsed_time
 	def validate(self):
 		if not self.is_directed():
 			raise TypeError('is_source only accepts DiGraphs as input')
 		return True
 
+	@log.elapsed_time
 	def predecessor(self, node): # finds any single predecessor of a node in a Directed Graph
 		return next(self.predecessors_iter(node), None)
 
@@ -189,12 +201,14 @@ class _DiGraphExtended (nx.DiGraph):
 		return graph
 
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
+		if not self.acceptable_iterable(nodes): #without this, if nodes is just a string, the return statement will not work correctly
+			raise ValueError('Argument {} is not iterable'.format(str(nodes)))
 		hanging_dominion = self.successors(nodes)
 		hanging_absolute_dominion = []
 		for candidate in hanging_dominion:
 			if set(self.predecessors(candidate)) <= set(nodes):
 				hanging_absolute_dominion.append(candidate)
-		return hanging_absolute_dominion + nodes
+		return hanging_absolute_dominion + list(nodes)
 
 	def unlearned_dependency_tree(self, target, learned_nodes):
 		if not self.acceptable_iterable(learned_nodes): #without this, if learned_nodes was a string, then DG.remove_nodes_from(learned_nodes) would cause incorrect behavior
@@ -212,52 +226,54 @@ class _DiGraphExtended (nx.DiGraph):
 		DG.remove_nodes_from(learned_nodes)
 		return [len(DG.ancestors(target)) for target in target_bunch]
 	'''
+	
+	def most_important_weight(self, node):
+		distance_from_node = 0
+		current_depth_nodes = {node}
+		already_counted_nodes = set() #needed in case there are any cycles
+		predecessors = {node}
+		successors = {node}	#kept separate because descendants are given more weight than ancestors in asessing a node's importance
+		ANCESTORS_DESCENDANTS_WEIGHT_FRACTION = 1/6
+		NEIGHBOR_NORMALIZATION_FRACTION = 1/10 #rescales the sum of all neighbor importances to match the scale of the original node's own importance, i.e. [1,10]
+		EXPECTED_NEIGHBORS_PER_NODE = 3
+		
+		norm_importances = [self.n(node).importance] #normalized importance of the nodes in each depth level
+		SEARCH_DEPTH_LIMIT = 4
+		while distance_from_node < SEARCH_DEPTH_LIMIT:
+			distance_from_node += 1
+			if predecessors:
+				predecessors = self.predecessors(predecessors) - already_counted_nodes	#needed in case there are any cycles
+			else:
+				predecessors = set()
+			if successors:
+				successors = self.successors(successors) - already_counted_nodes
+			else:
+				successors = set()
+			if (len(successors) + len(predecessors)) == 0:	#no more neighbors, don't look any further
+				norm_importances.append(0)
+				break
+			predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).importance for n in predecessors]
+			successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).importance for n in successors]	#weighted toward descendants
+			current_depth_importances = predecessors_importances + successors_importances
+			
+			current_depth_normalized_sum = sum(current_depth_importances) * NEIGHBOR_NORMALIZATION_FRACTION / (EXPECTED_NEIGHBORS_PER_NODE**distance_from_node)
+			#As distance increases there are exponentially more neighbors.  The 1/(EXPECTED_NEIGHBORS_PER_NODE**distance) term counteracts this.
+			norm_importances.append(current_depth_normalized_sum)
+			
+			already_counted_nodes = already_counted_nodes.union(predecessors)
+			already_counted_nodes = already_counted_nodes.union(successors)
+		weighted_importances = [(importance/(index+1)**2) for index, importance in enumerate(norm_importances)]	#normalized importance of the nodes in each depth level, weighted against distance from node
+		neighbors_weight = sum(weighted_importances)
+		return neighbors_weight #(neighbors_weight, self.n(node).id)
 
 	def most_important(self, number, nbunch):
-		def most_important_weight(node):
-			distance_from_node = 0
-			current_depth_nodes = {node}
-			already_counted_nodes = set() #needed in case there are any cycles
-			predecessors = {node}
-			successors = {node}	#kept separate because descendants are given more weight than ancestors in asessing a node's importance
-			ANCESTORS_DESCENDANTS_WEIGHT_FRACTION = 1/6
-			NEIGHBOR_NORMALIZATION_FRACTION = 1/10 #rescales the sum of all neighbor importances to match the scale of the original node's own importance, i.e. [1,10]
-			EXPECTED_NEIGHBORS_PER_NODE = 3
-			
-			norm_importances = [self.n(node).importance] #normalized importance of the nodes in each depth level
-			SEARCH_DEPTH_LIMIT = 4
-			while distance_from_node < SEARCH_DEPTH_LIMIT:
-				distance_from_node += 1
-				if predecessors:
-					predecessors = self.predecessors(predecessors) - already_counted_nodes	#needed in case there are any cycles
-				else:
-					predecessors = set()
-				if successors:
-					successors = self.successors(successors) - already_counted_nodes
-				else:
-					successors = set()
-				if (len(successors) + len(predecessors)) == 0:	#no more neighbors, don't look any further
-					norm_importances.append(0)
-					break
-				predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).importance for n in predecessors]
-				successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).importance for n in successors]	#weighted toward descendants
-				current_depth_importances = predecessors_importances + successors_importances
-				
-				current_depth_normalized_sum = sum(current_depth_importances) * NEIGHBOR_NORMALIZATION_FRACTION / (EXPECTED_NEIGHBORS_PER_NODE**distance_from_node)
-				#As distance increases there are exponentially more neighbors.  The 1/(EXPECTED_NEIGHBORS_PER_NODE**distance) term counteracts this.
-				norm_importances.append(current_depth_normalized_sum)
-				
-				already_counted_nodes = already_counted_nodes.union(predecessors)
-				already_counted_nodes = already_counted_nodes.union(successors)
-			weighted_importances = [(importance/(index+1)**2) for index, importance in enumerate(norm_importances)]	#normalized importance of the nodes in each depth level, weighted against distance from node
-			neighbors_weight = sum(weighted_importances)
-			return (neighbors_weight, self.n(node).id)
-		
+		def most_important_sorter(node):
+			return (self.most_important_weight(node), self.n(node).id)
 		if number <= 0:
 			raise ValueError('Must give number > 0')
 		if len(nbunch) < number:
 			raise ValueError('Asked for more nodes than you provided')
-		nodes_by_importance = sorted(nbunch, key=most_important_weight, reverse=True)
+		nodes_by_importance = sorted(nbunch, key=most_important_sorter, reverse=True)
 		return nodes_by_importance[:number]
 
 for key, value in _DiGraphExtended.__dict__.items():
