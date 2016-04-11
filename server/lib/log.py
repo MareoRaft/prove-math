@@ -53,4 +53,5 @@ def critical(*args, **kwargs):
 @decorate.transparent
 def elapsed_time(func):
 	# greg's decorator goes here
+	return func
 

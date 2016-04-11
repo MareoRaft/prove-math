@@ -179,6 +179,9 @@ class SocketHandler (WebSocketHandler):
 			subject = ball['subject']
 			self.send_graph(ball, subject)
 
+		elif ball['command'] == 'get-curriculum':
+			goal = ball['goal']
+
 		elif ball['command'] == 'learn-node':
 			self.user.learn_node(ball['node_id'])
 			if ball['mode'] == 'learn':
@@ -275,7 +278,7 @@ class SocketHandler (WebSocketHandler):
 		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
 	def send_graph(self, ball, subject=None):
-		log.debug('SUBJECT IS: ' + subject)
+		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
 		ids = self.ids(ball)
 		if ids:
