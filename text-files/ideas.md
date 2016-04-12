@@ -83,3 +83,6 @@ when somebody adds a new dependency, we have to verify that when we add the edge
 Simon's Foundation   ---->  apply for a grant
 
 for the user manual --> make it on readthedocs.org !
+
+73. use Zenlog for even cooler logging? https://github.com/ManufacturaInd/python-zenlog
+74. make gerg's next project to go through this ideas file?

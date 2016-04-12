@@ -1,10 +1,11 @@
 ################################## IMPORTS ####################################
-import networkx as nx
-
-from lib.networkx.classes import digraph_extend
+import json
 from collections import OrderedDict
 
-import json
+import networkx as nx
+from lib.networkx.classes import digraph_extend
+
+from lib import decorate
 
 ################################# HELPERS #####################################
 
@@ -77,7 +78,7 @@ class _DAG (nx.DiGraph):
 ###	or, use this if we actually want to make short_sighted_deepest_successors_dict() return a NON-ordered dict
 ###		sorted_depths = sorted(depth_to_successors_dict.keys(), reverse=True)
 ###		deepest_successors = depth_to_successors_dict[sorted_depths[0]]
-		
+
 		#now sort the deepest successors by learn count, then by importance, and finally name to break a tie
 		if len(deepest_successors) == 1:
 #We can easily get rid of this check
@@ -95,6 +96,7 @@ class _DAG (nx.DiGraph):
 		prereqs = self.unlearned_dependency_tree(goal, learned_nodes)
 		return set.intersection(learnable_nodes, prereqs)
 
+	@decorate.record_elapsed_time
 	def user_learn_suggestion(self, axioms, learned_nodes, goal=None):
 		if not goal:
 			goal = self.short_sighted_depth_first_choose_goal(axioms, learned_nodes)

@@ -342,6 +342,7 @@ class Axiom(Definition):
 			self._dependencies = []
 		else:
 			if "justification" in dic:
+				# as Mo pointed out, axioms CAN have dependencies.  Perhaps there are some definitions you create first, and then an AXIOM uses those definitions (but still introduces something you must accept on faith alone).
 				Node.dependencies.fset(self, new_deps)
 			else:
 				raise KeyError('Axioms cannot have dependencies!')

@@ -16,7 +16,8 @@ from tornado.websocket import WebSocketHandler
 from tornado.web import Application
 from tornado.web import Finish
 
-from networkx.readwrite import json_graph
+from lib import clogging
+log = clogging.getLogger('main', filename='main.log') # this must come BEFORE imports that use getLogger('main')
 from lib.helper import strip_underscores
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
@@ -29,7 +30,6 @@ from lib import node
 import random
 import inspect
 import traceback
-from lib import log
 # this and relevant code should eventually be migrated into auth module
 import xml.etree.ElementTree as ET
 
@@ -179,6 +179,9 @@ class SocketHandler (WebSocketHandler):
 			subject = ball['subject']
 			self.send_graph(ball, subject)
 
+		elif ball['command'] == 'get-curriculum':
+			goal = ball['goal']
+
 		elif ball['command'] == 'learn-node':
 			self.user.learn_node(ball['node_id'])
 			if ball['mode'] == 'learn':
@@ -275,7 +278,7 @@ class SocketHandler (WebSocketHandler):
 		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
 	def send_graph(self, ball, subject=None):
-		log.debug('SUBJECT IS: ' + subject)
+		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
 		ids = self.ids(ball)
 		if ids:

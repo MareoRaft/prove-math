@@ -2,6 +2,10 @@
 """
 # see https://wiki.python.org/moin/PythonDecoratorLibrary for some useful decorators!!
 
+import time
+
+from lib import clogging
+
 def transparent(decorator):
 	""" Decorators have a few unwanted side effects.  This decorator, when used on a decorator, reverses those side-effects!
 
@@ -27,6 +31,19 @@ def transparent(decorator):
 	new_decorator.__doc__ = decorator.__doc__
 	new_decorator.__dict__.update(decorator.__dict__)
 	return new_decorator
+
+@transparent
+def record_elapsed_time(func, file_path='defpath'):
+	def new_func(*args, **kwargs):
+		start_time = time.time()
+		out = func(*args, **kwargs)
+		end_time = time.time()
+		elapsed_time = end_time - start_time
+		log_msg = 'Function: {}\tRuntime: {}'.format(func.__name__, str(elapsed_time))
+		logger = clogging.getLogger('elapsed_times', filename='elapsed_times.log')
+		logger.info(log_msg)
+		return out
+	return new_func
 
 @transparent
 def memoize(obj):

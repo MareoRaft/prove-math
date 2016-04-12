@@ -1,11 +1,6 @@
+from lib import clogging
+log = clogging.getLogger('main')
 from lib.mongo import Mongo
-
-import logging
-import chromalog
-chromalog.basicConfig(level=logging.DEBUG, format='%(asctime)s   %(filename)s line %(lineno)d   %(levelname)s:   %(message)s', datefmt='%Y-%m-%d at %I:%M %p and %S secs')
-log = logging.getLogger()
-def l(s):
-	log.debug(s)
 
 
 class User: # there's really no point in storing users ephemerally, other than to associate a specific user with a specific websocket
@@ -14,7 +9,7 @@ class User: # there's really no point in storing users ephemerally, other than t
 	USERS = Mongo("provemath", "users")
 
 	def __init__(self, initial_identifier):
-		l('inital ident: '+str(initial_identifier))
+		log.debug('inital ident: '+str(initial_identifier))
 		if initial_identifier['type'] in ['google', 'facebook', 'github', 'linkedin', 'local']:
 			self.account_type = initial_identifier['type']
 			self.account_id = initial_identifier['id']
@@ -47,7 +42,7 @@ class User: # there's really no point in storing users ephemerally, other than t
 	def dict(self):
 		user_dict = self._get_from_db()
 		if user_dict:
-			l('ACCOUNT ID IS: '+ str(user_dict['account']['id']))
+			log.debug('ACCOUNT ID IS: '+ str(user_dict['account']['id']))
 			# delete the ObjectId('94569463') thing because it is not JSON serializable
 			del user_dict['_id']
 			return user_dict
@@ -99,7 +94,7 @@ class User: # there's really no point in storing users ephemerally, other than t
 
 	def set_prefs(self, pref_dict):
 		for key, value in pref_dict.items():
-			l('setting pref --> key: ' + key + ', value: ' + value)
+			log.debug('setting pref --> key: ' + key + ', value: ' + value)
 			temp_dict = dict()
 			temp_dict[key] = value
 			self.set_pref(temp_dict)
