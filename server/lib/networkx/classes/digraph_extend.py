@@ -1,6 +1,6 @@
 ################################## IMPORTS ####################################
 import networkx as nx
-from lib import log
+from lib import decorate
 
 from lib.networkx.classes import graph_extend
 
@@ -40,28 +40,18 @@ def find_dict_from_id(list_of_dics, ID):
 	warn('Could node find dict with ID "' + ID + '" within list_of_dics.')
 	return {"_id": ID, "empty": True, "_importance": 4, "_name": ""}
 
-def log_function_call(func):
-	def new_func(*args, **kwargs):
-		start_time = time.time()
-		out = func(*args, **kwargs)
-		elapsed_time = time.time() - start_time
-		log_msg = time.ctime() + '\tFunction: ' + func.__name__ + '\tRuntime: ' + str(elapsed_time)
-		print(log_msg)
-#		print("Result:", str(out))
-		return out
-	return new_func
 #################################### MAIN #####################################
 
 
 class _DiGraphExtended (nx.DiGraph):
 
-	@log.elapsed_time
+	@decorate.record_elapsed_time
 	def validate(self):
 		if not self.is_directed():
 			raise TypeError('is_source only accepts DiGraphs as input')
 		return True
 
-	@log.elapsed_time
+	@decorate.record_elapsed_time
 	def predecessor(self, node): # finds any single predecessor of a node in a Directed Graph
 		return next(self.predecessors_iter(node), None)
 
@@ -127,7 +117,7 @@ class _DiGraphExtended (nx.DiGraph):
 		ancA = self.ancestors(nbunchA)
 		ancB = self.ancestors(nbunchB)
 		return set.intersection(ancA, ancB)
-		
+
 	def descendants(self, nbunch):
 		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	#single input node
@@ -226,7 +216,7 @@ class _DiGraphExtended (nx.DiGraph):
 		DG.remove_nodes_from(learned_nodes)
 		return [len(DG.ancestors(target)) for target in target_bunch]
 	'''
-	
+
 	def most_important_weight(self, node):
 		distance_from_node = 0
 		current_depth_nodes = {node}
@@ -236,7 +226,7 @@ class _DiGraphExtended (nx.DiGraph):
 		ANCESTORS_DESCENDANTS_WEIGHT_FRACTION = 1/6
 		NEIGHBOR_NORMALIZATION_FRACTION = 1/10 #rescales the sum of all neighbor importances to match the scale of the original node's own importance, i.e. [1,10]
 		EXPECTED_NEIGHBORS_PER_NODE = 3
-		
+
 		norm_importances = [self.n(node).importance] #normalized importance of the nodes in each depth level
 		SEARCH_DEPTH_LIMIT = 4
 		while distance_from_node < SEARCH_DEPTH_LIMIT:
@@ -255,11 +245,11 @@ class _DiGraphExtended (nx.DiGraph):
 			predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).importance for n in predecessors]
 			successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).importance for n in successors]	#weighted toward descendants
 			current_depth_importances = predecessors_importances + successors_importances
-			
+
 			current_depth_normalized_sum = sum(current_depth_importances) * NEIGHBOR_NORMALIZATION_FRACTION / (EXPECTED_NEIGHBORS_PER_NODE**distance_from_node)
 			#As distance increases there are exponentially more neighbors.  The 1/(EXPECTED_NEIGHBORS_PER_NODE**distance) term counteracts this.
 			norm_importances.append(current_depth_normalized_sum)
-			
+
 			already_counted_nodes = already_counted_nodes.union(predecessors)
 			already_counted_nodes = already_counted_nodes.union(successors)
 		weighted_importances = [(importance/(index+1)**2) for index, importance in enumerate(norm_importances)]	#normalized importance of the nodes in each depth level, weighted against distance from node

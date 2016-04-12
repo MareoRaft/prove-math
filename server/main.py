@@ -16,7 +16,8 @@ from tornado.websocket import WebSocketHandler
 from tornado.web import Application
 from tornado.web import Finish
 
-from networkx.readwrite import json_graph
+from lib import clogging
+log = clogging.getLogger('main', filename='main.log') # this must come BEFORE imports that use getLogger('main')
 from lib.helper import strip_underscores
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
@@ -29,7 +30,6 @@ from lib import node
 import random
 import inspect
 import traceback
-from lib import log
 # this and relevant code should eventually be migrated into auth module
 import xml.etree.ElementTree as ET
 
