@@ -95,19 +95,11 @@ class _DAG (nx.DiGraph):
 		prereqs = self.unlearned_dependency_tree(goal, learned_nodes)
 		return set.intersection(learnable_nodes, prereqs)
 
-	def choose_next_prereq(self, prereqs, learned_nodes): #choose one from learnable_prereqs
-		#sort by learn count, then by importance, then by name
-		def learn_count_sorter(prereq):
-			return (self.learn_count(prereq, learned_nodes), -self.most_important_weight(prereq), self.n(prereq).id)
-		sorted_prereqs = sorted(prereqs, key=learn_count_sorter)
-		return sorted_prereqs[0]
-#technically this calls learn_count_sorter unnecessarily for the case where prereqs only has a single element, but this inefficiency is totally negligable
-
 	def user_learn_suggestion(self, axioms, learned_nodes, goal=None):
 		if not goal:
 			goal = self.short_sighted_depth_first_choose_goal(axioms, learned_nodes)
 		learnable_prereqs = self.learnable_prereqs(goal, learned_nodes)
-		return self.choose_next_prereq(learnable_prereqs, learned_nodes)
+		return self.most_important(1, learnable_prereqs)
 			
 
 '''	def short_sighted_depth_first_unlearned_source(self, axioms, learned_nodes): # not necessarily a source, as it is
