@@ -1,10 +1,9 @@
 ################################## IMPORTS ####################################
 import networkx as nx
-from lib import decorate
-
-from lib.networkx.classes import graph_extend
-
 from warnings import warn
+
+from lib import decorate
+from lib.networkx.classes import graph_extend
 
 ################################## HELPERS ####################################
 def create_s_pointing_to_source(DG, source):

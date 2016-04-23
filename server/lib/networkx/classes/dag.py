@@ -96,36 +96,28 @@ class _DAG (nx.DiGraph):
 		prereqs = self.unlearned_dependency_tree(goal, learned_nodes)
 		return set.intersection(learnable_nodes, prereqs)
 
-	def choose_next_prereq(self, prereqs, learned_nodes): #choose one from learnable_prereqs
-		#sort by learn count, then by importance, then by name
-		def learn_count_sorter(prereq):
-			return (self.learn_count(prereq, learned_nodes), -self.most_important_weight(prereq), self.n(prereq).id)
-		sorted_prereqs = sorted(prereqs, key=learn_count_sorter)
-		return sorted_prereqs[0]
-#technically this calls learn_count_sorter unnecessarily for the case where prereqs only has a single element, but this inefficiency is totally negligable
-
 	@decorate.record_elapsed_time
 	def user_learn_suggestion(self, axioms, learned_nodes, goal=None):
 		if not goal:
 			goal = self.short_sighted_depth_first_choose_goal(axioms, learned_nodes)
 		learnable_prereqs = self.learnable_prereqs(goal, learned_nodes)
-		return self.choose_next_prereq(learnable_prereqs, learned_nodes)
-
+		return self.most_important(1, learnable_prereqs)
+			
 
 '''	def short_sighted_depth_first_unlearned_source(self, axioms, learned_nodes): # not necessarily a source, as it is
 		if learned_nodes not a subset of self.nodes():
 			raise Exception('Nodes not part of graph.')
 		distance_to_successors = self.short_sighted_deepest_successors(axioms, learned_nodes)
-
+	
 		# take the successor w/ minimum learn_count, and IMPORTANCE to break a tie, then ALPHABETICAL
 		graph = self
 ###		#why?
-
+		
 		def sorter_learn_count(successor):
 			# the keys are ids, so we can get the node...
 ###			#learn_count is simply len(graph.unlearned_dependency_tree(target, learned_nodes))
 			return (len(graph.unlearned_dependency_tree(successor, learned_nodes)), -graph.n(successor).importance, graph.n(successor).id)
-
+	
 		def sorter_depth(node):
 			return (depth_dict[node.id], node.importance) # or self.n(node).importance
 
@@ -139,7 +131,7 @@ class _DAG (nx.DiGraph):
 				for guy_to_learn in sorted(depth_dict, key=sorter_depth, reverse=True):
 					return guy_to_learn
 ### rather than for loops is it cleaner to write this as:
-
+		
 #		#sorted_distances_successors_tuples = sorted(distance_to_successors.items(), reverse=True)
 #		#deepest_successors = sorted_distances_successors_tuples[0][1]
 #		#sorted_deepest_successors = sorted(deepest_successors, key=sorter_learn_count)
@@ -151,7 +143,7 @@ class _DAG (nx.DiGraph):
 
 # or instead of doing sorted_prereqs by importance, it would be nice to do it by learn_count
 # but that would require running unlearned_dependency_tree on each prereq list item and will make things even slower than they already are
-
+		
 
 
 	#deepest_successors_dict = dict()
