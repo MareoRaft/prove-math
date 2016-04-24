@@ -171,7 +171,8 @@ svg {
 	color: white;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: center; /*not working on text for some reason, so including also...*/
+	text-align: center;
 }
 #avatar {
 	@extend .hover-circle;
@@ -185,12 +186,29 @@ svg {
 }
 #logout-circle {
 	@extend .hover-circle-with-text;
-	top: 100px;
+	top: 0;
 	right: 0;
+	opacity: 0;
+
+	transition: right 0.4s ease, opacity 0.4s ease; // or just use "all" instead of "right" and "opacity"
+}
+.logout-circle-out {
+	opacity: 0.5 !important;
+	right: 55px !important;
 }
 #get-starting-nodes {
 	@extend .hover-circle-with-text;
 	top: 100px;
+	right: 0;
+}
+#get-goal-suggestion {
+	@extend .hover-circle-with-text;
+	top: 200px;
+	right: 0;
+}
+#get-pregoal-suggestion {
+	@extend .hover-circle-with-text;
+	top: 300px;
 	right: 0;
 }
 #add-node {

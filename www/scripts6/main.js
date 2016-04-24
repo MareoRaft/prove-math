@@ -262,11 +262,32 @@ $('#search-box').keypress(function(event) { if(event.which === 13 /* Enter */) {
 
 
 //////////////////////////// ACTION STUFF ////////////////////////////
-$('#add-node').click(function(){
-	graph.addNode(new Node())
+$('#avatar').click(function(){
+	// detect if drawer is in or out
+	let $logout = $('#logout-circle')
+	let drawer_position = $logout.css('right')
+	if( drawer_position === '0px' ){
+		// pull drawer out
+		$logout.addClass('logout-circle-out')
+	}
+	else if( drawer_position === '55px' ){
+		// put drawer in
+		$logout.removeClass('logout-circle-out')
+	}
+	else die('unexpected drawer position')
 })
 $('#get-starting-nodes').click(function(){
 	promptStartingNodes()
+})
+$('#get-goal-suggestion').click(function(){
+	ws.jsend({command: 'get-goal-suggestion (or whatever Greg writes in the main.py file)'})
+})
+$('#get-pregoal-suggestion').click(function(){
+	ws.jsend({command: 'get-pregoal-suggestion (or whatever Greg writes in the main.py file)'})
+})
+
+$('#add-node').click(function(){
+	graph.addNode(new Node())
 })
 
 

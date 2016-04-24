@@ -25,6 +25,6 @@ section, svg { // this resizes svg element but NOT the graph animation inside of
 @mixin hover-opacity {
 	opacity: 0.5;
 	&:hover {
-		opacity: 1;
+		opacity: 1 !important;
 	}
 }

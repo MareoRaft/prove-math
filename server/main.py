@@ -22,8 +22,8 @@ from lib.helper import strip_underscores
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 from lib.user import User
-import networkx as nx
-from lib.networkx.classes import dag
+import networkx as nx # should be removed
+from lib.networkx.classes import dag # should be removed
 from lib import user
 from lib import auth
 from lib import node
@@ -376,4 +376,4 @@ if __name__ == "__main__":
 
 	# 3. launch!
 	make_app_and_start_listening()
-#stupid comment
+
