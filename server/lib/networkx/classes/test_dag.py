@@ -6,13 +6,13 @@ from lib.networkx.classes import dag
 from lib.node import create_appropriate_node, Node
 
 from collections import OrderedDict
-#why is that needed?  we imported dag and dag already imported this
+#from lib.networkx.classes.testing_helper import fill_sample_custom_nodes
 
 ################################## HELPERS ####################################
 def fill_sample_custom_nodes():
 	#creates a graph with a handful of our custom node objects, but no edges
-	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":2}
-	a = Node(pre_a)
+	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3}
+	a = create_appropriate_node(pre_a)
 	pre_b = {"type":"theorem","description":"This is node bbbbbbbbbb","name":"B","importance":4}
 	b = create_appropriate_node(pre_b)
 	pre_c = {"type":"theorem","description":"This is node cccccccccc","name":"C","importance":4}
@@ -20,7 +20,7 @@ def fill_sample_custom_nodes():
 	pre_d = {"type":"theorem","description":"This is node dddddddddd","name":"D","importance":6}
 	d = create_appropriate_node(pre_d)
 	pre_e = {"type":"theorem","description":"This is node eeeeeeeeee","name":"E","importance":8}
-	e = Node(pre_e)
+	e = create_appropriate_node(pre_e)
 	DAG = nx.DAG()
 	DAG.add_n(a)
 	DAG.add_n(b)
@@ -210,7 +210,7 @@ def test_learnable_prereqs():
 	])
 	assert DAG.learnable_prereqs('t', ['l1', 'l2']) == {'u1'}
 
-def test_choose_next_prereq():
+"""def test_choose_next_prereq():
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edge('a', 'b')
 	with pytest.raises(ValueError):
@@ -236,7 +236,7 @@ def test_choose_next_prereq():
 	DAG.add_edges_from([
 		('a', 'b'), ('a', 'c')
 	])
-	assert DAG.choose_next_prereq(['b', 'c'], ['a']) == 'b'
+	assert DAG.choose_next_prereq(['b', 'c'], ['a']) == 'b'"""
 
 def test_user_learn_suggestion():
 	DAG = fill_sample_custom_nodes()
@@ -270,48 +270,4 @@ def test_user_learn_suggestion():
 		('a', 'b'), ('a', 'c'), ('d', 'b'), ('e', 'c'), ('a', 'd'), ('a', 'e')
 	])
 	assert DAG.user_learn_suggestion(['a'], ['a']) == 'e'
-
-# def test_short_sighted_depth_first_unlearned_sources():
-# 	G = nx.DAG()
-# 	G.add_path(['1left', '2left', '3left', 'left'])
-# 	G.add_path(['a', 'b', 'left'])
-# 	G.add_path(['a', 'b', 'right'])
-# 	G.add_path(['1right', '2right', 'right']) # this is less effort to learm, so 1right should be returned
-# 	assert G.short_sighted_depth_first_unlearned_sources(['a', 'b']) == ['1right']
-
-# 	# now do the same test, but reverse the order of adding stuff onto graph
-# 	G = nx.DAG()
-# 	G.add_path(['1right', '2right', 'right']) # this is less effort to learm, so 1right should be returned
-# 	G.add_path(['a', 'b', 'right'])
-# 	G.add_path(['a', 'b', 'left'])
-# 	G.add_path(['1left', '2left', '3left', 'left'])
-# 	assert G.short_sighted_depth_first_unlearned_sources(['a', 'b']) == ['1right']
-
-# 	# edge cases, empty graph?  null graph?
-
-
-# def test_short_sighted_deepest_successors():
-	# G = nx.DAG()
-	# G.add_path(['a', 'b', 'c'])
-	# axioms = ['a']
-	# nodes = ['a', 'b']
-	# assert G.short_sighted_deepest_successors(axioms, nodes) == {2: ['c']}
-# 
-	# G = nx.DAG()
-	# G.add_path(['a', 'b', 'c'])
-	# G.add_path(['s', 't', 'c'])
-	# axioms = ['a', 't']
-	# nodes = ['a', 't']
-	# assert G.short_sighted_deepest_successors(axioms, nodes) == {1: ['b', 'c']}
-# 
-	# G = nx.DAG()
-	# G.add_path(['a', 'b', 'c'])
-	# G.add_path(['s', 't', 'c'])
-	# G.add_path(['p', 't', 'a'])
-	# axioms = ['a', 's']
-	# nodes = ['p', 'a', 'b']
-	# assert G.short_sighted_deepest_successors(axioms, nodes) == {
-		# 1: ['t'],
-		# 2: ['c']
-	# }
 

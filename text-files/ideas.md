@@ -86,3 +86,7 @@ for the user manual --> make it on readthedocs.org !
 
 73. use Zenlog for even cooler logging? https://github.com/ManufacturaInd/python-zenlog
 74. make gerg's next project to go through this ideas file?
+
+-----------------
+Greg
+75. Have some kind of transparency gradient.  As the user learns deeper nodes the old "shallow" nodes can become progressively more transparent, eventually disappearing from view to reduce clutter

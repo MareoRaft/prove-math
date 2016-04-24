@@ -44,13 +44,11 @@ def find_dict_from_id(list_of_dics, ID):
 
 class _DiGraphExtended (nx.DiGraph):
 
-	@decorate.record_elapsed_time
 	def validate(self):
 		if not self.is_directed():
 			raise TypeError('is_source only accepts DiGraphs as input')
 		return True
 
-	@decorate.record_elapsed_time
 	def predecessor(self, node): # finds any single predecessor of a node in a Directed Graph
 		return next(self.predecessors_iter(node), None)
 
@@ -158,7 +156,7 @@ class _DiGraphExtended (nx.DiGraph):
 			if (cutoff is not None and cutoff <= level):  break
 			nextlevel = dict.fromkeys(self.anydirectional_neighbors(thislevel.keys()))
 			level += 1
-		return seen  # return all path lengths as dictionary
+		return seen  # return all nodes as keys, shortest path lengths as values
 
 	def descendants_to_distance_dict(self, nbunch, cutoff=None):
 		if not self.acceptable_iterable(nbunch):	#single input node
@@ -181,7 +179,7 @@ class _DiGraphExtended (nx.DiGraph):
 			if (cutoff is not None and cutoff <= level):  break
 			nextlevel = dict.fromkeys(self.successors(thislevel.keys()))
 			level += 1
-		return seen  # return all path lengths as dictionary
+		return seen  # return all nodes as keys, shortest path lengths as values
 
 	def as_complete_dict(self):
 		graph = dict()
@@ -192,9 +190,9 @@ class _DiGraphExtended (nx.DiGraph):
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
 		if not self.acceptable_iterable(nodes): #without this, if nodes is just a string, the return statement will not work correctly
 			raise ValueError('Argument {} is not iterable'.format(str(nodes)))
-		hanging_dominion = self.successors(nodes)
+		successors = self.successors(nodes)
 		hanging_absolute_dominion = []
-		for candidate in hanging_dominion:
+		for candidate in successors:
 			if set(self.predecessors(candidate)) <= set(nodes):
 				hanging_absolute_dominion.append(candidate)
 		return hanging_absolute_dominion + list(nodes)
