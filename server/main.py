@@ -236,7 +236,7 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors
-			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1)
+			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1) # can just use digraph.anydirectional_neighbors
 			H = our_DAG.subgraph(list(neighbors.keys()))
 			dict_graph = H.as_complete_dict()
 			self.jsend({
@@ -253,6 +253,27 @@ class SocketHandler (WebSocketHandler):
 					'command': 'search-results',
 					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
+
+		'''elif ball['command'] == 'suggest-goal':
+			axioms = our_DAG.axioms() # need to write
+			learned_node_ids = self.user.dict['learned_node_ids']
+			goal_id = our_DAG.choose_goal(axioms, learned_node_ids)
+			self.send_graph(ball, goal=goal_id)
+			self.jsend({
+					'command': 'set-goal'
+					'goal': goal_id
+			})
+
+		elif ball['command'] == 'suggest-pregoal':
+			axioms = our_DAG.axioms() # need to write
+			learned_node_ids = self.user.dict['learned_node_ids']
+			goal_id = ball['goal']
+			pregoal_id = our_Dag.choose_learnable_pregoal(axioms, learned_node_ids, goal_id)
+			self.send_graph(ball, goal=goal_id)
+			self.jsend({
+					'command': 'set-pregoal'
+					'pregoal': pregoal_id
+			})'''
 
 	def request_nodes(self, node_ids, ball):
 		for node_id in node_ids:
@@ -277,14 +298,16 @@ class SocketHandler (WebSocketHandler):
 		learned_ids = self.user.dict['learned_node_ids']
 		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
-	def send_graph(self, ball, subject=None):
+	def send_graph(self, ball, subject=None, goal=None):
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
 		ids = self.ids(ball)
 		if ids:
 			learned_ids = self.user.dict['learned_node_ids']
 			ids_to_send = our_DAG.absolute_dominion(learned_ids)
-			ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest(subject)))
+			ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest(subject, goal)))
+			if self.user.dict['prefs']['always_send_learnable_pregoal']:
+				ids_to_send = set(ids_to_send).union(set(our_DAG.choose_learnable_pregoal(self.user.dict['learned_node_ids'])))
 			H = our_DAG.subgraph(list(ids_to_send))
 		else:
 			# they've learned nothing so far.  send them a starting point
@@ -296,14 +319,17 @@ class SocketHandler (WebSocketHandler):
 			'new_graph': dict_graph,
 		})
 
-	def other_nodes_of_interest(self, subject=None):
+	def other_nodes_of_interest(self, subject=None, goal=None):
 		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
 		nodes = []
 		if subject:
 			nodes = nodes + self.starting_nodes(subject)
+		
+#		if goal:
+#			nodes = nodes + our_DAG.unlearned_dependency_tree(goal, self.user.dict['learned_node_ids'])
 		return nodes
 		# for later, add the following too:
-		return [our_DAG.short_sighted_depth_first_unlearned_source(starting_nodes, learned_ids)]
+#		return [our_DAG.short_sighted_depth_first_unlearned_source(starting_nodes, learned_ids)]
 
 	def starting_nodes(self, subject):
 		return starting_nodes[subject]
