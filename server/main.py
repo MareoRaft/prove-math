@@ -238,7 +238,7 @@ class SocketHandler (WebSocketHandler):
 			# We get the 5th nearest neighbors
 			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1) # can just use digraph.anydirectional_neighbors
 			H = our_DAG.subgraph(list(neighbors.keys()))
-			dict_graph = H.as_complete_dict()
+			dict_graph = H.as_js_ready_dict()
 			self.jsend({
 				'command': 'load-graph',
 				'new_graph': dict_graph,
@@ -281,7 +281,7 @@ class SocketHandler (WebSocketHandler):
 				raise ValueError('The node_id "'+node_id+'" does not exist.')
 		ids = set(self.user.dict['learned_node_ids']).union(set(ball['client_node_ids'])).union(set(node_ids))
 		H = our_DAG.subgraph(list(ids))
-		dict_graph = H.as_complete_dict()
+		dict_graph = H.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
@@ -313,7 +313,7 @@ class SocketHandler (WebSocketHandler):
 			# they've learned nothing so far.  send them a starting point
 			H = our_DAG.subgraph(self.starting_nodes(subject))
 
-		dict_graph = H.as_complete_dict()
+		dict_graph = H.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
@@ -324,7 +324,7 @@ class SocketHandler (WebSocketHandler):
 		nodes = []
 		if subject:
 			nodes = nodes + self.starting_nodes(subject)
-		
+
 #		if goal:
 #			nodes = nodes + our_DAG.unlearned_dependency_tree(goal, self.user.dict['learned_node_ids'])
 		return nodes

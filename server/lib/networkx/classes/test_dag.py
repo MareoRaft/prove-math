@@ -1,4 +1,4 @@
-################################## IMPORTS ####################################
+############################ IMPORTS ############################
 import networkx as nx
 import pytest
 
@@ -6,11 +6,10 @@ from lib.networkx.classes import dag
 from lib.node import create_appropriate_node, Node
 
 from collections import OrderedDict
-#from lib.networkx.classes.testing_helper import fill_sample_custom_nodes
 
-################################## HELPERS ####################################
+############################ HELPERS ############################
 def fill_sample_custom_nodes():
-	#creates a graph with a handful of our custom node objects, but no edges
+	# creates a graph with a handful of our custom Node objects, but no edges
 	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3}
 	a = create_appropriate_node(pre_a)
 	pre_b = {"type":"theorem","description":"This is node bbbbbbbbbb","name":"B","importance":4}
@@ -29,7 +28,80 @@ def fill_sample_custom_nodes():
 	DAG.add_n(e)
 	return DAG
 
-#################################### MAIN #####################################
+############################## MAIN ##############################
+def test_most_important():
+	a = create_appropriate_node({"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3})
+	b = create_appropriate_node({"type":"theorem","description":"This is node bbbbbbbbbb","name":"B","importance":4})
+	c = create_appropriate_node({"type":"theorem","description":"This is node cccccccccc","name":"C","importance":4})
+	d = create_appropriate_node({"type":"theorem","description":"This is node dddddddddd","name":"D","importance":6})
+	e = create_appropriate_node({"type":"theorem","description":"This is node eeeeeeeeee","name":"E","importance":8})
+	f = create_appropriate_node({"type":"theorem","description":"This is node ffffffffff","name":"F","importance":8})
+
+	# we will REUSE the SAME graph for below tests:
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d, e, f])
+
+	#testing sort by node's own importance and id
+	with pytest.raises(ValueError):
+		DAG.most_important([], 1)
+
+	# trivial test
+	assert DAG.most_important(['a'], 1) == ['a']
+
+	# test that number defaults to 1
+	assert DAG.most_important(['a']) == ['a']
+
+	# bad number
+	with pytest.raises(ValueError):
+		DAG.most_important(['a'], -1)
+
+	# and more...
+	assert DAG.most_important(['a', 'b']) == ['b']
+	assert DAG.most_important(['a', 'b'], 2) == ['b', 'a']
+	with pytest.raises(ValueError):
+		DAG.most_important(['a', 'b'], 4) == ['b', 'a']
+	assert DAG.most_important(['a', 'b', 'c'], 2) == ['c', 'b'] #sorts alphabetically, but remember we use reverse=True to sort by numerical importance so the alphabetical sort is reversed too
+	assert DAG.most_important(['a', 'b', 'c', 'd']) == ['d']
+	assert DAG.most_important(['a', 'b', 'c', 'd'], 2) == ['d', 'c']
+	assert DAG.most_important(['a', 'b', 'c', 'd'], 3) == ['d', 'c', 'b']
+
+
+	# using DIFFERENT graphs for the BELOW TESTS:
+
+	#testing sort by weighted importance of neighbors when node's own importance is a tie
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d, e, f])
+	DAG.add_edges_from([
+			['a', 'c'], ['d', 'b']	#d is a more important neighbor than a, so b should be more important than c
+	])
+	node_list = ['b', 'c']
+	assert DAG.most_important(node_list, 2) == ['b', 'c']
+
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d, e, f])
+	DAG.add_edges_from([
+			['c', 'a'], ['b', 'd']
+	])
+	node_list = ['b', 'c']
+	assert DAG.most_important(node_list, 2) == ['b', 'c']
+
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d, e, f])
+	DAG.add_edges_from([
+			['c', 'a'], ['d', 'b']	#d is a more important neighbor than a but this time a is a descendant while d is only an ancestor; this time c should be more important than b
+	])
+	node_list = ['b', 'c']
+	assert DAG.most_important(node_list, 2) == ['c', 'b']
+
+	#remember that when the nodes being compared are neighbors with each other, we will get some shared common neighbors, although they have different distances to the two compared nodes
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d, e, f])
+	DAG.add_edge('b', 'c')
+	node_list = ['b', 'c']
+	assert DAG.most_important(node_list, 2) == ['b', 'c']	#descendants are given more weight
+	DAG.add_edge('c', 'b')
+	assert DAG.most_important(node_list, 2) == ['c', 'b']	#now sorts (reverse) alphabetically because neighbor weights are symmetric
+
 def test_validate():
 	DAG = nx.DAG()
 	DAG.add_path(['a', 'b', 'c', 'd'])
@@ -123,151 +195,195 @@ def test_remove_redundant_edges():
 	assert {('a', 'b'), ('b', 'c'), ('c', 'd'), 			('d', 'z'),
 									('c', 't'), ('t', 'y'), ('y', 'z'),} == set(DAG.edges())
 
-def test_short_sighted_depth_to_successors_dict():
+def test_depth_to_successors_dict():
 	DAG = nx.DAG()
 	DAG.add_path(['axiom', 'one', 'two', 'three', 'four', 'five'])
-	d = DAG.short_sighted_depth_to_successors_dict('axiom', ['two']) #notice axioms do not need to be in a list
-	assert d == {3: ['three']} #does not need to be ordered in this case
-	d = DAG.short_sighted_depth_to_successors_dict('axiom', ['two', 'four'])
-	res = OrderedDict.fromkeys([5, 3])
-	res[5] = ['five']
-	res[3] = ['three']
-	assert d == res
-	d = DAG.short_sighted_depth_to_successors_dict('axiom', ['two', 'three'])
-	assert d == {4: ['four']}
-	
+	d = DAG.depth_to_successors_dict('axiom', ['two']) # notice axioms do not need to be in a list
+	assert type(d).__name__ == 'OrderedDict'
+	assert d == {3: {'three'}} # does not need to be ordered in this case
+	d = DAG.depth_to_successors_dict('axiom', ['two', 'four'])
+	assert d == OrderedDict([
+		(5, {'five'}),
+		(3, {'three'}),
+	])
+
+	d = DAG.depth_to_successors_dict('axiom', ['two', 'three'])
+	assert d == OrderedDict([
+		(4, {'four'}),
+	])
+
 	DAG = nx.DAG()
 	DAG.add_path(['axiom1', 'one', 'two', 'axiom2', 'three', 'four'])
-	d = DAG.short_sighted_depth_to_successors_dict(['axiom1', 'axiom2'], ['three'])
-	assert d == {2: ['four']} #depth is counted from the CLOSEST axiom
-	
+	d = DAG.depth_to_successors_dict(['axiom1', 'axiom2'], ['three'])
+	# depth is counted from the CLOSEST axiom
+	assert d == OrderedDict([
+		(2, {'four'}),
+	])
+	d = DAG.depth_to_successors_dict(['axiom1', 'axiom2'], ['one'])
+	assert d == OrderedDict([
+		(2, {'two'}),
+	])
+	d = DAG.depth_to_successors_dict(['axiom1', 'axiom2'], ['two'])
+	assert d == OrderedDict([
+		(0, {'axiom2'}),
+	])
+
 	DAG = nx.DAG()
 	DAG.add_path(['axiom1', 'one', 'two', 'four', 'six'])
 	DAG.add_path(['axiom2', 'three', 'four'])
 	DAG.add_path(['axiom3', 'five', 'six'])
-	d = DAG.short_sighted_depth_to_successors_dict(['axiom1', 'axiom2', 'axiom3'], ['one', 'two', 'four'])
-	assert d == {2: ['six']} #returns 'six' even though 'six' is not learnable right now
+	d = DAG.depth_to_successors_dict(['axiom1', 'axiom2', 'axiom3'], ['one', 'two', 'four'])
+	assert d == OrderedDict([
+		(2, {'six'}),
+	])
 
-def test_short_sighted_depth_first_choose_goal():
-	DAG = fill_sample_custom_nodes()	
-	#first sort by depth:
-	DAG.add_path(['axiom', 'one', 'b'])
-	DAG.add_path(['axiom', 'two', 'three', 'c'])
-	assert DAG.short_sighted_depth_first_choose_goal(['axiom'], ['one', 'two', 'three']) == 'c'
-	#make sure this case is symmetric and node id does not affect it:
-	DAG.remove_nodes_from(['axiom', 'one', 'two', 'three'])
-	DAG.add_path(['axiom', 'one', 'c'])
-	DAG.add_path(['axiom', 'two', 'three', 'b'])
-	assert DAG.short_sighted_depth_first_choose_goal(['axiom'], ['one', 'two', 'three']) == 'b'
+def test_choose_goal():
+	# NOTE: our criteria for which goal to choose may change in the future.  In which case, some of the tests below may fail
+	a = create_appropriate_node({"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":5})
+	b = create_appropriate_node({"type":"theorem","description":"This is node bbbbbbbbbb","name":"B","importance":5})
+	c = create_appropriate_node({"type":"theorem","description":"This is node cccccccccc","name":"C","importance":5})
+	d = create_appropriate_node({"type":"theorem","description":"This is node dddddddddd","name":"D","importance":5})
+	e = create_appropriate_node({"type":"theorem","description":"This is node eeeeeeeeee","name":"E","importance":5})
+	f = create_appropriate_node({"type":"theorem","description":"This is node ffffffffff","name":"F","importance":5})
 
-	#next sort by learn count:
-	DAG.remove_nodes_from(['axiom', 'one', 'two', 'three'])
+	# choose deepest goal
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d, e, f])
+	DAG.add_path(['a', 'b', 'c'])
+	DAG.add_path(['a', 'd', 'e', 'f'])
+	assert DAG.choose_goal(['a'], ['b', 'd', 'e']) == 'f'
+
+	# make sure this case is symmetric and node id does not affect it:
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d, e, f])
+	DAG.add_path(['a', 'b', 'f'])
+	DAG.add_path(['a', 'd', 'e', 'c'])
+	assert DAG.choose_goal(['a'], ['b', 'd', 'e']) == 'c'
+
+	# next sort by learn count:
+	DAG = nx.DAG()
+	DAG.add_n([a, c, d, e])
 	DAG.add_edges_from([
 		('a', 'c'), ('a', 'd'), ('e', 'd')
-	]) # d now has a higher learn count than c but the same depth (d is more important)
-	assert DAG.short_sighted_depth_first_choose_goal(['a'], ['a']) == 'c'
-	#again make sure this is symmetric:
-	DAG.remove_edges_from([('a', 'c'), ('a', 'd'), ('e', 'd')])
+	])
+	d.importance = 10
+	c.importance = 3
+	# d now has a higher learn count than c but the same depth (d is more important)
+	assert DAG.choose_goal(['a'], ['a']) == 'c'
+
+	# again make sure this is symmetric:
+	DAG = nx.DAG()
+	DAG.add_n([a, c, d, e])
 	DAG.add_edges_from([
-		('a', 'c'), ('a', 'd'), ('e', 'c')
-	]) # c now has a higher learn count than d but the same depth (d still more important)
-	assert DAG.short_sighted_depth_first_choose_goal(['a'], ['a']) == 'd'
-	
-	#then sort by importance:
-	DAG.remove_edges_from([('a', 'c'), ('a', 'd'), ('e', 'c')])
+		('a', 'd'), ('a', 'c'), ('e', 'c')
+	])
+	d.importance = 10
+	c.importance = 3
+	# d now has a higher learn count than c but the same depth (d is more important)
+	assert DAG.choose_goal(['a'], ['a']) == 'd'
+
+	# then sort by importance:
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d])
 	DAG.add_edges_from([
 		('a', 'b'), ('b', 'c'), ('b', 'd')
-	]) # same depth and learn count but d is more important than c
-	assert DAG.short_sighted_depth_first_choose_goal(['a'], ['b']) == 'd'
-
-	#finally sort by name
-	DAG.remove_edges_from([('a', 'b'), ('b', 'c'), ('b', 'd')])
-	DAG.add_edges_from([
-		('a', 'd'), ('d', 'b'), ('d', 'c')
 	])
-	assert DAG.short_sighted_depth_first_choose_goal(['a'], ['d']) == 'b' #this goes in alphabetical order, unlike digraph.most_important which goes in reverse alphabetical
+	d.importance = 10
+	c.importance = 3
+	# same depth and learn count but d is more important than c
+	assert DAG.choose_goal(['a'], ['b']) == 'd'
 
-def test_learnable_prereqs():
+	#finally sort by id
+	DAG = nx.DAG()
+	DAG.add_n([a, b, c, d])
+	DAG.add_edges_from([
+		('a', 'd'),
+		     ('d', 'b'),
+		     ('d', 'c'),
+	])
+	# this goes in alphabetical order, unlike digraph.most_important which goes in reverse alphabetical
+	assert DAG.choose_goal(['a'], ['d']) == 'b'
+
+def test_learnable_pregoals():
 	DAG = nx.DAG()
 	DAG.add_path(['l1', 't'])
 	with pytest.raises(ValueError):
-		DAG.learnable_prereqs('t', [])
+		DAG.learnable_pregoals('t', [])
 	with pytest.raises(nx.NetworkXError):
-		DAG.learnable_prereqs(['t'], ['l1'])
+		DAG.learnable_pregoals(['t'], ['l1'])
 	with pytest.raises(ValueError):
-		DAG.learnable_prereqs('t', 'l1')
-	assert DAG.learnable_prereqs('t', ['l1']) == {'t'}
-	
+		DAG.learnable_pregoals('t', 'l1')
+	assert DAG.learnable_pregoals('t', ['l1']) == {'t'}
+
 	DAG = nx.DAG()
 	DAG.add_edges_from([
 		('l1', 't'), ('u1', 't') # learned, unlearned, target
 	])
-	assert DAG.learnable_prereqs('t', ['l1']) == set()
-	
+	assert DAG.learnable_pregoals('t', ['l1']) == set()
+
 	DAG = nx.DAG()
 	DAG.add_edges_from([
 		('l1', 't'), ('l2', 'u1'), ('u1', 't'), ('u2', 't')
 	])
-	assert DAG.learnable_prereqs('t', ['l1', 'l2']) == {'u1'}
+	assert DAG.learnable_pregoals('t', ['l1', 'l2']) == {'u1'}
 
-"""def test_choose_next_prereq():
+def test_choose_learnable_pregoals():
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edge('a', 'b')
 	with pytest.raises(ValueError):
-		print(DAG.choose_next_prereq(['b'], 'a'))
-	assert DAG.choose_next_prereq(['b'], ['a']) == 'b'
-	
+		print(DAG.choose_learnable_pregoals(['b'], 'a'))
+	assert DAG.choose_learnable_pregoals(['b'], ['a']) == ['b']
+
 	#first sort by learn count
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edges_from([
 		('a', 'b'), ('b', 'c'), ('a', 'd')
 	])
-	assert DAG.choose_next_prereq(['c', 'd'], ['a']) == 'd'
-	
+	assert DAG.choose_learnable_pregoals(['c', 'd'], ['a']) == ['d']
+
 	#then sort by importance
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edges_from([
 		('a', 'b'), ('a', 'c'), ('a', 'd')
 	])
-	assert DAG.choose_next_prereq(['b', 'c', 'd'], ['a']) == 'd'
-	
+	assert DAG.choose_learnable_pregoals(['b', 'c', 'd'], ['a']) == ['d']
+
 	#finally sort by name
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edges_from([
 		('a', 'b'), ('a', 'c')
 	])
-	assert DAG.choose_next_prereq(['b', 'c'], ['a']) == 'b'"""
+	assert DAG.choose_learnable_pregoals(['b', 'c'], ['a']) == ['b']
 
-def test_user_learn_suggestion():
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edges_from([
 		('a', 'b'), ('a', 'c')
 	])
 	with pytest.raises(ValueError):
-		DAG.user_learn_suggestion(['a'], [])
-	assert DAG.user_learn_suggestion(['a'], ['a']) == 'b'
-		
+		DAG.choose_learnable_pregoals(['a'], [])
+	assert DAG.choose_learnable_pregoals(['a'], ['a']) == ['b']
+
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edges_from([
 		('a', 'b'), ('b', 'c'), ('b', 'd')
 	])
-	assert DAG.user_learn_suggestion(['a'], ['b']) == 'd'
-	
+	assert DAG.choose_learnable_pregoals(['a'], ['b']) == ['d']
+
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edges_from([
 		('a', 'b'), ('b', 'c'), ('b', 'd'), ('e', 'd')
 	])
-	assert DAG.user_learn_suggestion(['a'], ['b']) == 'c'
-	
+	assert DAG.choose_learnable_pregoals(['a'], ['b']) == ['c']
+
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edges_from([
 		('a', 'b'), ('b', 'c'), ('b', 'd'), ('e', 'c'), ('e', 'd'), ('b', 'e')
 	])
-	assert DAG.user_learn_suggestion(['a'], ['b']) == 'e'
-	
+	assert DAG.choose_learnable_pregoals(['a'], ['b']) == ['e']
+
 	DAG = fill_sample_custom_nodes()
 	DAG.add_edges_from([
 		('a', 'b'), ('a', 'c'), ('d', 'b'), ('e', 'c'), ('a', 'd'), ('a', 'e')
 	])
-	assert DAG.user_learn_suggestion(['a'], ['a']) == 'e'
+	assert DAG.choose_learnable_pregoals(['a'], ['a']) == ['e']
 

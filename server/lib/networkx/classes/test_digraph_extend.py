@@ -1,11 +1,12 @@
-################################## IMPORTS ####################################
+########################### IMPORTS #############################
 import networkx as nx
 import pytest
 
 from lib.networkx.classes import digraph_extend
 from lib.node import create_appropriate_node, Node
+from lib.networkx.classes.testing_helper import fill_sample_custom_nodes
 
-#################################### MAIN #####################################
+############################# MAIN ##############################
 def test_is_nonnull(): # this is here really to make sure DiGraph inherited is_nonnull from Graph
 	nn = nx.DiGraph()
 	nn.add_node('a')
@@ -100,7 +101,7 @@ def test_successors():
 	assert DG.successors('d') == set()
 	assert DG.successors('y') == {'c'}
 	assert DG.successors('c') == {'L', 'd'}
-	assert DG.successors(['c']) == {'L', 'd'} 
+	assert DG.successors(['c']) == {'L', 'd'}
 	#test multiple inputs
 	assert DG.successors(['y', 'd']) == {'c'}
 	assert DG.successors(['y', 'c']) == {'L', 'd'}
@@ -128,7 +129,7 @@ def test_anydirectional_neighbors():
 	assert DG.anydirectional_neighbors('d') == {'c'}
 	assert DG.anydirectional_neighbors('y') == {'c'}
 	assert DG.anydirectional_neighbors('c') == {'y', 't', 'L', 'd'}
-	assert DG.anydirectional_neighbors(['c']) == {'y', 't', 'L', 'd'} 
+	assert DG.anydirectional_neighbors(['c']) == {'y', 't', 'L', 'd'}
 	#test multiple inputs
 	assert DG.anydirectional_neighbors(['y', 'x']) == {'c'}
 	assert DG.anydirectional_neighbors(['y', 'd']) == {'c'}
@@ -179,7 +180,7 @@ def test_shortest_anydirectional_path():
 def test_ancestors():
 	DG = nx.DiGraph()
 	DG.add_path(['x', 'y', 'z'])
-	
+
 	#testing nonexistent inputs:
 	with pytest.raises(nx.NetworkXError):
 		DG.ancestors('NotANode')
@@ -189,7 +190,7 @@ def test_ancestors():
 		DG.ancestors(['x', 'NotANode', 'z'])
 	with pytest.raises(ValueError):
 		DG.ancestors([])
-	
+
 	#existing inputs:
 	assert DG.ancestors('z') == {'x', 'y'}
 	assert DG.ancestors('y') == {'x'}
@@ -204,7 +205,7 @@ def test_ancestors():
 	assert DG.ancestors('z') == {'y', 'x', 'c', 'b', 'a'}
 	assert DG.ancestors('y') == {'x', 'b', 'a'}
 	assert DG.ancestors(['y', 'x']) == {'b', 'a'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['x', 'y', 'z'])
 	DG.add_path(['a', 'b', 'c'])	#disconnected paths
@@ -212,7 +213,7 @@ def test_ancestors():
 	assert DG.ancestors(['a', 'x']) == set()
 	assert DG.ancestors(['a', 'y']) == {'x'}
 	DG.add_path(['x', 'b'])
-	assert DG.ancestors(['c', 'z']) == {'b', 'a', 'y', 'x'}	
+	assert DG.ancestors(['c', 'z']) == {'b', 'a', 'y', 'x'}
 
 def test_common_ancestors():
 	DG = nx.DiGraph()
@@ -233,8 +234,8 @@ def test_common_ancestors():
 	DG = nx.DiGraph()
 	DG.add_nodes_from(['x', 'y'])
 	assert DG.common_ancestors('x', 'y') == set()
-	
-	DG = nx.DiGraph()	
+
+	DG = nx.DiGraph()
 	DG.add_edges_from([['a', 'x'], ['c', 'y']])
 	assert DG.common_ancestors('x', 'y') == set()
 
@@ -243,15 +244,15 @@ def test_common_ancestors():
 		['a', 'x'], ['b', 'x'], ['b', 'y'], ['c', 'y']
 	])
 	assert DG.common_ancestors('x', 'y') == {'b'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_edges_from([
-		['a', 'x'], ['b', 'x'], 
-		['b', 'y'], ['c', 'y'], 
+		['a', 'x'], ['b', 'x'],
+		['b', 'y'], ['c', 'y'],
 		['d', 'b']
 	])
 	assert DG.common_ancestors('x', 'y') == {'b','d'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_edges_from([
 		['a', 'x'], ['b', 'y'],
@@ -260,7 +261,7 @@ def test_common_ancestors():
 	assert DG.common_ancestors(['x', 'y'], 'z') == {'b'}
 	DG.add_edge('a', 'z')
 	assert DG.common_ancestors(['x', 'y'], 'z') == {'a', 'b'}
-	
+
 def test_descendants():
 	DG = nx.DiGraph()
 	DG.add_path(['x', 'y', 'z'])
@@ -277,7 +278,7 @@ def test_descendants():
 	assert DG.descendants('x') == {'y', 'z'}
 	assert DG.descendants('y') == {'z'}
 	assert DG.descendants('z') == set()
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['x', 'y', 'z'])
 	DG.add_edges_from([
@@ -285,7 +286,7 @@ def test_descendants():
 	])
 	assert DG.descendants('x') == {'y', 'z', 'a', 'b', 'c'}
 	assert DG.descendants('y') == {'z', 'b', 'c'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['x', 'y', 'z'])
 	DG.add_path(['a', 'b', 'c'])
@@ -313,8 +314,8 @@ def test_common_descendants():
 	DG = nx.DiGraph()
 	DG.add_nodes_from(['x', 'y'])
 	assert DG.common_descendants('x', 'y') == set()
-	
-	DG = nx.DiGraph()	
+
+	DG = nx.DiGraph()
 	DG.add_edges_from([['x', 'a'], ['y', 'c']])
 	assert DG.common_descendants('x', 'y') == set()
 
@@ -323,15 +324,15 @@ def test_common_descendants():
 		['x', 'a'], ['x', 'b'], ['y', 'b'], ['y', 'c']
 	])
 	assert DG.common_descendants('x', 'y') == {'b'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_edges_from([
-		['x', 'a'], ['x', 'b'], 
-		['y', 'b'], ['y', 'c'], 
+		['x', 'a'], ['x', 'b'],
+		['y', 'b'], ['y', 'c'],
 		['b', 'd']
 	])
 	assert DG.common_descendants('x', 'y') == {'b','d'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_edges_from([
 		['x', 'a'], ['y', 'b'],
@@ -355,7 +356,7 @@ def test_relatives_to_distance_dict():
 		7: 2,
 		8: 3,
 	}
-	
+
 	x = G.relatives_to_distance_dict([3, 4], 2)
 	assert len(x) == 6
 	assert x == {
@@ -389,52 +390,52 @@ def test_descendants_to_distance_dict():
 		'x': 2,
 	}
 
-def test_as_complete_dict():
+def test_as_js_ready_dict():
 	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3}
 	a = create_appropriate_node(pre_a)
 	pre_b = {"type":"theorem","description":"This is node bbbbbbbbbb","name":"B","importance":4}
 	b = create_appropriate_node(pre_b)
 	pre_c = {"type":"theorem","description":"This is node cccccccccc","name":"C","importance":4}
 	c = create_appropriate_node(pre_c)
-	
+
 	DG = nx.DiGraph()
-	d = DG.as_complete_dict()
+	d = DG.as_js_ready_dict()
 	assert d == {'nodes': [], 'links': []}
-	
+
 	DG = nx.DiGraph()
 	DG.add_n(a)
-	d = DG.as_complete_dict()
+	d = DG.as_js_ready_dict()
 	assert d == {'nodes': [a.__dict__], 'links': []}
-	
+
 	DG = nx.DiGraph()
 	DG.add_n(a)
 	DG.add_n(b)
-	d = DG.as_complete_dict()
+	d = DG.as_js_ready_dict()
 	dl = d['links']
 	dn = d['nodes']
 	assert dl == []
-	assert (dn == [a.__dict__, b.__dict__] or dn == [b.__dict__, a.__dict__]) 
-	
+	assert (dn == [a.__dict__, b.__dict__] or dn == [b.__dict__, a.__dict__])
+
 	DG = nx.DiGraph()
 	DG.add_n(a)
 	DG.add_n(b)
 	DG.add_edge('a', 'b')
-	d = DG.as_complete_dict()
+	d = DG.as_js_ready_dict()
 	dl = d['links']
 	dn = d['nodes']
 	assert (dl == [{'source': 'a', 'target': 'b'}])
 	assert (dn == [a.__dict__, b.__dict__] or dn == [b.__dict__, a.__dict__])
-	
+
 	DG = nx.DiGraph()
 	DG.add_n(a)
 	DG.add_n(b)
 	DG.add_n(c)
 	DG.add_path(['a', 'b', 'c'])
-	d = DG.as_complete_dict()
+	d = DG.as_js_ready_dict()
 	dl = d['links']
 	dn = d['nodes']
 	assert (	#ordering is ambiguous so check each possibility
-		dl == [{'source': 'a', 'target': 'b'}, {'source': 'b', 'target': 'c'}] 
+		dl == [{'source': 'a', 'target': 'b'}, {'source': 'b', 'target': 'c'}]
 		or
 		dl == [{'source': 'b', 'target': 'c'}, {'source': 'a', 'target': 'b'}]
 		)
@@ -465,7 +466,7 @@ def test_unlearned_dependency_tree():
 	DG = nx.DiGraph()
 	DG.add_path(['l1', 't'])
 	assert DG.unlearned_dependency_tree('t', ['l1']) == {'t'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['l1', 'u1', 't']) #learned, unlearned, target
 	with pytest.raises(nx.NetworkXError):
@@ -484,17 +485,17 @@ def test_unlearned_dependency_tree():
 	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1', 'u2', 't'}
 	assert DG.unlearned_dependency_tree('t', []) == {'u1', 'u2', 'l1', 't'}
 	assert DG.unlearned_dependency_tree('t', ['l1', 'u1']) == {'t'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	DG.add_edge('u2', 't')
 	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1', 'u2', 't'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	DG.add_edge('u3', 'l1')
 	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1', 't'}
-	
+
 	DG = nx.DiGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	DG.add_path(['u4', 'l2', 't'])
@@ -514,50 +515,7 @@ def test_learn_count():
 	assert DG.learn_count('t', ['l1']) == 2
 	assert DG.learn_count('t', ['u1']) == 1
 
-def test_most_important():
-	#testing sort by node's own importance and id
-	DG = fill_sample_custom_nodes()
-	with pytest.raises(ValueError):
-		DG.most_important(1, [])
-	assert DG.most_important(1, ['a']) == ['a']
-	with pytest.raises(ValueError):
-		DG.most_important(-1, ['a'])
-	assert DG.most_important(1, ['a', 'b']) == ['b']
-	assert DG.most_important(2, ['a', 'b']) == ['b', 'a']
-	with pytest.raises(ValueError):
-		DG.most_important(4, ['a', 'b']) == ['b', 'a']
-	assert DG.most_important(2, ['a', 'b', 'c']) == ['c', 'b'] #sorts alphabetically, but remember we use reverse=True to sort by numerical importance so the alphabetical sort is reversed too
-	assert DG.most_important(1, ['a', 'b', 'c', 'd']) == ['d']
-	assert DG.most_important(2, ['a', 'b', 'c', 'd']) == ['d', 'c']
-	assert DG.most_important(3, ['a', 'b', 'c', 'd']) == ['d', 'c', 'b']
-	
-	#testing sort by weighted importance of neighbors when node's own importance is a tie
-	DG = fill_sample_custom_nodes()
-	DG.add_edges_from([
-			['a', 'c'], ['d', 'b']	#d is a more important neighbor than a, so b should be more important than c
-	])
-	node_list = ['b', 'c']
-	assert DG.most_important(2, node_list) == ['b', 'c']
-
-	DG = fill_sample_custom_nodes()
-	DG.add_edges_from([
-			['c', 'a'], ['b', 'd']
-	])
-	node_list = ['b', 'c']
-	assert DG.most_important(2, node_list) == ['b', 'c']
-
-	DG = fill_sample_custom_nodes()
-	DG.add_edges_from([
-			['c', 'a'], ['d', 'b']	#d is a more important neighbor than a but this time a is a descendant while d is only an ancestor; this time c should be more important than b
-	])
-	node_list = ['b', 'c']
-	assert DG.most_important(2, node_list) == ['c', 'b']
-
-	#remember that when the nodes being compared are neighbors with each other, we will get some shared common neighbors, although they have different distances to the two compared nodes
-	DG = fill_sample_custom_nodes()
-	DG.add_edge('b', 'c')
-	node_list = ['b', 'c']
-	assert DG.most_important(2, node_list) == ['b', 'c']	#descendants are given more weight
-	DG.add_edge('c', 'b')
-	assert DG.most_important(2, node_list) == ['c', 'b']	#now sorts (reverse) alphabetically because neighbor weights are symmetric
-
+def test_learn_counts():
+	DG = nx.DiGraph()
+	DG.add_path(['l1', 'u1', 't'])
+	assert DG.learn_counts(['t', 'u1'], []) == [3, 2]

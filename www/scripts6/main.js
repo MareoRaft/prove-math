@@ -164,9 +164,9 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	}
 	else if( ball.command === 'load-graph' ) {
 		let raw_graph = ball.new_graph
-		_.each(raw_graph.nodes, function(raw_node, index) { // raw_node here is just a temp copy it seems
-			raw_graph.nodes[index] = new Node(raw_node); // so NOW it is a REAL node, no longer raw //
-		})
+
+		raw_graph.nodes = _.map(raw_graph.nodes, raw_node => new Node(raw_node))
+
 		let ready_graph = raw_graph
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,

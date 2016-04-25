@@ -1,11 +1,11 @@
-################################## IMPORTS ####################################
+########################### IMPORTS #############################
 import networkx as nx
 from warnings import warn
 
 from lib import decorate
 from lib.networkx.classes import graph_extend
 
-################################## HELPERS ####################################
+########################### HELPERS #############################
 def create_s_pointing_to_source(DG, source):
 	if not DG.acceptable_iterable(source): # My goal is that "scalar" values will get stuffed into a list.  But lists and sets will not.
 		source = [source]
@@ -32,6 +32,8 @@ def shortest_path_helper(DG, source, target): # the REASON why this function is 
 		return None
 
 def find_dict_from_id(list_of_dics, ID):
+	""" WARNING.  If you are using this function, you are probably not doing things in the most efficient way.  This is only here just in case we need it.
+	"""
 	for dic in list_of_dics:
 		if dic['_id'] == ID:
 			return dic
@@ -55,28 +57,28 @@ class _DiGraphExtended (nx.DiGraph):
 	def successor(self, node): # should follow the same exact pattern as predecessor
 		return next(self.successors_iter(node), None)
 
-	def predecessors(self, nbunch):	#works for single or multiple input nodes
-		if not self.acceptable_iterable(nbunch):	#single input node
+	@decorate.record_elapsed_time
+	def predecessors(self, nbunch):	# works for single or multiple input nodes
+		if not self.acceptable_iterable(nbunch):	# single input node
 			pred = set(self.predecessors_iter(nbunch))
 		else:
 			pred = set()
-			if len(nbunch) == 0:	#empty iterable
+			if len(nbunch) == 0:	# empty iterable
 				raise ValueError('Argument {} is empty'.format(str(nbunch)))
-			else:	#multiple input nodes
-#possibly reimplement for better efficiency
+			else:	# multiple input nodes
 				for node in nbunch:
 					pred = pred.union(set(self.predecessors_iter(node)))
 		return pred - set(nbunch)
 
+	@decorate.record_elapsed_time
 	def successors(self, nbunch):	# should follow the same exact pattern as predecessors
-		if not self.acceptable_iterable(nbunch):	#single input node
+		if not self.acceptable_iterable(nbunch):
 			succ = set(self.successors_iter(nbunch))
 		else:
 			succ = set()
-			if len(nbunch) == 0:	#empty iterable
+			if len(nbunch) == 0:
 				raise ValueError('Argument {} is empty'.format(str(nbunch)))
-			else:	#multiple input nodes
-#possibly reimplement for better efficiency
+			else:
 				for node in nbunch:
 					succ = succ.union(set(self.successors_iter(node)))
 		return succ - set(nbunch)
@@ -91,30 +93,33 @@ class _DiGraphExtended (nx.DiGraph):
 		DG = self.copy()
 		return shortest_path_helper(DG, source, target)
 
+	@decorate.record_elapsed_time
 	def shortest_anydirectional_path(self, source=None, target=None):
 		DG = self.to_undirected() # if we need this, we should optimize it.
 		return shortest_path_helper(DG, source, target)
 
+	@decorate.record_elapsed_time
 	def ancestors(self, nbunch):
 		self.validate_input_nodes(nbunch)
-		if not self.acceptable_iterable(nbunch):	#single input node
+		if not self.acceptable_iterable(nbunch):	# single input node
 			return nx.ancestors(self, nbunch)
 		else:
-			if len(nbunch) == 1:	#still a single node
+			if len(nbunch) == 1:	# still a single node
 				return nx.ancestors(self, nbunch[0])
-			else:	#multiple input nodes
+			else:	# multiple input nodes
 				DG = self.copy()
 				t = DG.add_node_unique()
 				for node in nbunch:
 					DG.add_edge(node, t) # this automatically adds t to DG too
 				return nx.ancestors(DG, t) - set(nbunch) # returns a SET
 
+	@decorate.record_elapsed_time
 	def common_ancestors(self, nbunchA, nbunchB):
-#possibly reimplement for better efficiency
 		ancA = self.ancestors(nbunchA)
 		ancB = self.ancestors(nbunchB)
 		return set.intersection(ancA, ancB)
 
+	@decorate.record_elapsed_time
 	def descendants(self, nbunch):
 		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	#single input node
@@ -129,17 +134,23 @@ class _DiGraphExtended (nx.DiGraph):
 					DG.add_edge(s, node) # this automatically adds s to DG too
 				return nx.descendants(DG, s) - set(nbunch) # returns a SET
 
+	@decorate.record_elapsed_time
 	def common_descendants(self, nbunchA, nbunchB):
-#possibly reimplement for better efficiency
 		descA = self.descendants(nbunchA)
 		descB = self.descendants(nbunchB)
 		return set.intersection(descA, descB)
 
-	def relatives_to_distance_dict(self, nbunch, cutoff=None):	#name? relatives? relative?
-		if not self.acceptable_iterable(nbunch):	#single input node
+	@decorate.record_elapsed_time
+	def relatives_to_distance_dict(self, nbunch, cutoff=None):
+		"""
+		:param int cutoff: Maximum distance to search for.
+		:returns: A dictionary where the nodes (relatives) are keys and shortest path lengths (distance) are values.
+		:rtype: dict
+		"""
+		if not self.acceptable_iterable(nbunch):	# single input node
 			source = {nbunch:1}
 		else:
-			if len(nbunch) == 0:	#empty iterable
+			if len(nbunch) == 0:	# empty iterable
 				raise ValueError('Argument {} is empty'.format(str(nbunch)))
 			else:
 				source = {}
@@ -156,37 +167,40 @@ class _DiGraphExtended (nx.DiGraph):
 			if (cutoff is not None and cutoff <= level):  break
 			nextlevel = dict.fromkeys(self.anydirectional_neighbors(thislevel.keys()))
 			level += 1
-		return seen  # return all nodes as keys, shortest path lengths as values
+		return seen
 
+	@decorate.record_elapsed_time
 	def descendants_to_distance_dict(self, nbunch, cutoff=None):
-		if not self.acceptable_iterable(nbunch):	#single input node
+		""" Same as relatives_to_distance_dict, but only descendants of the nbunch. """
+		if not self.acceptable_iterable(nbunch):
 			source = {nbunch:1}
 		else:
-			if len(nbunch) == 0:	#empty iterable
+			if len(nbunch) == 0:
 				raise ValueError('Argument {} is empty'.format(str(nbunch)))
 			else:
 				source = {}
 				for node in nbunch:
 					source[node] = 1
-		seen = {}                  # level (number of hops) when seen in BFS
-		level = 0                  # the current level
-		nextlevel = source  # set of nodes to check at next level
+		seen = {}
+		level = 0
+		nextlevel = source
 		while nextlevel:
-			thislevel = nextlevel  # advance to next level
+			thislevel = nextlevel
 			for v in thislevel:
 				if v not in seen:
-					seen[v] = level # set the level of vertex v
+					seen[v] = level
 			if (cutoff is not None and cutoff <= level):  break
 			nextlevel = dict.fromkeys(self.successors(thislevel.keys()))
 			level += 1
-		return seen  # return all nodes as keys, shortest path lengths as values
+		return seen
 
-	def as_complete_dict(self):
-		graph = dict()
-		graph['nodes'] = [self.n(node_id).__dict__ for node_id in self.nodes()]
-		graph['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
-		return graph
+	def as_js_ready_dict(self):
+		d = dict()
+		d['nodes'] = [self.n(node_id).__dict__ for node_id in self.nodes()]
+		d['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
+		return d
 
+	@decorate.record_elapsed_time
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
 		if not self.acceptable_iterable(nodes): #without this, if nodes is just a string, the return statement will not work correctly
 			raise ValueError('Argument {} is not iterable'.format(str(nodes)))
@@ -197,8 +211,9 @@ class _DiGraphExtended (nx.DiGraph):
 				hanging_absolute_dominion.append(candidate)
 		return hanging_absolute_dominion + list(nodes)
 
+	@decorate.record_elapsed_time
 	def unlearned_dependency_tree(self, target, learned_nodes):
-		if not self.acceptable_iterable(learned_nodes): #without this, if learned_nodes was a string, then DG.remove_nodes_from(learned_nodes) would cause incorrect behavior
+		if not self.acceptable_iterable(learned_nodes):
 			raise ValueError('Argument {} is not iterable'.format(str(learned_nodes)))
 		DG = self.copy()
 		DG.remove_nodes_from(learned_nodes)
@@ -207,61 +222,12 @@ class _DiGraphExtended (nx.DiGraph):
 	def learn_count(self, target, learned_nodes):
 		return len(self.unlearned_dependency_tree(target, learned_nodes))
 
-	'''
 	def learn_counts(self, target_bunch, learned_nodes):
-		DG = self.copy()	#lets us bypass calling unlearned_dependency_tree repeatedly
+		if not self.acceptable_iterable(learned_nodes):
+			raise ValueError('Argument {} is not iterable'.format(str(learned_nodes)))
+		DG = self.copy()	# lets us bypass calling unlearned_dependency_tree repeatedly
 		DG.remove_nodes_from(learned_nodes)
-		return [len(DG.ancestors(target)) for target in target_bunch]
-	'''
-
-	def most_important_weight(self, node):
-		distance_from_node = 0
-		current_depth_nodes = {node}
-		already_counted_nodes = set() #needed in case there are any cycles
-		predecessors = {node}
-		successors = {node}	#kept separate because descendants are given more weight than ancestors in asessing a node's importance
-		ANCESTORS_DESCENDANTS_WEIGHT_FRACTION = 1/6
-		NEIGHBOR_NORMALIZATION_FRACTION = 1/10 #rescales the sum of all neighbor importances to match the scale of the original node's own importance, i.e. [1,10]
-		EXPECTED_NEIGHBORS_PER_NODE = 3
-
-		norm_importances = [self.n(node).importance] #normalized importance of the nodes in each depth level
-		SEARCH_DEPTH_LIMIT = 4
-		while distance_from_node < SEARCH_DEPTH_LIMIT:
-			distance_from_node += 1
-			if predecessors:
-				predecessors = self.predecessors(predecessors) - already_counted_nodes	#needed in case there are any cycles
-			else:
-				predecessors = set()
-			if successors:
-				successors = self.successors(successors) - already_counted_nodes
-			else:
-				successors = set()
-			if (len(successors) + len(predecessors)) == 0:	#no more neighbors, don't look any further
-				norm_importances.append(0)
-				break
-			predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).importance for n in predecessors]
-			successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).importance for n in successors]	#weighted toward descendants
-			current_depth_importances = predecessors_importances + successors_importances
-
-			current_depth_normalized_sum = sum(current_depth_importances) * NEIGHBOR_NORMALIZATION_FRACTION / (EXPECTED_NEIGHBORS_PER_NODE**distance_from_node)
-			#As distance increases there are exponentially more neighbors.  The 1/(EXPECTED_NEIGHBORS_PER_NODE**distance) term counteracts this.
-			norm_importances.append(current_depth_normalized_sum)
-
-			already_counted_nodes = already_counted_nodes.union(predecessors)
-			already_counted_nodes = already_counted_nodes.union(successors)
-		weighted_importances = [(importance/(index+1)**2) for index, importance in enumerate(norm_importances)]	#normalized importance of the nodes in each depth level, weighted against distance from node
-		neighbors_weight = sum(weighted_importances)
-		return neighbors_weight #(neighbors_weight, self.n(node).id)
-
-	def most_important(self, number, nbunch):
-		def most_important_sorter(node):
-			return (self.most_important_weight(node), self.n(node).id)
-		if number <= 0:
-			raise ValueError('Must give number > 0')
-		if len(nbunch) < number:
-			raise ValueError('Asked for more nodes than you provided')
-		nodes_by_importance = sorted(nbunch, key=most_important_sorter, reverse=True)
-		return nodes_by_importance[:number]
+		return [len(DG.ancestors(target).union({target})) for target in target_bunch]
 
 for key, value in _DiGraphExtended.__dict__.items():
 	try:

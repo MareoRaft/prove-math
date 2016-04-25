@@ -33,14 +33,14 @@ def transparent(decorator):
 	return new_decorator
 
 @transparent
-def record_elapsed_time(func, file_path='defpath'):
+def record_elapsed_time(func, file_path='elapsed_times.log'):
 	def new_func(*args, **kwargs):
 		start_time = time.time()
 		out = func(*args, **kwargs)
 		end_time = time.time()
 		elapsed_time = end_time - start_time
 		log_msg = 'Function: {}\tRuntime: {}'.format(func.__name__, str(elapsed_time))
-		logger = clogging.getLogger('elapsed_times', filename='elapsed_times.log')
+		logger = clogging.getLogger('elapsed_times', filename=file_path)
 		logger.info(log_msg)
 		return out
 	return new_func

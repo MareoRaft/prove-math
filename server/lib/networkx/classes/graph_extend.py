@@ -15,6 +15,9 @@ class _GraphExtended (nx.Graph):
 
 	ACCEPTABLE_ITERABLES = [list, set, type(dict().keys())]	#dict, nx.Graph later
 
+	def acceptable_iterable(self, nbunch):
+		return type(nbunch) in self.ACCEPTABLE_ITERABLES
+
 	def is_nonnull(self):
 		return bool(self.nodes())
 
@@ -31,15 +34,15 @@ class _GraphExtended (nx.Graph):
 				self.add_node(n)
 				break
 		return n
-	
+
 	def n(self, node_id):
 		return self.node[node_id]["custom_object"]
 
-	def add_n(self, node):
-		self.add_node(node.id, attr_dict={"custom_object": node})
-	
-	def acceptable_iterable(self, nbunch):
-		return type(nbunch) in self.ACCEPTABLE_ITERABLES
+	def add_n(self, nodebunch):
+		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
+			nodebunch = [nodebunch]
+		for node in nodebunch:
+			self.add_node(node.id, attr_dict={"custom_object": node})
 
 	def validate_input_nodes(self, nbunch):
 		#checks that all given inputs exist in the graph
