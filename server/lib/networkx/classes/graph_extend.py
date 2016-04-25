@@ -1,19 +1,20 @@
-################################## IMPORTS ####################################
+############################ IMPORTS #############################
 import time
 from warnings import warn
 
 import networkx as nx
 
-################################## HELPERS ####################################
+############################ HELPERS #############################
 def string_unique():
+	# this could be improved.  it should guarantee to create a unique string.
 	return str(time.time())
 
-#################################### MAIN #####################################
+############################## MAIN ##############################
 
 
 class _GraphExtended (nx.Graph):
 
-	ACCEPTABLE_ITERABLES = [list, set, type(dict().keys())]	#dict, nx.Graph later
+	ACCEPTABLE_ITERABLES = [list, set, type(dict().keys())]	# dict, nx.Graph later
 
 	def acceptable_iterable(self, nbunch):
 		return type(nbunch) in self.ACCEPTABLE_ITERABLES
@@ -34,15 +35,6 @@ class _GraphExtended (nx.Graph):
 				self.add_node(n)
 				break
 		return n
-
-	def n(self, node_id):
-		return self.node[node_id]["custom_object"]
-
-	def add_n(self, nodebunch):
-		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
-			nodebunch = [nodebunch]
-		for node in nodebunch:
-			self.add_node(node.id, attr_dict={"custom_object": node})
 
 	def validate_input_nodes(self, nbunch):
 		#checks that all given inputs exist in the graph

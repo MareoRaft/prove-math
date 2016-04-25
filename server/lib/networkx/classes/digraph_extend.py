@@ -2,7 +2,7 @@
 import networkx as nx
 from warnings import warn
 
-from lib import decorate
+from lib.decorate import record_elapsed_time
 from lib.networkx.classes import graph_extend
 
 ########################### HELPERS #############################
@@ -41,7 +41,7 @@ def find_dict_from_id(list_of_dics, ID):
 	warn('Could node find dict with ID "' + ID + '" within list_of_dics.')
 	return {"_id": ID, "empty": True, "_importance": 4, "_name": ""}
 
-#################################### MAIN #####################################
+############################## MAIN ##############################
 
 
 class _DiGraphExtended (nx.DiGraph):
@@ -57,7 +57,7 @@ class _DiGraphExtended (nx.DiGraph):
 	def successor(self, node): # should follow the same exact pattern as predecessor
 		return next(self.successors_iter(node), None)
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def predecessors(self, nbunch):	# works for single or multiple input nodes
 		if not self.acceptable_iterable(nbunch):	# single input node
 			pred = set(self.predecessors_iter(nbunch))
@@ -70,7 +70,7 @@ class _DiGraphExtended (nx.DiGraph):
 					pred = pred.union(set(self.predecessors_iter(node)))
 		return pred - set(nbunch)
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def successors(self, nbunch):	# should follow the same exact pattern as predecessors
 		if not self.acceptable_iterable(nbunch):
 			succ = set(self.successors_iter(nbunch))
@@ -93,12 +93,12 @@ class _DiGraphExtended (nx.DiGraph):
 		DG = self.copy()
 		return shortest_path_helper(DG, source, target)
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def shortest_anydirectional_path(self, source=None, target=None):
 		DG = self.to_undirected() # if we need this, we should optimize it.
 		return shortest_path_helper(DG, source, target)
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def ancestors(self, nbunch):
 		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	# single input node
@@ -113,13 +113,13 @@ class _DiGraphExtended (nx.DiGraph):
 					DG.add_edge(node, t) # this automatically adds t to DG too
 				return nx.ancestors(DG, t) - set(nbunch) # returns a SET
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def common_ancestors(self, nbunchA, nbunchB):
 		ancA = self.ancestors(nbunchA)
 		ancB = self.ancestors(nbunchB)
 		return set.intersection(ancA, ancB)
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def descendants(self, nbunch):
 		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	#single input node
@@ -134,13 +134,13 @@ class _DiGraphExtended (nx.DiGraph):
 					DG.add_edge(s, node) # this automatically adds s to DG too
 				return nx.descendants(DG, s) - set(nbunch) # returns a SET
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def common_descendants(self, nbunchA, nbunchB):
 		descA = self.descendants(nbunchA)
 		descB = self.descendants(nbunchB)
 		return set.intersection(descA, descB)
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def relatives_to_distance_dict(self, nbunch, cutoff=None):
 		"""
 		:param int cutoff: Maximum distance to search for.
@@ -169,7 +169,7 @@ class _DiGraphExtended (nx.DiGraph):
 			level += 1
 		return seen
 
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def descendants_to_distance_dict(self, nbunch, cutoff=None):
 		""" Same as relatives_to_distance_dict, but only descendants of the nbunch. """
 		if not self.acceptable_iterable(nbunch):
@@ -194,13 +194,7 @@ class _DiGraphExtended (nx.DiGraph):
 			level += 1
 		return seen
 
-	def as_js_ready_dict(self):
-		d = dict()
-		d['nodes'] = [self.n(node_id).__dict__ for node_id in self.nodes()]
-		d['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
-		return d
-
-	@decorate.record_elapsed_time
+	@record_elapsed_time
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
 		if not self.acceptable_iterable(nodes): #without this, if nodes is just a string, the return statement will not work correctly
 			raise ValueError('Argument {} is not iterable'.format(str(nodes)))
@@ -210,24 +204,6 @@ class _DiGraphExtended (nx.DiGraph):
 			if set(self.predecessors(candidate)) <= set(nodes):
 				hanging_absolute_dominion.append(candidate)
 		return hanging_absolute_dominion + list(nodes)
-
-	@decorate.record_elapsed_time
-	def unlearned_dependency_tree(self, target, learned_nodes):
-		if not self.acceptable_iterable(learned_nodes):
-			raise ValueError('Argument {} is not iterable'.format(str(learned_nodes)))
-		DG = self.copy()
-		DG.remove_nodes_from(learned_nodes)
-		return nx.ancestors(DG, target).union({target})
-
-	def learn_count(self, target, learned_nodes):
-		return len(self.unlearned_dependency_tree(target, learned_nodes))
-
-	def learn_counts(self, target_bunch, learned_nodes):
-		if not self.acceptable_iterable(learned_nodes):
-			raise ValueError('Argument {} is not iterable'.format(str(learned_nodes)))
-		DG = self.copy()	# lets us bypass calling unlearned_dependency_tree repeatedly
-		DG.remove_nodes_from(learned_nodes)
-		return [len(DG.ancestors(target).union({target})) for target in target_bunch]
 
 for key, value in _DiGraphExtended.__dict__.items():
 	try:
