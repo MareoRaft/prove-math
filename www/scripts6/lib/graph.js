@@ -65,13 +65,17 @@ function _addNodesHereAndJSNetworkX(nodes) {
 	// add ids to JSnetworkx too
 }
 
-function _removeNodes(nodes) {
+function removeNodes(nodes) {
 	_.each(nodes, function(node) {
 		if( !(node.id in graph.nodes) ) die("You are trying to remove a node that isn't in the graph.nodes hash.")
 	})
 	graphAnimation.removeNodes(nodes)
 	// remove nodes (using node.id) from JSNetworkX (and any incident links will automatically go away)
 	_.each(nodes, function(node){ delete graph.nodes[node.id] })
+}
+
+function removeNode(node) {
+	removeNodes([node])
 }
 
 function _addLinksHereAndJSNetworkX(links) {
@@ -113,6 +117,8 @@ return {
 	init: init,
 	addNode: addNode,
 	addNodesAndLinks: addNodesAndLinks,
+	removeNode: removeNode,
+	removeNodes: removeNodes,
 	removeLinks: removeLinks,
 	nodes: graph.nodes,
 	nodeIdsList: nodeIdsList,

@@ -49,6 +49,7 @@ class Mongo:
         self._collection = new_collection
 
     def insert_one(self, dic):
+        # complains if what you try to insert already exists???
         self.address[self.database][self.collection].insert_one(dic)
 
     def insert_many(self, list_of_dicts):
@@ -61,10 +62,17 @@ class Mongo:
     def upsert(self, query, update):
         self.address[self.database][self.collection].update(query, update, upsert=True)
 
+    def find_one(self, dict_fields=None, projection=None):
+        return self.address[self.database][self.collection].find_one(dict_fields, projection)
+
     def find(self, dict_fields=None, projection=None):
         return self.address[self.database][self.collection].find(dict_fields, projection)
+
+    def delete_one(self, dict_fields):
+        results = self.address[self.database][self.collection].delete_one(dict_fields)
 
     def delete_many(self, dict_fields):
         # This will delete from all fields which match the parameter!!
         results = self.address[self.database][self.collection].delete_many(dict_fields)
         print("Number deleted: " + str(results.deleted_count))
+

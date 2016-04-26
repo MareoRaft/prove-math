@@ -11,8 +11,10 @@ file_name = re.sub(r'\.pre-json$', '', file_name)
 file_path = 'data/' + file_name + '.pre-json'
 subprocess.check_output(['lib/pre-json_to_json.pl', file_path])
 
-new_data_dictionary = json_import('data/' + file_name + '.json')
-
+json_file_path = 'data/' + file_name + '.json'
+new_data_dictionary = json_import(json_file_path)
+# delete .json file
+subprocess.check_output(['rm', json_file_path])
 
 collection = input('Which collection should we store the nodes in? (nodes): ')
 if collection == '':

@@ -133,6 +133,15 @@ function updateNodeTemplateLearnedState(){
 		$('#toggle-learn-state').html('<img src="images/light-off.png">not learned')
 	}
 }
+$('#discard-node').click(function(){
+	// remove node from our graph
+	graph.removeNode(current_node)
+	graphAnimation.update() // we should NOT need this
+	// change view back to the graph
+	fromBlindsToGraphAnimation()
+	// tell server (maybe server wants to avoid sending this node over again) to discard-node too
+	ws.jsend({command: 'discard-node', node_id: current_node.id})
+})
 
 let host = $('body').attr('data-host')
 let ws = ('WebSocket' in window)? new WebSocket("ws://"+host+"/websocket"): undefined;

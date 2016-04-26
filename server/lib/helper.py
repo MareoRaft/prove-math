@@ -1,6 +1,13 @@
+import random
 import json
 from itertools import chain
 from collections import OrderedDict
+
+def random_string(length):
+	word = ''
+	for i in range(length):
+		word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789')
+	return word
 
 def json_import(file_path):
 	print("Importing from: " + str(file_path))

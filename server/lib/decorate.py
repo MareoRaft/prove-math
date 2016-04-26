@@ -3,8 +3,10 @@
 # see https://wiki.python.org/moin/PythonDecoratorLibrary for some useful decorators!!
 
 import time
+import logging
 
 from lib import clogging
+
 
 def transparent(decorator):
 	""" Decorators have a few unwanted side effects.  This decorator, when used on a decorator, reverses those side-effects!
@@ -40,7 +42,7 @@ def record_elapsed_time(func, file_path='elapsed_times.log'):
 		end_time = time.time()
 		elapsed_time = end_time - start_time
 		log_msg = 'Function: {}\tRuntime: {}'.format(func.__name__, str(elapsed_time))
-		logger = clogging.getLogger('elapsed_times', filename=file_path)
+		logger = clogging.getLogger('elapsed_times', filename=file_path, stdout_level=logging.WARNING)
 		logger.info(log_msg)
 		return out
 	return new_func
@@ -60,6 +62,32 @@ def memoize(obj):
 			cache[key] = obj(*args, **kwargs)
 		return cache[key]
 	return memoizer
+
+@transparent
+def read_only(func):
+	""" Allows a property to only be set ONCE.  After that, it cannot be set again.  Usage:
+
+	class BlaBla:
+		def __init__(self, value):
+			self.v = value
+		@property
+		def v(self):
+			return self._v
+		@v.setter
+		@read_only
+		def v(self, new_value):
+			self._v = new_value
+	"""
+	def new_func(self, *args, **kwargs):
+		secret_attr_name = func.__name__ + "_read_only_property_set"
+		if hasattr(self, secret_attr_name):
+			raise Exception('This property is read-only.  It can only be set ONCE, and has already been set.')
+		else:
+			out = func(self, *args, **kwargs)
+			setattr(self, secret_attr_name, "anything")
+			return out
+	return new_func
+
 
 # other ideas: type enforcement for inputs/outputs
 # and so many more!

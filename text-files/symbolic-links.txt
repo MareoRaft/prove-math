@@ -1,0 +1,3 @@
+Symbolic Links are SOMETIMES possible on Windows:
+https://github.com/git-for-windows/git/wiki/Symbolic-Links
+

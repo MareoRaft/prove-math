@@ -18,16 +18,14 @@ from tornado.web import Finish
 
 from lib import clogging
 log = clogging.getLogger('main', filename='main.log') # this must come BEFORE imports that use getLogger('main')
-from lib.helper import strip_underscores
+from lib.helper import strip_underscores, random_string
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 from lib.user import User
-import networkx as nx # should be removed
-from lib.networkx.classes import dag # should be removed
+from lib.networkx.classes.pmdag import PMDAG
 from lib import user
 from lib import auth
 from lib import node
-import random
 import inspect
 import traceback
 # this and relevant code should eventually be migrated into auth module
@@ -36,12 +34,6 @@ import xml.etree.ElementTree as ET
 ################################# HELPERS #####################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
-
-def random_string(length):
-	word = ''
-	for i in range(length):
-		word += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789')
-	return word
 
 ################################## MAIN #######################################
 
@@ -372,7 +364,7 @@ def update_our_DAG():
 
 	# 2. create a networkx graph with the info...
 	global our_DAG
-	our_DAG = nx.DAG()
+	our_DAG = PMDAG()
 	for node_dict in all_node_dicts:
 		try:
 			node = create_appropriate_node(strip_underscores(node_dict))

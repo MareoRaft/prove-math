@@ -214,12 +214,20 @@ function addNodesAndLinks({ nodes=[], links=[] }) {
 
 function removeNodes(nodes) {
 	_.each(nodes, function(node) {
-		_.each(gA.nodes, function(gA_node, index) {
-			if( node.id === gA_node.id ) remove(gA.nodes, index) // but if we have to remove more than one, i'm afraid the index will get off
-		})
+		removeNodeHelper(node)
 	})
 	update()
 	_start()
+}
+
+function removeNodeHelper(node) {
+	_.each(gA.nodes, function(gA_node, index) {
+		if( node.id === gA_node.id ){
+			remove(gA.nodes, index)
+			return
+		}
+		// but if we have to remove more than one, i'm afraid the index will get off.  so this is why RETURN we do!
+	})
 }
 
 function removeLinks(links) {
