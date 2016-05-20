@@ -6,7 +6,7 @@
  	<link rel="icon" type="image/png" sizes="256x256" href="favicon/256.png">
     <link rel='stylesheet' href='stylesheets/main.css' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
-    <script src='scripts/lib/require.js?' data-main='scripts/config'></script>
+    <script src='scripts/lib/require-min.js?' data-main='scripts/config'></script>
 </head>
 <body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}" data-subjects="{{ subjects }}">
 <section id='login'>
@@ -51,8 +51,13 @@
 </section>
 <section id='overlay'>
 	<div id='search-wrapper'>
-		<div id='search-image-wrapper'><img src='images/search.png'></div>
-		<input id="search-box" type="text" placeholder="node search">
+		<div id='search-query-wrapper'>
+			<div id='search-image-wrapper'><img src='images/search.png'></div>
+			<input id="search-box" type="text" placeholder="node search">
+		</div>
+		<div id='search-results-wrapper'>
+			<!-- here we can TRY to populate the search results -->
+		</div>
 	</div>
 	<div id='login-circle'>login</div> <!-- overlaps avatar.  never should both appear at the same time -->
 	<div id='logout-circle'>logout</div> <!-- placed BEFORE avatar so that it will appear UNDER the avatar -->
@@ -60,6 +65,7 @@
 	<div id='get-starting-nodes'>start<br />subject</div>
 	<div id='get-goal-suggestion'>start<br />goal</div>
 	<div id='get-pregoal-suggestion'>start<br />pregoal</div>
+	<div id='push'>push<br />me:)</div>
 	<img id="add-node" src="images/add.svg">
 </section>
 <!-- svg should appear here (populated by JS) -->
