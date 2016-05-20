@@ -246,13 +246,21 @@ class SocketHandler (WebSocketHandler):
 					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
 
-		'''elif ball['command'] == 'suggest-goal':
+		'''
+		elif ball['command'] == 'suggest-goal':
 			axioms = our_DAG.axioms() # need to write
 			learned_node_ids = self.user.dict['learned_node_ids']
 			goal_id = our_DAG.choose_goal(axioms, learned_node_ids)
-			self.send_graph(ball, goal=goal_id)
 			self.jsend({
-					'command': 'set-goal'
+					'command': 'suggest-goal'
+					'goal': goal_id
+			})
+
+		elif ball['command'] == 'set-goal':
+			#goal_id = ball['goal'] or something like that
+			#update user "goal" preference to goal_id
+			self.jsend({
+					'command': 'highlight-goal'
 					'goal': goal_id
 			})
 
@@ -263,15 +271,23 @@ class SocketHandler (WebSocketHandler):
 			pregoal_id = our_Dag.choose_learnable_pregoal(axioms, learned_node_ids, goal_id)
 			self.send_graph(ball, goal=goal_id)
 			self.jsend({
-					'command': 'set-pregoal'
+					'command': 'start-pregoal'
 					'pregoal': pregoal_id
-			})'''
+			})
+		
+		elif ball['command'] == 'set-pregoal':
+			#pregoal_id = ball['pregoal'] or something like that
+			self.jsend({
+					'command': 'highlight-pregoal'
+					'goal': pregoal_id
+			})
+		'''
 
 	def request_nodes(self, node_ids, ball):
 		for node_id in node_ids:
 			if node_id not in our_DAG.nodes():
 				raise ValueError('The node_id "'+node_id+'" does not exist.')
-		ids = set(self.user.dict['learned_node_ids']).union(set(ball['client_node_ids'])).union(set(node_ids))
+		ids = set(self.ids()).union(set(node_ids))
 		H = our_DAG.subgraph(list(ids))
 		dict_graph = H.as_js_ready_dict()
 		self.jsend({
@@ -293,35 +309,12 @@ class SocketHandler (WebSocketHandler):
 	def send_graph(self, ball, subject=None, goal=None):
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
-		ids = self.ids(ball)
-		if ids:
-			learned_ids = self.user.dict['learned_node_ids']
-			ids_to_send = our_DAG.absolute_dominion(learned_ids)
-			ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest(subject, goal)))
-			if self.user.dict['prefs']['always_send_learnable_pregoal']:
-				ids_to_send = set(ids_to_send).union(set(our_DAG.choose_learnable_pregoal(self.user.dict['learned_node_ids'])))
-			H = our_DAG.subgraph(list(ids_to_send))
-		else:
-			# they've learned nothing so far.  send them a starting point
-			H = our_DAG.subgraph(self.starting_nodes(subject))
-
-		dict_graph = H.as_js_ready_dict()
+		subgraph_to_send = our_DAG.subgraph_to_send(self.user)
+		dict_graph = subgraph_to_send.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
-
-	def other_nodes_of_interest(self, subject=None, goal=None):
-		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
-		nodes = []
-		if subject:
-			nodes = nodes + self.starting_nodes(subject)
-
-#		if goal:
-#			nodes = nodes + our_DAG.unlearned_dependency_tree(goal, self.user.dict['learned_node_ids'])
-		return nodes
-		# for later, add the following too:
-#		return [our_DAG.short_sighted_depth_first_unlearned_source(starting_nodes, learned_ids)]
 
 	def starting_nodes(self, subject):
 		return starting_nodes[subject]

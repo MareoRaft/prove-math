@@ -103,6 +103,9 @@ class PMDAG (nx.DAG):
 		self.validate_input_nodes(learned_nodes)
 		depth_to_successors_dict = self.depth_to_successors_dict(axioms, learned_nodes)
 		deepest_successors = list(depth_to_successors_dict.items())[0][1]
+		if not deepest_successors:
+			# no more successors.  the user has finished the subject and needs to choose a new one
+			return None
 
 		# Now sort the deepest successors by learn count, then by importance, and finally name to break a tie.
 		# If we need better efficiency, use DiGraph.learn_counts(targets, learned_nodes)
@@ -127,6 +130,62 @@ class PMDAG (nx.DAG):
 			goal = self.choose_goal(axioms, learned_nodes)
 		learnable_pregoals = self.learnable_pregoals(goal, learned_nodes)
 		return self.most_important(learnable_pregoals, number)
+
+	# temporary solution -- will want to move to a separate configuration file
+	starting_nodes = {
+		'graph theory': ['set', 'multiset', 'vertex'],
+		'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
+		'category theory': ['equatable', 'type'],
+	}
+
+	def subgraph_to_send(self, user):
+		if not user:
+			raise ValueError("Did not give a user!")
+		
+		learned_ids = user.dict['learned_node_ids']
+		ids_to_send = set()
+		pref = user.dict['prefs']
+		
+		if not learned_ids:
+			# if the user is just starting and has not learned anything:
+			if not pref['subject']:
+				# the User class initialization should guarantee we never hit this line:
+				raise ValueError("User is new but has not chosen a subject!")
+			ids_to_send.update(starting_nodes[pref['subject']])
+		else:
+			# nodes to send no matter what:
+			ids_to_send.update(learned_ids)
+			
+			# learnable nodes to send based on preference:
+			if pref['always_send_absolute_dominion']:
+				ids_to_send.update(self.absolute_dominion(learned)ids)
+			
+			# nodes related to the user's goal:
+			
+			#nodes related to pregoals:
+			
+		return self.subgraph(ids_to_send)
+		
+		
+'''		if self.user.dict['prefs']['always_send_learnable_pregoal']:
+			ids_to_send = set(ids_to_send).union(set(our_DAG.choose_learnable_pregoal(self.user.dict['learned_node_ids'])))
+		H = our_DAG.subgraph(list(ids_to_send))
+#		else:
+#			# they've learned nothing so far.  send them a starting point
+#			H = our_DAG.subgraph(self.starting_nodes(subject))
+#
+	def other_nodes_of_interest(self, subject=None, goal=None):
+		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
+		nodes = []
+		if subject:
+			nodes = nodes + self.starting_nodes(subject)
+
+#		if goal:
+#			nodes = nodes + our_DAG.unlearned_dependency_tree(goal, self.user.dict['learned_node_ids'])
+		return nodes
+		# for later, add the following too:
+#		return [our_DAG.short_sighted_depth_first_unlearned_source(starting_nodes, learned_ids)]
+'''
 
 
 
