@@ -27,7 +27,7 @@ class PMDAG (nx.DAG):
 	@record_elapsed_time
 	def unlearned_dependency_tree(self, target, learned_nodes):
 		if not self.acceptable_iterable(learned_nodes):
-			raise ValueError('Argument {} is not iterable'.format(str(learned_nodes)))
+			raise ValueError('Argument {} is not iterable'.format(learned_nodes))
 		DG = self.copy()
 		DG.remove_nodes_from(learned_nodes)
 		return nx.ancestors(DG, target).union({target})
@@ -37,7 +37,7 @@ class PMDAG (nx.DAG):
 
 	def learn_counts(self, target_bunch, learned_nodes):
 		if not self.acceptable_iterable(learned_nodes):
-			raise ValueError('Argument {} is not iterable'.format(str(learned_nodes)))
+			raise ValueError('Argument {} is not iterable'.format(learned_nodes))
 		DG = self.copy()	# lets us bypass calling unlearned_dependency_tree repeatedly
 		DG.remove_nodes_from(learned_nodes)
 		return [len(DG.ancestors(target).union({target})) for target in target_bunch]

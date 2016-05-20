@@ -94,7 +94,7 @@ class User: # there's really no point in storing users ephemerally, other than t
 
 	def set_prefs(self, pref_dict):
 		for key, value in pref_dict.items():
-			log.debug('setting pref --> key: ' + key + ', value: ' + value)
+			log.debug('setting pref --> key: {}, value: {}'.format(key, value))
 			temp_dict = dict()
 			temp_dict[key] = value
 			self.set_pref(temp_dict)
@@ -114,6 +114,6 @@ class User: # there's really no point in storing users ephemerally, other than t
 		proposed_id = 1
 		while proposed_id in local_ids: proposed_id += 1
 		if proposed_id > 100:
-			log.warn('generated unique local id is '+ proposed_id + '.  This is a high number.  Are local accounts getting deleted properly?')
+			log.warn('generated unique local id is {}.  This is a high number.  Are local accounts getting deleted properly?'.format(proposed_id))
 		return proposed_id
 

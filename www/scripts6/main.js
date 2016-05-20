@@ -181,6 +181,12 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,
 		})
+
+		// // TEMP TEST
+		// if (raw_graph.nodes.length > 0) {
+		// 	let node = raw_graph.nodes[0]
+		// 	display_search_results([node])
+		// }
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -191,9 +197,26 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	else if( ball.command === 'display-error' ) {
 		alert('error: '+ball.message)
 	}
-        else if(ball.command === 'search-results'){
-	    alert('Search results: '+JSON.stringify(ball.results))
-	    document.getElementById("search_results_return").innerHTML = JSON.stringify(ball.results);
+		else if(ball.command === 'search-results'){
+		alert('Search results: '+JSON.stringify(ball.results))
+		document.getElementById("search_results_return").innerHTML = JSON.stringify(ball.results);
+	}
+	else if (ball.command === "suggest-goal") {
+		node = new Node(ball.node_dict)
+		if (user.prefs.always_accept_suggested_goal) {
+			choice = true
+		}
+		else{
+			alert("The goal " + node.name + " has been suggested.  Details: " + JSON.stringify(ball.node_dict))
+			choice = window.prompt("Would you like to accept the goal?  Type 'yes' to accept.")
+			choice = (choice === 'yes')
+		}
+		if (choice) {
+			ws.jsend({ command: "set-goal", node_id: node.id })
+		}
+	}
+	else if (ball.command === "highlight-goal") {
+		alert("Your new goal is " + goalname + "!!!!")
 	}
 	else die('Unrecognized command '+ball.command+'.')
 }
@@ -268,6 +291,44 @@ function logout(){
 $('#search-box').keypress(function(event) { if(event.which === 13 /* Enter */) {
 	ws.jsend({ command: 'search', search_term: $('#search-box').val() })
 }})
+$('#search-wrapper').click(expand_search_wrapper)
+$('#search-box').focus(expand_search_wrapper)
+$(document).click(function(event) { // click anywhere BUT the #search-wrapper
+	if (!$(event.target).closest('#search-wrapper').length && !$(event.target).is('#search-wrapper')) {
+		collapse_search_wrapper()
+	}
+})
+
+function display_search_results(nodes) {
+	_.each(nodes, function(node) {
+		let box_html = 	"<div class='preview-box'>"
+		+	"<div class='preview-top-bar'>"
+		+		"<div class='preview-circle-wrapper'>"
+		+			"<div><!--the circle itself--></div>"
+		+		"</div>"
+		+		"<div class='preview-name'>"
+		+			"<!--node name goes here-->The Inclusion-Exclusion Principal"
+		+		"</div>"
+		+	"</div>"
+		+	"<div class='preview-description'>"
+		+		"<!--node description goes here-->Given $n\in\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\left|\cup_{i=1}^{n} A_i\right| = \sum_{S\subset [n]} (-1)^{|S|+1} \left|\cap_{j\in S} A_j\right|$."
+		+	"</div>"
+		+"</div>"
+
+		$('#search-results-wrapper').append(box_html)
+		$('#search-results-wrapper').append(box_html)
+	})
+	expand_search_wrapper()
+}
+
+function expand_search_wrapper() {
+	$('#search-wrapper').width('800px')
+	// $('#search-wrapper').height('auto')
+}
+function collapse_search_wrapper() {
+	$('#search-wrapper').width('300px')
+	// $('#search-wrapper').height('50px')
+}
 
 
 //////////////////////////// ACTION STUFF ////////////////////////////
@@ -294,6 +355,7 @@ $('#get-goal-suggestion').click(function(){
 $('#get-pregoal-suggestion').click(function(){
 	ws.jsend({command: 'get-pregoal-suggestion (or whatever Greg writes in the main.py file)'})
 })
+$('#push').click(expand_search_wrapper)
 
 $('#add-node').click(function(){
 	graph.addNode(new Node())

@@ -17,7 +17,10 @@ class _GraphExtended (nx.Graph):
 	ACCEPTABLE_ITERABLES = [list, set, type(dict().keys())]	# dict, nx.Graph later
 
 	def acceptable_iterable(self, nbunch):
-		return type(nbunch) in self.ACCEPTABLE_ITERABLES
+		for it_type in self.ACCEPTABLE_ITERABLES:
+			if isinstance(nbunch, it_type):
+				return True
+		return False
 
 	def is_nonnull(self):
 		return bool(self.nodes())
@@ -41,10 +44,10 @@ class _GraphExtended (nx.Graph):
 		if not self.acceptable_iterable(nbunch):
 			nbunch = [nbunch]
 		if len(nbunch) == 0:	#empty iterable
-			raise ValueError('Argument {} is empty'.format(str(nbunch)))
+			raise ValueError('Argument {} is empty'.format(nbunch))
 		elif len(nbunch) == 1:	#single node
 			if not self.has_node(nbunch[0]):
-				raise nx.NetworkXError('The input node {} is not in the graph'.format(str(nbunch[0])))
+				raise nx.NetworkXError('The input node {} is not in the graph'.format(nbunch[0]))
 			return True
 		else:	#multiple nodes
 			for node in nbunch:
