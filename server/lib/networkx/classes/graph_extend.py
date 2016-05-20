@@ -17,7 +17,10 @@ class _GraphExtended (nx.Graph):
 	ACCEPTABLE_ITERABLES = [list, set, type(dict().keys())]	# dict, nx.Graph later
 
 	def acceptable_iterable(self, nbunch):
-		return type(nbunch) in self.ACCEPTABLE_ITERABLES
+		for it_type in self.ACCEPTABLE_ITERABLES:
+			if isinstance(nbunch, it_type):
+				return True
+		return False
 
 	def is_nonnull(self):
 		return bool(self.nodes())
