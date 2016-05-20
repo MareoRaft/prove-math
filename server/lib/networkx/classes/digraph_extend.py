@@ -64,7 +64,7 @@ class _DiGraphExtended (nx.DiGraph):
 		else:
 			pred = set()
 			if len(nbunch) == 0:	# empty iterable
-				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+				raise ValueError('Argument {} is empty'.format(nbunch))
 			else:	# multiple input nodes
 				for node in nbunch:
 					pred = pred.union(set(self.predecessors_iter(node)))
@@ -77,7 +77,7 @@ class _DiGraphExtended (nx.DiGraph):
 		else:
 			succ = set()
 			if len(nbunch) == 0:
-				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+				raise ValueError('Argument {} is empty'.format(nbunch))
 			else:
 				for node in nbunch:
 					succ = succ.union(set(self.successors_iter(node)))
@@ -151,7 +151,7 @@ class _DiGraphExtended (nx.DiGraph):
 			source = {nbunch:1}
 		else:
 			if len(nbunch) == 0:	# empty iterable
-				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+				raise ValueError('Argument {} is empty'.format(nbunch))
 			else:
 				source = {}
 				for node in nbunch:
@@ -176,7 +176,7 @@ class _DiGraphExtended (nx.DiGraph):
 			source = {nbunch:1}
 		else:
 			if len(nbunch) == 0:
-				raise ValueError('Argument {} is empty'.format(str(nbunch)))
+				raise ValueError('Argument {} is empty'.format(nbunch))
 			else:
 				source = {}
 				for node in nbunch:
@@ -197,7 +197,7 @@ class _DiGraphExtended (nx.DiGraph):
 	@record_elapsed_time
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
 		if not self.acceptable_iterable(nodes): #without this, if nodes is just a string, the return statement will not work correctly
-			raise ValueError('Argument {} is not iterable'.format(str(nodes)))
+			raise ValueError('Argument {} is not iterable'.format(nodes))
 		successors = self.successors(nodes)
 		hanging_absolute_dominion = []
 		for candidate in successors:
