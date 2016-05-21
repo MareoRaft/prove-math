@@ -161,7 +161,7 @@ class SocketHandler (WebSocketHandler):
 			self.user = User(ball['identifier'])
 			self.jsend({'command': 'update-user'})
 			if self.ids(ball):
-				self.send_graph(ball)
+				self.send_graph()
 			else: # they've learned nothing yet
 				self.jsend({
 					'command': 'prompt-starting-nodes',
@@ -170,7 +170,7 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'get-starting-nodes':
 			subject = ball['subject']
 			self.user.set_pref({'subject': subject})
-			self.send_graph(ball, subject)
+			self.send_graph()
 
 		elif ball['command'] == 'get-curriculum':
 			goal = ball['goal']
@@ -178,7 +178,7 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'learn-node':
 			self.user.learn_node(ball['node_id'])
 			if ball['mode'] == 'learn':
-				self.send_graph(ball)
+				self.send_graph()
 			else:
 				raise Exception('mode is not learn')
 
@@ -246,44 +246,60 @@ class SocketHandler (WebSocketHandler):
 					'command': 'search-results',
 					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
-
-		'''
+		
 		elif ball['command'] == 'suggest-goal':
-			axioms = our_DAG.axioms() # need to write
+			subject = self.user.dict['prefs']['subject']
+			axioms = starting_nodes[subject]
 			learned_node_ids = self.user.dict['learned_node_ids']
 			goal_id = our_DAG.choose_goal(axioms, learned_node_ids)
-			self.jsend({
-					'command': 'suggest-goal'
-					'goal': goal_id
-			})
-
-		elif ball['command'] == 'set-goal':
-			#goal_id = ball['goal'] or something like that
-			#update user "goal" preference to goal_id
-			self.jsend({
-					'command': 'highlight-goal'
-					'goal': goal_id
-			})
-
-		elif ball['command'] == 'suggest-pregoal':
-			axioms = our_DAG.axioms() # need to write
-			learned_node_ids = self.user.dict['learned_node_ids']
-			goal_id = ball['goal']
-			pregoal_id = our_Dag.choose_learnable_pregoal(axioms, learned_node_ids, goal_id)
-			self.send_graph(ball, goal=goal_id)
-			self.jsend({
-					'command': 'start-pregoal'
-					'pregoal': pregoal_id
-			})
+			autoset_goal = self.user.dict['prefs']['always_accept_suggested_goal']
+			if autoset_goal:
+				self.set_goal(ball)
+			else:
+				self.jsend({
+						'command': 'comfirm-goal',
+						'goal-id': goal_id
+				})
 		
-		elif ball['command'] == 'set-pregoal':
-			#pregoal_id = ball['pregoal'] or something like that
+		elif ball['command'] == 'set-goal':
+			self.set_goal(ball)
+		
+		elif ball['command'] == 'suggest-pregoal':
+			subject = self.user.dict['prefs']['subject']
+			axioms = starting_nodes[subject]
+			learned_node_ids = self.user.dict['learned_node_ids']
+			goal_id = self.user.dict['prefs']['goal_node_id']
+			pregoal_id = our_Dag.choose_learnable_pregoal(axioms, learned_node_ids, goal_id)
+			#if not autoconfirm, jsend({'command': 'confirm-pregoal'}) # else set_pregoal
+			self.user.set_pref({'pregoal_node_id': pregoal_id})
+			self.send_graph()
 			self.jsend({
-					'command': 'highlight-pregoal'
-					'goal': pregoal_id
+					'command': 'highlight-pregoal',
+					'pregoal-id': pregoal_id
 			})
 		'''
-
+		# or do we want the user to confirm pregoals as well?
+		elif ball['command'] == 'set-pregoal':
+			pregoal_id = ball['pregoal-id']
+			self.user.set_pref({'pregoal_node_id': pregoal_id})
+			self.jsend({
+					'command': 'highlight-pregoal'
+					'pregoal-id': pregoal_id
+			})
+		'''
+	
+	def set_goal(self, ball):
+		goal_id = ball['goal-id']
+		self.user.set_pref({'goal_node_id': goal_id})
+		pref = self.user.dict['prefs']
+		show_goal = pref['always_send_goal'] or pref['always_send_unlearned_dependency_tree_of_goal']
+		if show_goal:
+			self.send_graph()
+		self.jsend({
+				'command': 'highlight-goal',
+				'goal-id': goal_id
+		})
+	
 	def request_nodes(self, node_ids, ball):
 		for node_id in node_ids:
 			if node_id not in our_DAG.nodes():
@@ -307,7 +323,8 @@ class SocketHandler (WebSocketHandler):
 		learned_ids = self.user.dict['learned_node_ids']
 		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
-	def send_graph(self, ball, subject=None, goal=None):
+	def send_graph(self):
+		subject = self.user.dict['prefs']['subject']
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
 		subgraph_to_send = our_DAG.subgraph(our_DAG.nodes_to_send(self.user))

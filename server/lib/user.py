@@ -74,17 +74,25 @@ class User: # there's really no point in storing users ephemerally, other than t
 				'enforce_learn_order': True,
 				'subject': 'graph theory',
 				'goal_node_id': None,
+				'requested_pregoal_node_id': None,
 				'always_send_absolute_dominion': True,
 				'always_send_learnable_pregoals': True,
 				'send_learnable_pregoal_number': 1,
 				'always_send_goal': False,
 				'always_send_unlearned_dependency_tree_of_goal': False,
+
 				'always_accept_suggested_goal': False,
 			},
 		}
 
 	def learn_node(self, node_id):
 		self.USERS.update(self._mongo_identifier_dict(), {'$addToSet': {'learned_node_ids': node_id}}, False)
+		# if newly learned node is the current goal, update goal
+		if self.dict['prefs']['goal_node_id'] == node_id:
+			self.set_pref({'goal_node_id': None})
+		# same for requested pregoal
+		if self.dict['prefs']['requested_pregoal_node_id'] == node_id:
+			self.set_pref({'requested_pregoal_node_id': None})
 		# send info down to all other clients (if user is logged in on multiple computers)
 		# tornado.websockethandler.send_to_multiple_accounts({ command: 'learn-node', node_id: node_id })
 

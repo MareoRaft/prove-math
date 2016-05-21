@@ -168,6 +168,9 @@ class PMDAG (nx.DAG):
 			pregoals = self.choose_learnable_pregoals(axioms, learned_ids, pref['send_learnable_pregoal_number'], goal_id)
 			ids_to_send.update(pregoals)
 		
+		if pref['requested_pregoal_node_id']:
+			ids_to_send.update([pref['requested_pregoal_node_id']])
+		
 		# nodes related to the user's goal:
 		if goal_id:
 			if pref['always_send_goal']:

@@ -30,17 +30,22 @@ default: false
 warning! overrides behavior of always-send-learnable-pregoals
 
 name: restrict_to_subject
-description: user can only get things within the subject
+description: User can only get things within the subject
 type: bool
 default: false
 
 name: enforce_learn_order
-description: user can only learn things in order (with exception of starting nodes).  That is, they can ONLY learn LEARNABLE nodes.
+description: User can only learn things in order (with exception of starting nodes).  That is, they can ONLY learn LEARNABLE nodes.
 type: string (can be "true", "false", or "flexible" (to allow user to override when they really want))
 default: true
 
 name: goal_node_id
-description: user can choose a goal to work toward.  This can also be set by calling choose_goal.  This will be used by choose_learnable_pregoals
+description: user can choose a goal to work toward.  This can also be set by calling choose_goal.  This will be used by choose_learnable_pregoals/
+type: string (must be an existing node id)
+default: None
+
+name: requested_pregoal_node_id
+description: This should only be set when the user asks for a pregoal.  It is separate from the automatically chosen pregoals from always_send_learnable_pregoals.
 type: string (must be an existing node id)
 default: None
 
@@ -48,3 +53,4 @@ name: subject
 description: 
 type: string (must be an existing subject)
 default: 'graph theory'
+
