@@ -120,7 +120,7 @@ class PMDAG (nx.DAG):
 
 	@record_elapsed_time
 	def learnable_pregoals(self, goal, learned_nodes):	# a pregoal is an unlearned dependency of the goal, or the goal itself
-		learnable_nodes = set(self.absolute_dominion(learned_nodes))
+		learnable_nodes = set(self.absolute_dominion(learned_nodes)).union(self.sources())
 		pregoals = self.unlearned_dependency_tree(goal, learned_nodes)
 		return set.intersection(learnable_nodes, pregoals)
 
@@ -138,55 +138,43 @@ class PMDAG (nx.DAG):
 		'category theory': ['equatable', 'type'],
 	}
 
-	def subgraph_to_send(self, user):
+	@record_elapsed_time
+	def nodes_to_send(self, user):
 		if not user:
 			raise ValueError("Did not give a user!")
 		
 		learned_ids = user.dict['learned_node_ids']
 		ids_to_send = set()
 		pref = user.dict['prefs']
+		subject = pref['subject']
+		goal_id = pref['goal_node_id']
 		
-		if not learned_ids:
-			# if the user is just starting and has not learned anything:
-			if not pref['subject']:
-				# the User class initialization should guarantee we never hit this line:
-				raise ValueError("User is new but has not chosen a subject!")
-			ids_to_send.update(starting_nodes[pref['subject']])
-		else:
-			# nodes to send no matter what:
-			ids_to_send.update(learned_ids)
-			
-			# learnable nodes to send based on preference:
-			if pref['always_send_absolute_dominion']:
-				ids_to_send.update(self.absolute_dominion(learned)ids)
-			
-			# nodes related to the user's goal:
-			
-			#nodes related to pregoals:
-			
-		return self.subgraph(ids_to_send)
+		# nodes to send no matter what:
+		if not subject:
+			# the User class initialization should guarantee we don't hit this line unless something resets subject to None:
+			raise ValueError("User's subject has been deleted!")
+		if not subject in self.starting_nodes.keys():
+			# not a valid subject choice
+			raise ValueError("User's subject was somehow set to an invalid choice!")
+		ids_to_send.update(self.starting_nodes[subject])
+		ids_to_send.update(learned_ids)
 		
+		# learnable nodes to send based on preference:
+		if pref['always_send_absolute_dominion'] and learned_ids:
+			ids_to_send.update(self.absolute_dominion(learned_ids))
 		
-'''		if self.user.dict['prefs']['always_send_learnable_pregoal']:
-			ids_to_send = set(ids_to_send).union(set(our_DAG.choose_learnable_pregoal(self.user.dict['learned_node_ids'])))
-		H = our_DAG.subgraph(list(ids_to_send))
-#		else:
-#			# they've learned nothing so far.  send them a starting point
-#			H = our_DAG.subgraph(self.starting_nodes(subject))
-#
-	def other_nodes_of_interest(self, subject=None, goal=None):
-		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
-		nodes = []
-		if subject:
-			nodes = nodes + self.starting_nodes(subject)
-
-#		if goal:
-#			nodes = nodes + our_DAG.unlearned_dependency_tree(goal, self.user.dict['learned_node_ids'])
-		return nodes
-		# for later, add the following too:
-#		return [our_DAG.short_sighted_depth_first_unlearned_source(starting_nodes, learned_ids)]
-'''
-
-
+		if pref['always_send_learnable_pregoals'] and learned_ids:
+			axioms = self.starting_nodes[subject]
+			pregoals = self.choose_learnable_pregoals(axioms, learned_ids, pref['send_learnable_pregoal_number'], goal_id)
+			ids_to_send.update(pregoals)
+		
+		# nodes related to the user's goal:
+		if goal_id:
+			if pref['always_send_goal']:
+				ids_to_send.update(goal_id)
+			if pref['always_send_unlearned_dependency_tree_of_goal']:
+				ids_to_send.update(self.unlearned_dependency_tree(goal_id, learned_ids))
+		
+		return ids_to_send # could just return self.subgraph(list(ids_to_send)) but this makes testing simpler
 
 # Our ProveMath specific graph methods go here, e.g. anything using our custom node or user objects

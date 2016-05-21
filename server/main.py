@@ -169,6 +169,7 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 'get-starting-nodes':
 			subject = ball['subject']
+			self.user.set_pref({'subject': subject})
 			self.send_graph(ball, subject)
 
 		elif ball['command'] == 'get-curriculum':
@@ -309,7 +310,7 @@ class SocketHandler (WebSocketHandler):
 	def send_graph(self, ball, subject=None, goal=None):
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
-		subgraph_to_send = our_DAG.subgraph_to_send(self.user)
+		subgraph_to_send = our_DAG.subgraph(our_DAG.nodes_to_send(self.user))
 		dict_graph = subgraph_to_send.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',

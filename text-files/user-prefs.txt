@@ -13,7 +13,7 @@ description: The NUMBER of learnable pregoals to send whenever we send learnable
 type: natural number 1 or more
 default: 1
 
-name: always-accept-suggested-goal
+name: always_accept_suggested_goal
 description: When the user asks for a goal suggestion, the first suggestion given is automatically set as the user's new goal.
 type: bool
 default: false

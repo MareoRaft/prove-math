@@ -273,6 +273,8 @@ def test_descendants():
 		DG.descendants(['NotANode'])
 	with pytest.raises(nx.NetworkXError):
 		DG.descendants(['x', 'NotANode', 'z']);
+	with pytest.raises(ValueError):
+		DG.descendants([])
 
 	#existing inputs:
 	assert DG.descendants('x') == {'y', 'z'}

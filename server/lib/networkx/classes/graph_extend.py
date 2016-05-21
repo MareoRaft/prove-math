@@ -43,9 +43,9 @@ class _GraphExtended (nx.Graph):
 		#checks that all given inputs exist in the graph
 		if not self.acceptable_iterable(nbunch):
 			nbunch = [nbunch]
-		if len(nbunch) == 0:	#empty iterable
-			raise ValueError('Argument {} is empty'.format(nbunch))
-		elif len(nbunch) == 1:	#single node
+#		if len(nbunch) == 0:	#empty iterable
+#			raise ValueError('Argument {} is empty'.format(nbunch))
+		if len(nbunch) == 1:	#single node
 			if not self.has_node(nbunch[0]):
 				raise nx.NetworkXError('The input node {} is not in the graph'.format(nbunch[0]))
 			return True

@@ -70,6 +70,16 @@ class User: # there's really no point in storing users ephemerally, other than t
 				'display_name_capitalization': None, # can be null, "sentence", or "title"
 				'underline_definitions': False, # can be true or false # do you want definitions to be underlined in the DAG view?
 				'show_description_on_hover': False, # can be true or false
+				'restrict_to_subject': False,
+				'enforce_learn_order': True,
+				'subject': 'graph theory',
+				'goal_node_id': None,
+				'always_send_absolute_dominion': True,
+				'always_send_learnable_pregoals': True,
+				'send_learnable_pregoal_number': 1,
+				'always_send_goal': False,
+				'always_send_unlearned_dependency_tree_of_goal': False,
+				'always_accept_suggested_goal': False,
 			},
 		}
 

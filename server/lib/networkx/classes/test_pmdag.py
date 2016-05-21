@@ -5,6 +5,7 @@ import networkx as nx
 
 from lib.networkx.classes.pmdag import PMDAG
 from lib.node import create_appropriate_node, Node
+from lib.user import User
 
 ############################ HELPERS ############################
 def fill_sample_custom_nodes():
@@ -292,25 +293,24 @@ def test_choose_goal():
 def test_learnable_pregoals():
 	DAG = PMDAG()
 	DAG.add_path(['l1', 't'])
-	with pytest.raises(ValueError):
-		DAG.learnable_pregoals('t', [])
 	with pytest.raises(nx.NetworkXError):
 		DAG.learnable_pregoals(['t'], ['l1'])
 	with pytest.raises(ValueError):
 		DAG.learnable_pregoals('t', 'l1')
+	assert DAG.learnable_pregoals('t', []) == {'l1'}
 	assert DAG.learnable_pregoals('t', ['l1']) == {'t'}
 
 	DAG = PMDAG()
 	DAG.add_edges_from([
 		('l1', 't'), ('u1', 't') # learned, unlearned, target
 	])
-	assert DAG.learnable_pregoals('t', ['l1']) == set()
+	assert DAG.learnable_pregoals('t', ['l1']) == {'u1'}
 
 	DAG = PMDAG()
 	DAG.add_edges_from([
 		('l1', 't'), ('l2', 'u1'), ('u1', 't'), ('u2', 't')
 	])
-	assert DAG.learnable_pregoals('t', ['l1', 'l2']) == {'u1'}
+	assert DAG.learnable_pregoals('t', ['l1', 'l2']) == {'u1', 'u2'}
 
 def test_choose_learnable_pregoals():
 	DAG = fill_sample_custom_nodes()
@@ -371,4 +371,116 @@ def test_choose_learnable_pregoals():
 		('a', 'b'), ('a', 'c'), ('d', 'b'), ('e', 'c'), ('a', 'd'), ('a', 'e')
 	])
 	assert DAG.choose_learnable_pregoals(['a'], ['a']) == ['e']
+
+def test_nodes_to_send():
+	# Need to complete!  Each option works independently but I did not try combining them!
+	
+	pmdag = fill_sample_custom_nodes()
+	pre_set = {"type":"axiom","description":"__This is the node for set__","name":"set","importance":4}
+	sset = create_appropriate_node(pre_set)
+	pre_vertex = {"type":"axiom","description":"__This is the node for vertex__","name":"vertex","importance":4}
+	vertex = create_appropriate_node(pre_vertex)
+	pre_multiset = {"type":"axiom","description":"__This is the node for multiset__","name":"multiset","importance":4}
+	multiset = create_appropriate_node(pre_multiset)
+	pmdag.add_n(sset)
+	pmdag.add_n(vertex)
+	pmdag.add_n(multiset)
+	
+	pmdag.add_path(['a', 'b', 'c', 'e'])
+	pmdag.add_path(['b', 'd', 'e'])
+	pmdag.add_edges_from([
+		('set', 'a'), ('vertex', 'a'), ('multiset', 'a')
+	])
+	
+	greg = User({'type': 'facebook', 'id': 'test_pmdag_greg'})
+	#helpers
+	def reset_prefs(user): # sets preferences for minimal client nodes; should send learned nodes and starting nodes only
+		user.set_prefs(
+		{'subject': 'graph theory',
+		'goal_node_id': None,
+		'always_send_absolute_dominion': False, 
+		'always_send_learnable_pregoals': False,
+		'send_learnable_pregoal_number': 1,
+		'always_send_goal': False,
+		'always_send_unlearned_dependency_tree_of_goal': False}
+		)
+	def reset_learned(user):
+		for node_id in user.dict['learned_node_ids']:
+			user.unlearn_node(node_id)
+	
+	# check starting nodes
+	
+	reset_learned(greg)
+	reset_prefs(greg)
+	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
+	assert nodes == set()
+	greg.set_pref({'subject': None})
+	with pytest.raises(ValueError):
+		pmdag.nodes_to_send(greg)
+
+	greg.set_pref({'subject': 'not a real subject'})
+	with pytest.raises(ValueError):
+		pmdag.nodes_to_send(greg)
+
+	# check learned nodes
+	
+	reset_learned(greg)
+	reset_prefs(greg)
+	greg.learn_node('a')
+	greg.learn_node('b')
+	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
+	assert nodes == {'a', 'b'}
+	
+	# check absolute dominion
+	
+	reset_learned(greg)
+	reset_prefs(greg)
+	greg.learn_node('a')
+	greg.set_pref({'always_send_absolute_dominion': True})
+	# should now send learnable successors of learned nodes
+	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
+	assert nodes == {'a', 'b'}
+	
+	# check learnable pregoals
+	
+	reset_learned(greg)
+	reset_prefs(greg)
+	greg.learn_node('a')
+	greg.learn_node('b')
+	greg.set_pref({'always_send_learnable_pregoals': True})
+	greg.set_pref({'goal_node_id': 'e'}) # using a manually set goal
+	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
+	assert nodes == {'a', 'b', 'd'} # d is chosen over c because it is more important
+
+	greg.set_pref({'send_learnable_pregoal_number': 2}) # ask for more than one pregoal
+	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
+	assert nodes == {'a', 'b', 'c', 'd'} # c and d both chosen as pregoals
+	
+	greg.set_pref({'goal_node_id': None}) # choses a goal without setting it
+	# in this case d should be chosen as the goal (because d and c are the only successors of learned_nodes and d is more important)
+	greg.set_pref({'send_learnable_pregoal_number': 1})
+	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
+	assert nodes == {'a', 'b', 'd'} # d is chosen as the goal, then also set as the pregoal
+	
+	# check always send goal
+
+	reset_learned(greg)
+	reset_prefs(greg)
+	greg.learn_node('a')
+	greg.learn_node('b')
+	greg.set_pref({'always_send_goal': True})
+	greg.set_pref({'goal_node_id': 'e'})
+	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
+	assert nodes == {'a', 'b', 'e'}
+	
+	# check always send dependency tree of goal
+
+	reset_learned(greg)
+	reset_prefs(greg)
+	greg.learn_node('a')
+	greg.learn_node('b')
+	greg.set_pref({'always_send_unlearned_dependency_tree_of_goal': True})
+	greg.set_pref({'goal_node_id': 'e'})
+	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
+	assert nodes == {'a', 'b', 'c', 'd', 'e'}
 

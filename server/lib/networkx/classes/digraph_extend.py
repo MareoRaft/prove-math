@@ -198,6 +198,8 @@ class _DiGraphExtended (nx.DiGraph):
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
 		if not self.acceptable_iterable(nodes): #without this, if nodes is just a string, the return statement will not work correctly
 			raise ValueError('Argument {} is not iterable'.format(nodes))
+		if len(nodes) == 0:
+			return []
 		successors = self.successors(nodes)
 		hanging_absolute_dominion = []
 		for candidate in successors:
