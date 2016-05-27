@@ -17,7 +17,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 		show("#login");
 	} else {
 		// logged in:
-		// $("#display_name").html(user_dict["id_name"]) // add this back in when we have a drop down
+		$("#display-name").html(user_dict.id_name); // add this back in when we have a drop down
 		$("#avatar").attr("src", user_dict.profile_pic);
 		hide("#login-circle");
 		show("#overlay");
@@ -233,6 +233,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 	$("#logout-circle").click(logout);
 
 	function login() {
+		// this is what runs when the user clicks "login"
 		if (!def(oauth_url_dict)) alert("oauth login broken.");
 		var account_type = $("input[type=radio][name=provider]:checked").val();
 		if (!def(account_type) || account_type === "") {
@@ -247,6 +248,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 		}
 	}
 	function logout() {
+		// this is what runs when the user clicks "logout"
 		delete_cookie();
 		hide("#overlay");
 		show("#login");
@@ -287,14 +289,17 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 	//////////////////////////// ACTION STUFF ////////////////////////////
 	$("#avatar").click(function () {
 		// detect if drawer is in or out
+		var $display_name = $("#display-name");
 		var $logout = $("#logout-circle");
 		var drawer_position = $logout.css("right");
 		if (drawer_position === "0px") {
 			// pull drawer out
 			$logout.addClass("logout-circle-out");
+			$display_name.addClass("display-name-out");
 		} else if (drawer_position === "55px") {
 			// put drawer in
 			$logout.removeClass("logout-circle-out");
+			$display_name.removeClass("display-name-out");
 		} else die("unexpected drawer position");
 	});
 	$("#get-starting-nodes").click(function () {
