@@ -1,7 +1,7 @@
 # general things to ignore:
 *.log
 server/dictionary_maker.py
-text-files/things-to-go-over-with-theo.txt
+text-files/things-to-go-over-with-contributors.txt
 server/data/*.json
 .sass-cache/
 .cache/

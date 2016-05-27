@@ -350,10 +350,10 @@ $('#get-starting-nodes').click(function(){
 	promptStartingNodes()
 })
 $('#get-goal-suggestion').click(function(){
-	ws.jsend({command: 'get-goal-suggestion (or whatever Greg writes in the main.py file)'})
+	ws.jsend({command: 'suggest-goal'})
 })
 $('#get-pregoal-suggestion').click(function(){
-	ws.jsend({command: 'get-pregoal-suggestion (or whatever Greg writes in the main.py file)'})
+	ws.jsend({command: 'suggest-pregoal'})
 })
 $('#push').click(expand_search_wrapper)
 

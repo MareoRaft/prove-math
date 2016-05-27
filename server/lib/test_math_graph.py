@@ -3,7 +3,7 @@ from collections import OrderedDict
 import pytest
 import networkx as nx
 
-from lib.networkx.classes.pmdag import PMDAG
+from lib.math_graph import MathGraph
 from lib.node import create_appropriate_node, Node
 from lib.user import User
 
@@ -20,7 +20,7 @@ def fill_sample_custom_nodes():
 	d = create_appropriate_node(pre_d)
 	pre_e = {"type":"theorem","description":"This is node eeeeeeeeee","name":"E","importance":8}
 	e = create_appropriate_node(pre_e)
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n(a)
 	DAG.add_n(b)
 	DAG.add_n(c)
@@ -45,16 +45,16 @@ def test_as_js_ready_dict():
 	pre_c = {"type":"theorem","description":"This is node cccccccccc","name":"C","importance":4}
 	c = create_appropriate_node(pre_c)
 
-	DG = PMDAG()
+	DG = MathGraph()
 	d = DG.as_js_ready_dict()
 	assert d == {'nodes': [], 'links': []}
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_n(a)
 	d = DG.as_js_ready_dict()
 	assert d == {'nodes': [a.__dict__], 'links': []}
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_n(a)
 	DG.add_n(b)
 	d = DG.as_js_ready_dict()
@@ -63,7 +63,7 @@ def test_as_js_ready_dict():
 	assert dl == []
 	assert (dn == [a.__dict__, b.__dict__] or dn == [b.__dict__, a.__dict__])
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_n(a)
 	DG.add_n(b)
 	DG.add_edge('a', 'b')
@@ -73,7 +73,7 @@ def test_as_js_ready_dict():
 	assert (dl == [{'source': 'a', 'target': 'b'}])
 	assert (dn == [a.__dict__, b.__dict__] or dn == [b.__dict__, a.__dict__])
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_n(a)
 	DG.add_n(b)
 	DG.add_n(c)
@@ -93,11 +93,11 @@ def test_as_js_ready_dict():
 		)
 
 def test_unlearned_dependency_tree():
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_path(['l1', 't'])
 	assert DG.unlearned_dependency_tree('t', ['l1']) == {'t'}
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_path(['l1', 'u1', 't']) #learned, unlearned, target
 	with pytest.raises(nx.NetworkXError):
 		DG.unlearned_dependency_tree('NotANode', ['l1'])
@@ -109,30 +109,30 @@ def test_unlearned_dependency_tree():
 	assert DG.unlearned_dependency_tree('t', []) == {'l1', 'u1', 't'}
 	assert DG.unlearned_dependency_tree('t', ['NotANode', 'StillNotANode']) == {'l1', 'u1', 't'}
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	DG.add_path(['u2', 'u1'])
 	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1', 'u2', 't'}
 	assert DG.unlearned_dependency_tree('t', []) == {'u1', 'u2', 'l1', 't'}
 	assert DG.unlearned_dependency_tree('t', ['l1', 'u1']) == {'t'}
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	DG.add_edge('u2', 't')
 	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1', 'u2', 't'}
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	DG.add_edge('u3', 'l1')
 	assert DG.unlearned_dependency_tree('t', ['l1']) == {'u1', 't'}
 
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	DG.add_path(['u4', 'l2', 't'])
 	assert DG.unlearned_dependency_tree('t', ['l1', 'l2']) == {'u1', 't'}
 
 def test_learn_count():
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	with pytest.raises(nx.NetworkXError):
 		DG.learn_count('NotANode', ['l1'])
@@ -146,7 +146,7 @@ def test_learn_count():
 	assert DG.learn_count('t', ['u1']) == 1
 
 def test_learn_counts():
-	DG = PMDAG()
+	DG = MathGraph()
 	DG.add_path(['l1', 'u1', 't'])
 	assert DG.learn_counts(['t', 'u1'], []) == [3, 2]
 
@@ -159,7 +159,7 @@ def test_most_important():
 	f = create_appropriate_node({"type":"theorem","description":"This is node ffffffffff","name":"F","importance":8})
 
 	# we will REUSE the SAME graph for below tests:
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d, e, f])
 
 	#testing sort by node's own importance and id
@@ -190,7 +190,7 @@ def test_most_important():
 	# using DIFFERENT graphs for the BELOW TESTS:
 
 	#testing sort by weighted importance of neighbors when node's own importance is a tie
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d, e, f])
 	DAG.add_edges_from([
 			['a', 'c'], ['d', 'b']	#d is a more important neighbor than a, so b should be more important than c
@@ -198,7 +198,7 @@ def test_most_important():
 	node_list = ['b', 'c']
 	assert DAG.most_important(node_list, 2) == ['b', 'c']
 
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d, e, f])
 	DAG.add_edges_from([
 			['c', 'a'], ['b', 'd']
@@ -206,7 +206,7 @@ def test_most_important():
 	node_list = ['b', 'c']
 	assert DAG.most_important(node_list, 2) == ['b', 'c']
 
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d, e, f])
 	DAG.add_edges_from([
 			['c', 'a'], ['d', 'b']	#d is a more important neighbor than a but this time a is a descendant while d is only an ancestor; this time c should be more important than b
@@ -215,7 +215,7 @@ def test_most_important():
 	assert DAG.most_important(node_list, 2) == ['c', 'b']
 
 	#remember that when the nodes being compared are neighbors with each other, we will get some shared common neighbors, although they have different distances to the two compared nodes
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d, e, f])
 	DAG.add_edge('b', 'c')
 	node_list = ['b', 'c']
@@ -233,21 +233,21 @@ def test_choose_goal():
 	f = create_appropriate_node({"type":"theorem","description":"This is node ffffffffff","name":"F","importance":5})
 
 	# choose deepest goal
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d, e, f])
 	DAG.add_path(['a', 'b', 'c'])
 	DAG.add_path(['a', 'd', 'e', 'f'])
 	assert DAG.choose_goal(['a'], ['b', 'd', 'e']) == 'f'
 
 	# make sure this case is symmetric and node id does not affect it:
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d, e, f])
 	DAG.add_path(['a', 'b', 'f'])
 	DAG.add_path(['a', 'd', 'e', 'c'])
 	assert DAG.choose_goal(['a'], ['b', 'd', 'e']) == 'c'
 
 	# next sort by learn count:
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, c, d, e])
 	DAG.add_edges_from([
 		('a', 'c'), ('a', 'd'), ('e', 'd')
@@ -258,7 +258,7 @@ def test_choose_goal():
 	assert DAG.choose_goal(['a'], ['a']) == 'c'
 
 	# again make sure this is symmetric:
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, c, d, e])
 	DAG.add_edges_from([
 		('a', 'd'), ('a', 'c'), ('e', 'c')
@@ -269,7 +269,7 @@ def test_choose_goal():
 	assert DAG.choose_goal(['a'], ['a']) == 'd'
 
 	# then sort by importance:
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d])
 	DAG.add_edges_from([
 		('a', 'b'), ('b', 'c'), ('b', 'd')
@@ -280,7 +280,7 @@ def test_choose_goal():
 	assert DAG.choose_goal(['a'], ['b']) == 'd'
 
 	#finally sort by id
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_n([a, b, c, d])
 	DAG.add_edges_from([
 		('a', 'd'),
@@ -291,7 +291,7 @@ def test_choose_goal():
 	assert DAG.choose_goal(['a'], ['d']) == 'b'
 
 def test_learnable_pregoals():
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_path(['l1', 't'])
 	with pytest.raises(nx.NetworkXError):
 		DAG.learnable_pregoals(['t'], ['l1'])
@@ -300,13 +300,13 @@ def test_learnable_pregoals():
 	assert DAG.learnable_pregoals('t', []) == {'l1'}
 	assert DAG.learnable_pregoals('t', ['l1']) == {'t'}
 
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_edges_from([
 		('l1', 't'), ('u1', 't') # learned, unlearned, target
 	])
 	assert DAG.learnable_pregoals('t', ['l1']) == {'u1'}
 
-	DAG = PMDAG()
+	DAG = MathGraph()
 	DAG.add_edges_from([
 		('l1', 't'), ('l2', 'u1'), ('u1', 't'), ('u2', 't')
 	])
@@ -374,7 +374,7 @@ def test_choose_learnable_pregoals():
 
 def test_nodes_to_send():
 	# Need to complete!  Each option works independently but I did not try combining them!
-	
+
 	pmdag = fill_sample_custom_nodes()
 	pre_set = {"type":"axiom","description":"__This is the node for set__","name":"set","importance":4}
 	sset = create_appropriate_node(pre_set)
@@ -385,20 +385,20 @@ def test_nodes_to_send():
 	pmdag.add_n(sset)
 	pmdag.add_n(vertex)
 	pmdag.add_n(multiset)
-	
+
 	pmdag.add_path(['a', 'b', 'c', 'e'])
 	pmdag.add_path(['b', 'd', 'e'])
 	pmdag.add_edges_from([
 		('set', 'a'), ('vertex', 'a'), ('multiset', 'a')
 	])
-	
+
 	greg = User({'type': 'facebook', 'id': 'test_pmdag_greg'})
 	#helpers
 	def reset_prefs(user): # sets preferences for minimal client nodes; should send learned nodes and starting nodes only
 		user.set_prefs(
 		{'subject': 'graph theory',
-		'goal_node_id': None,
-		'always_send_absolute_dominion': False, 
+		'goal_id': None,
+		'always_send_absolute_dominion': False,
 		'always_send_learnable_pregoals': False,
 		'send_learnable_pregoal_number': 1,
 		'always_send_goal': False,
@@ -407,9 +407,9 @@ def test_nodes_to_send():
 	def reset_learned(user):
 		for node_id in user.dict['learned_node_ids']:
 			user.unlearn_node(node_id)
-	
+
 	# check starting nodes
-	
+
 	reset_learned(greg)
 	reset_prefs(greg)
 	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
@@ -423,16 +423,16 @@ def test_nodes_to_send():
 		pmdag.nodes_to_send(greg)
 
 	# check learned nodes
-	
+
 	reset_learned(greg)
 	reset_prefs(greg)
 	greg.learn_node('a')
 	greg.learn_node('b')
 	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
 	assert nodes == {'a', 'b'}
-	
+
 	# check absolute dominion
-	
+
 	reset_learned(greg)
 	reset_prefs(greg)
 	greg.learn_node('a')
@@ -440,28 +440,28 @@ def test_nodes_to_send():
 	# should now send learnable successors of learned nodes
 	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
 	assert nodes == {'a', 'b'}
-	
+
 	# check learnable pregoals
-	
+
 	reset_learned(greg)
 	reset_prefs(greg)
 	greg.learn_node('a')
 	greg.learn_node('b')
 	greg.set_pref({'always_send_learnable_pregoals': True})
-	greg.set_pref({'goal_node_id': 'e'}) # using a manually set goal
+	greg.set_pref({'goal_id': 'e'}) # using a manually set goal
 	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
 	assert nodes == {'a', 'b', 'd'} # d is chosen over c because it is more important
 
 	greg.set_pref({'send_learnable_pregoal_number': 2}) # ask for more than one pregoal
 	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
 	assert nodes == {'a', 'b', 'c', 'd'} # c and d both chosen as pregoals
-	
-	greg.set_pref({'goal_node_id': None}) # choses a goal without setting it
+
+	greg.set_pref({'goal_id': None}) # choses a goal without setting it
 	# in this case d should be chosen as the goal (because d and c are the only successors of learned_nodes and d is more important)
 	greg.set_pref({'send_learnable_pregoal_number': 1})
 	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
 	assert nodes == {'a', 'b', 'd'} # d is chosen as the goal, then also set as the pregoal
-	
+
 	# check always send goal
 
 	reset_learned(greg)
@@ -469,10 +469,10 @@ def test_nodes_to_send():
 	greg.learn_node('a')
 	greg.learn_node('b')
 	greg.set_pref({'always_send_goal': True})
-	greg.set_pref({'goal_node_id': 'e'})
+	greg.set_pref({'goal_id': 'e'})
 	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
 	assert nodes == {'a', 'b', 'e'}
-	
+
 	# check always send dependency tree of goal
 
 	reset_learned(greg)
@@ -480,7 +480,7 @@ def test_nodes_to_send():
 	greg.learn_node('a')
 	greg.learn_node('b')
 	greg.set_pref({'always_send_unlearned_dependency_tree_of_goal': True})
-	greg.set_pref({'goal_node_id': 'e'})
+	greg.set_pref({'goal_id': 'e'})
 	nodes = pmdag.nodes_to_send(greg).difference({'set', 'multiset', 'vertex'})
 	assert nodes == {'a', 'b', 'c', 'd', 'e'}
 

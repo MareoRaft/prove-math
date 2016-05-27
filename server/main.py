@@ -16,13 +16,14 @@ from tornado.websocket import WebSocketHandler
 from tornado.web import Application
 from tornado.web import Finish
 
+from lib.config import starting_nodes
 from lib import clogging
 log = clogging.getLogger('main', filename='main.log') # this must come BEFORE imports that use getLogger('main')
 from lib.helper import strip_underscores, random_string
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 from lib.user import User
-from lib.networkx.classes.pmdag import PMDAG
+from lib.math_graph import MathGraph
 from lib import user
 from lib import auth
 from lib import node
@@ -120,7 +121,7 @@ class JSONHandler(BaseHandler):
 
 	def get(self):
 		# get appropriate subgraph from NewtorkX!
-		json_graph = our_DAG.as_complete_json() # TODO write this method
+		json_graph = our_MG.as_complete_json() # TODO write this method
 		self.write(json_graph)
 
 
@@ -207,14 +208,14 @@ class SocketHandler (WebSocketHandler):
 
 
 				# VERIFY THAT THE GRAPH WITH THESE NEW ARCS IS STILL ACYCLIC:
-				H = our_DAG.copy()
+				H = our_MG.copy()
 				for new_dependency_id in new_dependency_ids:
-					print('from '+str(our_DAG.n(new_dependency_id))+' to '+str(node_obj))
+					print('from '+str(our_MG.n(new_dependency_id))+' to '+str(node_obj))
 					H.add_edge(new_dependency_id, node_obj.id)
-					H.validate(node_obj.name + ' cannot depend on ' + our_DAG.n(new_dependency_id).name + ' because ' + our_DAG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
+					H.validate(node_obj.name + ' cannot depend on ' + our_MG.n(new_dependency_id).name + ' because ' + our_MG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
 
 				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
-				update_our_DAG()
+				update_our_MG()
 
 				# send an update of the graph to the user if there are new dependencies:
 				self.request_nodes(new_dependency_ids, ball)
@@ -229,8 +230,8 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors
-			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1) # can just use digraph.anydirectional_neighbors
-			H = our_DAG.subgraph(list(neighbors.keys()))
+			neighbors = our_MG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1) # can just use digraph.anydirectional_neighbors
+			H = our_MG.subgraph(list(neighbors.keys()))
 			dict_graph = H.as_js_ready_dict()
 			self.jsend({
 				'command': 'load-graph',
@@ -243,69 +244,64 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'search':
 			search_results = our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
 			self.jsend({
-					'command': 'search-results',
-					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
+				'command': 'search-results',
+				'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
-		
+
 		elif ball['command'] == 'suggest-goal':
-			subject = self.user.dict['prefs']['subject']
-			axioms = starting_nodes[subject]
-			learned_node_ids = self.user.dict['learned_node_ids']
-			goal_id = our_DAG.choose_goal(axioms, learned_node_ids)
+			goal_id = our_MG.choose_goal(user=self.user)
+
 			autoset_goal = self.user.dict['prefs']['always_accept_suggested_goal']
 			if autoset_goal:
 				self.set_goal(ball)
 			else:
 				self.jsend({
-						'command': 'comfirm-goal',
-						'goal-id': goal_id
+					'command': 'confirm-goal',
+					'goal-id': goal_id
 				})
-		
+
 		elif ball['command'] == 'set-goal':
 			self.set_goal(ball)
-		
+
 		elif ball['command'] == 'suggest-pregoal':
-			subject = self.user.dict['prefs']['subject']
-			axioms = starting_nodes[subject]
-			learned_node_ids = self.user.dict['learned_node_ids']
-			goal_id = self.user.dict['prefs']['goal_node_id']
-			pregoal_id = our_Dag.choose_learnable_pregoal(axioms, learned_node_ids, goal_id)
+			pregoal_id = our_MG.choose_learnable_pregoals(user=self.user)[0]
+
 			#if not autoconfirm, jsend({'command': 'confirm-pregoal'}) # else set_pregoal
-			self.user.set_pref({'pregoal_node_id': pregoal_id})
+			self.user.set_pref({'pregoal_id': pregoal_id})
 			self.send_graph()
 			self.jsend({
-					'command': 'highlight-pregoal',
-					'pregoal-id': pregoal_id
+				'command': 'highlight-pregoal',
+				'pregoal-id': pregoal_id
 			})
 		'''
 		# or do we want the user to confirm pregoals as well?
 		elif ball['command'] == 'set-pregoal':
 			pregoal_id = ball['pregoal-id']
-			self.user.set_pref({'pregoal_node_id': pregoal_id})
+			self.user.set_pref({'pregoal_id': pregoal_id})
 			self.jsend({
-					'command': 'highlight-pregoal'
-					'pregoal-id': pregoal_id
+				'command': 'highlight-pregoal'
+				'pregoal-id': pregoal_id
 			})
 		'''
-	
+
 	def set_goal(self, ball):
 		goal_id = ball['goal-id']
-		self.user.set_pref({'goal_node_id': goal_id})
+		self.user.set_pref({'goal_id': goal_id})
 		pref = self.user.dict['prefs']
 		show_goal = pref['always_send_goal'] or pref['always_send_unlearned_dependency_tree_of_goal']
 		if show_goal:
 			self.send_graph()
 		self.jsend({
-				'command': 'highlight-goal',
-				'goal-id': goal_id
+			'command': 'highlight-goal',
+			'goal-id': goal_id
 		})
-	
+
 	def request_nodes(self, node_ids, ball):
 		for node_id in node_ids:
-			if node_id not in our_DAG.nodes():
+			if node_id not in our_MG.nodes():
 				raise ValueError('The node_id "'+node_id+'" does not exist.')
 		ids = set(self.ids()).union(set(node_ids))
-		H = our_DAG.subgraph(list(ids))
+		H = our_MG.subgraph(list(ids))
 		dict_graph = H.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
@@ -327,7 +323,7 @@ class SocketHandler (WebSocketHandler):
 		subject = self.user.dict['prefs']['subject']
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
-		subgraph_to_send = our_DAG.subgraph(our_DAG.nodes_to_send(self.user))
+		subgraph_to_send = our_MG.subgraph(our_MG.nodes_to_send(user=self.user))
 		dict_graph = subgraph_to_send.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
@@ -363,45 +359,38 @@ def make_app():
 	)
 
 def make_app_and_start_listening():
-	# enable_pretty_logging()
 	application = make_app()
 	application.listen(80)
-	# other stuff
 	IOLoop.current().start()
 
-def update_our_DAG():
+def update_our_MG():
 	# 1. grab nodes and edges from database
 	all_node_dicts = list(Mongo("provemath", "nodes").find())
 
 	# 2. create a networkx graph with the info...
-	global our_DAG
-	our_DAG = PMDAG()
+	global our_MG
+	our_MG = MathGraph()
 	for node_dict in all_node_dicts:
 		try:
 			node = create_appropriate_node(strip_underscores(node_dict))
 		except Exception as e:
 			print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
-		our_DAG.add_n(node)
-	for node_id in our_DAG.nodes():
-		node = our_DAG.n(node_id)
+		our_MG.add_n(node)
+	for node_id in our_MG.nodes():
+		node = our_MG.n(node_id)
 		for dependency_id in node.dependency_ids:
-			our_DAG.add_edge(dependency_id, node_id)
-	our_DAG.validate() # make sure it's still Acyclic
-	print('Node array loaded with length: ' + str(len(our_DAG.nodes())))
-	print('Edge array loaded with length: ' + str(len(our_DAG.edges())))
-	our_DAG.remove_redundant_edges()
+			our_MG.add_edge(dependency_id, node_id)
+	our_MG.validate() # make sure it's still Acyclic
+	print('Node array loaded with length: ' + str(len(our_MG.nodes())))
+	print('Edge array loaded with length: ' + str(len(our_MG.edges())))
+	our_MG.remove_redundant_edges()
 
 if __name__ == "__main__":
 	# 0. create a global mongo object for later use (for upserts in the future)
 	our_mongo = Mongo("provemath", "nodes")
 
 	# 1 and 2
-	update_our_DAG()
-	starting_nodes = {
-		'graph theory': ['set', 'multiset', 'vertex'],
-		'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
-		'category theory': ['equatable', 'type'],
-	}
+	update_our_MG()
 
 	# 3. launch!
 	make_app_and_start_listening()

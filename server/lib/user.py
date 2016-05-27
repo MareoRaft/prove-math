@@ -1,9 +1,11 @@
 from lib import clogging
 log = clogging.getLogger('main')
+
 from lib.mongo import Mongo
+from lib.config import DEF_USER_PREFS
 
 
-class User: # there's really no point in storing users ephemerally, other than to associate a specific user with a specific websocket
+class User:
 
 
 	USERS = Mongo("provemath", "users")
@@ -66,33 +68,17 @@ class User: # there's really no point in storing users ephemerally, other than t
 				'id': self.account_id,
 			},
 			'learned_node_ids': [],
-			'prefs': {
-				'display_name_capitalization': None, # can be null, "sentence", or "title"
-				'underline_definitions': False, # can be true or false # do you want definitions to be underlined in the DAG view?
-				'show_description_on_hover': False, # can be true or false
-				'restrict_to_subject': False,
-				'enforce_learn_order': True,
-				'subject': 'graph theory',
-				'goal_node_id': None,
-				'requested_pregoal_node_id': None,
-				'always_send_absolute_dominion': True,
-				'always_send_learnable_pregoals': True,
-				'send_learnable_pregoal_number': 1,
-				'always_send_goal': False,
-				'always_send_unlearned_dependency_tree_of_goal': False,
-
-				'always_accept_suggested_goal': False,
-			},
+			'prefs': DEF_USER_PREFS,
 		}
 
 	def learn_node(self, node_id):
 		self.USERS.update(self._mongo_identifier_dict(), {'$addToSet': {'learned_node_ids': node_id}}, False)
 		# if newly learned node is the current goal, update goal
-		if self.dict['prefs']['goal_node_id'] == node_id:
-			self.set_pref({'goal_node_id': None})
+		if self.dict['prefs']['goal_id'] == node_id:
+			self.set_pref({'goal_id': None})
 		# same for requested pregoal
-		if self.dict['prefs']['requested_pregoal_node_id'] == node_id:
-			self.set_pref({'requested_pregoal_node_id': None})
+		if self.dict['prefs']['requested_pregoal_id'] == node_id:
+			self.set_pref({'requested_pregoal_id': None})
 		# send info down to all other clients (if user is logged in on multiple computers)
 		# tornado.websockethandler.send_to_multiple_accounts({ command: 'learn-node', node_id: node_id })
 
