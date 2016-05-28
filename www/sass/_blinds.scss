@@ -1,5 +1,5 @@
 @import 'variables';
-@import 'chosen';
+// @import 'chosen';
 @import 'chosen_normalize';
 @import 'animate';
 
@@ -39,7 +39,7 @@
 @mixin white {
 	color: white;
 	img {
-		@include filter(invert(1));
+		filter: invert(1);
 	}
 }
 .node-attribute {
