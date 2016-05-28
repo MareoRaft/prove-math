@@ -230,7 +230,10 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 			$(this).removeClass("invalid");
 		}
 	});
-	$("#logout-circle").click(logout);
+	$("#logout-circle").click(function () {
+		push_pull_drawer();
+		logout();
+	});
 
 	function login() {
 		// this is what runs when the user clicks "login"
@@ -287,21 +290,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 	}
 
 	//////////////////////////// ACTION STUFF ////////////////////////////
-	$("#avatar").click(function () {
-		// detect if drawer is in or out
-		var $display_name = $("#display-name");
-		var $logout = $("#logout-circle");
-		var drawer_position = $logout.css("right");
-		if (drawer_position === "0px") {
-			// pull drawer out
-			$logout.addClass("logout-circle-out");
-			$display_name.addClass("display-name-out");
-		} else if (drawer_position === "55px") {
-			// put drawer in
-			$logout.removeClass("logout-circle-out");
-			$display_name.removeClass("display-name-out");
-		} else die("unexpected drawer position");
-	});
+	$("#avatar").click(push_pull_drawer);
 	$("#get-starting-nodes").click(function () {
 		promptStartingNodes();
 	});
@@ -316,6 +305,22 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 	$("#add-node").click(function () {
 		graph.addNode(new Node());
 	});
+
+	function push_pull_drawer() {
+		// detect if drawer is in or out
+		var $display_name = $("#display-name");
+		var $logout = $("#logout-circle");
+		var drawer_position = $logout.css("right");
+		if (drawer_position === "0px") {
+			// pull drawer out
+			$logout.addClass("logout-circle-out");
+			$display_name.addClass("display-name-out");
+		} else if (drawer_position === "55px") {
+			// put drawer in
+			$logout.removeClass("logout-circle-out");
+			$display_name.removeClass("display-name-out");
+		} else die("unexpected drawer position");
+	}
 
 	//////////////////////////// TOGGLE STUFF ////////////////////////////
 	$(document).on("node-click", function (Event) {
