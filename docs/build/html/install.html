@@ -103,6 +103,36 @@
 </div>
 <p>There is a <a class="reference external" href="http://compass-style.org/install/">compass</a> website with install information.</p>
 </div>
+<div class="section" id="node">
+<span id="install-node"></span><h2>Node<a class="headerlink" href="#node" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://nodejs.org">Node</a> is a language nearly identical to JavaScript that can be run outside of a browser.  It is popular among web developers because it basically allows them to write in the same language on the server side and the client side.</p>
+<p>You can install it with your computer&#8217;s package manager:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>brew install node
+</pre></div>
+</div>
+<p>It is a whole language, so it may have a number of dependencies :)  Here is an <a class="reference external" href="https://nodejs.org/en/download/">alternative installation</a>.</p>
+</div>
+<div class="section" id="npm">
+<span id="install-npm"></span><h2>npm<a class="headerlink" href="#npm" title="Permalink to this headline">¶</a></h2>
+<p>npm is the official node package manager.  Therefore, make sure you have <a class="reference internal" href="#install-node"><span>node installed</span></a>.</p>
+<p>npm should come automatically installed when you install node.  Alright!</p>
+<p>You can confirm installation and view the version of npm on the command line:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="o">-</span><span class="n">v</span>
+</pre></div>
+</div>
+<p>There is a manual method for installing <a class="reference external" href="http://jason.pureconcepts.net/2011/12/installing-node-js-npm-redis-mac-os-x/">npm</a>.</p>
+</div>
+<div class="section" id="babel">
+<span id="install-babel"></span><h2>Babel<a class="headerlink" href="#babel" title="Permalink to this headline">¶</a></h2>
+<p>We use babel to convert our JavaScript 6 (a.k.a. JS Harmony, a.k.a. ECMA Script 6) files to JavaScript 5 files.  In a year or two when browsers fully support JS 6, we won&#8217;t need this anymore.</p>
+<p>Our JS6 files are stored in <code class="docutils literal"><span class="pre">www/scripts6</span></code> and our JS5 files are stored in <code class="docutils literal"><span class="pre">www/scripts</span></code>.  For any JS5 file that has a corresponding JS6 files, MAKE SURE to always edit the JS6 file, not the 5 file.  The 5 file is automatically overwritten by babel every time the JS6 file is updated.</p>
+<p>Recommended installation:  First <a class="reference internal" href="#install-npm"><span>install npm</span></a> on your system.  Then:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>npm install --save-dev babel-cli
+</pre></div>
+</div>
+<p>I haven&#8217;t figured out the kinks, because it seems a new version of babel was released.  Can somebody figure out the new usage?  We might migrate to a Grunt build system in the future :).  Official <a class="reference external" href="https://babeljs.io/docs/setup/#installation">babel</a> website installation.</p>
+<p>There is also a <a class="reference external" href="https://github.com/MareoRaft/babeljs-python/tree/master/babeljs">pybabeljs</a> library which is an alternative way of running babel through python.</p>
+</div>
 </div>
 
 
@@ -119,6 +149,9 @@
 <li><a class="reference internal" href="#rubygems">RubyGems</a></li>
 <li><a class="reference internal" href="#sass">SASS</a></li>
 <li><a class="reference internal" href="#compass">Compass</a></li>
+<li><a class="reference internal" href="#node">Node</a></li>
+<li><a class="reference internal" href="#npm">npm</a></li>
+<li><a class="reference internal" href="#babel">Babel</a></li>
 </ul>
 </li>
 </ul>

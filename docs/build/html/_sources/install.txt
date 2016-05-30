@@ -83,6 +83,8 @@ Sass_ has a really great website.  You can find more info there.
 
 
 
+
+
 ..	_install-compass:
 
 Compass
@@ -100,5 +102,76 @@ You can confirm it's installed by running the command::
 There is a compass_ website with install information.
 
 ..	_compass: http://compass-style.org/install/
+
+
+
+
+
+
+..	_install-node:
+
+Node
+-------------
+Node_ is a language nearly identical to JavaScript that can be run outside of a browser.  It is popular among web developers because it basically allows them to write in the same language on the server side and the client side.
+
+You can install it with your computer's package manager::
+
+	brew install node
+
+It is a whole language, so it may have a number of dependencies :)  Here is an `alternative installation`__.
+
+__ node-install-site_
+..	_node-install-site: https://nodejs.org/en/download/
+..	_Node: https://nodejs.org
+
+
+
+
+
+
+
+..	_install-npm:
+
+npm
+------------
+npm is the official node package manager.  Therefore, make sure you have :ref:`node installed <install-node>`.
+
+npm should come automatically installed when you install node.  Alright!
+
+You can confirm installation and view the version of npm on the command line::
+
+	npm -v
+
+There is a manual method for installing npm_.
+
+..	_npm: http://jason.pureconcepts.net/2011/12/installing-node-js-npm-redis-mac-os-x/
+
+
+
+
+
+
+
+
+
+..	_install-babel:
+
+Babel
+--------------
+We use babel to convert our JavaScript 6 (a.k.a. JS Harmony, a.k.a. ECMA Script 6) files to JavaScript 5 files.  In a year or two when browsers fully support JS 6, we won't need this anymore.
+
+Our JS6 files are stored in ``www/scripts6`` and our JS5 files are stored in ``www/scripts``.  For any JS5 file that has a corresponding JS6 files, MAKE SURE to always edit the JS6 file, not the 5 file.  The 5 file is automatically overwritten by babel every time the JS6 file is updated.
+
+Recommended installation:  First :ref:`install npm <install-npm>` on your system.  Then::
+
+	npm install --save-dev babel-cli
+
+I haven't figured out the kinks, because it seems a new version of babel was released.  Can somebody figure out the new usage?  We might migrate to a Grunt build system in the future :).  Official babel_ website installation.
+
+There is also a pybabeljs_ library which is an alternative way of running babel through python.
+
+..	_babel: https://babeljs.io/docs/setup/#installation
+..	_pybabeljs: https://github.com/MareoRaft/babeljs-python/tree/master/babeljs
+
 
 
