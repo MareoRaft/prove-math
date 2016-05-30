@@ -43,3 +43,7 @@ Output/
 *.fdb_latexmk
 *.fls
 *.toc
+
+# node things
+node_modules
+

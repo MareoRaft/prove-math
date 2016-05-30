@@ -1,19 +1,16 @@
-"use strict";
+define(["underscore", "check-types", "graph-animation"], /*"jsnetworkx"*/function (_, is, graphAnimation /*, jsNetworkX*/) {
 
-define(["underscore", "check-types", "graph-animation"], function (_, is, graphAnimation /*, jsNetworkX*/) {
-
-	var graph = {
+	let graph = {
 		nodes: {},
-		links: [] };
-	function init() {
-		var nodes = arguments[0] === undefined ? [] : arguments[0];
-		var links = arguments[1] === undefined ? [] : arguments[1];
-
-		die("maybe not finished writing this init function yet");
+		links: []
+	};
+	function init(nodes = [], links = []) {
+		die('maybe not finished writing this init function yet');
 		// create blank jsNetworkX graph
 		addNodesAndLinks({
 			nodes: nodes,
-			links: links });
+			links: links
+		});
 	}
 
 	function nodeIdsList() {
@@ -21,7 +18,7 @@ define(["underscore", "check-types", "graph-animation"], function (_, is, graphA
 	}
 
 	function nodeNamesList() {
-		var node_names = [];
+		let node_names = [];
 		_.each(graph.nodes, function (node) {
 			node_names.push(node.name);
 		});
@@ -30,31 +27,28 @@ define(["underscore", "check-types", "graph-animation"], function (_, is, graphA
 
 	function addNode(node) {
 		addNodesAndLinks({
-			nodes: [node] });
+			nodes: [node]
+		});
 	}
 
-	function addNodesAndLinks(_ref) {
-		var _ref$nodes = _ref.nodes;
-		var nodes = _ref$nodes === undefined ? [] : _ref$nodes;
-		var _ref$links = _ref.links;
-		var links = _ref$links === undefined ? [] : _ref$links;
-
+	function addNodesAndLinks({ nodes = [], links = [] }) {
 		_.each(nodes, function (node) {
-			if (node === undefined) die("before. undefined node in graph.addNodesAndLinks");
+			if (node === undefined) die('before. undefined node in graph.addNodesAndLinks');
 		});
 		_addNodesHereAndJSNetworkX(nodes);
 		_addLinksHereAndJSNetworkX(links);
 		// see from JSNetworkX which things we should add to the animation:
 		_.each(nodes, function (node) {
-			if (node === undefined) die("after. undefined node in graph.addNodesAndLinks");
+			if (node === undefined) die('after. undefined node in graph.addNodesAndLinks');
 		});
 		_.each(links, function (link) {
-			if (link.source === undefined) die("graph link no source. link: " + JSON.stringify(link));
+			if (link.source === undefined) die('graph link no source. link: ' + JSON.stringify(link));
 		});
 
 		graphAnimation.addNodesAndLinks({
 			nodes: nodes,
-			links: links });
+			links: links
+		});
 	}
 
 	function _addNodesHereAndJSNetworkX(nodes) {
@@ -62,11 +56,14 @@ define(["underscore", "check-types", "graph-animation"], function (_, is, graphA
 			if (node.remove) {
 				_removeNodes([node]);
 			} else {
-				if (node.id in graph.nodes) {} else {
-					graph.nodes[node.id] = node;
-				}
+				if (node.id in graph.nodes) {
+					//die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
+				} else {
+						graph.nodes[node.id] = node;
+					}
 			}
 		});
+		// add ids to JSnetworkx too
 	}
 
 	function removeNodes(nodes) {
@@ -90,31 +87,29 @@ define(["underscore", "check-types", "graph-animation"], function (_, is, graphA
 		// maybe no need to have local copy of links see they don't carry any extra info.
 		//update source and targets of links to point to objects, not IDs // i don't think we need this anymore!  or perhaps graph-animation likes it...
 		_.each(links, function (link) {
-			var source_key = link.source;
-			var target_key = link.target;
+			let source_key = link.source;
+			let target_key = link.target;
 
-			var source_before = link.source;
+			let source_before = link.source;
 			link.source = graph.nodes[link.source];
 			link.target = graph.nodes[link.target];
 			if (!def(link.source)) {
 				$.event.trigger({
-					type: "request-node",
-					message: source_before });
+					type: 'request-node',
+					message: source_before
+				});
 			}
-			if (!def(link.target)) die("bad target key is: " + target_key);
+			if (!def(link.target)) die('bad target key is: ' + target_key);
 		});
 		is.assert.array.of.object(links);
 	}
 
-	function removeLinks(_ref) {
-		var node_id = _ref.node_id;
-		var dependency_ids = _ref.dependency_ids;
+	function removeLinks({ node_id, dependency_ids }) {
+		let node = graph.nodes[node_id];
 
-		var node = graph.nodes[node_id];
-
-		var links = [];
+		let links = [];
 		_.each(dependency_ids, function (dependency_id) {
-			var dependency = graph.nodes[dependency_id];
+			let dependency = graph.nodes[dependency_id];
 
 			links.push({ source: dependency, target: node });
 		});
@@ -130,9 +125,6 @@ define(["underscore", "check-types", "graph-animation"], function (_, is, graphA
 		removeLinks: removeLinks,
 		nodes: graph.nodes,
 		nodeIdsList: nodeIdsList,
-		nodeNamesList: nodeNamesList };
-}); /*"jsnetworkx"*/
-//die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
-// add ids to JSnetworkx too
-// end define
-
+		nodeNamesList: nodeNamesList
+	};
+}); // end define

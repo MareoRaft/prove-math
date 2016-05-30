@@ -1,11 +1,8 @@
-"use strict";
-
 define([], function () {
 
 	// we want to grab magic values too!
 	window.hasOwnPropertyOrGetter = function (obj, key) {
-		return obj.hasOwnProperty(key) || obj.__lookupGetter__(key) // see http://ejohn.org/blog/javascript-getters-and-setters/
-		;
+		return obj.hasOwnProperty(key) || obj.__lookupGetter__(key); // see http://ejohn.org/blog/javascript-getters-and-setters/
 	};
 
 	// when pushing an array ref onto an array, use pushArray for proper flattenation:
@@ -25,12 +22,12 @@ define([], function () {
 		return this.charAt(0).toUpperCase() + this.slice(1);
 	};
 	String.prototype.singularize = function () {
-		if (this === "dependencies") return "dependency";
-		if (this.charAt(this.length - 1) === "s") return this.slice(0, this.length - 1);else return this;
+		if (this === 'dependencies') return 'dependency';
+		if (this.charAt(this.length - 1) === 's') return this.slice(0, this.length - 1);else return this;
 	};
 	// we are appending these to window in order to make them global variables
 	window.reduce_string = function (string) {
-		return string.replace(/[_\W]/g, "").toLowerCase();
+		return string.replace(/[_\W]/g, '').toLowerCase();
 	};
 	window.die = function (string) {
 		alert(string);
@@ -38,7 +35,7 @@ define([], function () {
 	};
 	window.def = function (input) {
 		// die("This function should return TRUE for empty arrays [].  verify that it does.  then see why blorg populated synonyms in all our nodes!.")
-		return typeof input !== "undefined";
+		return typeof input !== 'undefined';
 	};
 
 	window.log = function (thing) {
@@ -52,4 +49,3 @@ define([], function () {
 		}
 	};
 }); // end of define
-

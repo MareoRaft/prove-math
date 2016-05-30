@@ -1,5 +1,3 @@
-"use strict";
-
 // THIS FILE ITSELF IS NOT CACHE BUSTED
 require.config({
 	urlArgs: "bust=" + new Date().getTime(),
@@ -21,18 +19,20 @@ require.config({
 		chosen: { deps: ["jquery"] },
 		mathjax: {
 			exports: "MathJax",
-			init: function init() {
+			init: function () {
 				MathJax.Hub.Config({
 					tex2jax: {
-						inlineMath: [["$", "$"], ["\\(", "\\)"]],
-						processEscapes: true } });
+						inlineMath: [['$', '$'], ['\\(', '\\)']],
+						processEscapes: true }
+				});
+				// this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
 				MathJax.Hub.Startup.onload();
 				return MathJax;
 			}
-		} } });
+		}
+	}
+});
 
-require(["main"], function (main) {});
-// this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
-
-// pass.  by loading main, we run main.js
-
+require(["main"], function (main) {
+	// pass.  by loading main, we run main.js
+});
