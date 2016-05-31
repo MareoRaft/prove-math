@@ -47,6 +47,7 @@ class User:
 			log.debug('ACCOUNT ID IS: '+ str(user_dict['account']['id']))
 			# delete the ObjectId('94569463') thing because it is not JSON serializable
 			del user_dict['_id']
+			user_dict['prefs'] = dict(DEF_USER_PREFS, **user_dict['prefs'])
 			return user_dict
 		else:
 			raise Exception('There was no user in the database.  The user should have been added when it was first __init__ed!')
@@ -68,19 +69,23 @@ class User:
 				'id': self.account_id,
 			},
 			'learned_node_ids': [],
-			'prefs': DEF_USER_PREFS,
+			'prefs': dict(), # gets filled with defaults on retrieval
 		}
 
 	def learn_node(self, node_id):
+		command = None
 		self.USERS.update(self._mongo_identifier_dict(), {'$addToSet': {'learned_node_ids': node_id}}, False)
 		# if newly learned node is the current goal, update goal
 		if self.dict['prefs']['goal_id'] == node_id:
+			command = {'command': 'complete-goal', 'node_id': node_id}
 			self.set_pref({'goal_id': None})
 		# same for requested pregoal
 		if self.dict['prefs']['requested_pregoal_id'] == node_id:
+			command = {'command': 'complete-pregoal', 'node_id': node_id}
 			self.set_pref({'requested_pregoal_id': None})
 		# send info down to all other clients (if user is logged in on multiple computers)
 		# tornado.websockethandler.send_to_multiple_accounts({ command: 'learn-node', node_id: node_id })
+		return command
 
 	def unlearn_node(self, node_id):
 		self.USERS.update(self._mongo_identifier_dict(), {'$pull': {'learned_node_ids': node_id}}, False)
