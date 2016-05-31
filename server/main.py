@@ -16,7 +16,7 @@ from tornado.websocket import WebSocketHandler
 from tornado.web import Application
 from tornado.web import Finish
 
-from lib.config import starting_nodes
+from lib import config
 from lib import clogging
 log = clogging.getLogger('main', filename='main.log') # this must come BEFORE imports that use getLogger('main')
 from lib.helper import strip_underscores, random_string
@@ -112,7 +112,8 @@ class IndexHandler(BaseHandler):
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
 					host=self.request.host,
-					subjects=json.dumps(list(starting_nodes.keys()))
+					subjects=json.dumps(list(config.starting_nodes.keys())),
+					javascript_kickoff_file=config.javascript_kickoff_file,
 					)
 
 
@@ -318,7 +319,7 @@ class SocketHandler (WebSocketHandler):
 		})
 
 	def starting_nodes(self, subject):
-		return starting_nodes[subject]
+		return config.starting_nodes[subject]
 
 	def on_close(self):
 		print('A websocket has been closed.')
@@ -336,7 +337,7 @@ def make_app():
 			url('/', RedirectHandler, {"url": "index.html"}, name="rooth"),
 			url('/websocket', SocketHandler),
 			url('/json', JSONHandler, name="jsonh"),
-			url(r'/index(?:\.html)?', IndexHandler, name="indexh"),
+			url(r'/index(?:\.html?)?', IndexHandler, name="indexh"),
 			# captures anything at all, and serves it as a static file. simple!
 			url(r'/(.*)', StaticHandler, {"path": "../www/"}),
 		],
