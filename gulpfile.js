@@ -61,6 +61,4 @@ gulp.task('watch', function() {
 	watch_babel.on('change', log_standard)
 })
 
-gulp.task('server', ['babel', 'compass', 'minify'])
-
 gulp.task('default', ['babel', 'compass', 'watch'])
