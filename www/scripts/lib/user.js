@@ -1,8 +1,10 @@
+'use strict';
+
 define(['jquery', 'underscore', 'profile', 'check-types'], function ($, _, undefined, is) {
 
 	/////////////////////////////////// HELPERS ///////////////////////////////////
 	//////////////////////////////////// MAIN /////////////////////////////////////
-	let user = {
+	var user = {
 		account: {
 			type: "local",
 			id: null

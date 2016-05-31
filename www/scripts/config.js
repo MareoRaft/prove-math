@@ -1,3 +1,5 @@
+"use strict";
+
 // THIS FILE ITSELF IS NOT CACHE BUSTED
 require.config({
 	urlArgs: "bust=" + new Date().getTime(),
@@ -19,7 +21,7 @@ require.config({
 		chosen: { deps: ["jquery"] },
 		mathjax: {
 			exports: "MathJax",
-			init: function () {
+			init: function init() {
 				MathJax.Hub.Config({
 					tex2jax: {
 						inlineMath: [['$', '$'], ['\\(', '\\)']],

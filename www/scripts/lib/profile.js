@@ -1,3 +1,5 @@
+'use strict';
+
 define([], function () {
 
 	// we want to grab magic values too!

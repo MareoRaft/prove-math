@@ -20,17 +20,16 @@ __pycache__/
 *.pyc
 
 # javascript 5 things (we are using scripts6 and babel to overwrite these things)
-# ADDING THESE TO REPO FOR GREG -- HE CAN"T GET BABEL TO WORK YET
-# www/scripts/main.js
-# www/scripts/main-optimized.min.js
-# www/scripts/tests.js
-# www/scripts/config.js
-# www/scripts/lib/blinds.js
-# www/scripts/lib/user.js
-# www/scripts/lib/profile.js
-# www/scripts/lib/graph.js
-# www/scripts/lib/graph-animation.js
-# www/scripts/lib/node.js
+www/scripts/config.js
+www/scripts/config-optimized.min.js
+www/scripts/main.js
+www/scripts/tests.js
+www/scripts/lib/blinds.js
+www/scripts/lib/user.js
+www/scripts/lib/profile.js
+www/scripts/lib/graph.js
+www/scripts/lib/graph-animation.js
+www/scripts/lib/node.js
 
 # css things (we are using sass and compass to overwrite these)
 www/stylesheets

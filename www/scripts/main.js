@@ -1,12 +1,14 @@
+"use strict";
+
 define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathjax", "profile", "marked", "graph", "node", "graph-animation", "blinds", "chosen", "user"], function ($, _, browser, is, katex, mathjax, undefined, marked, graph, Node, graphAnimation, blinds, chosen, user) {
 
 	////////////////////////////// GLOBALS ///////////////////////////////
-	let css_show_hide_array = ['#avatar', '#login-circle', '#logout-circle'];
+	var css_show_hide_array = ['#avatar', '#login-circle', '#logout-circle'];
 
 	/////////////////////////// INITIALIZATION ///////////////////////////
-	let subjects = JSON.parse($('body').attr('data-subjects'));
+	var subjects = JSON.parse($('body').attr('data-subjects'));
 
-	let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'));
+	var user_dict = JSON.parse($('body').attr('data-user-dict-json-string'));
 	log('user dict is...');
 	logj(user_dict);
 	if (is.emptyObject(user_dict)) {
@@ -24,22 +26,34 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 
 	graphAnimation.init({
 		// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
-		node_label: node => {
+		node_label: function node_label(node) {
 			if (node.type !== 'exercise') return node.gA_display_name;
 		}, // exercise names should NOT appear
-		node_radius: node => 7.9 * Math.sqrt(node.importance), // 7.5
+		node_radius: function node_radius(node) {
+			return 7.9 * Math.sqrt(node.importance);
+		}, // 7.5
 		circle_class_conditions: {
-			'bright-circle': node => node.learned,
-			'axiom-circle': node => node.type === 'axiom' || node.type === null,
-			'definition-circle': node => node.type === 'definition',
-			'theorem-circle': node => node.type === 'theorem',
-			'exercise-circle': node => node.type === 'exercise'
+			'bright-circle': function brightCircle(node) {
+				return node.learned;
+			},
+			'axiom-circle': function axiomCircle(node) {
+				return node.type === 'axiom' || node.type === null;
+			},
+			'definition-circle': function definitionCircle(node) {
+				return node.type === 'definition';
+			},
+			'theorem-circle': function theoremCircle(node) {
+				return node.type === 'theorem';
+			},
+			'exercise-circle': function exerciseCircle(node) {
+				return node.type === 'exercise';
+			}
 		},
 		circle_events: { // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
-			mouseover: node => {
+			mouseover: function mouseover(node) {
 				if (user.prefs.show_description_on_hover) node.gA_display_name = node.description;
 			},
-			mouseout: node => {
+			mouseout: function mouseout(node) {
 				if (user.prefs.show_description_on_hover) node.gA_display_name = node.display_name;
 			}
 		}
@@ -48,7 +62,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 	show('#banner');
 
 	function katexRenderIfPossible(string) {
-		let content = string.substr(1, -1);
+		var content = string.substr(1, -1);
 		try {
 			content = katex.renderToString(content); // katex.render takes in element as second parameter
 		} catch (error) {
@@ -69,7 +83,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 		keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
 		collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
 		append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
-		render: function (string) {
+		render: function render(string) {
 			// run katex
 			// string = string.replace(/\$[^\$]*\$/g, katexRenderIfPossible)
 			// return string
@@ -77,7 +91,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 			string = string.replace(/\\/g, '\\\\');
 			return marked(string);
 		},
-		post_render: function () {
+		post_render: function post_render() {
 			// the following should be equivalent to // mathjax.Hub.Queue(['Typeset', mathjax.Hub])
 			mathjax.Hub.Typeset(); // this can't be passed in without the parenthesis
 		},
@@ -87,11 +101,13 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 			'node-attribute': true,
 			animated: user.prefs.animate_blinds,
 			flipInX: user.prefs.animate_blinds,
-			empty: (node, display_key, key) => is.null(node[key]) || is.array(node[key]) && (is.emptyArray(node[key]) || is.emptyString(node[key][0]))
+			empty: function empty(node, display_key, key) {
+				return is.null(node[key]) || is.array(node[key]) && (is.emptyArray(node[key]) || is.emptyString(node[key][0]));
+			}
 		},
 		chosen: true
 	});
-	let current_node = {};
+	var current_node = {};
 	$('#toggle-learn-state').click(function () {
 		current_node.learned = !current_node.learned;
 		updateNodeTemplateLearnedState();
@@ -114,8 +130,8 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 		ws.jsend({ command: 'discard-node', node_id: current_node.id });
 	});
 
-	let host = $('body').attr('data-host');
-	let ws = 'WebSocket' in window ? new WebSocket("ws://" + host + "/websocket") : undefined;
+	var host = $('body').attr('data-host');
+	var ws = 'WebSocket' in window ? new WebSocket("ws://" + host + "/websocket") : undefined;
 	if (!def(ws)) die('Your browser does not support websockets, which are essential for this program.');
 
 	ws.jsend = function (raw_object) {
@@ -127,7 +143,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 	};
 	ws.onmessage = function (event) {
 		// i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
-		let ball = JSON.parse(event.data);
+		var ball = JSON.parse(event.data);
 		logj('got message: ', ball);
 		if (ball.command === 'populate-oauth-urls') {
 			oauth_url_dict = ball.url_dict;
@@ -140,11 +156,13 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 		} else if (ball.command === 'prompt-starting-nodes') {
 			// promptStartingNodes(subjects) // but not before x'ing out the login :(
 		} else if (ball.command === 'load-graph') {
-				let raw_graph = ball.new_graph;
+				var raw_graph = ball.new_graph;
 
-				raw_graph.nodes = _.map(raw_graph.nodes, raw_node => new Node(raw_node));
+				raw_graph.nodes = _.map(raw_graph.nodes, function (raw_node) {
+					return new Node(raw_node);
+				});
 
-				let ready_graph = raw_graph;
+				var ready_graph = raw_graph;
 				graph.addNodesAndLinks({
 					nodes: ready_graph.nodes,
 					links: ready_graph.links
@@ -234,7 +252,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 	function login() {
 		// this is what runs when the user clicks "login"
 		if (!def(oauth_url_dict)) alert('oauth login broken.');
-		let account_type = $('input[type=radio][name=provider]:checked').val();
+		var account_type = $('input[type=radio][name=provider]:checked').val();
 		if (!def(account_type) || account_type === '') {
 			if (!def(account_type)) {
 				$('.image-wrapper').addClass('invalid');
@@ -270,7 +288,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 
 	function display_search_results(nodes) {
 		_.each(nodes, function (node) {
-			let box_html = "<div class='preview-box'>" + "<div class='preview-top-bar'>" + "<div class='preview-circle-wrapper'>" + "<div><!--the circle itself--></div>" + "</div>" + "<div class='preview-name'>" + "<!--node name goes here-->The Inclusion-Exclusion Principal" + "</div>" + "</div>" + "<div class='preview-description'>" + "<!--node description goes here-->Given $n\in\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\left|\cup_{i=1}^{n} A_i\right| = \sum_{S\subset [n]} (-1)^{|S|+1} \left|\cap_{j\in S} A_j\right|$." + "</div>" + "</div>";
+			var box_html = "<div class='preview-box'>" + "<div class='preview-top-bar'>" + "<div class='preview-circle-wrapper'>" + "<div><!--the circle itself--></div>" + "</div>" + "<div class='preview-name'>" + "<!--node name goes here-->The Inclusion-Exclusion Principal" + "</div>" + "</div>" + "<div class='preview-description'>" + "<!--node description goes here-->Given $n\in\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\left|\cup_{i=1}^{n} A_i\right| = \sum_{S\subset [n]} (-1)^{|S|+1} \left|\cap_{j\in S} A_j\right|$." + "</div>" + "</div>";
 
 			$('#search-results-wrapper').append(box_html);
 			$('#search-results-wrapper').append(box_html);
@@ -306,9 +324,9 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 
 	function push_pull_drawer() {
 		// detect if drawer is in or out
-		let $display_name = $('#display-name');
-		let $logout = $('#logout-circle');
-		let drawer_position = $logout.css('right');
+		var $display_name = $('#display-name');
+		var $logout = $('#logout-circle');
+		var drawer_position = $logout.css('right');
 		if (drawer_position === '0px') {
 			// pull drawer out
 			$logout.addClass('logout-circle-out');
@@ -360,17 +378,17 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 
 	////////////////////////////// HELPERS //////////////////////////////
 	function promptStartingNodes() {
-		let subjects_clone = _.clone(subjects);
-		let last_subject = subjects_clone.pop();
-		let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"';
-		let default_subject = 'graph theory';
-		let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject);
+		var subjects_clone = _.clone(subjects);
+		var last_subject = subjects_clone.pop();
+		var subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"';
+		var default_subject = 'graph theory';
+		var subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject);
 		if (!_.contains(subjects, subject)) subject = default_subject;
 		ws.jsend({ 'command': 'get-starting-nodes', 'subject': subject });
 	}
 
 	function hide(css_selector) {
-		let $selected = $(css_selector);
+		var $selected = $(css_selector);
 		if (!_.contains(css_show_hide_array, css_selector)) {
 			$selected.css('height', '0');
 			$selected.css('width', '0');
@@ -382,7 +400,7 @@ define(["jquery", "underscore", "browser-detect", "check-types", "katex", "mathj
 	}
 	function show(css_selector) {
 		// this stuff fails for svg when using .addClass, so we can just leave show and hide stuff in the JS.
-		let $selected = $(css_selector);
+		var $selected = $(css_selector);
 		if (!_.contains(css_show_hide_array, css_selector)) {
 			$selected.css('height', '100%');
 			$selected.css('width', '100%');

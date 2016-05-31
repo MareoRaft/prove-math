@@ -1,10 +1,15 @@
+"use strict";
+
 define(["underscore", "check-types", "graph-animation"], /*"jsnetworkx"*/function (_, is, graphAnimation /*, jsNetworkX*/) {
 
-	let graph = {
+	var graph = {
 		nodes: {},
 		links: []
 	};
-	function init(nodes = [], links = []) {
+	function init() {
+		var nodes = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+		var links = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
 		die('maybe not finished writing this init function yet');
 		// create blank jsNetworkX graph
 		addNodesAndLinks({
@@ -18,7 +23,7 @@ define(["underscore", "check-types", "graph-animation"], /*"jsnetworkx"*/functio
 	}
 
 	function nodeNamesList() {
-		let node_names = [];
+		var node_names = [];
 		_.each(graph.nodes, function (node) {
 			node_names.push(node.name);
 		});
@@ -31,7 +36,12 @@ define(["underscore", "check-types", "graph-animation"], /*"jsnetworkx"*/functio
 		});
 	}
 
-	function addNodesAndLinks({ nodes = [], links = [] }) {
+	function addNodesAndLinks(_ref) {
+		var _ref$nodes = _ref.nodes;
+		var nodes = _ref$nodes === undefined ? [] : _ref$nodes;
+		var _ref$links = _ref.links;
+		var links = _ref$links === undefined ? [] : _ref$links;
+
 		_.each(nodes, function (node) {
 			if (node === undefined) die('before. undefined node in graph.addNodesAndLinks');
 		});
@@ -87,10 +97,10 @@ define(["underscore", "check-types", "graph-animation"], /*"jsnetworkx"*/functio
 		// maybe no need to have local copy of links see they don't carry any extra info.
 		//update source and targets of links to point to objects, not IDs // i don't think we need this anymore!  or perhaps graph-animation likes it...
 		_.each(links, function (link) {
-			let source_key = link.source;
-			let target_key = link.target;
+			var source_key = link.source;
+			var target_key = link.target;
 
-			let source_before = link.source;
+			var source_before = link.source;
 			link.source = graph.nodes[link.source];
 			link.target = graph.nodes[link.target];
 			if (!def(link.source)) {
@@ -104,12 +114,15 @@ define(["underscore", "check-types", "graph-animation"], /*"jsnetworkx"*/functio
 		is.assert.array.of.object(links);
 	}
 
-	function removeLinks({ node_id, dependency_ids }) {
-		let node = graph.nodes[node_id];
+	function removeLinks(_ref2) {
+		var node_id = _ref2.node_id;
+		var dependency_ids = _ref2.dependency_ids;
 
-		let links = [];
+		var node = graph.nodes[node_id];
+
+		var links = [];
 		_.each(dependency_ids, function (dependency_id) {
-			let dependency = graph.nodes[dependency_id];
+			var dependency = graph.nodes[dependency_id];
 
 			links.push({ source: dependency, target: node });
 		});

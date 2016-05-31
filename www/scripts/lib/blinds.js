@@ -1,6 +1,12 @@
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 define(["jquery", "underscore", "profile", "check-types", "graph"], function ($, _, undefined, is, graph) {
 
-	let blinds = {};
+	var blinds = {};
 
 	function string_parser(string_test) {
 		//var string_test='Here is a test <img1> and here is a question A tree <<[is]|is not>> an object and the answer is [[10]].Here is <<[exists]| does not exist>> another picture <img2>. Check this one out too [[true]]'
@@ -55,9 +61,15 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 			collapse_array_keys: undefined,
 			append_keys: undefined,
 			chosen: false,
-			render: x => x,
-			post_render: x => x,
-			transform_key: x => x,
+			render: function render(x) {
+				return x;
+			},
+			post_render: function post_render(x) {
+				return x;
+			},
+			transform_key: function transform_key(x) {
+				return x;
+			},
 			expand_array: false,
 			open_empty_blind: true,
 			blind_class_conditions: {},
@@ -70,13 +82,18 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 		blinds.blind_id_counter = 0;
 	}
 
-	function open({
-		object = null,
-		keys = blinds.keys,
-		expand_array_keys = blinds.expand_array_keys,
-		collapse_array_keys = blinds.collapse_array_keys,
-		append_keys = blinds.append_keys
-	}) {
+	function open(_ref) {
+		var _ref$object = _ref.object;
+		var object = _ref$object === undefined ? null : _ref$object;
+		var _ref$keys = _ref.keys;
+		var keys = _ref$keys === undefined ? blinds.keys : _ref$keys;
+		var _ref$expand_array_key = _ref.expand_array_keys;
+		var expand_array_keys = _ref$expand_array_key === undefined ? blinds.expand_array_keys : _ref$expand_array_key;
+		var _ref$collapse_array_k = _ref.collapse_array_keys;
+		var collapse_array_keys = _ref$collapse_array_k === undefined ? blinds.collapse_array_keys : _ref$collapse_array_k;
+		var _ref$append_keys = _ref.append_keys;
+		var append_keys = _ref$append_keys === undefined ? blinds.append_keys : _ref$append_keys;
+
 		keys = def(keys) ? keys : 'own';
 		expand_array_keys = def(expand_array_keys) ? expand_array_keys : [];
 		collapse_array_keys = def(collapse_array_keys) ? collapse_array_keys : [];
@@ -84,10 +101,10 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 
 		if (object === null) die('Tried to open the blinds with no blinds (object input was null or undefined).');
 		blinds.object = object;
-		let iterable = keys === 'own' ? blinds.object : keys;
-		for (let key in iterable) {
+		var iterable = keys === 'own' ? blinds.object : keys;
+		for (var key in iterable) {
 			if (is.array(iterable)) key = iterable[key]; // for the keys array, grab the STRINGS, not the INDECIS
-			let expand_array = blinds.expand_array && !_.contains(collapse_array_keys, key) || _.contains(expand_array_keys, key);
+			var expand_array = blinds.expand_array && !_.contains(collapse_array_keys, key) || _.contains(expand_array_keys, key);
 			if (hasOwnPropertyOrGetter(blinds.object, key)) {
 				// nonarrays:
 				if (is.not.array(blinds.object[key])) {
@@ -151,10 +168,16 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 		blinds.object = undefined;
 	}
 
-	function _openBlind({ parent_object = blinds.object, key, expand_array, display_key, $before }) {
+	function _openBlind(_ref2) {
+		var _ref2$parent_object = _ref2.parent_object;
+		var parent_object = _ref2$parent_object === undefined ? blinds.object : _ref2$parent_object;
+		var key = _ref2.key;
+		var expand_array = _ref2.expand_array;
+		var display_key = _ref2.display_key;
+		var $before = _ref2.$before;
 		// at this point, expand_array represents whether we should expand for THIS key specifically.
 		if (expand_array && is.array(blinds.object[key])) {
-			let array = blinds.object[key];
+			var array = blinds.object[key];
 			// if( is.emptyArray(array) && blinds.open_empty_blind ) array.push('') // empty arrays get a single empty string element
 			_.each(array, function (array_element, index) {
 				_openBlind({
@@ -169,7 +192,7 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 			if (blinds.open_empty_blind || blinds.object[key] !== '') {
 				// if a blind already exists (check '.blind' key in parent_object), fetch it here
 				// otherwise...
-				let blind = new Blind({
+				var blind = new Blind({
 					parent_object: parent_object,
 					key: key,
 					display_key: display_key,
@@ -182,9 +205,14 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 		}
 	}
 
-	function _openAppendBlind({ key, display_key, expand_array, is_one_time_only }) {
-		let parent_object = is.array(blinds.object[key]) && expand_array ? blinds.object[key] : blinds.object;
-		let blind = new Blind({
+	function _openAppendBlind(_ref3) {
+		var key = _ref3.key;
+		var display_key = _ref3.display_key;
+		var expand_array = _ref3.expand_array;
+		var is_one_time_only = _ref3.is_one_time_only;
+
+		var parent_object = is.array(blinds.object[key]) && expand_array ? blinds.object[key] : blinds.object;
+		var blind = new Blind({
 			parent_object: parent_object,
 			key: key, // there is no key since there is no value
 			display_key: display_key,
@@ -208,21 +236,21 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 		if (is_one_time_only) {
 			// it looks like closure wasn't an issue after all.  once the chosen glitch and the one_time_only glitch is resolved, revert this code to the compact form
 			$('#' + blind.id + ' ' + '.append').click(function () {
-				let new_blind = _appendValueOrCollapsedBlind(blind, expand_array);
+				var new_blind = _appendValueOrCollapsedBlind(blind, expand_array);
 				_toggleBlind(new_blind);
 				$('#' + blind.id).remove();
 			});
 		} else {
 			$('#' + blind.id + ' ' + '.append').click(function () {
-				let new_blind = _appendValueOrCollapsedBlind(blind, expand_array);
+				var new_blind = _appendValueOrCollapsedBlind(blind, expand_array);
 				_toggleBlind(new_blind);
 			});
 		}
 	}
 
 	function _toggleBlind(blind) {
-		let $this = $('#' + blind.id);
-		let $value = $this.children('.value:first');
+		var $this = $('#' + blind.id);
+		var $value = $this.children('.value:first');
 
 		blind.toggleState();
 		if (blind.state === 'read') _startReadMode(blind, $value);
@@ -230,8 +258,8 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 	}
 
 	function _appendValueOrCollapsedBlind(blind, expand_array) {
-		let $this = $('#' + blind.id);
-		let key = undefined;
+		var $this = $('#' + blind.id);
+		var key = undefined;
 		if (is.array(blind.parent_object)) {
 			if (expand_array) {
 				blind.parent_object.push('');
@@ -260,12 +288,14 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 
 	function _startReadMode(blind, $value) {
 		if (blind.mode === 'chosen') {
-			let selected_elements = [];
-			// grab the options that have the selected property (jQuery)
-			$('#' + blind.id + ' > .value > .tags').children().each(function () {
-				if ($(this).prop('selected')) selected_elements.push($(this).val());
-			});
-			blind.value = selected_elements;
+			(function () {
+				var selected_elements = [];
+				// grab the options that have the selected property (jQuery)
+				$('#' + blind.id + ' > .value > .tags').children().each(function () {
+					if ($(this).prop('selected')) selected_elements.push($(this).val());
+				});
+				blind.value = selected_elements;
+			})();
 		} else if (blind.mode === 'standard') {
 			$value.prop('contenteditable', false);
 			blind.value = $value.html();
@@ -327,9 +357,11 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 	}
 
 	//////////////////////////// BLIND CLASS ////////////////////////////
-	class Blind {
 
-		constructor(input) {
+	var Blind = function () {
+		function Blind(input) {
+			_classCallCheck(this, Blind);
+
 			_.defaults(input, {
 				parent_object: undefined,
 				key: undefined,
@@ -340,132 +372,162 @@ define(["jquery", "underscore", "profile", "check-types", "graph"], function ($,
 			_.extendOwn(this, input);
 		}
 
-		get id() {
-			if (!def(this._id)) this._id = 'Blind-ID-' + (blinds.blind_id_counter++).toString();
-			return this._id;
-		}
-
-		get value() {
-			// hand over the iterable() (or string) of the BlindValue object value
-			if (this.mode === 'append') {
-				return 'Add a new ' + this.display_key.singularize() + '!';
-			} else {
-				return this.parent_object[this.key];
+		_createClass(Blind, [{
+			key: "toggleState",
+			value: function toggleState() {
+				if (this.state === 'read') this.state = 'write';else if (this.state === 'write') this.state = 'read';else die('Bad state.');
 			}
-		}
+		}, {
+			key: "id",
+			get: function get() {
+				if (!def(this._id)) this._id = 'Blind-ID-' + (blinds.blind_id_counter++).toString();
+				return this._id;
+			}
+		}, {
+			key: "value",
+			get: function get() {
+				// hand over the iterable() (or string) of the BlindValue object value
+				if (this.mode === 'append') {
+					return 'Add a new ' + this.display_key.singularize() + '!';
+				} else {
+					return this.parent_object[this.key];
+				}
+			},
+			set: function set(new_value) {
+				// create a BlindValue object with new_value, or if it already exists, update the obj w/ new_value
+				this.parent_object[this.key] = new_value;
+			}
+		}, {
+			key: "classes",
+			get: function get() {
+				var classes = ['blind'];
+				if (this.mode === 'append') classes.push('blind-append');
+				for (var class_name in blinds.blind_class_conditions) {
+					var value = blinds.blind_class_conditions[class_name];
+					if (is.function(value)) {
+						var bool_func = value;
+						if (bool_func(blinds.object, this.display_key, this.key)) classes.push(class_name);
+					} else if (is.boolean(value)) {
+						var bool = value;
+						if (bool) classes.push(class_name);
+					}
+				}
+				return classes;
+			}
 
-		set value(new_value) {
-			// create a BlindValue object with new_value, or if it already exists, update the obj w/ new_value
-			this.parent_object[this.key] = new_value;
-		}
+			// get index() {
+			// 	// may not need this //
+			// }
 
-		get classes() {
-			let classes = ['blind'];
-			if (this.mode === 'append') classes.push('blind-append');
-			for (let class_name in blinds.blind_class_conditions) {
-				let value = blinds.blind_class_conditions[class_name];
-				if (is.function(value)) {
-					let bool_func = value;
-					if (bool_func(blinds.object, this.display_key, this.key)) classes.push(class_name);
-				} else if (is.boolean(value)) {
-					let bool = value;
-					if (bool) classes.push(class_name);
+		}, {
+			key: "htmlified",
+			get: function get() {
+				return '<div id="' + this.id + '" class="' + this.classes_htmlified + '">'
+				// + '<span class="key" data-key="'+this.key+'"' + this.index_htmlified + '>' // may not need this info at all!
+				 + '<div class="key" data-key="' + this.key + '">' + this.display_key_htmlified + '&nbsp&nbsp' + '</div>' + '<div class="value" ' + this.contenteditable_htmlified + '>' + this.value_htmlified + '</div>' + this.icon_htmlified + '</div>';
+			}
+		}, {
+			key: "icon_htmlified",
+			get: function get() {
+				if (this.mode === 'append') return '<img class="icon append" src="images/add.svg" />';
+				return blinds.edit_save_icon ? '<img class="icon edit-save" src="images/' + editOrSave(this.state) + '.svg" />' : '';
+				function editOrSave(state) {
+					return state === 'read' ? 'edit' : 'save';
 				}
 			}
-			return classes;
-		}
-
-		// get index() {
-		// 	// may not need this //
-		// }
-
-		get htmlified() {
-			return '<div id="' + this.id + '" class="' + this.classes_htmlified + '">'
-			// + '<span class="key" data-key="'+this.key+'"' + this.index_htmlified + '>' // may not need this info at all!
-			 + '<div class="key" data-key="' + this.key + '">' + this.display_key_htmlified + '&nbsp&nbsp' + '</div>' + '<div class="value" ' + this.contenteditable_htmlified + '>' + this.value_htmlified + '</div>' + this.icon_htmlified + '</div>';
-		}
-
-		get icon_htmlified() {
-			if (this.mode === 'append') return '<img class="icon append" src="images/add.svg" />';
-			return blinds.edit_save_icon ? '<img class="icon edit-save" src="images/' + editOrSave(this.state) + '.svg" />' : '';
-			function editOrSave(state) {
-				return state === 'read' ? 'edit' : 'save';
+		}, {
+			key: "display_key_htmlified",
+			get: function get() {
+				return blinds.render(blinds.transform_key(this.display_key, blinds.object) + ':'); // marked wraps this in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
 			}
-		}
+		}, {
+			key: "value_htmlified",
+			get: function get() {
+				var value_string = is.array(this.value) ? this.value.join(', ') : this.value;
+				if (this.state === 'write') {
+					if (this.mode === 'chosen') return as_select_html(this.value);else return value_string;
+				} else if (this.state === 'read') {
+					return blinds.render(value_string);
+				} else die('Bad state.');
+			}
+		}, {
+			key: "classes_htmlified",
+			get: function get() {
+				return this.classes.join(' ');
+			}
+		}, {
+			key: "contenteditable_htmlified",
+			get: function get() {
+				if (this.state === 'read') return '';else if (this.state === 'write') return 'contenteditable';else die('Bad state.');
+			}
+		}]);
 
-		get display_key_htmlified() {
-			return blinds.render(blinds.transform_key(this.display_key, blinds.object) + ':'); // marked wraps this in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
-		}
-
-		get value_htmlified() {
-			let value_string = is.array(this.value) ? this.value.join(', ') : this.value;
-			if (this.state === 'write') {
-				if (this.mode === 'chosen') return as_select_html(this.value);else return value_string;
-			} else if (this.state === 'read') {
-				return blinds.render(value_string);
-			} else die('Bad state.');
-		}
-
-		get classes_htmlified() {
-			return this.classes.join(' ');
-		}
-
-		get contenteditable_htmlified() {
-			if (this.state === 'read') return '';else if (this.state === 'write') return 'contenteditable';else die('Bad state.');
-		}
-
-		toggleState() {
-			if (this.state === 'read') this.state = 'write';else if (this.state === 'write') this.state = 'read';else die('Bad state.');
-		}
-	}
+		return Blind;
+	}();
 
 	//////////////////////////// BLINDVALUE CLASS ////////////////////////////
-	class BlindValue {
 
-		constructor(value) {
+
+	var BlindValue = function () {
+		function BlindValue(value) {
 			// if string, store it
 			// if array, map el to [el, true] and store
+
+			_classCallCheck(this, BlindValue);
 		}
 
-		get this() {
-			return this.iterable.this;
-		}
+		_createClass(BlindValue, [{
+			key: "select",
+			value: function select(el) {
+				// if element exists, make sure its true
+				// otherwise, create it true
+			}
+		}, {
+			key: "deselect",
+			value: function deselect(el) {
+				// if el exists, make false
+				// otherwise, create it false
+			}
+		}, {
+			key: "_append",
+			value: function _append(el, bool) {
+				// create it w/ bool value
+			}
+		}, {
+			key: "_delete",
+			value: function _delete(el) {
+				// we may need this in the future
+			}
+		}, {
+			key: "this",
+			get: function get() {
+				return this.iterable.this;
+			}
+		}, {
+			key: "_iterable",
+			set: function set(array) {
+				// this could possibly be something other than an array if necessary
+				// if an iterable already exists, complain
+				// the array can also hold a hidden 'this' key which holds the pointer to the blind value
+				this.__iterable = array;
+			}
+		}, {
+			key: "iterable",
+			get: function get() {
+				return this.__iterable;
+			}
+		}]);
 
-		set _iterable(array) {
-			// this could possibly be something other than an array if necessary
-			// if an iterable already exists, complain
-			// the array can also hold a hidden 'this' key which holds the pointer to the blind value
-			this.__iterable = array;
-		}
-
-		get iterable() {
-			return this.__iterable;
-		}
-
-		select(el) {
-			// if element exists, make sure its true
-			// otherwise, create it true
-		}
-
-		deselect(el) {
-			// if el exists, make false
-			// otherwise, create it false
-		}
-
-		_append(el, bool) {
-			// create it w/ bool value
-		}
-
-		_delete(el) {
-			// we may need this in the future
-		}
-	}
+		return BlindValue;
+	}();
 
 	////////////////////////////// HELPERS //////////////////////////////
-	function as_select_html(array_selected) {
-		let client_node_names = graph.nodeNamesList();
 
-		let string = '<select class="tags" multiple>';
+
+	function as_select_html(array_selected) {
+		var client_node_names = graph.nodeNamesList();
+
+		var string = '<select class="tags" multiple>';
 		_.each(client_node_names, function (el) {
 			string = string + '<option value="' + el + '" ' + selected(array_selected, el) + '>' + el + '</option>';
 		});

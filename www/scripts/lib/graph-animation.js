@@ -1,20 +1,28 @@
+"use strict";
+
 define(["jquery", "check-types", "profile", "d3", "user"], function ($, is, undefined, d3, user) {
 
-	let gA = {}; // for graphAnimation
+	var gA = {}; // for graphAnimation
 	function init(input) {
 		gA = _.defaults(input, {
 			// window_id, // due to select() issue having to use 'body'
 			nodes: [],
 			links: [],
-			node_id: function (node) {
+			node_id: function node_id(node) {
 				if (!def(node)) die('got undefined node..');return node.id;
 			},
 			node_label: '',
-			node_radius: node => node.r,
+			node_radius: function node_radius(node) {
+				return node.r;
+			},
 			circle_class_conditions: {},
 			circle_events: {},
-			width: () => $(window).width(),
-			height: () => $(window).height()
+			width: function width() {
+				return $(window).width();
+			},
+			height: function height() {
+				return $(window).height();
+			}
 		});
 
 		gA.circle_events = _.mapObject(gA.circle_events, function (func) {
@@ -36,7 +44,7 @@ define(["jquery", "check-types", "profile", "d3", "user"], function ($, is, unde
 		// to
 		// if ((alpha *= .995) < .0045) {
 		gA.force.resume = function () {
-			let alpha = gA.force.alpha();
+			var alpha = gA.force.alpha();
 			if (alpha < 0.0045) {
 				alpha = 0.0050;
 			} // assuming a cutoff of 0.0045.  That means for now, we are dependent on serving a customized version of d3 to users, even though its only one line change.  We could change it to 0.0050 and 0.0055 if we had to.
@@ -76,25 +84,35 @@ define(["jquery", "check-types", "profile", "d3", "user"], function ($, is, unde
 
 	function _tick() {
 		gA.svg.selectAll('.node').attr({
-			transform: node => 'translate(' + node.x + ',' + node.y + ')'
+			transform: function transform(node) {
+				return 'translate(' + node.x + ',' + node.y + ')';
+			}
 		});
 		gA.svg.selectAll('.link').attr({
-			x1: link => endpointLessRadius(link, 'x1'),
-			y1: link => endpointLessRadius(link, 'y1'),
-			x2: link => endpointLessRadius(link, 'x2'),
-			y2: link => endpointLessRadius(link, 'y2')
+			x1: function x1(link) {
+				return endpointLessRadius(link, 'x1');
+			},
+			y1: function y1(link) {
+				return endpointLessRadius(link, 'y1');
+			},
+			x2: function x2(link) {
+				return endpointLessRadius(link, 'x2');
+			},
+			y2: function y2(link) {
+				return endpointLessRadius(link, 'y2');
+			}
 		});
 	}
 	function endpointLessRadius(link, attr_name) {
 		// subtract radius away from line ends
-		let x1 = link.source.x;
-		let y1 = link.source.y;
-		let x2 = link.target.x;
-		let y2 = link.target.y;
+		var x1 = link.source.x;
+		var y1 = link.source.y;
+		var x2 = link.target.x;
+		var y2 = link.target.y;
 
-		let distance = cartesianDistance([x1, y1], [x2, y2]);
-		let radius1 = gA.node_radius(link.source);
-		let radius2 = gA.node_radius(link.target);
+		var distance = cartesianDistance([x1, y1], [x2, y2]);
+		var radius1 = gA.node_radius(link.source);
+		var radius2 = gA.node_radius(link.target);
 
 		if (attr_name === 'x1') return x1 + (x2 - x1) * radius1 / distance;
 		if (attr_name === 'y1') return y1 + (y2 - y1) * radius1 / distance;
@@ -116,12 +134,12 @@ define(["jquery", "check-types", "profile", "d3", "user"], function ($, is, unde
 		// x.domain([0, d3.max(_.pluck(nodes, 'x'))]) // not sure where in the flow this belongs...
 
 		// it was a LINK ISSUE!  you need to go over entire link importation stuff to verify it makes sense
-		let link = gA.svg.selectAll('.link').data(gA.force.links(), generateLinkId); // links before nodes so that lines in SVG appear *under* nodes
+		var link = gA.svg.selectAll('.link').data(gA.force.links(), generateLinkId); // links before nodes so that lines in SVG appear *under* nodes
 		link.enter().append('line').classed('link', true).attr('marker-end', 'url(#arrow-head)'); // add in the marker-end defined above
 		link.exit().remove();
 
-		let node = gA.svg.selectAll('.node').data(gA.force.nodes(), gA.node_id);
-		let node_group = node.enter().append('g').classed('node', true).call(gA.drag);
+		var node = gA.svg.selectAll('.node').data(gA.force.nodes(), gA.node_id);
+		var node_group = node.enter().append('g').classed('node', true).call(gA.drag);
 		node_group.append('circle').classed('node-circle', true).attr('r', gA.node_radius) // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
 		.on('mousedown', mousedown).on('mouseup', mouseup).on(gA.circle_events);
 		node_group.append('text') // must appear ABOVE node-circle
@@ -165,10 +183,17 @@ define(["jquery", "check-types", "profile", "d3", "user"], function ($, is, unde
 		// DOES work, but only affects centering and where new nodes are populated.  not scaling.
 	}
 
-	function addNodesAndLinks({ nodes = [], links = [] }) {
+	function addNodesAndLinks(_ref) {
+		var _ref$nodes = _ref.nodes;
+		var nodes = _ref$nodes === undefined ? [] : _ref$nodes;
+		var _ref$links = _ref.links;
+		var links = _ref$links === undefined ? [] : _ref$links;
+
 		// WE HAVE TO DO THIS BECAUSE d3 force directed graph makes us use an internal array :(((
-		let gA_node_ids = _.map(gA.nodes, node => node.id);
-		let new_nodes = [];
+		var gA_node_ids = _.map(gA.nodes, function (node) {
+			return node.id;
+		});
+		var new_nodes = [];
 		_.each(nodes, function (node) {
 			if (node === undefined) {
 				die('before. undefined node in gA.addNodesAndLinks');
@@ -181,8 +206,8 @@ define(["jquery", "check-types", "profile", "d3", "user"], function ($, is, unde
 		pushArray(gA.nodes, new_nodes);
 
 		// SAME IDEA, but for links :)
-		let gA_link_ids = _.map(gA.links, generateLinkId);
-		let new_links = [];
+		var gA_link_ids = _.map(gA.links, generateLinkId);
+		var new_links = [];
 		_.each(links, function (link) {
 			if (link === undefined) {
 				die('before. undefined link in gA.addNodesAndLinks');

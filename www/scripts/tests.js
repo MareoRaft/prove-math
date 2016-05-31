@@ -1,3 +1,5 @@
+'use strict';
+
 //////////////////////////// BLINDS ////////////////////////////
 function blindsTest(obj) {
 	blinds.init({

@@ -1,3 +1,5 @@
+javascript_kickoff_file = 'config'
+
 starting_nodes = {
 	'graph theory': ['set', 'multiset', 'vertex'],
 	'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
