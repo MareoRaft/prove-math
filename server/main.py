@@ -279,7 +279,7 @@ class SocketHandler (WebSocketHandler):
 			self.user.set_pref({'pregoal_id': pregoal_id})
 			self.send_graph()
 			self.jsend({
-				'command': 'highlight-pregoal'
+				'command': 'highlight-pregoal',
 				'pregoal-id': pregoal_id
 			})
 
