@@ -111,9 +111,10 @@ class MathGraph (nx.DAG):
 
 		self.validate_input_nodes(axioms)
 		self.validate_input_nodes(learned_nodes)
-		# if the use has learned nothing, emit an error
+		# if the user has learned nothing, emit an error
 		if not learned_nodes:
-			raise Exception('User must choose a subject and learn one of the starting nodes before choosing a goal.')
+			return axioms[0]
+#			raise Exception('User must choose a subject and learn one of the starting nodes before choosing a goal.')
 
 		depth_to_successors_dict = self.depth_to_successors_dict(axioms, learned_nodes)
 		deepest_successors = list(depth_to_successors_dict.items())[0][1]
@@ -134,9 +135,9 @@ class MathGraph (nx.DAG):
 
 	# @record_elapsed_time
 	def learnable_pregoals(self, goal, learned_nodes):	# a pregoal is an unlearned dependency of the goal, or the goal itself
-		learnable_nodes = set(self.absolute_dominion(learned_nodes)).union(self.sources())
-		pregoals = self.unlearned_dependency_tree(goal, learned_nodes)
-		return set.intersection(learnable_nodes, pregoals)
+		unlearned_dependency_graph = self.subgraph(self.unlearned_dependency_tree(goal, learned_nodes))
+		learnable_dependencies = unlearned_dependency_graph.sources()
+		return learnable_dependencies
 
 	# @record_elapsed_time
 	def choose_learnable_pregoals(self, *args, user=None, **kwargs):
@@ -164,7 +165,7 @@ class MathGraph (nx.DAG):
 		return self.most_important(learnable_pregoals, number)
 
 	# @record_elapsed_time
-	def nodes_to_send(self, user=None):
+	def nodes_to_send(self, user=None, client_node_ids=[]):
 		if user is None:
 			raise ValueError("Did not give a user!")
 
@@ -185,10 +186,10 @@ class MathGraph (nx.DAG):
 		ids_to_send.update(learned_ids)
 
 		# learnable nodes to send based on preference:
-		if pref['always_send_absolute_dominion'] and learned_ids:
+		if pref['always_send_absolute_dominion']:
 			ids_to_send.update(self.absolute_dominion(learned_ids))
 
-		if pref['always_send_learnable_pregoals'] and learned_ids:
+		if pref['always_send_learnable_pregoals']:
 			axioms = starting_nodes[subject]
 			pregoals = self.choose_learnable_pregoals(user=user)
 			ids_to_send.update(pregoals)
@@ -202,6 +203,9 @@ class MathGraph (nx.DAG):
 				ids_to_send.add(goal_id)
 			if pref['always_send_unlearned_dependency_tree_of_goal']:
 				ids_to_send.update(self.unlearned_dependency_tree(goal_id, learned_ids))
-
+		
+		if pref['sticky_client_nodes']:
+			ids_to_send.update(client_node_ids)
+		
 		return ids_to_send # could just return self.subgraph(list(ids_to_send)) but this makes testing simpler
 

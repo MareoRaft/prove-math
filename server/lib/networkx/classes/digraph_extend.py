@@ -63,11 +63,8 @@ class _DiGraphExtended (nx.DiGraph):
 			pred = set(self.predecessors_iter(nbunch))
 		else:
 			pred = set()
-			if len(nbunch) == 0:	# empty iterable
-				raise ValueError('Argument {} is empty'.format(nbunch))
-			else:	# multiple input nodes
-				for node in nbunch:
-					pred = pred.union(set(self.predecessors_iter(node)))
+			for node in nbunch:
+				pred = pred.union(set(self.predecessors_iter(node)))
 		return pred - set(nbunch)
 
 	# @record_elapsed_time
@@ -76,11 +73,8 @@ class _DiGraphExtended (nx.DiGraph):
 			succ = set(self.successors_iter(nbunch))
 		else:
 			succ = set()
-			if len(nbunch) == 0:
-				raise ValueError('Argument {} is empty'.format(nbunch))
-			else:
-				for node in nbunch:
-					succ = succ.union(set(self.successors_iter(node)))
+			for node in nbunch:
+				succ = succ.union(set(self.successors_iter(node)))
 		return succ - set(nbunch)
 
 	def anydirectional_neighbors(self, nbunch):

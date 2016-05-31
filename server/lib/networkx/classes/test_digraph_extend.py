@@ -63,8 +63,6 @@ def test_predecessors():
 		['a', 'b']
 	])
 	#test bad inputs
-	with pytest.raises(ValueError):
-		DG.predecessors([])
 	with pytest.raises(nx.NetworkXError):
 		DG.predecessors('NotANode')
 	with pytest.raises(nx.NetworkXError):
@@ -72,6 +70,7 @@ def test_predecessors():
 	with pytest.raises(nx.NetworkXError):
 		DG.predecessors(['c', 'NotANode'])
 	#test single input
+	assert DG.predecessors([]) == set()
 	assert DG.predecessors('y') == set()
 	assert DG.predecessors('d') == {'c'}
 	assert DG.predecessors('c') == {'y', 't'}
@@ -89,8 +88,6 @@ def test_successors():
 		['a', 'b']
 	])
 	#test bad inputs
-	with pytest.raises(ValueError):
-		DG.successors([])
 	with pytest.raises(nx.NetworkXError):
 		DG.successors('NotANode')
 	with pytest.raises(nx.NetworkXError):
@@ -98,6 +95,7 @@ def test_successors():
 	with pytest.raises(nx.NetworkXError):
 		DG.successors(['c', 'NotANode'])
 	#test single input
+	assert DG.successors([]) == set()
 	assert DG.successors('d') == set()
 	assert DG.successors('y') == {'c'}
 	assert DG.successors('c') == {'L', 'd'}
@@ -116,8 +114,6 @@ def test_anydirectional_neighbors():
 	])
 	DG.add_node('x')
 	#test bad inputs
-	with pytest.raises(ValueError):
-		DG.anydirectional_neighbors([])
 	with pytest.raises(nx.NetworkXError):
 		DG.anydirectional_neighbors('NotANode')
 	with pytest.raises(nx.NetworkXError):
@@ -125,6 +121,7 @@ def test_anydirectional_neighbors():
 	with pytest.raises(nx.NetworkXError):
 		DG.anydirectional_neighbors(['c', 'NotANode'])
 	#test single input
+	assert DG.anydirectional_neighbors([]) == set()
 	assert DG.anydirectional_neighbors('x') == set()
 	assert DG.anydirectional_neighbors('d') == {'c'}
 	assert DG.anydirectional_neighbors('y') == {'c'}
@@ -188,10 +185,9 @@ def test_ancestors():
 		DG.ancestors(['NotANode'])
 	with pytest.raises(nx.NetworkXError):
 		DG.ancestors(['x', 'NotANode', 'z'])
-	with pytest.raises(ValueError):
-		DG.ancestors([])
 
 	#existing inputs:
+	assert DG.ancestors([]) == set()
 	assert DG.ancestors('z') == {'x', 'y'}
 	assert DG.ancestors('y') == {'x'}
 	assert DG.ancestors('x') == set()
@@ -225,9 +221,8 @@ def test_common_ancestors():
 		DG.common_ancestors(['NotANode'], 'y')
 	with pytest.raises(nx.NetworkXError):
 		DG.common_ancestors('NotANode','StillNotANode')
-	with pytest.raises(ValueError):
-		DG.common_ancestors([],'y')
 	#existing inputs:
+	assert DG.common_ancestors([],'y') == set()
 	assert DG.common_ancestors('x', 'y') == set()
 	assert DG.common_ancestors(['x', 'y'], 'x') == {'a'}
 
@@ -273,10 +268,9 @@ def test_descendants():
 		DG.descendants(['NotANode'])
 	with pytest.raises(nx.NetworkXError):
 		DG.descendants(['x', 'NotANode', 'z']);
-	with pytest.raises(ValueError):
-		DG.descendants([])
 
 	#existing inputs:
+	assert DG.descendants([]) == set()
 	assert DG.descendants('x') == {'y', 'z'}
 	assert DG.descendants('y') == {'z'}
 	assert DG.descendants('z') == set()
@@ -307,9 +301,8 @@ def test_common_descendants():
 		DG.common_descendants(['NotANode'], 'y')
 	with pytest.raises(nx.NetworkXError):
 		DG.common_descendants('NotANode','StillNotANode')
-	with pytest.raises(ValueError):
-		DG.common_descendants([],'y')
 	#existing inputs:
+	assert DG.common_descendants([],'y') == set()
 	assert DG.common_descendants('x', 'y') == set()
 	assert DG.common_descendants(['x', 'y'], 'x') == {'a'}
 
