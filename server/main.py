@@ -163,7 +163,7 @@ class SocketHandler (WebSocketHandler):
 			self.user = User(ball['identifier'])
 			self.jsend({'command': 'update-user'})
 			if self.ids(ball):
-				self.send_graph()
+				self.send_graph(ball)
 			else: # they've learned nothing yet
 				self.jsend({
 					'command': 'prompt-starting-nodes',
@@ -172,15 +172,17 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'get-starting-nodes':
 			subject = ball['subject']
 			self.user.set_pref({'subject': subject})
-			self.send_graph()
+			self.send_graph(ball)
 
 		elif ball['command'] == 'get-curriculum':
 			goal = ball['goal']
 
 		elif ball['command'] == 'learn-node':
-			self.user.learn_node(ball['node_id'])
+			command = self.user.learn_node(ball['node_id'])
+			if command is not None:
+				self.jsend(command)
 			if ball['mode'] == 'learn':
-				self.send_graph()
+				self.send_graph(ball)
 			else:
 				raise Exception('mode is not learn')
 
@@ -249,53 +251,41 @@ class SocketHandler (WebSocketHandler):
 				'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
 
-		elif ball['command'] == 'suggest-goal':
+		elif ball['command'] == 'get-goal-suggestion':
 			goal_id = our_MG.choose_goal(user=self.user)
-
-			autoset_goal = self.user.dict['prefs']['always_accept_suggested_goal']
-			if autoset_goal:
-				self.set_goal(ball)
-			else:
-				self.jsend({
-					'command': 'confirm-goal',
-					'goal-id': goal_id
-				})
+			goal_node = our_MG.n(goal_id)
+			self.jsend({
+				'command': 'suggest-goal',
+				'goal': goal_node.__dict__,
+			})
 
 		elif ball['command'] == 'set-goal':
-			self.set_goal(ball)
+			goal_id = ball['goal_id']
+			goal_node = our_MG.n(goal_id)
+			self.user.set_pref({'goal_id': goal_id})
+			self.send_graph(ball)
+			self.jsend({
+				'command': 'highlight-goal',
+				'goal': goal_node.__dict__,
+			})
 
-		elif ball['command'] == 'suggest-pregoal':
+		elif ball['command'] == 'get-pregoal-suggestion':
 			pregoal_id = our_MG.choose_learnable_pregoals(user=self.user)[0]
+			pregoal_node = our_MG.n(pregoal_id)
+			self.jsend({
+				'command': 'suggest-pregoal',
+				'pregoal': pregoal_node.__dict__,
+			})
 
-			#if not autoconfirm, jsend({'command': 'confirm-pregoal'}) # else set_pregoal
+		elif ball['command'] == 'set-pregoal':
+			pregoal_id = ball['pregoal_id']
+			pregoal_node = our_MG.n(pregoal_id)
 			self.user.set_pref({'pregoal_id': pregoal_id})
-			self.send_graph()
+			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-pregoal',
-				'pregoal-id': pregoal_id
+				'pregoal': pregoal_node.__dict__,
 			})
-		'''
-		# or do we want the user to confirm pregoals as well?
-		elif ball['command'] == 'set-pregoal':
-			pregoal_id = ball['pregoal-id']
-			self.user.set_pref({'pregoal_id': pregoal_id})
-			self.jsend({
-				'command': 'highlight-pregoal'
-				'pregoal-id': pregoal_id
-			})
-		'''
-
-	def set_goal(self, ball):
-		goal_id = ball['goal-id']
-		self.user.set_pref({'goal_id': goal_id})
-		pref = self.user.dict['prefs']
-		show_goal = pref['always_send_goal'] or pref['always_send_unlearned_dependency_tree_of_goal']
-		if show_goal:
-			self.send_graph()
-		self.jsend({
-			'command': 'highlight-goal',
-			'goal-id': goal_id
-		})
 
 	def request_nodes(self, node_ids, ball):
 		for node_id in node_ids:
@@ -320,11 +310,12 @@ class SocketHandler (WebSocketHandler):
 		learned_ids = self.user.dict['learned_node_ids']
 		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
-	def send_graph(self):
+	def send_graph(self, ball):
 		subject = self.user.dict['prefs']['subject']
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
-		subgraph_to_send = our_MG.subgraph(our_MG.nodes_to_send(user=self.user))
+		nodes_to_send = our_MG.nodes_to_send(user=self.user, client_node_ids=ball['client_node_ids'])
+		subgraph_to_send = our_MG.subgraph(nodes_to_send)
 		dict_graph = subgraph_to_send.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',

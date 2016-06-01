@@ -31,7 +31,7 @@ DEF_USER_PREFS = {
 # :description: User can only learn things in order (with exception of starting nodes).  That is, they can ONLY learn LEARNABLE nodes.
 # :possible values: True, False, or "flexible" (allows user to override when they really want to)
 
-'subject': None,
+'subject': 'combinatorics',
 # :description: The current subject that the user is studying.
 # :possible values: any key of the starting_nodes dictionary in config.py
 
@@ -65,5 +65,13 @@ DEF_USER_PREFS = {
 
 'always_accept_suggested_goal': False,
 # :description: When the user asks for a goal suggestion, the first suggestion given is automatically accepted as the user's new goal.
+# :type: bool
+
+'always_accept_suggested_pregoal': False,
+# :description: When the user asks for a pregoal suggestion, the first suggestion given is automatically accepted as the user's new pregoal.
+# :type: bool
+
+'sticky_client_nodes': False,
+# :description: User will always receive every node already included in the client graph.  Nodes will not be removed.
 # :type: bool
 }
