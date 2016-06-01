@@ -1,4 +1,4 @@
-javascript_kickoff_file = 'config'
+javascript_kickoff_file = 'config-optimized.min'
 
 starting_nodes = {
 	'graph theory': ['set', 'multiset', 'vertex'],
