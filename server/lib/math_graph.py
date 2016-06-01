@@ -111,12 +111,14 @@ class MathGraph (nx.DAG):
 
 		self.validate_input_nodes(axioms)
 		self.validate_input_nodes(learned_nodes)
-		# if the user has learned nothing, emit an error
-		if not learned_nodes:
-			return axioms[0]
-#			raise Exception('User must choose a subject and learn one of the starting nodes before choosing a goal.')
 
 		depth_to_successors_dict = self.depth_to_successors_dict(axioms, learned_nodes)
+		if not depth_to_successors_dict:
+			unlearned_axioms = set(axioms) - set(learned_nodes)
+			if unlearned_axioms:
+				return list(unlearned_axioms)[0]
+			else:
+				raise Exception('You\'ve learned EVERYTHING (in that subject)!!!!  :(')
 		deepest_successors = list(depth_to_successors_dict.items())[0][1]
 		if not deepest_successors:
 			# no more successors.  the user has finished the subject and needs to choose a new one
@@ -182,6 +184,12 @@ class MathGraph (nx.DAG):
 		if not subject in starting_nodes.keys():
 			# not a valid subject choice
 			raise ValueError("User's subject was somehow set to an invalid choice!")
+
+		if pref['sticky_client_nodes']:
+			ids_to_send.update(client_node_ids)
+		# else:
+		# we might want to think about how we want these to behave with sticky nodes.
+		# for now, always send.
 		ids_to_send.update(starting_nodes[subject])
 		ids_to_send.update(learned_ids)
 
@@ -203,9 +211,6 @@ class MathGraph (nx.DAG):
 				ids_to_send.add(goal_id)
 			if pref['always_send_unlearned_dependency_tree_of_goal']:
 				ids_to_send.update(self.unlearned_dependency_tree(goal_id, learned_ids))
-		
-		if pref['sticky_client_nodes']:
-			ids_to_send.update(client_node_ids)
-		
+
 		return ids_to_send # could just return self.subgraph(list(ids_to_send)) but this makes testing simpler
 

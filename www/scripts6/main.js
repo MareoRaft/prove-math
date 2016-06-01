@@ -202,21 +202,38 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		document.getElementById("search_results_return").innerHTML = JSON.stringify(ball.results);
 	}
 	else if (ball.command === "suggest-goal") {
-		node = new Node(ball.node_dict)
+		let goal = new Node(ball.goal)
+		let choice = undefined
 		if (user.prefs.always_accept_suggested_goal) {
 			choice = true
 		}
 		else{
-			alert("The goal " + node.name + " has been suggested.  Details: " + JSON.stringify(ball.node_dict))
+			alert("The goal " + goal.name + " has been suggested.  Details: " + JSON.stringify(ball.goal))
 			choice = window.prompt("Would you like to accept the goal?  Type 'yes' to accept.")
 			choice = (choice === 'yes')
 		}
 		if (choice) {
-			ws.jsend({ command: "set-goal", node_id: node.id })
+			ws.jsend({ command: "set-goal", goal_id: goal.id })
+		}
+	}
+	else if (ball.command === "suggest-pregoal") {
+		let pregoal = new Node(ball.pregoal)
+		let choice = undefined
+		if (user.prefs.always_accept_suggested_pregoal) {
+			choice = true
+		}
+		else{
+			alert("The pregoal " + pregoal.name + " has been suggested.  Details: " + JSON.stringify(ball.pregoal))
+			choice = window.prompt("Would you like to accept the pregoal?  Type 'yes' to accept.")
+			choice = (choice === 'yes')
+		}
+		if (choice) {
+			ws.jsend({ command: "set-pregoal", pregoal_id: pregoal.id })
 		}
 	}
 	else if (ball.command === "highlight-goal") {
-		alert("Your new goal is " + goalname + "!!!!")
+		let goal = new Node(ball.goal)
+		alert("Your new goal is " + goal.name + "!!!!")
 	}
 	else die('Unrecognized command '+ball.command+'.')
 }
@@ -340,10 +357,10 @@ $('#get-starting-nodes').click(function(){
 	promptStartingNodes()
 })
 $('#get-goal-suggestion').click(function(){
-	ws.jsend({command: 'suggest-goal'})
+	ws.jsend({command: 'get-goal-suggestion'})
 })
 $('#get-pregoal-suggestion').click(function(){
-	ws.jsend({command: 'suggest-pregoal'})
+	ws.jsend({command: 'get-pregoal-suggestion'})
 })
 $('#push').click(expand_search_wrapper)
 

@@ -163,7 +163,7 @@ class SocketHandler (WebSocketHandler):
 			self.user = User(ball['identifier'])
 			self.jsend({'command': 'update-user'})
 			if self.ids(ball):
-				self.send_graph()
+				self.send_graph(ball)
 			else: # they've learned nothing yet
 				self.jsend({
 					'command': 'prompt-starting-nodes',
@@ -172,7 +172,7 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'get-starting-nodes':
 			subject = ball['subject']
 			self.user.set_pref({'subject': subject})
-			self.send_graph()
+			self.send_graph(ball)
 
 		elif ball['command'] == 'get-curriculum':
 			goal = ball['goal']
@@ -182,7 +182,7 @@ class SocketHandler (WebSocketHandler):
 			if command is not None:
 				self.jsend(command)
 			if ball['mode'] == 'learn':
-				self.send_graph()
+				self.send_graph(ball)
 			else:
 				raise Exception('mode is not learn')
 
@@ -253,34 +253,38 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 'get-goal-suggestion':
 			goal_id = our_MG.choose_goal(user=self.user)
+			goal_node = our_MG.n(goal_id)
 			self.jsend({
 				'command': 'suggest-goal',
-				'goal-id': goal_id
+				'goal': goal_node.__dict__,
 			})
 
 		elif ball['command'] == 'set-goal':
-			goal_id = ball['goal-id']
+			goal_id = ball['goal_id']
+			goal_node = our_MG.n(goal_id)
 			self.user.set_pref({'goal_id': goal_id})
-			self.send_graph()
+			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-goal',
-				'goal-id': goal_id
+				'goal': goal_node.__dict__,
 			})
 
 		elif ball['command'] == 'get-pregoal-suggestion':
 			pregoal_id = our_MG.choose_learnable_pregoals(user=self.user)[0]
+			pregoal_node = our_MG.n(pregoal_id)
 			self.jsend({
 				'command': 'suggest-pregoal',
-				'pregoal-id': pregoal_id
+				'pregoal': pregoal_node.__dict__,
 			})
-		
+
 		elif ball['command'] == 'set-pregoal':
-			pregoal_id = ball['pregoal-id']
+			pregoal_id = ball['pregoal_id']
+			pregoal_node = our_MG.n(pregoal_id)
 			self.user.set_pref({'pregoal_id': pregoal_id})
-			self.send_graph()
+			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-pregoal',
-				'pregoal-id': pregoal_id
+				'pregoal': pregoal_node.__dict__,
 			})
 
 	def request_nodes(self, node_ids, ball):
@@ -306,7 +310,7 @@ class SocketHandler (WebSocketHandler):
 		learned_ids = self.user.dict['learned_node_ids']
 		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
-	def send_graph(self):
+	def send_graph(self, ball):
 		subject = self.user.dict['prefs']['subject']
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
