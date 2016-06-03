@@ -235,7 +235,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		let goal = new Node(ball.goal)
 		alert("Your new goal is " + goal.name + "!!!!")
 	}
-	else die('Unrecognized command '+ball.command+'.')
+	else log('Unrecognized command '+ball.command+'.')
 }
 
 $(document).on('jsend', function(Event) {
