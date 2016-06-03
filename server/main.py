@@ -342,7 +342,8 @@ def make_app():
 			url('/websocket', SocketHandler),
 			url('/json', JSONHandler, name="jsonh"),
 			url(r'/index(?:\.html?)?', IndexHandler, name="indexh"),
-			# captures anything at all, and serves it as a static file. simple!
+			url(r'/docs(?:\.html?)?', RedirectHandler, {"url": "docs/index.html"}, name='docsh'),
+			url(r'/docs/(.*)', StaticHandler, {"path": "../docs/build/html/"}),
 			url(r'/(.*)', StaticHandler, {"path": "../www/"}),
 		],
 		# settings:
