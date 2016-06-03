@@ -1,6 +1,7 @@
 /*
 Run this file by typing 'gulp' in the command line (you must be somewhere in provemath directory).
 More info: https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md
+syncronous running: http://stackoverflow.com/questions/26715230/gulp-callback-how-to-tell-gulp-to-run-a-task-first-before-another/26715351
 */
 /////////////////// IMPORTS ///////////////////
 const gulp = require('gulp')
