@@ -383,7 +383,7 @@ function push_pull_drawer() {
 		$logout.removeClass('logout-circle-out')
 		$display_name.removeClass('display-name-out')
 	}
-	else die('unexpected drawer position')
+	else log('unexpected drawer position')
 }
 
 //////////////////////////// TOGGLE STUFF ////////////////////////////
