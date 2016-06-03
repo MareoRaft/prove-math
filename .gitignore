@@ -15,6 +15,9 @@ octave-core
 # mergetool files:
 *.orig
 
+# sphinx things
+docs/build
+
 # python things
 __pycache__/
 *.pyc

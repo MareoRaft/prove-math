@@ -32,7 +32,7 @@ define( [
 
 
 ////////////////////////////// GLOBALS ///////////////////////////////
-let css_show_hide_array = ['#avatar', '#login-circle', '#logout-circle']
+let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle']
 
 
 /////////////////////////// INITIALIZATION ///////////////////////////
@@ -48,7 +48,7 @@ if( is.emptyObject(user_dict) ){
 }
 else{
 	// logged in:
-		$("#display-name").html(user_dict["id_name"]) // add this back in when we have a drop down
+		$(".display-name").html(user_dict["id_name"]) // add this back in when we have a drop down
 		$("#avatar").attr("src", user_dict["profile_pic"])
 		hide('#login-circle')
 	show('#overlay')
@@ -260,7 +260,7 @@ var oauth_url_dict = undefined
 $('#x').click(function() {
 	hide('#login')
 		hide('#avatar')
-		hide('#logout-circle')
+		hide('.logout-circle')
 		show('#login-circle')
 	show('#overlay')
 })
@@ -280,7 +280,7 @@ $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE 
 		$(this).removeClass('invalid')
 	}
 })
-$('#logout-circle').click(function() {
+$('.logout-circle').click(function() {
 	push_pull_drawer()
 	logout()
 })
@@ -370,8 +370,8 @@ $('#add-node').click(function(){
 
 function push_pull_drawer() {
 	// detect if drawer is in or out
-	let $display_name = $('#display-name')
-	let $logout = $('#logout-circle')
+	let $display_name = $('.display-name')
+	let $logout = $('.logout-circle')
 	let drawer_position = $logout.css('right')
 	if( drawer_position === '0px' ){
 		// pull drawer out

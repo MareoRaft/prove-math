@@ -1,6 +1,7 @@
 /*
 Run this file by typing 'gulp' in the command line (you must be somewhere in provemath directory).
 More info: https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md
+syncronous running: http://stackoverflow.com/questions/26715230/gulp-callback-how-to-tell-gulp-to-run-a-task-first-before-another/26715351
 */
 /////////////////// IMPORTS ///////////////////
 const gulp = require('gulp')
@@ -12,8 +13,9 @@ const exec = require('child_process').exec
 
 
 /////////////////// GLOBALS ///////////////////
-const src_compass = 'www/sass/**/*.scss'
-const src_babel = 'www/scripts6/**/*.js'
+const src_scss = 'www/sass/**/*.scss'
+const src_js6 = 'www/scripts6/**/*.js'
+const src_docs = 'docs/source/**/*'
 
 const log_standard = function(event) {
 	console.log('File ' + event.path + ' was ' + event.type + ', running tasks...')
@@ -21,8 +23,8 @@ const log_standard = function(event) {
 
 
 ///////////////////// MAIN /////////////////////
-gulp.task('compass', function() {
-	gulp.src(src_compass)
+gulp.task('css', function() {
+	gulp.src(src_scss)
 		.pipe(compass({
 			sassDir: 'www/sass',
 			cssDir: 'www/stylesheets',
@@ -35,12 +37,21 @@ gulp.task('compass', function() {
 		.pipe(gulp.dest('www/stylesheets'))
 })
 
-gulp.task('babel', function() {
-	gulp.src(src_babel)
+gulp.task('js', function() {
+	gulp.src(src_js6)
 		.pipe(babel({
 			presets: ['es2015'], // Specifies which ECMAScript standard to follow.  This is necessary.
 		}))
 		.pipe(gulp.dest('www/scripts'))
+})
+
+gulp.task('docs', function(cb) {
+	// generate docs/build/html from docs/source using sphinx's `make html` command
+	exec('cd docs && make html', function (err, stdout, stderr) {
+		console.log(stdout)
+		console.log(stderr)
+		cb(err)
+	})
 })
 
 gulp.task('minify', function(cb) {
@@ -53,12 +64,15 @@ gulp.task('minify', function(cb) {
 })
 
 gulp.task('watch', function() {
-	// compass and autoprefixer watcher
-	var watch_compass = gulp.watch(src_compass, ['compass'])
-	watch_compass.on('change', log_standard)
-	// babel watcher
-	var watch_babel = gulp.watch(src_babel, ['babel'])
-	watch_babel.on('change', log_standard)
+	// css watcher
+	var watch_css = gulp.watch(src_scss, ['css'])
+	watch_css.on('change', log_standard)
+	// js watcher
+	var watch_js = gulp.watch(src_js6, ['js'])
+	watch_js.on('change', log_standard)
+	// docs watcher
+	var watch_docs = gulp.watch(src_docs, ['docs'])
+	watch_docs.on('change', log_standard)
 })
 
-gulp.task('default', ['babel', 'compass', 'watch'])
+gulp.task('default', ['js', 'css', 'docs', 'watch'])
