@@ -46,8 +46,8 @@ gulp.task('js', function() {
 })
 
 gulp.task('docs', function(cb) {
-	// generate docs/build/html from docs/source using sphinx's `make html` command
-	exec('cd docs && make html', function (err, stdout, stderr) {
+	// generate docs/build/html from docs/source using sphinx's `sphinx-build` command
+	exec('cd docs && sphinx-build -b html source build/html', function (err, stdout, stderr) {
 		console.log(stdout)
 		console.log(stderr)
 		cb(err)
