@@ -32,7 +32,7 @@ define( [
 
 
 ////////////////////////////// GLOBALS ///////////////////////////////
-let css_show_hide_array = ['#avatar', '#login-circle', '#logout-circle']
+let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle']
 
 
 /////////////////////////// INITIALIZATION ///////////////////////////
@@ -48,7 +48,7 @@ if( is.emptyObject(user_dict) ){
 }
 else{
 	// logged in:
-		$("#display-name").html(user_dict["id_name"]) // add this back in when we have a drop down
+		$(".display-name").html(user_dict["id_name"]) // add this back in when we have a drop down
 		$("#avatar").attr("src", user_dict["profile_pic"])
 		hide('#login-circle')
 	show('#overlay')
@@ -202,21 +202,38 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		document.getElementById("search_results_return").innerHTML = JSON.stringify(ball.results);
 	}
 	else if (ball.command === "suggest-goal") {
-		node = new Node(ball.node_dict)
+		let goal = new Node(ball.goal)
+		let choice = undefined
 		if (user.prefs.always_accept_suggested_goal) {
 			choice = true
 		}
 		else{
-			alert("The goal " + node.name + " has been suggested.  Details: " + JSON.stringify(ball.node_dict))
+			alert("The goal " + goal.name + " has been suggested.  Details: " + JSON.stringify(ball.goal))
 			choice = window.prompt("Would you like to accept the goal?  Type 'yes' to accept.")
 			choice = (choice === 'yes')
 		}
 		if (choice) {
-			ws.jsend({ command: "set-goal", node_id: node.id })
+			ws.jsend({ command: "set-goal", goal_id: goal.id })
+		}
+	}
+	else if (ball.command === "suggest-pregoal") {
+		let pregoal = new Node(ball.pregoal)
+		let choice = undefined
+		if (user.prefs.always_accept_suggested_pregoal) {
+			choice = true
+		}
+		else{
+			alert("The pregoal " + pregoal.name + " has been suggested.  Details: " + JSON.stringify(ball.pregoal))
+			choice = window.prompt("Would you like to accept the pregoal?  Type 'yes' to accept.")
+			choice = (choice === 'yes')
+		}
+		if (choice) {
+			ws.jsend({ command: "set-pregoal", pregoal_id: pregoal.id })
 		}
 	}
 	else if (ball.command === "highlight-goal") {
-		alert("Your new goal is " + goalname + "!!!!")
+		let goal = new Node(ball.goal)
+		alert("Your new goal is " + goal.name + "!!!!")
 	}
 	else die('Unrecognized command '+ball.command+'.')
 }
@@ -243,7 +260,7 @@ var oauth_url_dict = undefined
 $('#x').click(function() {
 	hide('#login')
 		hide('#avatar')
-		hide('#logout-circle')
+		hide('.logout-circle')
 		show('#login-circle')
 	show('#overlay')
 })
@@ -263,7 +280,7 @@ $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE 
 		$(this).removeClass('invalid')
 	}
 })
-$('#logout-circle').click(function() {
+$('.logout-circle').click(function() {
 	push_pull_drawer()
 	logout()
 })
@@ -340,10 +357,10 @@ $('#get-starting-nodes').click(function(){
 	promptStartingNodes()
 })
 $('#get-goal-suggestion').click(function(){
-	ws.jsend({command: 'suggest-goal'})
+	ws.jsend({command: 'get-goal-suggestion'})
 })
 $('#get-pregoal-suggestion').click(function(){
-	ws.jsend({command: 'suggest-pregoal'})
+	ws.jsend({command: 'get-pregoal-suggestion'})
 })
 $('#push').click(expand_search_wrapper)
 
@@ -353,8 +370,8 @@ $('#add-node').click(function(){
 
 function push_pull_drawer() {
 	// detect if drawer is in or out
-	let $display_name = $('#display-name')
-	let $logout = $('#logout-circle')
+	let $display_name = $('.display-name')
+	let $logout = $('.logout-circle')
 	let drawer_position = $logout.css('right')
 	if( drawer_position === '0px' ){
 		// pull drawer out

@@ -2,11 +2,11 @@
 <html>
 <head>
 	<meta charset='UTF-8'>
-    <title>Prove Math</title>
- 	<link rel="icon" type="image/png" sizes="256x256" href="favicon/256.png">
-    <link rel='stylesheet' href='stylesheets/main.css' />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
-    <script src='scripts/lib/require-min.js?' data-main='scripts/config'></script>
+	<title>Prove Math</title>
+	<link rel="icon" type="image/png" sizes="256x256" href="favicon/256.png">
+	<link rel='stylesheet' href='stylesheets/main.css' />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
+	<script src='scripts/lib/require-min.js?' data-main='scripts/{{ javascript_kickoff_file }}'></script>
 </head>
 <body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}" data-subjects="{{ subjects }}">
 <section id='login'>
@@ -60,8 +60,8 @@
 		</div>
 	</div>
 	<div id='login-circle'>login</div> <!-- overlaps avatar.  never should both appear at the same time -->
-	<div id='logout-circle'>logout</div> <!-- placed BEFORE avatar so that it will appear UNDER the avatar -->
-	<div id='display-name'>not logged in</div> <!-- also under avatar, behaves just like logout-cirlce in CSS -->
+	<div class='logout-circle'>logout</div> <!-- placed BEFORE avatar so that it will appear UNDER the avatar -->
+	<div class='display-name'>not logged in</div> <!-- also under avatar, behaves just like logout-cirlce in CSS -->
 	<img id='avatar' src='images/smiley-face.png'>
 	<div id='get-starting-nodes'>start<br />subject</div>
 	<div id='get-goal-suggestion'>start<br />goal</div>

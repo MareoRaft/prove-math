@@ -344,8 +344,7 @@ def test_choose_learnable_pregoals():
 	DAG.add_edges_from([
 		('a', 'b'), ('a', 'c')
 	])
-	with pytest.raises(ValueError):
-		DAG.choose_learnable_pregoals(['a'], [])
+	assert DAG.choose_learnable_pregoals(['a'], []) == ['a']
 	assert DAG.choose_learnable_pregoals(['a'], ['a']) == ['b']
 
 	DAG = fill_sample_custom_nodes()

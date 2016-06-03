@@ -157,7 +157,7 @@ $circle-diameter: 60px;
 	top: 0;
 	right: 0;
 }
-#logout-circle {
+.logout-circle {
 	@extend .hover-circle-with-text;
 	top: 0;
 	right: 0;
@@ -166,11 +166,11 @@ $circle-diameter: 60px;
 	transition: all 0.4s ease; // or transition: top 0.4s ease, right 0.4s ease, opacity 0.4s ease;
 }
 .logout-circle-out {
-	top: 40px !important;
-	right: 55px !important;
-	opacity: 0.5 !important;
+	top: 40px;
+	right: 55px;
+	opacity: 0.5;
 }
-#display-name {
+.display-name {
 	// this is NOT a side hover option because we don't want the opacity to change on hover.  Also, we don't want pointer-events.  This is just some read-only info right now.
 	@extend .centered-text;
 	position: absolute;
@@ -183,8 +183,8 @@ $circle-diameter: 60px;
 	transition: all 0.4s ease;
 }
 .display-name-out {
-	right: 70px !important; // in the future, it would be awesome to use the Bourbon library and calc(), if it supports important! Something like @include calc(right, "#{$circle-diameter} + 10px", "important");
-	opacity: 0.8 !important;
+	right: 70px; // calc(right, "#{$circle-diameter} + 10px");
+	opacity: 0.8;
 }
 #avatar {
 	@extend .hover-circle;

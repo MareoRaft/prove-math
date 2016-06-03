@@ -111,11 +111,14 @@ class MathGraph (nx.DAG):
 
 		self.validate_input_nodes(axioms)
 		self.validate_input_nodes(learned_nodes)
-		# if the use has learned nothing, emit an error
-		if not learned_nodes:
-			raise Exception('User must choose a subject and learn one of the starting nodes before choosing a goal.')
 
 		depth_to_successors_dict = self.depth_to_successors_dict(axioms, learned_nodes)
+		if not depth_to_successors_dict:
+			unlearned_axioms = set(axioms) - set(learned_nodes)
+			if unlearned_axioms:
+				return list(unlearned_axioms)[0]
+			else:
+				raise Exception('You\'ve learned EVERYTHING (in that subject)!!!!  :(')
 		deepest_successors = list(depth_to_successors_dict.items())[0][1]
 		if not deepest_successors:
 			# no more successors.  the user has finished the subject and needs to choose a new one
@@ -134,9 +137,9 @@ class MathGraph (nx.DAG):
 
 	# @record_elapsed_time
 	def learnable_pregoals(self, goal, learned_nodes):	# a pregoal is an unlearned dependency of the goal, or the goal itself
-		learnable_nodes = set(self.absolute_dominion(learned_nodes)).union(self.sources())
-		pregoals = self.unlearned_dependency_tree(goal, learned_nodes)
-		return set.intersection(learnable_nodes, pregoals)
+		unlearned_dependency_graph = self.subgraph(self.unlearned_dependency_tree(goal, learned_nodes))
+		learnable_dependencies = unlearned_dependency_graph.sources()
+		return learnable_dependencies
 
 	# @record_elapsed_time
 	def choose_learnable_pregoals(self, *args, user=None, **kwargs):
@@ -164,7 +167,7 @@ class MathGraph (nx.DAG):
 		return self.most_important(learnable_pregoals, number)
 
 	# @record_elapsed_time
-	def nodes_to_send(self, user=None):
+	def nodes_to_send(self, user=None, client_node_ids=[]):
 		if user is None:
 			raise ValueError("Did not give a user!")
 
@@ -181,14 +184,20 @@ class MathGraph (nx.DAG):
 		if not subject in starting_nodes.keys():
 			# not a valid subject choice
 			raise ValueError("User's subject was somehow set to an invalid choice!")
+
+		if pref['sticky_client_nodes']:
+			ids_to_send.update(client_node_ids)
+		# else:
+		# we might want to think about how we want these to behave with sticky nodes.
+		# for now, always send.
 		ids_to_send.update(starting_nodes[subject])
 		ids_to_send.update(learned_ids)
 
 		# learnable nodes to send based on preference:
-		if pref['always_send_absolute_dominion'] and learned_ids:
+		if pref['always_send_absolute_dominion']:
 			ids_to_send.update(self.absolute_dominion(learned_ids))
 
-		if pref['always_send_learnable_pregoals'] and learned_ids:
+		if pref['always_send_learnable_pregoals']:
 			axioms = starting_nodes[subject]
 			pregoals = self.choose_learnable_pregoals(user=user)
 			ids_to_send.update(pregoals)
