@@ -43,7 +43,7 @@ DEF_USER_PREFS = {
 # :description: This should only be set when the user asks for a pregoal.  It is separate from the automatically chosen pregoals from always_send_learnable_pregoals.
 # :type: string (must be an existing node id)
 
-'always_send_absolute_dominion': True,
+'always_send_learnable_successors': True,
 # :description: Always send nodes that (user is capable of learning AND are successors of what they've already learned).
 # :type: bool
 

@@ -252,7 +252,7 @@ class SocketHandler (WebSocketHandler):
 			})
 
 		elif ball['command'] == 'get-goal-suggestion':
-			goal_id = our_MG.choose_goal(user=self.user)
+			goal_id = our_MG.choose_goal(self.user)
 			goal_node = our_MG.n(goal_id)
 			self.jsend({
 				'command': 'suggest-goal',
@@ -270,7 +270,7 @@ class SocketHandler (WebSocketHandler):
 			})
 
 		elif ball['command'] == 'get-pregoal-suggestion':
-			pregoal_id = our_MG.choose_learnable_pregoals(user=self.user)[0]
+			pregoal_id = our_MG.choose_learnable_pregoals(self.user, number=1)
 			pregoal_node = our_MG.n(pregoal_id)
 			self.jsend({
 				'command': 'suggest-pregoal',
@@ -314,7 +314,7 @@ class SocketHandler (WebSocketHandler):
 		subject = self.user.dict['prefs']['subject']
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
-		nodes_to_send = our_MG.nodes_to_send(user=self.user, client_node_ids=ball['client_node_ids'])
+		nodes_to_send = our_MG.nodes_to_send(self.user, client_node_ids=ball['client_node_ids'])
 		subgraph_to_send = our_MG.subgraph(nodes_to_send)
 		dict_graph = subgraph_to_send.as_js_ready_dict()
 		self.jsend({
