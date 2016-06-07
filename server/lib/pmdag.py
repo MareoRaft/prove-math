@@ -105,7 +105,8 @@ class PMDAG (nx.DAG):
 		if len(nbunch) < number:
 			raise ValueError('Asked for more nodes than you provided')
 		nodes_by_importance = sorted(nbunch, key=most_important_sorter, reverse=True)
-		return nodes_by_importance[:number]
+		num_to_return = min(len(nodes_by_importance), number) # in case there are not actually at least :number: nodes available in nbunch
+		return nodes_by_importance[:num_to_return]
 
 	# @record_elapsed_time
 	def choose_destination(self, axioms, selected_nodes): # short sighted, depth-first

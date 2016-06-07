@@ -270,7 +270,7 @@ class SocketHandler (WebSocketHandler):
 			})
 
 		elif ball['command'] == 'get-pregoal-suggestion':
-			pregoal_id = our_MG.choose_learnable_pregoals(self.user, number=1)
+			pregoal_id = our_MG.choose_learnable_pregoals(self.user, number=1)[0]
 			pregoal_node = our_MG.n(pregoal_id)
 			self.jsend({
 				'command': 'suggest-pregoal',
@@ -280,7 +280,7 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'set-pregoal':
 			pregoal_id = ball['pregoal_id']
 			pregoal_node = our_MG.n(pregoal_id)
-			self.user.set_pref({'pregoal_id': pregoal_id})
+			self.user.set_pref({'requested_pregoal_id': pregoal_id})
 			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-pregoal',
