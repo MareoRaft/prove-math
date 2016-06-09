@@ -48,32 +48,28 @@ if( is.emptyObject(user_dict) ){
 }
 else{
 	// logged in:
-		$(".display-name").html(user_dict["id_name"]) // add this back in when we have a drop down
+		$(".display-name").html(user_dict["id_name"])
 		$("#avatar").attr("src", user_dict["profile_pic"])
 		hide('#login-circle')
 	show('#overlay')
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
 let pref_blinds = new Blinds({
-	// PLEASE delete the below comments once preference pane is working
 	window_id: 'preference-pane-blinds',
-	// keys: // get all by default
 	expand_array: false,
-	expand_array_keys: [], // none so far
 	// render: // no render function needed, except maybe to process True, False, etc
 	blind_class_conditions: {
 		'pref-attribute': true,
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
 	},
-	// chosen: // false by default
 })
 
 
 graphAnimation.init({
 	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
 	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
-	node_radius: node => 7.9 * Math.sqrt(node.importance), // 7.5
+	node_radius: node => 7.9 * Math.sqrt(node.importance),
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom' || node.type === null,
@@ -450,6 +446,7 @@ function toggleToGraphAnimation() {
 	show('svg')
 	show('#overlay')
 	node_blinds.close()
+	pref_blinds.close()
 }
 
 ////////////////////////////// HELPERS //////////////////////////////

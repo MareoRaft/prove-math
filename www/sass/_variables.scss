@@ -19,3 +19,9 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $medium
   height: 0;
   width: 0; // prevent rogue width overflows
 }
+
+@mixin center-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

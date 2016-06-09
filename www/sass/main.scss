@@ -20,14 +20,6 @@
 
 
 //////////////////////////////////////// INDEX ////////////////////////////////////////
-#node-template {
-	@include hide;
-	z-index: 4;
-	section {
-		overflow-y: scroll;
-	}
-}
-
 svg {
 	user-select: none;
 }
@@ -222,26 +214,6 @@ $circle-diameter: 60px;
 .invalid {
 	border-style: solid;
 	border-color: $yellow !important; // soft red: rgba( 255, 51, 0, 0.9 )
-}
-
-@mixin center-content {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-#node-template > header {
-	display: flex;
-}
-#node-template > header > * {
-	@include center-content;
-	margin: 0;
-	height: 60px;
-	padding: 0 30px;
-	@include hover-opacity;
-}
-#back {
-	@include hover-opacity;
 }
 
 $search-font: 300 normal 26px Helvetica, Tahoma, Arial, sans-serif;

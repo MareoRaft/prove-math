@@ -136,22 +136,22 @@ class Blinds {
 		if( expand_array && is.array(this.object[key]) ) {
 			let array = this.object[key]
 			// if( is.emptyArray(array) && this.open_empty_blind ) array.push('') // empty arrays get a single empty string element
-			let blinds = this // because this changes within underscore loops:
-			_.each(array, function(array_element, index) {
-				blinds._openBlind({
+			for (var index in array) {
+				this._openBlind({
 					parent_object: this.object[key],
 					key: index,
 					display_key: key,
 					expand_array: false,
 					$before: $before,
 				})
-			})
+			}
 		}
 		else {
 			if( this.open_empty_blind || this.object[key] !== '' ){
 				// if a blind already exists (check '.blind' key in parent_object), fetch it here
 				// otherwise...
 				let blind = new Blind({
+					blinds: this,
 					parent_object: parent_object,
 					key: key,
 					display_key: display_key,
@@ -167,6 +167,7 @@ class Blinds {
 	_openAppendBlind({ key, display_key, expand_array, is_one_time_only }) {
 		let parent_object = (is.array(this.object[key]) && expand_array)? this.object[key]: this.object
 		let blind = new Blind({
+			blinds: this,
 			parent_object: parent_object,
 			key: key, // there is no key since there is no value
 			display_key: display_key,
@@ -308,10 +309,12 @@ class Blind {
 			state: 'read', // can be 'read' or 'write'
 		})
 		_.extendOwn(this, input)
+		// verify that a blinds object was attached
+		if( !('blinds' in this) ) die('No Blinds object attached to this little Blind object :)')
 	}
 
 	get id() {
-		if( !def(this._id) ) this._id = 'Blind-ID-' + (blinds.blind_id_counter++).toString()
+		if( !def(this._id) ) this._id = 'Blind-ID-' + (this.blinds.blind_id_counter++).toString()
 		return this._id
 	}
 
@@ -333,11 +336,11 @@ class Blind {
 	get classes() {
 		let classes = ['blind']
 		if( this.mode === 'append' ) classes.push('blind-append')
-		for( let class_name in blinds.blind_class_conditions ){
-			let value = blinds.blind_class_conditions[class_name]
+		for( let class_name in this.blinds.blind_class_conditions ){
+			let value = this.blinds.blind_class_conditions[class_name]
 			if( is.function(value) ){
 				let bool_func = value
-				if( bool_func(blinds.object, this.display_key, this.key) ) classes.push(class_name)
+				if( bool_func(this.blinds.object, this.display_key, this.key) ) classes.push(class_name)
 			}
 			else if( is.boolean(value) ){
 				let bool = value
@@ -366,14 +369,14 @@ class Blind {
 
 	get icon_htmlified() {
 		if( this.mode === 'append' ) return '<img class="icon append" src="images/add.svg" />'
-		return (blinds.edit_save_icon)? '<img class="icon edit-save" src="images/'+editOrSave(this.state)+'.svg" />': ''
+		return (this.blinds.edit_save_icon)? '<img class="icon edit-save" src="images/'+editOrSave(this.state)+'.svg" />': ''
 		function editOrSave(state) {
 			return (state === 'read')? 'edit': 'save'
 		}
 	}
 
 	get display_key_htmlified() {
-		return blinds.render(blinds.transform_key(this.display_key, blinds.object) + ':') // marked wraps this in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
+		return this.blinds.render(this.blinds.transform_key(this.display_key, this.blinds.object) + ':') // marked wraps this in paragraph tags and NEWLINES. NEWLINES are rendered in HTML as a single space
 	}
 
 	get value_htmlified() {
@@ -383,7 +386,7 @@ class Blind {
 			else return value_string
 		}
 		else if(this.state === 'read') {
-			return blinds.render(value_string)
+			return this.blinds.render(value_string)
 		}
 		else die('Bad state.')
 	}
