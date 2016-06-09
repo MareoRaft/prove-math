@@ -31,7 +31,7 @@ DEF_USER_PREFS = {
 # :description: User can only learn things in order (with exception of starting nodes).  That is, they can ONLY learn LEARNABLE nodes.
 # :possible values: True, False, or "flexible" (allows user to override when they really want to)
 
-'subject': 'combinatorics',
+'subject': 'graph theory',
 # :description: The current subject that the user is studying.
 # :possible values: any key of the starting_nodes dictionary in config.py
 

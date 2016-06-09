@@ -1,5 +1,4 @@
-################################### IMPORTS ###################################
-# standard library:
+############################# IMPORTS ############################
 import sys
 from warnings import warn
 import subprocess
@@ -8,10 +7,10 @@ import re
 import json
 from string import punctuation
 
-# local:
 from lib import helper
+from lib.vote import Votable
 
-############################### INTERNAL HELPERS ###############################
+######################## INTERNAL HELPERS ########################
 def to_bash():
 	# include commands here to be executed in bash
 	bash_out = subprocess.check_output('ls; cd; ls', shell=True)
@@ -24,7 +23,7 @@ def move_attribute(dic, aliases, strict=True):
 			del dic[key]
 			return value
 	if strict:
-		raise KeyError('Could not find any of the following keys: '+str(aliases)+' in the soon-to-be Node '+str(dic))
+		raise KeyError('Could not find any of the following keys: {} in the soon-to-be Node {}.'.format(aliases, dic))
 	else:
 		return None
 
@@ -49,12 +48,12 @@ def check_type_and_clean(value, value_type, list_of=False):
 			clean_value = []
 			for el in value:
 				if type(el) is value_type:
-					if value_type is not str or el != '': # if value_type is str, we still exclude ''
+					if value_type is not str or el.strip() != '': # if value_type is str, we still exclude ''
 						clean_value.append(el)
-				elif (el is None or el == '') and value_type != 'NoneType' and value_type is not None:
+				elif (el is None or el.strip() == '') and value_type != 'NoneType' and value_type is not None:
 					pass # ignore the blank entry
 				else:
-					raise Exception('Element '+str(el)+' is not of type '+str(value_type))
+					raise Exception('Element {} is not of type {}'.format(el, value_type))
 			value = clean_value
 		elif value is None:
 			value = []
@@ -83,7 +82,7 @@ def get_contents_of_dunderscores(string):
 def reduce_string(string):
 	return re.sub(r'[_\W]', '', string).lower()
 
-############################### EXTERNAL HELPERS ###############################
+######################## EXTERNAL HELPERS ########################
 def create_appropriate_node(dic):
 	# for writers that use shortcut method, we must seek out the type:
 	if not 'type' in dic:
@@ -108,10 +107,10 @@ def find_node_from_id(list_of_nodes, ID):
 	warn('Could node find node with ID "' + ID + '" within list_of_nodes.')
 
 
-#################################### MAIN #####################################
+############################## MAIN ##############################
 
 
-class Node:
+class Node (Votable):
 
 
 	MIN_IMPORTANCE = 1
@@ -177,7 +176,7 @@ class Node:
 			self._name = check_type_and_clean(new_name, str)
 			self.id = self.name
 		else:
-			self._name= check_type_and_clean(new_name, type(None))
+			self._name = check_type_and_clean(new_name, type(None))
 
 	@property
 	def id(self):

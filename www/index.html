@@ -36,9 +36,18 @@
 		</div>
 	</div>
 </section>
+<section id='preference-pane'>
+	<header>
+		<img class='back' src='images/arrow-left.svg'>
+		<div>some header</div>
+		<div>options</div>
+	</header>
+	<section id='preference-pane-blinds'>
+	</section>
+</section>
 <section id='node-template'>
 	<header>
-		<img id='back' src='images/arrow-left.svg'>
+		<img class='back' src='images/arrow-left.svg'>
 		<div id='toggle-learn-state'></div>
 		<div id='discard-node'>discard node</div>
 	</header>
@@ -62,11 +71,12 @@
 	<div id='login-circle'>login</div> <!-- overlaps avatar.  never should both appear at the same time -->
 	<div class='logout-circle'>logout</div> <!-- placed BEFORE avatar so that it will appear UNDER the avatar -->
 	<div class='display-name'>not logged in</div> <!-- also under avatar, behaves just like logout-cirlce in CSS -->
+	<div class='see-preferences'>prefs</div> <!-- also under avatar, behaves just like logout-cirlce in CSS -->
 	<img id='avatar' src='images/smiley-face.png'>
 	<div id='get-starting-nodes'>start<br />subject</div>
 	<div id='get-goal-suggestion'>start<br />goal</div>
 	<div id='get-pregoal-suggestion'>start<br />pregoal</div>
-	<div id='push'>push<br />me:)</div>
+	<div id='push'>SEE PREFS</div>
 	<img id="add-node" src="images/add.svg">
 </section>
 <!-- svg should appear here (populated by JS) -->

@@ -1,5 +1,6 @@
 from lib.mongo import Mongo
 from lib import helper
+from lib.vote import Votable
 
 ############################ HELPERS ############################
 def unique_string(other_strings):
@@ -12,7 +13,7 @@ def unique_string(other_strings):
 ############################## MAIN ##############################
 
 
-class Curriculum:
+class Curriculum (Votable):
 
 
 	NODES = Mongo("provemath", "nodes")
@@ -55,7 +56,7 @@ class Curriculum:
 		# verify that each node id actually exists
 		for node_id in node_ids:
 			next(self.NODES.find({"_id": node_id}))
-			# the above should error if no curriculums exist, so we have verified that the id exists
+			# the above should error if no node exists, so we have verified that the id exists
 		# TODO: verify that node_ids follow LOGICAL order?
 		self._ids = node_ids
 
