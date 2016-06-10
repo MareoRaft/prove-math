@@ -32,7 +32,7 @@ define( [
 
 
 ////////////////////////////// GLOBALS ///////////////////////////////
-let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle']
+let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 
 
 /////////////////////////// INITIALIZATION ///////////////////////////
@@ -63,6 +63,9 @@ let pref_blinds = new Blinds({
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
 	},
+	read_mode_triggers: [
+		user.setPref,
+	],
 })
 
 
@@ -124,6 +127,9 @@ let node_blinds = new Blinds({
 		// the following should be equivalent to // mathjax.Hub.Queue(['Typeset', mathjax.Hub])
 		mathjax.Hub.Typeset() // this can't be passed in without the parenthesis
 	},
+	read_mode_triggers: [
+		{ type: 'save-node' }, // request-node will happen on the server side
+	],
 	transform_key: nodeKeyToDisplayKey,
 	blind_class_conditions: {
 		'node-attribute': true,
@@ -277,6 +283,7 @@ $('#x').click(function() {
 	hide('#login')
 		hide('#avatar')
 		hide('.logout-circle')
+		hide('.see-preferences')
 		show('#login-circle')
 	show('#overlay')
 })
@@ -388,16 +395,19 @@ function push_pull_drawer() {
 	// detect if drawer is in or out
 	let $display_name = $('.display-name')
 	let $logout = $('.logout-circle')
+	let $see_prefs = $('.see-preferences')
 	let drawer_position = $logout.css('right')
 	if( drawer_position === '0px' ){
 		// pull drawer out
 		$logout.addClass('logout-circle-out')
 		$display_name.addClass('display-name-out')
+		$see_prefs.addClass('see-preferences-out')
 	}
 	else if( drawer_position === '55px' ){
 		// put drawer in
 		$logout.removeClass('logout-circle-out')
 		$display_name.removeClass('display-name-out')
+		$see_prefs.removeClass('see-preferences-out')
 	}
 	else die('unexpected drawer position')
 }
@@ -418,7 +428,7 @@ $(document).on('node-click', function(Event){
 		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
 	}
 })
-$('#push').click(function() {
+$('.see-preferences').click(function() {
 	pref_blinds.open({
 		object: user.prefs,
 	})

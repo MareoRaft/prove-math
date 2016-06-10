@@ -58,8 +58,8 @@
 		font-style: italic;
 	}
 }
-// OVERRIDE FOR USER PREFS:
-#preference-pane {
+// OVERRIDE for user prefs:
+.pref-attribute {
 	.key {
 		width: 30%;
 		min-width: 200px; // this is to prevent stuff getting cut-off when width of window is very narrow
@@ -89,6 +89,27 @@
 	}
 	&:nth-child(4n+4) {
 		background-color: #0DD;
+	}
+}
+// OVERRIDE for user prefs:
+.pref-attribute {
+	&:nth-child(4n+1) {
+		background-color: #4b0054;
+		@include white;
+	}
+	&:nth-child(4n+2) {
+		background-color: #6a0059;
+		@include white;
+	}
+	&:nth-child(4n+3) {
+		background-color: #f0f888;
+	}
+	&:nth-child(4n+4) {
+		background-color: #a2dc8a;
+	}
+	&:nth-child(4n+5) {
+		background-color: #004873;
+		@include white;
 	}
 }
 

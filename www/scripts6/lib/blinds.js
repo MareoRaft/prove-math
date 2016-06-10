@@ -39,6 +39,7 @@ class Blinds {
 			expand_array: false,
 			open_empty_blind: true,
 			blind_class_conditions: {},
+			read_mode_events: [],
 			edit_save_icon: true,
 		})
 		_.extend(this, options)
@@ -136,7 +137,7 @@ class Blinds {
 		if( expand_array && is.array(this.object[key]) ) {
 			let array = this.object[key]
 			// if( is.emptyArray(array) && this.open_empty_blind ) array.push('') // empty arrays get a single empty string element
-			for (var index in array) {
+			for( var index in array ){
 				this._openBlind({
 					parent_object: this.object[key],
 					key: index,
@@ -183,7 +184,8 @@ class Blinds {
 	}
 
 	_enableRenderToggling(blind) {
-		$('#'+blind.id+' '+'.edit-save').click(function(){ this._toggleBlind(blind) })
+		let blinds = this // because 'this' won't work inside the following function...
+		$('#'+blind.id+' '+'.edit-save').click(function(){ blinds._toggleBlind(blind) })
 	}
 
 	_enableAppending(blind, expand_array, is_one_time_only) {
@@ -263,8 +265,9 @@ class Blinds {
 		$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit.svg')
 		this.post_render()
 
-		$.event.trigger({
-			type: 'save-node', // request-node will happen on the server side
+		_.each(this.read_mode_triggers, function(e){
+			if( is.function(e) ) e(blind.key, blind.value)
+			else $.event.trigger(e)
 		})
 	}
 

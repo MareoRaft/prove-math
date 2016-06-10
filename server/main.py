@@ -288,16 +288,21 @@ class SocketHandler (WebSocketHandler):
 			})
 
 	def request_nodes(self, node_ids, ball):
+		# user manually requests a node.  So we want to preserve client_node_ids as not to change anything for them.  We only want to ADD the requested nodes additionally.
 		for node_id in node_ids:
 			if node_id not in our_MG.nodes():
 				raise ValueError('The node_id "'+node_id+'" does not exist.')
-		ids = set(self.ids()).union(set(node_ids))
-		H = our_MG.subgraph(list(ids))
+		ids = set(self.ids(ball)).union(set(node_ids))
+		H = our_MG.subgraph(ids)
 		dict_graph = H.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
+
+	def ids(self, ball):
+		learned_ids = self.user.dict['learned_node_ids']
+		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
 	def remove_client_edges(self, node_id, dependency_ids):
 		self.jsend({
@@ -305,10 +310,6 @@ class SocketHandler (WebSocketHandler):
 			'node_id': node_id,
 			'dependency_ids': list(dependency_ids),
 		})
-
-	def ids(self, ball):
-		learned_ids = self.user.dict['learned_node_ids']
-		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
 	def send_graph(self, ball):
 		subject = self.user.dict['prefs']['subject']
