@@ -5,3 +5,4 @@ For Programmers
    :maxdepth: 2
 
    install
+   CHANGELOG
