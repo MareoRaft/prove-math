@@ -58,16 +58,14 @@ class MathGraph (PMDAG):
 	def nodes_to_send(self, user, client_node_ids=[]):
 		learned_ids = user.dict['learned_node_ids']
 		pref = user.dict['prefs']
-		subject = pref['subject']
-		goal_id = pref['goal_id']
 
 		ids_to_send = set()
 
 		# nodes to send no matter what:
-		if not subject:
+		if not pref['subject']:
 			# the User class initialization should guarantee we don't hit this line unless something resets subject to None:
 			raise ValueError("User's subject has been deleted!")
-		if not subject in starting_nodes.keys():
+		if not pref['subject'] in starting_nodes.keys():
 			# not a valid subject choice
 			raise ValueError("User's subject was somehow set to an invalid choice!")
 
@@ -76,7 +74,7 @@ class MathGraph (PMDAG):
 		# else:
 		# we might want to think about how we want these to behave with sticky nodes.
 		# for now, always send.
-		ids_to_send.update(starting_nodes[subject])
+		ids_to_send.update(starting_nodes[pref['subject']])
 		ids_to_send.update(learned_ids)
 
 		# learnable nodes to send based on preference:
@@ -90,11 +88,11 @@ class MathGraph (PMDAG):
 			ids_to_send.add(pref['requested_pregoal_id'])
 
 		# nodes related to the user's goal:
-		if goal_id:
+		if pref['goal_id']:
 			if pref['always_send_goal']:
-				ids_to_send.add(goal_id)
+				ids_to_send.add(pref['goal_id'])
 			if pref['always_send_unlearned_dependency_tree_of_goal']:
-				ids_to_send.update(self.unlearned_dependency_tree(user, goal_id))
+				ids_to_send.update(self.unlearned_dependency_tree(user, pref['goal_id']))
 
 		return ids_to_send
 

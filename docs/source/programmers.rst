@@ -1,8 +1,11 @@
 For Programmers
 =======================
 
-.. toctree::
-   :maxdepth: 2
+..	toctree::
+	:maxdepth: 2
 
-   install
-   CHANGELOG
+	install
+	mongo
+	auth
+	CHANGELOG
+
