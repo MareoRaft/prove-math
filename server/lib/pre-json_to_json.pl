@@ -38,7 +38,7 @@ $input =~ s/(?<!\\)\\(?=[nt][a-z])/\\\\/g;
 
 # 3. Look for newlines within strings, replace them with \n
 # 3.5 Look for tabs within strings, replace them with \t
-while( $input =~ s/^($JSONRegex::gobble_mid_strings)(?:(\n)|(\t))/ "$1\\" . "n" x!! $2 . "t" x!! $3 /e ){}
+while( $input =~ s/^($JSONRegex::gobble_mid_strings)\r?(?:(\n)|(\t))/ "$1\\" . "n" x!! $2 . "t" x!! $3 /e ){}
 
 # 4. Commas will be added to the end of all top-level dics
 $input =~ s/$JSONRegex::matched_braces/$&,/g; # this would naturally pick only the top-level dics
