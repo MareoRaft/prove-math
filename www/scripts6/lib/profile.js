@@ -1,4 +1,4 @@
-define( [], function() {
+define( ["check-types"], function(is) {
 
 // we want to grab magic values too!
 window.hasOwnPropertyOrGetter = function(obj, key) {
@@ -28,6 +28,7 @@ String.prototype.singularize = function() {
 }
 // we are appending these to window in order to make them global variables
 window.reduce_string = function(string) {
+	if( !is.string(string) ) die('Expected type string.  Got type: ' + typeof string)
 	return string.replace(/[_\W]/g, '').toLowerCase()
 }
 window.die = function(string) {

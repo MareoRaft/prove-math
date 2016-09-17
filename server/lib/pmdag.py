@@ -6,6 +6,7 @@ from lib.networkx.classes import dag
 
 from lib.decorate import record_elapsed_time
 from lib import helper
+from lib.node import reduce_string
 
 ############################ HELPERS #############################
 
@@ -17,22 +18,47 @@ class PMDAG (nx.DAG):
 
 	A few of the methods in here (unselected_dependency_tree, unselected_count, unselected_counts, and selectable_predestinations) could actually do just fine in nx.DAG, since they don't use our custom node objects ("self.n()").  However, I will leave them here because they seem to belong organizationally.
 	"""
+	# LOOKUP DIRECTORY FOR ALIASING RELATED THINGS
+	def __init__(self):
+		self._alias_to_id = dict()
+		super().__init__()
 
-
-	# FROM GRAPH:
 	def n(self, node_id):
-		return self.node[node_id]["custom_object"]
+		node_id = reduce_string(node_id) # just in case
+		while node_id in self._alias_to_id:
+			node_id = self._alias_to_id[node_id]
+		return super().n(node_id)
 
 	def add_n(self, nodebunch):
 		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
 			nodebunch = [nodebunch]
 		for node in nodebunch:
-			self.add_node(node.id, attr_dict={"custom_object": node})
+			# add each synonym to _alias_to_id, pointing to node.id
+			for name_string in node.names.all():
+				name_string_id = reduce_string(name_string)
+				if name_string_id != node.id:
+					self._alias_to_id[name_string_id] = node.id
+			# add node to graph
+			super().add_n(node)
+
+	def remove_n(self, nodebunch):
+		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
+			nodebunch = [nodebunch]
+		for node in nodebunch:
+			# remove each synonym from _alias_to_id, pointing to node.id
+			for name_string in node.names.all():
+				if name_string in self._alias_to_id:
+					del self._alias_to_id[name_string]
+			# remove node from graph
+			self.remove_node(node.id)
+
+	# FROM GRAPH:
+	# n and add_n relocated to graph
 
 	# FROM DIGRAPH:
 	def as_js_ready_dict(self):
 		d = dict()
-		d['nodes'] = [self.n(node_id).__dict__ for node_id in self.nodes()]
+		d['nodes'] = [self.n(node_id).as_dict() for node_id in self.nodes()]
 		d['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
 		return d
 

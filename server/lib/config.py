@@ -1,9 +1,21 @@
 javascript_kickoff_file = 'config'
 
+LINEAR_ALGEBRA = ['rank', 'a'] # soon: null space, row space, matrix, etc
+ABSTRACT_ALGEBRA = ['set', 'magma', 'composition']
+MULTIVARIABLE_CALCULUS = ['tangent plane', 'directional derivative', 'homeomorphism']
 starting_nodes = {
 	'graph theory': ['set', 'multiset', 'vertex'],
 	'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
 	'category theory': ['equatable', 'type'],
+	'l': LINEAR_ALGEBRA,
+	'linear algebra': LINEAR_ALGEBRA,
+	'abstract algebra': ABSTRACT_ALGEBRA,
+	'algebra': ABSTRACT_ALGEBRA,
+	'multivariable calculus': MULTIVARIABLE_CALCULUS,
+	'multivariable calc': MULTIVARIABLE_CALCULUS,
+	'calculus': MULTIVARIABLE_CALCULUS,
+	'calc': MULTIVARIABLE_CALCULUS,
+	'differential topology': ['n-sphere', 'tangent bundle'],
 }
 
 DEF_USER_PREFS = {

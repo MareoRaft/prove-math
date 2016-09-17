@@ -6,6 +6,7 @@ import copy
 import re
 import json
 from string import punctuation
+from copy import deepcopy
 
 from lib import helper
 from lib.vote import Votable
@@ -108,6 +109,79 @@ def find_node_from_id(list_of_nodes, ID):
 
 
 ############################## MAIN ##############################
+class Name:
+	def __init__(self, info):
+		if isinstance(info, str):
+			self.singular = info
+		elif isinstance(info, list):
+			self.singular = info[0]
+			self.plural = info[1]
+		elif isinstance(info, dict):
+			self.singular = info["singular"]
+			self.plural = info["plural"]
+
+	@property
+	def singular(self):
+		if not '_singular' in self.__dict__:
+			# first time
+			self._singular = None
+		return self._singular
+	@singular.setter
+	def singular(self, string):
+		if string is not None:
+			clean_string = self.check_and_clean(string)
+			self._singular = clean_string
+
+	@property
+	def plural(self):
+		if not '_plural' in self.__dict__:
+			# first time
+			self._plural = None
+		return self._plural
+	@plural.setter
+	def plural(self, string):
+		if string is not None:
+			clean_string = self.check_and_clean(string)
+			self._plural = clean_string
+
+	def all(self):
+		all_names = {name for name in [self.singular, self.plural] if name is not None}
+		return all_names
+
+	# HELPERS
+	def check_and_clean(self, new_name):
+		assert dunderscore_count(new_name) == 0
+		print('NEW NAME IS: {}'.format(new_name))
+		clean_name = check_type_and_clean(new_name, str)
+		return clean_name
+
+	def as_dict(self):
+		return {
+			"singular": self.singular,
+			"plural": self.plural,
+		}
+
+
+class Names (set):
+	def all(self):
+		# return every name possible
+		all_names = set()
+		for name in self:
+			all_names.update(name.all())
+		return all_names
+	def add(self, new_name):
+		if new_name is not None:
+			clean_name = Name(new_name)
+			super().add(clean_name)
+		else:
+			# ignore None names
+			pass
+	def add_many(self, iterable):
+		if iterable is not None:
+			for new_name in iterable:
+				self.add(new_name)
+	def as_array_of_dicts(self):
+		return [name.as_dict() for name in self]
 
 
 class Node (Votable):
@@ -134,6 +208,7 @@ class Node (Votable):
 		self.counterexamples = move_attribute(dic, {'counterexample', 'counterexamples', 'counter example', 'counter examples'}, strict=False)
 		self.notes = move_attribute(dic, {'note', 'notes'}, strict=False)
 		self.name = move_attribute(dic, {'name'}, strict=False)
+		self.names.add_many(move_attribute(dic, {'names'}, strict=False))
 
 	@property
 	def weight(self): # delete this if we get above to work
@@ -142,20 +217,27 @@ class Node (Votable):
 	def weight(self, new_weight):
 		raise Exception('We are not using "weight" anymore.  We are using "importance".')
 
+	def as_dict(self):
+		d = deepcopy(self.__dict__)
+		d["_names"] = self.names.as_array_of_dicts()
+		d["_id"] = self.id
+		return d
+
 	def as_json(self): # returns json version of self
-		return json.dumps(self.__dict__)
+		return json.dumps(self.as_dict())
 
 	def __str__(self):
-		return str(self.__dict__)
+		return str(self.as_dict())
 
 	def __repr__(self):
 		return 'Node(' + self.__str__() + ')'
 
 	def __hash__(self):
-		return hash(self.__dict__.values())
+		return hash(self.as_dict().values())
 
 	def __eq__(self, other):
-		return self.id == other.id
+		# two nodes are equal if the idification of its name or any of its synonyms is equal to the idification of the others name or any of its synonyms
+		self_ids = [self.id] + self.synonyms
 
 	def __ne__(self, other):
 		return not self.__eq__(other)
@@ -164,26 +246,39 @@ class Node (Votable):
 		return copy.deepcopy(self)
 
 	@property
+	def names(self):
+		if not '_names' in self.__dict__:
+			# first time
+			self._names = Names()
+		return self._names
+	@names.setter
+	def names(self, *args, **kwargs):
+		raise Exception('You may not overwrite the names directly.')
+
+	@property
 	def name(self):
-		if '_name' in self.__dict__:
-			return self._name
-		else:
-			return None
+		raise Exception('There is no single name. Use self.names instead.')
 	@name.setter
 	def name(self, new_name):
-		if new_name is not None:
-			assert dunderscore_count(new_name) == 0
-			self._name = check_type_and_clean(new_name, str)
-			self.id = self.name
+		# This name setter remains for legacy purposes
+		# if a name already exists, fail:
+		if self.names:
+			raise Exception('A name was already set.  The names are: {}'.format(self.names))
 		else:
-			self._name = check_type_and_clean(new_name, type(None))
+			self.names.add(new_name)
+
+	@property
+	def ids(self):
+		return { reduce_string(name) for name in self.names.all() }
 
 	@property
 	def id(self):
-		return self._id
-	@id.setter
-	def id(self, new_id_before_reduction):
-		self._id = reduce_string(new_id_before_reduction)
+		ids = self.ids
+		if ids:
+			return sorted(ids)[0]
+		else:
+			# resort to description
+			return reduce_string(self.description)
 
 	@property
 	def type(self):
@@ -279,33 +374,19 @@ class Node (Votable):
 		self._notes = cleaned_notes
 
 
-class Definition(Node):
+class Definition (Node):
 
-
-	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'plurals']
 
 	def __init__(self,dic):
 		super().__init__(dic)
 		self.type = "definition"
-		self.plurals = move_attribute(dic, {'plurals', 'plural', 'pl'}, strict=False)
 		self.negation = move_attribute(dic, {'negation'}, strict=False)
 		if self.importance is None:
 			self.importance = 4
 		if self.description is not None:
 			assert dunderscore_count(self.description) >=2
-		if self.name is None:
+		if not self.names:
 			self.name = get_contents_of_dunderscores(self.description)
-
-	@property
-	def plurals(self):
-		return self._plurals
-	@plurals.setter
-	def plurals(self, new_plurals):
-		if new_plurals is None:
-			self._plurals = []
-		else:
-			cleaned_plurals = check_type_and_clean(new_plurals, str, list_of=True)
-			self._plurals = cleaned_plurals
 
 	@property
 	def negation(self):
@@ -363,9 +444,6 @@ class PreTheorem(Node):
 	def __init__(self, dic):
 		super().__init__(dic)
 		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
-		# theorems and exercises CANNOT have plurals: (but since we only created plural for Definitions, we shouldn't need this as long as there is a way to block undefined properties (see other Stack Overflow question))
-		if 'plurals' in self.__dict__:
-			raise KeyError('Theorems cannot have plurals.')
 
 	@property
 	def proofs(self):
@@ -399,12 +477,13 @@ class Theorem(PreTheorem):
 		self.type = "theorem"
 		if self.importance is None:
 			self.importance = 6
-		assert self.name is not None
+		# assert self.name is not None
 
 	@PreTheorem.name.setter
 	def name(self, new_name):
-		assert new_name is not None
-		PreTheorem.name.fset(self, new_name)
+		# assert new_name is not None
+		if new_name is not None:
+			PreTheorem.name.fset(self, new_name)
 
 
 class Exercise(PreTheorem):
@@ -418,9 +497,3 @@ class Exercise(PreTheorem):
 		self.type = "exercise"
 		if self.importance is None:
 			self.importance = 1
-
-	@PreTheorem.description.setter
-	def description(self, new_description):
-		PreTheorem.description.fset(self, new_description)
-		if self.name is None:
-			self.id = self.description

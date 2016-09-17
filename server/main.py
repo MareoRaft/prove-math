@@ -217,7 +217,7 @@ class SocketHandler (WebSocketHandler):
 					H.add_edge(new_dependency_id, node_obj.id)
 					H.validate(node_obj.name + ' cannot depend on ' + our_MG.n(new_dependency_id).name + ' because ' + our_MG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
 
-				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
+				our_mongo.upsert({ "_id": node_obj.id }, node_obj.as_dict())
 				update_our_MG()
 
 				# send an update of the graph to the user if there are new dependencies:
@@ -256,7 +256,7 @@ class SocketHandler (WebSocketHandler):
 			goal_node = our_MG.n(goal_id)
 			self.jsend({
 				'command': 'suggest-goal',
-				'goal': goal_node.__dict__,
+				'goal': goal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'set-goal':
@@ -266,7 +266,7 @@ class SocketHandler (WebSocketHandler):
 			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-goal',
-				'goal': goal_node.__dict__,
+				'goal': goal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'get-pregoal-suggestion':
@@ -274,7 +274,7 @@ class SocketHandler (WebSocketHandler):
 			pregoal_node = our_MG.n(pregoal_id)
 			self.jsend({
 				'command': 'suggest-pregoal',
-				'pregoal': pregoal_node.__dict__,
+				'pregoal': pregoal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'set-pregoal':
@@ -284,7 +284,7 @@ class SocketHandler (WebSocketHandler):
 			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-pregoal',
-				'pregoal': pregoal_node.__dict__,
+				'pregoal': pregoal_node.as_dict(),
 			})
 
 	def request_nodes(self, node_ids, ball):

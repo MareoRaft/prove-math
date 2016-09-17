@@ -4,7 +4,7 @@ import pytest
 import networkx as nx
 
 from lib.pmdag import PMDAG
-from lib.node import create_appropriate_node
+from lib.node import create_appropriate_node, Node
 
 ############################ HELPERS ############################
 def fill_sample_custom_nodes():
@@ -28,13 +28,18 @@ def fill_sample_custom_nodes():
 	return G
 
 ############################## MAIN ##############################
-def test_n():
-	pass
-	# TODO
-
 def test_add_n():
 	pass
 	# TODO
+
+def test_n():
+	a = create_appropriate_node({"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3})
+	G = PMDAG()
+	G.add_n(a)
+	out = G.n(a)
+	assert type(out) == Node
+	assert out.type == 'theorem'
+	assert out.description == "This is node aaaaaaaaaa"
 
 def test_as_js_ready_dict():
 	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3}
@@ -51,7 +56,7 @@ def test_as_js_ready_dict():
 	G = PMDAG()
 	G.add_n(a)
 	d = G.as_js_ready_dict()
-	assert d == {'nodes': [a.__dict__], 'links': []}
+	assert d == {'nodes': [a.as_dict()], 'links': []}
 
 	G = PMDAG()
 	G.add_n(a)
@@ -60,7 +65,7 @@ def test_as_js_ready_dict():
 	dl = d['links']
 	dn = d['nodes']
 	assert dl == []
-	assert (dn == [a.__dict__, b.__dict__] or dn == [b.__dict__, a.__dict__])
+	assert (dn == [a..as_dict(), b..as_dict()] or dn == [b..as_dict(), a..as_dict()])
 
 	G = PMDAG()
 	G.add_n(a)
@@ -70,7 +75,7 @@ def test_as_js_ready_dict():
 	dl = d['links']
 	dn = d['nodes']
 	assert (dl == [{'source': 'a', 'target': 'b'}])
-	assert (dn == [a.__dict__, b.__dict__] or dn == [b.__dict__, a.__dict__])
+	assert (dn == [a..as_dict(), b..as_dict()] or dn == [b..as_dict(), a..as_dict()])
 
 	G = PMDAG()
 	G.add_n(a)
@@ -86,9 +91,9 @@ def test_as_js_ready_dict():
 		dl == [{'source': 'b', 'target': 'c'}, {'source': 'a', 'target': 'b'}]
 		)
 	assert (
-		dn == [a.__dict__, b.__dict__, c.__dict__] or dn == [a.__dict__, c.__dict__, b.__dict__]
-		or dn == [b.__dict__, a.__dict__, c.__dict__] or dn == [b.__dict__, c.__dict__, a.__dict__]
-		or dn == [c.__dict__, a.__dict__, b.__dict__] or dn == [c.__dict__, b.__dict__, a.__dict__]
+		dn == [a..as_dict(), b..as_dict(), c..as_dict()] or dn == [a..as_dict(), c..as_dict(), b..as_dict()]
+		or dn == [b..as_dict(), a..as_dict(), c..as_dict()] or dn == [b..as_dict(), c..as_dict(), a..as_dict()]
+		or dn == [c..as_dict(), a..as_dict(), b..as_dict()] or dn == [c..as_dict(), b..as_dict(), a..as_dict()]
 		)
 
 def test_unselected_dependency_tree():
