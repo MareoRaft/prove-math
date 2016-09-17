@@ -1,0 +1,67 @@
+{
+	"name": "derivative of multivariable function",
+	"def": "The __tangent plane__ to function $f : \mathbb{R}^n \\to \mathbb{R}^m$ at point $a$, denoted $df_a$ or $f^{\prime}(a)$, is the unique function that satisfies $\lim_{h\\to 0} \\frac{||f(a+h) - f(a) - df_a(h)||}{||h||} = 0$.",
+}
+{
+	"def": "The __directional derivative__ of $f$ at $x$ in the $v$ direction is $df_x(v)$ which is $\lim_{h\\to 0} \\frac{f(x+hv) - f(x)}{h}$.",
+}
+{
+	"def": "Let $U$ and $V$ be open sets in $\mathbb{R}^n$ (topological spaces, soon).  A function $f:U\\to V$ is a __homeomorphism__ iff it is a bijection and both $f$ and $f^{-1}$ are continuous.",
+	"synonym": "bi-continuous function",
+}
+{
+	"def": "Let $U$ and $V$ be open sets in $\mathbb{R}^n$.  A function $f:U\\to V$ is a __$C^r$-diffeomorphism__ iff it is a bijection and both $f$ and $f^{-1}$ are $r$-continuously-differentiable.",
+}
+{
+	"def": "Let $U$ and $V$ be open sets in $\mathbb{R}^n$.  A function $f:U\\to V$ is a __diffeomorphism__ iff it is a bijection and both $f$ and $f^{-1}$ are differentiable.",
+	"synonym": "bi-differentiable function",
+}
+{
+	"def": "For any $k \in \mathbb{N}$, a function $f:\mathbb{R}^n \\to \\mathbb{R}^m$ is __$k$-continuously-differentiable__, denoted $C^k$ if all iterated partial derivatives of $f$ of order $k$ exist and are continuous.",
+}
+{
+	"def": "A function $f:\mathbb{R}^n \\to \\mathbb{R}^m$ is __smooth__, denoted $C^\infty$ if $f$ is $C^k$ for all $k \in \mathbb{N}$.",
+	"synonym": "$\infty$-continuous",
+}
+{
+	"thm": "If $f:\mathbb{R}^n \\to \\mathbb{R}^m$ is $C^1$ in a neighborhood of $x$, then $f$ is differentiable at $x$.",
+	// no proof :(
+	// need to understand this better
+}
+{
+	"thm": "If $f:\mathbb{R}^n \\to \\mathbb{R}^m$ is $C^2$ in a neighborhood of $x$, then for all $i$ and $j$, $\\frac{\partial^2f}{\partial x_i \partial x_j}(x) = \\frac{\partial^2f}{\partial x_j \partial x_i}(x)$.",
+	// no proof :(
+}
+{
+	"name": "chain rule",
+	"thm": "If $f$ is differentiable at $a$ and $g$ is differentiable at $f(a)$, then $(g \circ f)$ is differentiable at $a$, and $(g \circ f)'(a) = g'(f(a))f'(a).$",
+}
+{
+	"name": "inverse function theorem",
+	"thm": "For any $k \in \mathbb{N}^+$, if $f:\mathbb{R}^n \\to \\mathbb{R}^n$ is $C^k$ and $f^\prime(x)$ is invertible for some $x$, then $f$ is locally a diffeomorphism of class $C^k$ at $x$.",
+	"counterexample": "Let
+
+	$f(x) = \begin{cases}\item \frac x2 + x^2\sin\left(\frac 1x\right) \text{ if $x \neq 0$} \item 0 \text{ if $x=0$} \end{cases}$
+
+	We see that $f$ is differentiable, but the derivative is not continuous (i haven't verified this).  It turns out that $f$ is not one-to-one (and therefore not a bijection).",
+}
+{
+	"name": "local submersion theorem",
+	"synonym": "implicit function theorem",
+	"thm": "",
+	"note": "This theorem is equivalent to the inverse function theorem.",
+}
+{
+	"name": "local immersion theorem",
+	"thm": "This is very similar to the local submersion theorem (more soon...)",
+}
+{
+	"thm": "If f is locally diffeomorphic at x, then the slope matrix of f inverse at f(x) is given by $(f^{-1})^\prime(f(x)) = (f^\prime(a))^{-1}$.",
+	"proof": "f is locally diffeomorphic at x, so f^{-1}(f(x)) = x.
+	Apply the chain rule: (f^{-1})^\prime(f(x)) \cdot f^\prime(x) = 1
+	Finally: (f^{-1})^\prime(f(x)) = (f^\prime(x))^{-1}",
+}
+{
+	"thm": "A function $f : \R^a \to \R^b$ is continuous iff each of its coordinate functions $f_i$, $1<= i <=b$, are continuous.",
+}
+

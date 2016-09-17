@@ -1,0 +1,25 @@
+{
+	"name": "null space under gaussian elimination",
+	"thm": "A matrix $M$ is converted to a matrix $E$ using Gaussian elimination.  For example, $E$ could be the REF or RREF of $M$.  Then the following are true:
+
+	  1. $M$ and $E$ have the same row space.
+	  2. $M$ and $E$ have the same null space.
+	  3. A subset of column vectors in $M$ is linearly independent iff the corresponding subset of column vectors in $E$ is linearly independent.",
+
+}
+{
+	"name": "row and col space dimensions",
+	"thm": "Given any matrix, the dimension of its row space is equal to the dimension of its column space.",
+}
+{
+	"def": "The __rank__ of a matrix is the dimension of its row space (and column space too).",
+}
+{
+	"name": "null and row spaces"
+	"thm": "Given any matrix, the null space is the orthogonal complement of the row space.",
+}
+{
+	"name": "total column dimensions",
+	"thm": "Given any matrix, the dimension of its column space plus the dimension of its null space equals the total number of columns.",
+	"proof": "This follows directly from the null and row spaces theorem.",
+}

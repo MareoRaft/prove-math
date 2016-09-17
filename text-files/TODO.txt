@@ -1,0 +1,7 @@
+THINGS TO DO TO MAKE PROVEMATH FUNCTIONAL FOR ACTUAL USE
+-----------------------------------------------------------
+
+1. Create a .simple to .pre-json converter to support new simpler syntax
+
+2. recognize synonyms in dependencies
+
