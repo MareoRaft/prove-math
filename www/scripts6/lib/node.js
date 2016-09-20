@@ -45,7 +45,6 @@ class Node {
 			this.name = object.id // and remember the ID is generated from this too
 		}
 		this.fillWithNullKeys()
-		alert('got node.  its names are: ' + this.names)
 	}
 
 	fillWithNullKeys() {
@@ -130,9 +129,7 @@ class Node {
 	}
 
 	get name() {
-		if( !def(this.names) || this.names === null ) return ''
-		alert('names are: ' + this.names + 'the typeof names is: ' + typeof names)
-
+		if( !def(this.names) || this.names === null || is.emptyArray(this.names) ) return ''
 		return this.names[0]['singular'] // just pick the first name, singular version
 	}
 

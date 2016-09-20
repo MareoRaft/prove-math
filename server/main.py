@@ -36,6 +36,14 @@ import xml.etree.ElementTree as ET
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
 
+def clean_node_ids(dic):
+	node_id_key_names = ['node_id', 'central_node_id', 'goal_id', 'pregoal_id']
+	for key in node_id_key_names:
+		if key in dic:
+			dic[key] = our_MG.n(dic[key]).id
+	return dic
+
+
 ################################## MAIN #######################################
 
 
@@ -155,6 +163,8 @@ class SocketHandler (WebSocketHandler):
 	def on_message(self, message):
 		log.debug('got message: ' + message+"\n")
 		ball = json.loads(message)
+		# clean any node ids that ball might have (to allow for multiple names)
+		clean_node_ids(ball)
 
 		if ball['command'] == 'print':
 			print(ball['message'])
@@ -184,7 +194,7 @@ class SocketHandler (WebSocketHandler):
 			if ball['mode'] == 'learn':
 				self.send_graph(ball)
 			else:
-				raise Exception('mode is not learn')
+				raise Exception('Mode is not learn.  Warning: That mode might not be implemented yet.')
 
 		elif ball['command'] == 'unlearn-node':
 			self.user.unlearn_node(ball['node_id'])
@@ -360,24 +370,27 @@ def make_app_and_start_listening():
 def update_our_MG():
 	# 1. grab nodes and edges from database
 	all_node_dicts = list(Mongo("provemath", "nodes").find())
+	# print(
 
 	# 2. create a networkx graph with the info...
 	global our_MG
 	our_MG = MathGraph()
 	for node_dict in all_node_dicts:
-		try:
-			node = create_appropriate_node(strip_underscores(node_dict))
-		except Exception as e:
-			print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
+		# try:
+		node = create_appropriate_node(strip_underscores(node_dict))
+		print('node names: {}'.format(node.names))
+
+		# except Exception as e:
+			# print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
 		our_MG.add_n(node)
 	for node_id in our_MG.nodes():
 		node = our_MG.n(node_id)
 		for dependency_id in node.dependency_ids:
 			our_MG.add_edge(dependency_id, node_id)
 	our_MG.validate() # make sure it's still Acyclic
+	our_MG.remove_redundant_edges()
 	print('Node array loaded with length: ' + str(len(our_MG.nodes())))
 	print('Edge array loaded with length: ' + str(len(our_MG.edges())))
-	our_MG.remove_redundant_edges()
 
 if __name__ == "__main__":
 	# 0. create a global mongo object for later use (for upserts in the future)

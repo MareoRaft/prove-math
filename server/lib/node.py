@@ -120,6 +120,12 @@ class Name:
 			self.singular = info["singular"]
 			self.plural = info["plural"]
 
+	def __repr__(self):
+		return 'Name({})'.format(self.as_dict())
+
+	def __str__(self):
+		return repr(self)
+
 	@property
 	def singular(self):
 		if not '_singular' in self.__dict__:
@@ -402,7 +408,8 @@ class Definition (Node):
 
 	@Node.description.setter
 	def description(self, new_description):
-		assert dunderscore_count(new_description) >= 2
+		if new_description is not None:
+			assert dunderscore_count(new_description) >= 2
 		Node.description.fset(self, new_description)
 
 

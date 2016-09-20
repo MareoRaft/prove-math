@@ -10,6 +10,7 @@ from lib.node import reduce_string
 
 ############################ HELPERS #############################
 
+
 ############################## MAIN ##############################
 
 
@@ -25,32 +26,47 @@ class PMDAG (nx.DAG):
 
 	def n(self, node_id):
 		node_id = reduce_string(node_id) # just in case
-		while node_id in self._alias_to_id:
-			node_id = self._alias_to_id[node_id]
+		node_id = self.unalias(node_id)
 		return super().n(node_id)
 
 	def add_n(self, nodebunch):
 		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
 			nodebunch = [nodebunch]
 		for node in nodebunch:
-			# add each synonym to _alias_to_id, pointing to node.id
-			for name_string in node.names.all():
-				name_string_id = reduce_string(name_string)
-				if name_string_id != node.id:
-					self._alias_to_id[name_string_id] = node.id
-			# add node to graph
+			self.add_aliases(node)
 			super().add_n(node)
 
 	def remove_n(self, nodebunch):
 		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
 			nodebunch = [nodebunch]
 		for node in nodebunch:
-			# remove each synonym from _alias_to_id, pointing to node.id
-			for name_string in node.names.all():
-				if name_string in self._alias_to_id:
-					del self._alias_to_id[name_string]
-			# remove node from graph
+			self.remove_aliases(node)
 			self.remove_node(node.id)
+
+
+
+
+	# ALIAS HELPERS.  MAKE OWN CLASS?
+	def unalias(self, node_id):
+		while node_id in self._alias_to_id:
+			node_id = self._alias_to_id[node_id]
+		return node_id
+
+	def add_aliases(self, node):
+		# add each synonym to _alias_to_id, pointing to node.id
+		for name_string in node.names.all():
+			name_string_id = reduce_string(name_string)
+			if name_string_id != node.id:
+				self._alias_to_id[name_string_id] = node.id
+
+	def remove_aliases(self, node):
+		# remove each synonym from _alias_to_id, pointing to node.id
+		for name_string in node.names.all():
+			if name_string in self._alias_to_id:
+				del self._alias_to_id[name_string]
+
+
+
 
 	# FROM GRAPH:
 	# n and add_n relocated to graph
