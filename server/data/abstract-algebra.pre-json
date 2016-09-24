@@ -631,4 +631,116 @@ rmk
 	b. G simple, G not cyclic of prime order. ==> G solvable by a => G not abelian => Z(G) = 1 => [G, G] = G => G is "perfect".
 	c. G simple and \phi : G \to H morphism. Then ker \phi = G or ker \phi = {e}.
 
+1.4.4
+thm
+For n >= 5, An is simple.
+
+1.4.5
+corr
+For n >=5, An and Sn are not solvable.  To be more exact, [Sn, Sn] = An, and [An, An] = An.  (Therefore, quintic equations are not solvable (while quartic and quadratic equations, for example, are).  So the word "solvable" is relevant to the definition!)
+
+1.4.6
+examples of simple linear groups
+	a. F field.  |F| > 2.  GLn(F) not simple
+	because [GLn(F), GLn(F)] <= SLn(F) < GLn(F)
+	b. F field.  |F| = 2 ?
+	[GLn(F), GLn(F)] = SLn(F) = [SLn(F), SLn(F)]
+	c. Is SLn(F) simple?
+	Exactly when Z(SLn(F)) = { Dn(a) | a^n = 1 } = In
+
+
+thm
+All simple non-abelian groups of order <= 360 are isomorphic to one of:
+	A5
+	GL3(Z2)
+	A6
+
+def
+A __simple group of Lie type__ is a simple matrix group over F, where F is finite.
+
+All finite simple non-abelian groups: An for n>=5, 26 sporadic finite simple groups, finite simple groups of Lie type.
+
+1.4.7
+def
+G group.  A finite seq
+1 = G0 <= G1 <= <= <= Gn = G
+is
+a __subnormal series__ if G{i-1} normal in Gi.  (in which case, Qi := Gi/G{i-1} are called the __quotients__ of the series)
+a __normal series__ if forall i, Gi normal in G
+a __composition series__ if it is subnormal series and every quotient is simple.
+
+1.4.8
+rmk
+	a. Every finite group has a composition series (induction on |G|)
+	b. If G infinite, it might not have one.
+	c. A finite group is solvable <==> there exists a comp series in which all quotients are cyclic of prime order <==> ALL comp series have all quotients cyclic of prime order
+	d. G has a comp series does NOT imply that every subgroup of G has a comp series.
+
+1.4.9
+thm [Jordan-Holder]
+G group. Every composition series of G has the same length.  Every comp series of G has the same quotients, up to permutation and isomorphism.
+
+1.5
+Group Actions
+----------------
+
+1.5.1
+def
+X is a set.  G __acts__ on X from the left if there is a map
+G x X \to X
+gx to g.x
+
+1.5.3
+def
+To generalize "action" above further, if X has an additional structure (group, ring, field, etc), then we require that each g(X) preserves the structure in order for it to be called an action.
+Otherwise stated, we require that pi_g in Aut(X).
+
+In particular, note that if X is a V.S., then pi_g in Aut(X) = GL(X) is called a __linear representation__.
+
+1.5.5
+def
+G acts on X.  The __stabilizer__ of x in X is the set of all elements in g that fix x.
+denotation: Stab_G(x), Stab(x), G_x,
+note: Stab(x) is a subgroup of G.
+We also define the Stab(Y) for any subset Y of X.  (g.Y = Y)
+We also define the __fixer__ of Y, Fix_G(Y), Fix(Y) so that every element of Y is fixed.
+
+1.5.6
+A __free__ action is an action where for all x in X, Stab(X) = {e}.
+
+examples
+	e. If X is G/H (The set of cosets), then the Stab(gH) is gHg^{-1}.
+	f. G acts on itself by conjugation.  Then for any H <= G, the Stab(H) is the N_G(H).
+	   And the Fix(H) is the C_G(H) (centralizer of H)
+
+1.5.7
+rmk
+Stab(g.x) = g Stab(x) g^{-1}
+
+phi : G \to S(X) by
+phi(g) = pi_g is called the "associated group hom"
+In which case, G acts *faithfully* iff Fix(G) = intersection across all x of Stab(x) = {e}
+
+1.5.8
+Corollary [Cayley's Theorem]
+If |G| = n, then G isomorphic to a subgroup of Sn.
+
+1.5.9
+prop
+If H <= G and [G : H] < oo, then there exists a group hom \phi : G \to Sn with
+Stab(1) = H and ker \phi = intersection across all g in G of gHg^{-1}
+
+1.5.10
+prop
+G finite gp.  |G| = p1...pn, every p_i prime and p1 <= <= <= pn.  If H <= G with [G:H] = p1, then H normalin G.
+
+
+
+
+
+
+
+
+
+
 
