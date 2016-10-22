@@ -90,3 +90,5 @@ for the user manual --> make it on readthedocs.org !
 -----------------
 Greg
 75. Have some kind of transparency gradient.  As the user learns deeper nodes the old "shallow" nodes can become progressively more transparent, eventually disappearing from view to reduce clutter
+76. We need a really awesome "zoom" feature.  That is, how can multiple nodes be combined into a single node?  For example, consider the theorem "Given the group $G$ and subgroups $A$ and $B$.  Then $AB <= G$ iff $AB = BA$ iff $A <= N_G(B)$ iff $B <= N_G(A)$.".  This is actually multiple theorems combined into a single theorem.  Can we automatically break down and recombine these things?
+

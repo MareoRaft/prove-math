@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>URL</key>
-	<string>https://login.secureserver.net/?app=wbe</string>
+	<string>http://webmail.provemath.org/index.php/mail</string>
 </dict>
 </plist>
