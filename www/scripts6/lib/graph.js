@@ -51,17 +51,21 @@ function addNodesAndLinks({ nodes=[], links=[] }) {
 function _addNodesHereAndJSNetworkX(nodes) {
 	_.each(nodes, function(node) {
 		if( node.remove ){
+			console.log('REMOVING node')
 			_removeNodes([node])
 		}
 		else{
 			if( node.id in graph.nodes ){
+				console.log('redundant node')
 				//die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
 			}
 			else{
+				if(node.id == "c") console.log('added C.')
 				graph.nodes[node.id] = node
 			}
 		}
 	})
+
 	// add ids to JSnetworkx too
 }
 
@@ -87,9 +91,11 @@ function _addLinksHereAndJSNetworkX(links) {
 		let source_key = link.source
 		let target_key = link.target
 
-		let source_before = link.source
-		link.source = graph.nodes[link.source]
-		link.target = graph.nodes[link.target]
+		let source_before = source_key
+		link.source = graph.nodes[source_key]
+		console.log('target key: '+target_key)
+		console.log('taget NODE: '+JSON.stringify(graph.nodes[target_key]))
+		link.target = graph.nodes[target_key]
 		if( !def(link.source) ){
 			$.event.trigger({
 				type: 'request-node',

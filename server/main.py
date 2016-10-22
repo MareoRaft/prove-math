@@ -40,7 +40,9 @@ def clean_node_ids(dic):
 	node_id_key_names = ['node_id', 'central_node_id', 'goal_id', 'pregoal_id']
 	for key in node_id_key_names:
 		if key in dic:
+			print('got unclean id: {}'.format(dic[key]))
 			dic[key] = our_MG.n(dic[key]).id
+			print('replaced with clean id: {}'.format(dic[key]))
 	return dic
 
 
