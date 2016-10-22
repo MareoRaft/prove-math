@@ -3,8 +3,9 @@
 	"def": "A __thing__ is something.",
 }
 {
-	"names": ["c", "d", "e", "f", "g", "h"],
+	"names": ["c", "e", "f"],
 	"def": "A __thing__ is something else!!!.",
+	"dependencies": ["a"],
 }
 // {
 // 	"name": "null space under gaussian elimination",
@@ -15,10 +16,11 @@
 // 	  3. A subset of column vectors in $M$ is linearly independent iff the corresponding subset of column vectors in $E$ is linearly independent.",
 
 // }
-{
-	"name": "row and col space dimensions",
-	"thm": "Given any matrix, the dimension of its row space is equal to the dimension of its column space.",
-}
+// {
+// 	"name": "row and col space dimensions",
+// 	"thm": "Given any matrix, the dimension of its row space is equal to the dimension of its column space.",
+// 	"dependencies": ["a"],
+// }
 {
 	"def": "The __rank__ of a matrix is the dimension of its row space (and column space too).",
 }

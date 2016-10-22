@@ -83,5 +83,13 @@
 }
 
 {
-	"definition":""
+	"def":"The __normal curve__ is the curve obtained by graphing the function $f(x) = \frac{1}{\sqrt{\tau}} e^{-\frac{x^2}{2}}$.",
+	"synonyms": ["Gaussian"],
 }
+{
+	"thm":"The Gaussian is a probability density function.  That is, $$ \frac{1}{\sqrt{\tau}} \int_{-\infty}^{\infty} e^{-\frac{x^2}{2}} dx = 1$$.",
+}
+
+
+
+
