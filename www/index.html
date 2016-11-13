@@ -2,11 +2,11 @@
 <html>
 <head>
 	<meta charset='UTF-8'>
-    <title>Prove Math</title>
- 	<link rel="icon" type="image/png" sizes="256x256" href="favicon/256.png">
-    <link rel='stylesheet' href='stylesheets/main.css' />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
-    <script src='scripts/lib/require-min.js?' data-main='scripts/config'></script>
+	<title>Prove Math</title>
+	<link rel="icon" type="image/png" sizes="256x256" href="favicon/256.png">
+	<link rel='stylesheet' href='stylesheets/main.css' />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
+	<script src='scripts/lib/require-min.js?' data-main='scripts/{{ javascript_kickoff_file }}'></script>
 </head>
 <body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}" data-subjects="{{ subjects }}">
 <section id='login'>
@@ -36,9 +36,18 @@
 		</div>
 	</div>
 </section>
-<section id='node-template'>
+<section id='preference-pane' class='blinds'>
 	<header>
-		<img id='back' src='images/arrow-left.svg'>
+		<img class='back' src='images/arrow-left.svg'>
+		<div>These are your user preferences!</div>
+		<div>:)</div>
+	</header>
+	<section id='preference-pane-blinds'>
+	</section>
+</section>
+<section id='node-template' class='blinds'>
+	<header>
+		<img class='back' src='images/arrow-left.svg'>
 		<div id='toggle-learn-state'></div>
 		<div id='discard-node'>discard node</div>
 	</header>
@@ -47,7 +56,7 @@
 </section>
 <section id='banner'>
   <div id='search_results_return'></div>
-	<div id='explanation'>ProveMath is a growing <a href='http://github.com/ProveMath/prove-math'>project</a>.  If you are interested in collaborating or just want to say hello, feel free to <a href='mailto:support@provemath.org'>contact</a> us.</div>
+	<div id='explanation'>ProveMath is a growing <a href='http://github.com/ProveMath/prove-math'>project</a>.  If you are interested in collaborating or just want to say hello, feel free to <a href='mailto:admin@provemath.org'>contact</a> us.</div>
 </section>
 <section id='overlay'>
 	<div id='search-wrapper'>
@@ -60,12 +69,14 @@
 		</div>
 	</div>
 	<div id='login-circle'>login</div> <!-- overlaps avatar.  never should both appear at the same time -->
-	<div id='logout-circle'>logout</div> <!-- placed BEFORE avatar so that it will appear UNDER the avatar -->
+	<div class='logout-circle'>logout</div> <!-- placed BEFORE avatar so that it will appear UNDER the avatar -->
+	<div class='display-name'>not logged in</div> <!-- also under avatar, behaves just like logout-cirlce in CSS -->
+	<div class='see-preferences'>prefs</div> <!-- also under avatar, behaves just like logout-cirlce in CSS -->
 	<img id='avatar' src='images/smiley-face.png'>
 	<div id='get-starting-nodes'>start<br />subject</div>
 	<div id='get-goal-suggestion'>start<br />goal</div>
 	<div id='get-pregoal-suggestion'>start<br />pregoal</div>
-	<div id='push'>push<br />me:)</div>
+	<div id='push'>push me</div>
 	<img id="add-node" src="images/add.svg">
 </section>
 <!-- svg should appear here (populated by JS) -->

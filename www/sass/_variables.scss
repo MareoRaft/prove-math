@@ -20,15 +20,8 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $medium
   width: 0; // prevent rogue width overflows
 }
 
-@mixin user-select($x) {
-	user-select: $x;
-	-webkit-user-select: $x;
-	-moz-user-select: $x;
-	-ms-user-select: $x;
-	-o-user-select: $x;
-}
-
-@mixin filter($prop) {
-  filter: $prop;
-  -webkit-filter: $prop;
+@mixin center-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }

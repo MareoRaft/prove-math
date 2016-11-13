@@ -1,9 +1,11 @@
 from lib import clogging
 log = clogging.getLogger('main')
+
 from lib.mongo import Mongo
+from lib.config import DEF_USER_PREFS
 
 
-class User: # there's really no point in storing users ephemerally, other than to associate a specific user with a specific websocket
+class User:
 
 
 	USERS = Mongo("provemath", "users")
@@ -45,6 +47,7 @@ class User: # there's really no point in storing users ephemerally, other than t
 			log.debug('ACCOUNT ID IS: '+ str(user_dict['account']['id']))
 			# delete the ObjectId('94569463') thing because it is not JSON serializable
 			del user_dict['_id']
+			user_dict['prefs'] = dict(DEF_USER_PREFS, **user_dict['prefs'])
 			return user_dict
 		else:
 			raise Exception('There was no user in the database.  The user should have been added when it was first __init__ed!')
@@ -66,17 +69,23 @@ class User: # there's really no point in storing users ephemerally, other than t
 				'id': self.account_id,
 			},
 			'learned_node_ids': [],
-			'prefs': {
-				'display_name_capitalization': None, # can be null, "sentence", or "title"
-				'underline_definitions': False, # can be true or false # do you want definitions to be underlined in the DAG view?
-				'show_description_on_hover': False, # can be true or false
-			},
+			'prefs': dict(), # gets filled with defaults on retrieval
 		}
 
 	def learn_node(self, node_id):
+		command = None
 		self.USERS.update(self._mongo_identifier_dict(), {'$addToSet': {'learned_node_ids': node_id}}, False)
+		# if newly learned node is the current goal, update goal
+		if self.dict['prefs']['goal_id'] == node_id:
+			command = {'command': 'complete-goal', 'node_id': node_id}
+			self.set_pref({'goal_id': None})
+		# same for requested pregoal
+		if self.dict['prefs']['requested_pregoal_id'] == node_id:
+			command = {'command': 'complete-pregoal', 'node_id': node_id}
+			self.set_pref({'requested_pregoal_id': None})
 		# send info down to all other clients (if user is logged in on multiple computers)
 		# tornado.websockethandler.send_to_multiple_accounts({ command: 'learn-node', node_id: node_id })
+		return command
 
 	def unlearn_node(self, node_id):
 		self.USERS.update(self._mongo_identifier_dict(), {'$pull': {'learned_node_ids': node_id}}, False)

@@ -30,7 +30,7 @@ class _DAG (nx.DiGraph):
 			currentNode = self.predecessor(currentNode)
 		return currentNode
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def sources(self): # finds the sources in a Directed A(dir)cyclic Graph
 		dag2 = self.copy()
 		sources = set()
@@ -47,14 +47,14 @@ class _DAG (nx.DiGraph):
 	def has_path(self, start, end):
 		return nx.has_path(self, start, end)
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def remove_redundant_edges(self): # We need to be careful not to perform this on a live graph, since it temporarily alters the graph.
 		for edge in self.edges():
 			self.remove_edge(edge[0], edge[1])
 			if not self.has_path(edge[0], edge[1]):
 				self.add_edge(edge[0], edge[1])
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def depth_to_successors_dict(self, axioms, learned_nodes):	# short sighted
 		"""
 		:param acceptable_iter axioms: The "bottom" of our graph.  The distance from the axioms is the depth.

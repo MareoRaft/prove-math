@@ -16,13 +16,14 @@ from tornado.websocket import WebSocketHandler
 from tornado.web import Application
 from tornado.web import Finish
 
+from lib import config
 from lib import clogging
 log = clogging.getLogger('main', filename='main.log') # this must come BEFORE imports that use getLogger('main')
 from lib.helper import strip_underscores, random_string
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 from lib.user import User
-from lib.networkx.classes.pmdag import PMDAG
+from lib.math_graph import MathGraph
 from lib import user
 from lib import auth
 from lib import node
@@ -111,7 +112,8 @@ class IndexHandler(BaseHandler):
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
 					host=self.request.host,
-					subjects=json.dumps(list(starting_nodes.keys()))
+					subjects=json.dumps(list(config.starting_nodes.keys())),
+					javascript_kickoff_file=config.javascript_kickoff_file,
 					)
 
 
@@ -120,7 +122,7 @@ class JSONHandler(BaseHandler):
 
 	def get(self):
 		# get appropriate subgraph from NewtorkX!
-		json_graph = our_DAG.as_complete_json() # TODO write this method
+		json_graph = our_MG.as_complete_json() # TODO write this method
 		self.write(json_graph)
 
 
@@ -169,13 +171,16 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 'get-starting-nodes':
 			subject = ball['subject']
-			self.send_graph(ball, subject)
+			self.user.set_pref({'subject': subject})
+			self.send_graph(ball)
 
 		elif ball['command'] == 'get-curriculum':
 			goal = ball['goal']
 
 		elif ball['command'] == 'learn-node':
-			self.user.learn_node(ball['node_id'])
+			command = self.user.learn_node(ball['node_id'])
+			if command is not None:
+				self.jsend(command)
 			if ball['mode'] == 'learn':
 				self.send_graph(ball)
 			else:
@@ -206,14 +211,14 @@ class SocketHandler (WebSocketHandler):
 
 
 				# VERIFY THAT THE GRAPH WITH THESE NEW ARCS IS STILL ACYCLIC:
-				H = our_DAG.copy()
+				H = our_MG.copy()
 				for new_dependency_id in new_dependency_ids:
-					print('from '+str(our_DAG.n(new_dependency_id))+' to '+str(node_obj))
+					print('from '+str(our_MG.n(new_dependency_id))+' to '+str(node_obj))
 					H.add_edge(new_dependency_id, node_obj.id)
-					H.validate(node_obj.name + ' cannot depend on ' + our_DAG.n(new_dependency_id).name + ' because ' + our_DAG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
+					H.validate(node_obj.name + ' cannot depend on ' + our_MG.n(new_dependency_id).name + ' because ' + our_MG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
 
 				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
-				update_our_DAG()
+				update_our_MG()
 
 				# send an update of the graph to the user if there are new dependencies:
 				self.request_nodes(new_dependency_ids, ball)
@@ -228,8 +233,8 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors
-			neighbors = our_DAG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1) # can just use digraph.anydirectional_neighbors
-			H = our_DAG.subgraph(list(neighbors.keys()))
+			neighbors = our_MG.single_source_shortest_anydirectional_path_length(ball['central_node_id'], 1) # can just use digraph.anydirectional_neighbors
+			H = our_MG.subgraph(list(neighbors.keys()))
 			dict_graph = H.as_js_ready_dict()
 			self.jsend({
 				'command': 'load-graph',
@@ -242,42 +247,62 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'search':
 			search_results = our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
 			self.jsend({
-					'command': 'search-results',
-					'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
+				'command': 'search-results',
+				'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
 			})
 
-		'''elif ball['command'] == 'suggest-goal':
-			axioms = our_DAG.axioms() # need to write
-			learned_node_ids = self.user.dict['learned_node_ids']
-			goal_id = our_DAG.choose_goal(axioms, learned_node_ids)
-			self.send_graph(ball, goal=goal_id)
+		elif ball['command'] == 'get-goal-suggestion':
+			goal_id = our_MG.choose_goal(self.user)
+			goal_node = our_MG.n(goal_id)
 			self.jsend({
-					'command': 'set-goal'
-					'goal': goal_id
+				'command': 'suggest-goal',
+				'goal': goal_node.__dict__,
 			})
 
-		elif ball['command'] == 'suggest-pregoal':
-			axioms = our_DAG.axioms() # need to write
-			learned_node_ids = self.user.dict['learned_node_ids']
-			goal_id = ball['goal']
-			pregoal_id = our_Dag.choose_learnable_pregoal(axioms, learned_node_ids, goal_id)
-			self.send_graph(ball, goal=goal_id)
+		elif ball['command'] == 'set-goal':
+			goal_id = ball['goal_id']
+			goal_node = our_MG.n(goal_id)
+			self.user.set_pref({'goal_id': goal_id})
+			self.send_graph(ball)
 			self.jsend({
-					'command': 'set-pregoal'
-					'pregoal': pregoal_id
-			})'''
+				'command': 'highlight-goal',
+				'goal': goal_node.__dict__,
+			})
+
+		elif ball['command'] == 'get-pregoal-suggestion':
+			pregoal_id = our_MG.choose_learnable_pregoals(self.user, number=1)[0]
+			pregoal_node = our_MG.n(pregoal_id)
+			self.jsend({
+				'command': 'suggest-pregoal',
+				'pregoal': pregoal_node.__dict__,
+			})
+
+		elif ball['command'] == 'set-pregoal':
+			pregoal_id = ball['pregoal_id']
+			pregoal_node = our_MG.n(pregoal_id)
+			self.user.set_pref({'requested_pregoal_id': pregoal_id})
+			self.send_graph(ball)
+			self.jsend({
+				'command': 'highlight-pregoal',
+				'pregoal': pregoal_node.__dict__,
+			})
 
 	def request_nodes(self, node_ids, ball):
+		# user manually requests a node.  So we want to preserve client_node_ids as not to change anything for them.  We only want to ADD the requested nodes additionally.
 		for node_id in node_ids:
-			if node_id not in our_DAG.nodes():
+			if node_id not in our_MG.nodes():
 				raise ValueError('The node_id "'+node_id+'" does not exist.')
-		ids = set(self.user.dict['learned_node_ids']).union(set(ball['client_node_ids'])).union(set(node_ids))
-		H = our_DAG.subgraph(list(ids))
+		ids = set(self.ids(ball)).union(set(node_ids))
+		H = our_MG.subgraph(ids)
 		dict_graph = H.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
+
+	def ids(self, ball):
+		learned_ids = self.user.dict['learned_node_ids']
+		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
 	def remove_client_edges(self, node_id, dependency_ids):
 		self.jsend({
@@ -286,45 +311,20 @@ class SocketHandler (WebSocketHandler):
 			'dependency_ids': list(dependency_ids),
 		})
 
-	def ids(self, ball):
-		learned_ids = self.user.dict['learned_node_ids']
-		return list(set(learned_ids).union(set(ball['client_node_ids'])))
-
-	def send_graph(self, ball, subject=None, goal=None):
+	def send_graph(self, ball):
+		subject = self.user.dict['prefs']['subject']
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
-		ids = self.ids(ball)
-		if ids:
-			learned_ids = self.user.dict['learned_node_ids']
-			ids_to_send = our_DAG.absolute_dominion(learned_ids)
-			ids_to_send = set(ids_to_send).union(set(ids)).union(set(self.other_nodes_of_interest(subject, goal)))
-			if self.user.dict['prefs']['always_send_learnable_pregoal']:
-				ids_to_send = set(ids_to_send).union(set(our_DAG.choose_learnable_pregoal(self.user.dict['learned_node_ids'])))
-			H = our_DAG.subgraph(list(ids_to_send))
-		else:
-			# they've learned nothing so far.  send them a starting point
-			H = our_DAG.subgraph(self.starting_nodes(subject))
-
-		dict_graph = H.as_js_ready_dict()
+		nodes_to_send = our_MG.nodes_to_send(self.user, client_node_ids=ball['client_node_ids'])
+		subgraph_to_send = our_MG.subgraph(nodes_to_send)
+		dict_graph = subgraph_to_send.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
 
-	def other_nodes_of_interest(self, subject=None, goal=None):
-		# but instead of sending ALL sources, let's look for deepest/most bang for buck, and send relevant sources of THAT
-		nodes = []
-		if subject:
-			nodes = nodes + self.starting_nodes(subject)
-
-#		if goal:
-#			nodes = nodes + our_DAG.unlearned_dependency_tree(goal, self.user.dict['learned_node_ids'])
-		return nodes
-		# for later, add the following too:
-#		return [our_DAG.short_sighted_depth_first_unlearned_source(starting_nodes, learned_ids)]
-
 	def starting_nodes(self, subject):
-		return starting_nodes[subject]
+		return config.starting_nodes[subject]
 
 	def on_close(self):
 		print('A websocket has been closed.')
@@ -342,8 +342,9 @@ def make_app():
 			url('/', RedirectHandler, {"url": "index.html"}, name="rooth"),
 			url('/websocket', SocketHandler),
 			url('/json', JSONHandler, name="jsonh"),
-			url(r'/index(?:\.html)?', IndexHandler, name="indexh"),
-			# captures anything at all, and serves it as a static file. simple!
+			url(r'/index(?:\.html?)?', IndexHandler, name="indexh"),
+			url(r'/docs(?:\.html?)?', RedirectHandler, {"url": "docs/index.html"}, name='docsh'),
+			url(r'/docs/(.*)', StaticHandler, {"path": "../docs/build/html/"}),
 			url(r'/(.*)', StaticHandler, {"path": "../www/"}),
 		],
 		# settings:
@@ -352,45 +353,38 @@ def make_app():
 	)
 
 def make_app_and_start_listening():
-	# enable_pretty_logging()
 	application = make_app()
 	application.listen(80)
-	# other stuff
 	IOLoop.current().start()
 
-def update_our_DAG():
+def update_our_MG():
 	# 1. grab nodes and edges from database
 	all_node_dicts = list(Mongo("provemath", "nodes").find())
 
 	# 2. create a networkx graph with the info...
-	global our_DAG
-	our_DAG = PMDAG()
+	global our_MG
+	our_MG = MathGraph()
 	for node_dict in all_node_dicts:
 		try:
 			node = create_appropriate_node(strip_underscores(node_dict))
 		except Exception as e:
 			print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
-		our_DAG.add_n(node)
-	for node_id in our_DAG.nodes():
-		node = our_DAG.n(node_id)
+		our_MG.add_n(node)
+	for node_id in our_MG.nodes():
+		node = our_MG.n(node_id)
 		for dependency_id in node.dependency_ids:
-			our_DAG.add_edge(dependency_id, node_id)
-	our_DAG.validate() # make sure it's still Acyclic
-	print('Node array loaded with length: ' + str(len(our_DAG.nodes())))
-	print('Edge array loaded with length: ' + str(len(our_DAG.edges())))
-	our_DAG.remove_redundant_edges()
+			our_MG.add_edge(dependency_id, node_id)
+	our_MG.validate() # make sure it's still Acyclic
+	print('Node array loaded with length: ' + str(len(our_MG.nodes())))
+	print('Edge array loaded with length: ' + str(len(our_MG.edges())))
+	our_MG.remove_redundant_edges()
 
 if __name__ == "__main__":
 	# 0. create a global mongo object for later use (for upserts in the future)
 	our_mongo = Mongo("provemath", "nodes")
 
 	# 1 and 2
-	update_our_DAG()
-	starting_nodes = {
-		'graph theory': ['set', 'multiset', 'vertex'],
-		'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
-		'category theory': ['equatable', 'type'],
-	}
+	update_our_MG()
 
 	# 3. launch!
 	make_app_and_start_listening()

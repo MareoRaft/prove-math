@@ -37,3 +37,7 @@ Credits
   - Tim Naumovitz - The combinatorics material is based on his lectures
   - Greg Mattson - Python NetworkX programmer
   - Sid Patel - HTML/CSS programmer
+
+Copyright 
+--------------
+© provemath.org 2016

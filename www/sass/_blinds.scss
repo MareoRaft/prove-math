@@ -1,10 +1,33 @@
 @import 'variables';
-@import 'chosen';
+// @import 'chosen';
 @import 'chosen_normalize';
 @import 'animate';
 
 //////////////////////////////////////// BLINDS ////////////////////////////////////////
-.node-attribute {
+.blinds { // #node-template and #preference-pane need to be hidden onload
+	@include hide;
+	z-index: 4;
+	section {
+		overflow-y: scroll;
+	}
+}
+.blinds > header {
+	display: flex;
+}
+.blinds > header > * {
+	@include center-content;
+	margin: 0;
+	height: 60px;
+	padding: 0 30px;
+	@include hover-opacity;
+}
+.back {
+	@include hover-opacity;
+}
+
+
+//////////////////////////////////////// BLIND ////////////////////////////////////////
+.blind {
 	display: flex;
 	padding: 44px;
 	font: 300 normal 19px Helvetica, Tahoma, Arial, sans-serif; /* somewhere in 18-22 range feels right */
@@ -35,14 +58,24 @@
 		font-style: italic;
 	}
 }
+// OVERRIDE for user prefs:
+.pref-attribute {
+	.key {
+		width: 30%;
+		min-width: 200px; // this is to prevent stuff getting cut-off when width of window is very narrow
+	}
+	.value {
+		width: 70%;
+	}
+}
 
 @mixin white {
 	color: white;
 	img {
-		@include filter(invert(1));
+		filter: invert(1);
 	}
 }
-.node-attribute {
+.blind {
 	&:nth-child(4n+1) {
 		background-color: #7A6;
 		@include white;
@@ -58,8 +91,35 @@
 		background-color: #0DD;
 	}
 }
+// OVERRIDE for user prefs:
+.pref-attribute {
+	&:nth-child(4n+1) {
+		background-color: #4b0054;
+		@include white;
+	}
+	&:nth-child(4n+2) {
+		background-color: #6a0059;
+		@include white;
+	}
+	&:nth-child(4n+3) {
+		background-color: #f0f888;
+	}
+	&:nth-child(4n+4) {
+		background-color: #a2dc8a;
+	}
+	&:nth-child(4n+5) {
+		background-color: #004873;
+		@include white;
+	}
+}
+
+.blind-append {
+	padding-top: 9px;
+	padding-bottom: 9px;
+}
 
 
+//////////////////////////////////////// WITHIN A BLIND ////////////////////////////////////////
 // chosen-related blinds stuff...
 .tags .chosen-results {
 	color: #444;
@@ -90,11 +150,4 @@
 }
 
 .empty {
-	// background-color: pink !important;
-}
-
-.blind-append {
-	// background-color: orange !important;
-	padding-top: 9px;
-	padding-bottom: 9px;
 }

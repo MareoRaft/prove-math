@@ -25,14 +25,14 @@ define( [
 	graph,
 	Node,
 	graphAnimation,
-	blinds,
+	Blinds,
 	chosen,
 	user
 ){
 
 
 ////////////////////////////// GLOBALS ///////////////////////////////
-let css_show_hide_array = ['#avatar', '#login-circle', '#logout-circle']
+let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 
 
 /////////////////////////// INITIALIZATION ///////////////////////////
@@ -48,17 +48,31 @@ if( is.emptyObject(user_dict) ){
 }
 else{
 	// logged in:
-		// $("#display_name").html(user_dict["id_name"]) // add this back in when we have a drop down
+		$(".display-name").html(user_dict["id_name"])
 		$("#avatar").attr("src", user_dict["profile_pic"])
 		hide('#login-circle')
 	show('#overlay')
 }
 user.init(user_dict) // this should ALSO be triggered by jQuery when they login
+let pref_blinds = new Blinds({
+	window_id: 'preference-pane-blinds',
+	expand_array: false,
+	// render: // no render function needed, except maybe to process True, False, etc
+	blind_class_conditions: {
+		'pref-attribute': true,
+		animated: user.prefs.animate_blinds,
+		flipInX: user.prefs.animate_blinds,
+	},
+	read_mode_triggers: [
+		user.setPref,
+	],
+})
+
 
 graphAnimation.init({
 	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
 	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
-	node_radius: node => 7.9 * Math.sqrt(node.importance), // 7.5
+	node_radius: node => 7.9 * Math.sqrt(node.importance),
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom' || node.type === null,
@@ -93,12 +107,15 @@ function katexRenderIfPossible(string) {
 	return content
 }
 
-blinds.init({
+
+let node_blinds = new Blinds({
 	window_id: 'node-template-blinds',
 	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
+	expand_array: true,
 	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
 	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
 	render: function(string) {
+		if (typeof string !== "string") die('The inputted variable "string" is NOT a string!  It has type ' + typeof string + '!')
 		// run katex
 		// string = string.replace(/\$[^\$]*\$/g, katexRenderIfPossible)
 		// return string
@@ -110,8 +127,10 @@ blinds.init({
 		// the following should be equivalent to // mathjax.Hub.Queue(['Typeset', mathjax.Hub])
 		mathjax.Hub.Typeset() // this can't be passed in without the parenthesis
 	},
-	transform_key: keyToDisplayKey,
-	expand_array: true,
+	read_mode_triggers: [
+		{ type: 'save-node' }, // request-node will happen on the server side
+	],
+	transform_key: nodeKeyToDisplayKey,
 	blind_class_conditions: {
 		'node-attribute': true,
 		animated: user.prefs.animate_blinds,
@@ -120,6 +139,8 @@ blinds.init({
 	},
 	chosen: true,
 })
+
+
 let current_node = {}
 $('#toggle-learn-state').click(function(){
 	current_node.learned = !current_node.learned
@@ -142,6 +163,7 @@ $('#discard-node').click(function(){
 	// tell server (maybe server wants to avoid sending this node over again) to discard-node too
 	ws.jsend({command: 'discard-node', node_id: current_node.id})
 })
+
 
 let host = $('body').attr('data-host')
 let ws = ('WebSocket' in window)? new WebSocket("ws://"+host+"/websocket"): undefined;
@@ -202,21 +224,38 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		document.getElementById("search_results_return").innerHTML = JSON.stringify(ball.results);
 	}
 	else if (ball.command === "suggest-goal") {
-		node = new Node(ball.node_dict)
+		let goal = new Node(ball.goal)
+		let choice = undefined
 		if (user.prefs.always_accept_suggested_goal) {
 			choice = true
 		}
 		else{
-			alert("The goal " + node.name + " has been suggested.  Details: " + JSON.stringify(ball.node_dict))
+			alert("The goal " + goal.name + " has been suggested.  Details: " + JSON.stringify(ball.goal))
 			choice = window.prompt("Would you like to accept the goal?  Type 'yes' to accept.")
 			choice = (choice === 'yes')
 		}
 		if (choice) {
-			ws.jsend({ command: "set-goal", node_id: node.id })
+			ws.jsend({ command: "set-goal", goal_id: goal.id })
+		}
+	}
+	else if (ball.command === "suggest-pregoal") {
+		let pregoal = new Node(ball.pregoal)
+		let choice = undefined
+		if (user.prefs.always_accept_suggested_pregoal) {
+			choice = true
+		}
+		else{
+			alert("The pregoal " + pregoal.name + " has been suggested.  Details: " + JSON.stringify(ball.pregoal))
+			choice = window.prompt("Would you like to accept the pregoal?  Type 'yes' to accept.")
+			choice = (choice === 'yes')
+		}
+		if (choice) {
+			ws.jsend({ command: "set-pregoal", pregoal_id: pregoal.id })
 		}
 	}
 	else if (ball.command === "highlight-goal") {
-		alert("Your new goal is " + goalname + "!!!!")
+		let goal = new Node(ball.goal)
+		alert("Your new goal is " + goal.name + "!!!!")
 	}
 	else die('Unrecognized command '+ball.command+'.')
 }
@@ -243,7 +282,8 @@ var oauth_url_dict = undefined
 $('#x').click(function() {
 	hide('#login')
 		hide('#avatar')
-		hide('#logout-circle')
+		hide('.logout-circle')
+		hide('.see-preferences')
 		show('#login-circle')
 	show('#overlay')
 })
@@ -263,10 +303,13 @@ $('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE 
 		$(this).removeClass('invalid')
 	}
 })
-$('#logout-circle').click(logout)
+$('.logout-circle').click(function() {
+	push_pull_drawer()
+	logout()
+})
 
 
-function login() {
+function login() { // this is what runs when the user clicks "login"
 	if( !def(oauth_url_dict) ) alert('oauth login broken.')
 	let account_type = $('input[type=radio][name=provider]:checked').val()
 	if( !def(account_type) || account_type === '' ){
@@ -280,7 +323,7 @@ function login() {
 		location.href = oauth_url_dict[account_type]
 	}
 }
-function logout(){
+function logout(){ // this is what runs when the user clicks "logout"
 	delete_cookie()
 	hide('#overlay')
 	show('#login')
@@ -332,28 +375,15 @@ function collapse_search_wrapper() {
 
 
 //////////////////////////// ACTION STUFF ////////////////////////////
-$('#avatar').click(function(){
-	// detect if drawer is in or out
-	let $logout = $('#logout-circle')
-	let drawer_position = $logout.css('right')
-	if( drawer_position === '0px' ){
-		// pull drawer out
-		$logout.addClass('logout-circle-out')
-	}
-	else if( drawer_position === '55px' ){
-		// put drawer in
-		$logout.removeClass('logout-circle-out')
-	}
-	else die('unexpected drawer position')
-})
+$('#avatar').click(push_pull_drawer)
 $('#get-starting-nodes').click(function(){
 	promptStartingNodes()
 })
 $('#get-goal-suggestion').click(function(){
-	ws.jsend({command: 'get-goal-suggestion (or whatever Greg writes in the main.py file)'})
+	ws.jsend({command: 'get-goal-suggestion'})
 })
 $('#get-pregoal-suggestion').click(function(){
-	ws.jsend({command: 'get-pregoal-suggestion (or whatever Greg writes in the main.py file)'})
+	ws.jsend({command: 'get-pregoal-suggestion'})
 })
 $('#push').click(expand_search_wrapper)
 
@@ -361,13 +391,33 @@ $('#add-node').click(function(){
 	graph.addNode(new Node())
 })
 
+function push_pull_drawer() {
+	// detect if drawer is in or out
+	let $display_name = $('.display-name')
+	let $logout = $('.logout-circle')
+	let $see_prefs = $('.see-preferences')
+	let drawer_position = $logout.css('right')
+	if( drawer_position === '0px' ){
+		// pull drawer out
+		$logout.addClass('logout-circle-out')
+		$display_name.addClass('display-name-out')
+		$see_prefs.addClass('see-preferences-out')
+	}
+	else if( drawer_position === '55px' ){
+		// put drawer in
+		$logout.removeClass('logout-circle-out')
+		$display_name.removeClass('display-name-out')
+		$see_prefs.removeClass('see-preferences-out')
+	}
+	else die('unexpected drawer position')
+}
 
 //////////////////////////// TOGGLE STUFF ////////////////////////////
 $(document).on('node-click', function(Event){
 	current_node = graph.nodes[Event.message] // graph.nodes is a DICTIONARY of nodes
 	updateNodeTemplateLearnedState()
 	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
-		blinds.open({
+		node_blinds.open({
 			object: current_node,
 		})
 		hide('svg')
@@ -378,8 +428,16 @@ $(document).on('node-click', function(Event){
 		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
 	}
 })
+$('.see-preferences').click(function() {
+	pref_blinds.open({
+		object: user.prefs,
+	})
+	hide('svg')
+	hide('#overlay')
+	show('#preference-pane')
+})
 
-$('#back').click(fromBlindsToGraphAnimation)
+$('.back').click(fromBlindsToGraphAnimation)
 $(document).keyup(function(event) { if(event.which === 27 /* Esc */) { // right now this runs even if the blinds are NOT the frontmost thing, which could lead to unpredictable behavior
 	fromBlindsToGraphAnimation()
 }})
@@ -387,14 +445,18 @@ function fromBlindsToGraphAnimation(){
 	if( user.prefs.animate_blinds ){
 		$('.node-attribute').addClass('animated flipOutX')
 		$('.node-attribute').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', toggleToGraphAnimation)
+		$('.pref-attribute').addClass('animated flipOutX')
+		$('.pref-attribute').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', toggleToGraphAnimation)
 	}
 	else toggleToGraphAnimation()
 }
 function toggleToGraphAnimation() {
 	hide('#node-template')
+	hide('#preference-pane')
 	show('svg')
 	show('#overlay')
-	blinds.close()
+	node_blinds.close()
+	pref_blinds.close()
 }
 
 ////////////////////////////// HELPERS //////////////////////////////
@@ -431,7 +493,7 @@ function show(css_selector) { // this stuff fails for svg when using .addClass, 
 	}
 }
 
-function keyToDisplayKey(word, node) {
+function nodeKeyToDisplayKey(word, node) {
 	if( word === 'description' ) return node.type
 	if( word === 'dependencies' || word === 'synonyms' || word === 'plurals' ) return word // we want these to stay plural
 	if( word[word.length - 1] === 's' ) return word.substr(0, word.length - 1)

@@ -22,10 +22,13 @@ def getLogger(name, filename=None, level=logging.DEBUG, stdout=True, stdout_leve
 	else:
 		# build our own "custom defaults" logger
 		logger = logging.getLogger(name)
-		logger.setLevel(level) # if you want to see more than just warnings, remember this!!  You can also set this option to a HANDLER if you want that handler to be at a different level.
+		# disable propagation of log messages to ancestor loggers (in this case, the root logger)
+		logger.propagate = False
+		# if you want to see more than just warnings, remember this!!  You can also set this option to a HANDLER if you want that handler to be at a different level.
+		logger.setLevel(level)
 		if stdout:
 			stdout_handler = logging.StreamHandler()
-			if stdout_level:
+			if stdout_level is not None:
 				stdout_handler.setLevel(stdout_level)
 			stdout_handler.setFormatter(
 				colorlog.ColoredFormatter(

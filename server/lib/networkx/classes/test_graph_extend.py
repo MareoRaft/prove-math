@@ -54,8 +54,6 @@ def test_validate_input_nodes():
 		DG.validate_input_nodes(['NotANode'])
 	with pytest.raises(nx.NetworkXError):
 		DG.validate_input_nodes(['x', 'NotANode', 'z'])
-	with pytest.raises(ValueError):
-		DG.validate_input_nodes([])
 
 	#existing inputs:
 	assert DG.validate_input_nodes('x')

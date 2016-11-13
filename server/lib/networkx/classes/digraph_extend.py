@@ -57,30 +57,24 @@ class _DiGraphExtended (nx.DiGraph):
 	def successor(self, node): # should follow the same exact pattern as predecessor
 		return next(self.successors_iter(node), None)
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def predecessors(self, nbunch):	# works for single or multiple input nodes
 		if not self.acceptable_iterable(nbunch):	# single input node
 			pred = set(self.predecessors_iter(nbunch))
 		else:
 			pred = set()
-			if len(nbunch) == 0:	# empty iterable
-				raise ValueError('Argument {} is empty'.format(nbunch))
-			else:	# multiple input nodes
-				for node in nbunch:
-					pred = pred.union(set(self.predecessors_iter(node)))
+			for node in nbunch:
+				pred = pred.union(set(self.predecessors_iter(node)))
 		return pred - set(nbunch)
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def successors(self, nbunch):	# should follow the same exact pattern as predecessors
 		if not self.acceptable_iterable(nbunch):
 			succ = set(self.successors_iter(nbunch))
 		else:
 			succ = set()
-			if len(nbunch) == 0:
-				raise ValueError('Argument {} is empty'.format(nbunch))
-			else:
-				for node in nbunch:
-					succ = succ.union(set(self.successors_iter(node)))
+			for node in nbunch:
+				succ = succ.union(set(self.successors_iter(node)))
 		return succ - set(nbunch)
 
 	def anydirectional_neighbors(self, nbunch):
@@ -93,12 +87,12 @@ class _DiGraphExtended (nx.DiGraph):
 		DG = self.copy()
 		return shortest_path_helper(DG, source, target)
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def shortest_anydirectional_path(self, source=None, target=None):
 		DG = self.to_undirected() # if we need this, we should optimize it.
 		return shortest_path_helper(DG, source, target)
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def ancestors(self, nbunch):
 		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	# single input node
@@ -113,13 +107,13 @@ class _DiGraphExtended (nx.DiGraph):
 					DG.add_edge(node, t) # this automatically adds t to DG too
 				return nx.ancestors(DG, t) - set(nbunch) # returns a SET
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def common_ancestors(self, nbunchA, nbunchB):
 		ancA = self.ancestors(nbunchA)
 		ancB = self.ancestors(nbunchB)
 		return set.intersection(ancA, ancB)
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def descendants(self, nbunch):
 		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	#single input node
@@ -134,13 +128,13 @@ class _DiGraphExtended (nx.DiGraph):
 					DG.add_edge(s, node) # this automatically adds s to DG too
 				return nx.descendants(DG, s) - set(nbunch) # returns a SET
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def common_descendants(self, nbunchA, nbunchB):
 		descA = self.descendants(nbunchA)
 		descB = self.descendants(nbunchB)
 		return set.intersection(descA, descB)
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def relatives_to_distance_dict(self, nbunch, cutoff=None):
 		"""
 		:param int cutoff: Maximum distance to search for.
@@ -169,7 +163,7 @@ class _DiGraphExtended (nx.DiGraph):
 			level += 1
 		return seen
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def descendants_to_distance_dict(self, nbunch, cutoff=None):
 		""" Same as relatives_to_distance_dict, but only descendants of the nbunch. """
 		if not self.acceptable_iterable(nbunch):
@@ -194,10 +188,12 @@ class _DiGraphExtended (nx.DiGraph):
 			level += 1
 		return seen
 
-	@record_elapsed_time
+	# @record_elapsed_time
 	def absolute_dominion(self, nodes): # abs dom of A is A and all nodes absolutely dominated by A (nodes succeeding A and whose predecessors are entirely in A)
 		if not self.acceptable_iterable(nodes): #without this, if nodes is just a string, the return statement will not work correctly
 			raise ValueError('Argument {} is not iterable'.format(nodes))
+		if len(nodes) == 0:
+			return []
 		successors = self.successors(nodes)
 		hanging_absolute_dominion = []
 		for candidate in successors:

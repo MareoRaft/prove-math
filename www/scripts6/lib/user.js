@@ -52,7 +52,9 @@ function hasLearned(node) {
 	return _.contains(user.learned_node_ids, node.id)
 }
 
-function setPref(dic) {
+function setPref(key, val) {
+	let dic = {}
+	dic[key] = val
 	_.extend(user.prefs, dic)
 	// maybe check for an error here that no preference was actually changed.
 	// if there was a change...
