@@ -177,7 +177,7 @@ class Node:
 			self._name = check_type_and_clean(new_name, str)
 			self.id = self.name
 		else:
-			self._name= check_type_and_clean(new_name, type(None))
+			self._name = check_type_and_clean(new_name, type(None))
 
 	@property
 	def id(self):
