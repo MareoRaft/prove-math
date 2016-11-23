@@ -1658,12 +1658,275 @@ rmk
 If R is a comm ring with 1
 	(a) Then a_0 x^0 +++ a_d x^d in (R[x], *) <==> a_0 in (R, *) and a_1,,,a_d are nilpotent.
 	"<==" follows from Ex(1) and (3)(a) in HW #10
-	(b) (R[[x]], *) = { SUM_{i=0}^{i=oo} | a_0 in (R, *) and for all i, a_i in R }
+	(b) (R[[x]], *) = { SUM_{i=0}^{i=oo} a_i x^i | a_0 in (R, *) and for all i, a_i in R }
 	"exercise"
 
 2.3.7
 prop (Universal Prop of R[x])
-For any commutative ring S with 1, any ring morphism phi : R to S and any a in S, there exists a unique ring morphism (phi_a)~ : R[x] to S (which i'll just call phi~) s.t. phi~(x) = a and phi~|_R = phi.
+R comm ring w/ 1.  For any commutative ring S w/ 1, any ring morphism phi : R to S and any a in S, there exists a unique ring morphism (phi_a)~ : R[x] to S (which i'll just call phi~) s.t. phi~(x) = a and phi~|_R = phi.
+
+note
+phi~(sum_{i=0}^{d} r_i x^i) = sum_{i=0}^{d} phi(r_i) a^i
+
+rmk
+phi~(R[x]) is a subring of S
+
+If R is a subring of S, then we can use phi = inclusion, in which case,
+phi~(R[x]) = { phi~(f) | f in R[x] } = { sum_{i=0}^{d} r_i a^i | d in N, r_i in R } is the smallest subring of S containing R and a.
+
+examples
+	(a) Z IN C.  Z[i] = { a + bi | a,b in Z } are the Gaussian integers!, a subring of C.
+	(b) Z in Q.  Z[1/2] is the 2-adic numbers!, a subring of Q, the smallest containing Z and 1/2.
+
+2.3.8
+def
+special case of 2.3.7
+	Given S = R and phi = id and a in R, the __evaluation homomorphism__, also called the __evaluation at a__, is the phi~ sending x to a
+denotation
+	ev_a, or f(a)
+
+note
+We obtain a rin hom psi : R[x] to R^R = { h : R to R }.
+If psi is injective, we can consider R[x] as a ring of runctions from R to R (a subring of R^R)
+
+2.3.9
+prop (Division algorithm for polynomial rings)
+If f in R[x], f != 0, and l(f) in (R, *), then for any g in R[x], there exists a uniquely determined h,r in R[x] s.t. g = fh + r and deg(r) < deg(f).
+
+pf
+	Uniqueness:
+	If g = h1f + r1 = h2f + r2
+	then f(h1-h2) = r2-r1
+	then deg(f(h1-h2)) = deg(r2-r1) < deg(f)
+	then deg(f) + deg(h1-h2) < deg(f)
+	then deg(h1-h2) < 0
+	then h1 - h2 = 0
+	then h1 = h2
+	then r1 = r2
+
+	Existence:
+	If g = 0, then 0 = f*0 + 0
+	If g != 0, then
+	more generally, assume e := deg(g) >= deg(f) = d
+	If e < d, then g = f*0 + g,
+	Otherwise,
+	proof by induction on e
+	...
+
+2.3.10
+cor
+If F is a field and f in F[x] is nonzero, then for all g in F[x], there exists a uniquely determined h,r in F[x] with g = fh + r and deg(r) < deg(f).
+pf
+	l(f) != 0 ==> l(f) in (F, *)
+	Then it's true by 2.3.9.
+
+2.3.11
+examples
+	(a) R = Z6, f = -x + 2, g = 2x^2 + 3.
+	Then g / f = -2x - 4 with remainder -1
+
+	(b) nonexample: R = Z, f = 2x + 1, g = x^2 - 1, l(f) = 2 which is *not* a unit in Z.  There are no h, r in Z[x] s.t. x^2 - 1 = (2x+1)h + r with deg(r) < 1.
+
+	(c) R = Q, f = 2x + 1, g = x^2 - 1, find the h and r.  Yay!  Observe that h and r are unique, and since they are not in Z[x], this proves why (b) is impossible.
+
+2.3.12
+lemma
+If g in R[x] and a in R, then ( g(a) = 0 <==> (x-a | g) in R[x] ).
+pf
+	l(x-a) = 1 in (R, *) ==> there exists h,r in R[x] s.t. g = h(x-a) + r, deg(r) < deg(x-a)
+	then r is constant, so r in R
+	apply ev_a
+	g(a) = (a-a)h(a) +r = r
+	then
+	g(a) = 0 iff r = 0 iff g = (x-a)h iff (x-a | g) in R[x].
+	QED.
+
+2.3.13
+prop
+If R is a commutative domain, then any nonzero f in R[x] has at most deg(f) many roots.
+
+rmk
+If R is an algebraically closed field, then there are exactly deg(f) roots with multiplicity.
+
+examples
+	(a) nonexample: R = Z8, f = x^2 - 1, has roots 1, 3, 5, 7.  Note that Z8 is not a domain.
+	(b) nonexample: R = Boolean ring: every r in R is a root of x^2 - x.
+
+2.3.14
+thm
+If R is a comm domain, then any finite subgroup of (R, *) is cyclic.
+pf
+	Let A be a finite subgrp of R*.
+	For any natural number m,
+	    a^m = 1
+	iff a^m - 1 = 0
+	iff x^m - 1 has a as a root
+
+	   |{a in A | a^m=1 }|
+	<= |{a in R | a^m = 1}|
+	=  |{roots in R of x^m-1}|
+	<= m, by thm 2.3.13
+
+	By thm 1.2.9(b), A is cyclic.
+
+2.3.15
+cor
+If F is a finite field, then F* is cyclic.
+In particular, Zp* isom Z{p-1}
+note that 2.3.14 completes the proof of 1.2.5 !!!
+
+2.3.16
+def
+	(a) R[x1,,,xn] is defined inductively by
+	    R[x1,,,xn] := R[x1,,,x{n-1}][xn]
+	(b) Direct def generalizing 2.3.1 by
+	    R[x1,,,xn] := { finite sums a_{i1,,,in} x_1^{i1}...x_n^{in} | i's in N, a's in R }
+	(c) ermmm
+		let i = i1,,,in
+	    R[x1,,,xn] := { f : N^n to R | f(i) = 0 for almost all i }
+
+	    (f+g)(i) := f(i) + g(i)
+	    (f*g)(k) := SUM_{i+j = k} f(i)g(j)
+
+thm
+R comm ring w/ 1 ==> R[x1,,,xn] is a commitative ring with 1
+
+2.4
+Euclidean Domains
+-----------------
+
+def
+A __degree__ function d satisfies
+	d: R\{0} to N
+for all a,b in R where a !=0, there exists q,r in R s.t.
+b = qa + r
+and
+r=0 or d(r) < d(a).
+
+rmk
+TF are NOT required
+	* uniqueness of q, r
+	* d(0)=0
+	* d(a) <= d(ab) if a,b in R\{0}
+
+2.4.1
+def
+A domain is __Euclidean__ if it is commutative and has a degree function
+
+2.4.2
+examples
+	(a) R = Z, d(a) = |a|
+	(b) R = F[x], d(f) = deg(f) for f in F[x]
+	    2.4.1 is satisfied by 2.3.10
+	(c) R = F field, d can be any function from F\{0} to N
+
+2.4.3
+thm
+Every Euclidean domain is a PID
+pf
+	Given R is E.D.  Given any ideal I in R.  Let a in I be an element of minimal degree.  We will show I = (a).  Let b in I.  Then there exists q,r s.t. b = qa + r w/ r=0 or deg(r) < deg(a).
+	r = b - qa, so r in I since b and a in I.  By minimality of degree of a, we conclude r=0.
+
+2.4.4
+def
+Given a comm ring R, and a,b,c in R, then c is a __common divisor__ of a and b if c|a and c|b.
+def
+A common devisor C of a and b is __greatest__ if all common divisors c of a and b satisfy c|C.
+rmk
+It follows that gcd(0,0) = 0
+
+2.4.5
+rmk
+	(a) For all units u in R, u*gcd(a,b) = gcd(a,b)
+	(b) If R is a comm domain and c = gcd(a,b) and c' = gcd(a,b), then there exists a u in R s.t. c = uc'
+	(c) gcd(a,b) need not exist
+
+examples
+	R = Z[sqrt(5)], a = 2(1+sqrt(-5)), b = 6 = 2*3 = (1+sqrt(5))(1-sqrt(5))
+	Then we have common divisors +-1, +-2, and +-(1+sqrt(-5)), but neither divides the other, so there is no gcd.
+
+2.4.6
+lemma
+R comm ring.
+	1) c|a and c|b <==> (a,b) IN (c)
+	2) (a,b) = (c) ==> c = gcd(a,b)
+rmk
+	If R is a PID, then for any a,b in R, gcd(a,b) exists.  namely, the generator of (a,b)
+rmk
+	c can be determined by Euclidean Algo, and it also provides x,y s.t. ax + by = c.
+
+2.4.8
+prop
+Euclidean Algo
+If R is a E.D., a,b in R, a nonzero, then there exists a finite chain of equations of the form, for q's, r's in R,
+  b = q0 a + r1 	and d(r1) < d(a)
+  a = q1 r1 + r2 	and d(r2) < d(r1)
+  r1 = q1 r2 + r3 	and d(r3) < d(r2)
+  r2 = q1 r3 + r4 	and d(r4) < d(r3)
+  ...
+  r{n-1} = q1 rn + r{n+1} 	and d(r{n+1}) = 0
+Then
+	(a) d(ri) <= d(a) - i , squigglearrow n <= d(a)
+	(b) (a,b) = (r{i-1}, ri) = (rn) ==> gcd(a,b) = rn by 2.4.6
+	(c) If we define inductively
+		alpha{-1} = 0, beta{-1} := 1,
+		alpha0 = 1, beta0 = 0
+		alphai = alpha{i-2} - q{i-1}alpha{i-1}, betai = beta{i-2} - q{i-1}beta{i-1}
+	then for all i,
+		ri = alphai a + betai b
+	and hence
+		rn = alphan a + betan b
+
+2.4.9
+quadratic number fields.
+Fix m in Z \ {0,1} square free, that is, m = -1 or m = product of distinct primes.
+Then sqrt(m) not in Q
+if m < 0, sqrt(m) in C \ R
+if m > 1, m = p1...pe ==> for all nonzero integers a, ma^2 not in (unique prime factorization) Z2
+
+So if sqrt(m) in Q, then sqrt(m) = b/q ==> a^2m = b^2, a contradiction,
+
+consequence
+for some s, t in Q, s + t*sqrt(m) = 0  ==>  t = s = 0
+That is, 1,sqrt(m) is a Q-basis of K := Km := Q[sqrt(m)] = { s + t*sqrt(m) | s,t in Q }
+Km is closed under + and * ==> subring of C
+Define phi : K to K
+by phi(s+t*sqrt(m)) = s-t*sqrt(m)
+check phi is ring hom and phi|_Q = id|_Q, phi^2 = id|_K.
+
+def
+The __norm__ N : K to Q is defined by N(z) = z*phi(z).
+rmk
+	(i) N(s+t*sqrt(m)) = s^2 - t^2m in Q
+	(ii) N(z) = 0 ==> s^2 = t^2m ==> t = 0 ==> s = 0
+	otherwise, t !=0 ==> m = s^2/t^2 ==> sqrt(m) = +-s/t in Q contradiction
+	(iii) z1,z2 in K ==> N(z1z2) = z1z2phi(z1z2) = z1phi(z1)z2phi(z2) = N(z1)N(z2)
+
+consequences
+	(1) K is a field
+	(2) N : K* to Q* is a group hom.
+
+2.4.10
+lemma
+If R subring of Km satisfying N(R) = Z, then
+	(a) a|b in R ==> N(a)|N(b) in Z
+	(b) phi(R) IN R ==> R* = { a in R | N(a) = +-1 }
+	(c) If for all z in K, there exists q in R s.t. |N(z-q)| < 1, then R is a E.D. with d(a) := |N(a)|.
+
+2.4.11
+discussion
+quadratic number rings (rings of quadratic algebraic integers)
+m in Z \ {0,1} square-free. Let Km = Q[sqrt(m)]
+
+w_m   :=     sqrt(m)  if  m != 1 mod 4
+        (1+sqrt(m))/2 if  m == 1 mod 4
+
+O = O(m) := Z[w_m] = { k + l w_m | k,l in Z }
+m = 1 mod 4, 2w_m = sqrt(m)
+      ==> Z[sqrt(m)] IN O(m)
+      ...
+
+
 
 
 
