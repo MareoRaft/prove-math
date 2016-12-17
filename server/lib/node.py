@@ -9,8 +9,19 @@ from string import punctuation
 
 from lib import helper
 from lib.vote import Votable
+from lib.config import ERR
 
 ######################## INTERNAL HELPERS ########################
+def report(severity, message):
+	# this will become a method of ScoreCard
+	pass
+
+def remove_outer_dunderscores(s):
+	# takes in a string like "__hi__", and returns "hi"
+	if len(s) >= 4 and s[:2] == "__" and s[-2:] == "__":
+		s = s[2:-2]
+	return s
+
 def to_bash():
 	# include commands here to be executed in bash
 	bash_out = subprocess.check_output('ls; cd; ls', shell=True)
@@ -180,6 +191,7 @@ class Node (Votable):
 
 	@property
 	def id(self):
+		print(self)
 		return self._id
 	@id.setter
 	def id(self, new_id_before_reduction):
@@ -229,7 +241,8 @@ class Node (Votable):
 		clean_intuitions = check_type_and_clean(new_intuitions, str, list_of=True)
 		assert is_content_clean(clean_intuitions)
 		for x in clean_intuitions:
-			assert dunderscore_count(x) == 0
+			if dunderscore_count(x) > 0:
+				report("low", ERR["DUNDERSCORES"](x))
 		self._intuitions = clean_intuitions
 
 	@property
@@ -238,8 +251,10 @@ class Node (Votable):
 	@dependencies.setter
 	def dependencies(self, new_dependencies):
 		cleaned_dependencies = check_type_and_clean(new_dependencies, str, list_of=True)
+		cleaned_dependencies = remove_outer_dunderscores(cleaned_dependencies)
 		for d in cleaned_dependencies:
-			assert dunderscore_count(d) == 0
+			if dunderscore_count(d) > 0:
+				report("critical", ERR["DUNDERSCORES"](d))
 		self._dependencies = cleaned_dependencies
 
 	@property
@@ -254,7 +269,8 @@ class Node (Votable):
 		cleaned_examples = check_type_and_clean(new_examples, str, list_of=True)
 		assert is_content_clean(cleaned_examples)
 		for x in cleaned_examples:
-			assert dunderscore_count(x) == 0
+			if dunderscore_count(x) > 0:
+				report("low", ERR["DUNDERSCORES"](x))
 		self._examples = cleaned_examples
 
 	@property
@@ -265,7 +281,8 @@ class Node (Votable):
 		cleaned_counterexamples = check_type_and_clean(new_counterexamples, str, list_of=True)
 		assert is_content_clean(cleaned_counterexamples)
 		for x in cleaned_counterexamples:
-			assert dunderscore_count(x) == 0
+			if dunderscore_count(x) > 0:
+				report("low", ERR["DUNDERSCORES"](x))
 		self._counterexamples = cleaned_counterexamples
 
 	@property
@@ -291,10 +308,19 @@ class Definition(Node):
 		self.negation = move_attribute(dic, {'negation'}, strict=False)
 		if self.importance is None:
 			self.importance = 4
-		if self.description is not None:
-			assert dunderscore_count(self.description) >=2
-		if self.name is None:
-			self.name = get_contents_of_dunderscores(self.description)
+		if self.description is None:
+			if self.name is None:
+				# error
+				report("critical", NEEDS_NAME)
+		else:
+			if self.name is None and dunderscore_count(self.description) < 2:
+				# error
+				report("critical", NEEDS_NAME)
+			if self.name is not None and dunderscore_count(self.description) < 2:
+				# we should fine the name in the description and underline it ourselves
+				pass
+			if self.name is None and dunderscore_count(self.description) >= 2:
+				self.name = get_contents_of_dunderscores(self.description)
 
 	@property
 	def plurals(self):
@@ -316,12 +342,15 @@ class Definition(Node):
 			self._negation = None
 		else:
 			clean_negation = check_type_and_clean(new_negation, str)
-			# assert dunderscore_count(clean_negation) >= 2 # let's make BLINDS do that stuff INSTEAD
+			clean_negation = remove_outer_dunderscores(clean_negation)
+			if dunderscore_count(clean_negation) > 0:
+				report("medium", ERR["DUNDERSCORES"](clean_negation))
 			self._negation = clean_negation
 
 	@Node.description.setter
 	def description(self, new_description):
-		assert dunderscore_count(new_description) >= 2
+		if dunderscore_count(new_description) < 2:
+			report("low", ERR["NO_DUNDERSCORES"](new_description))
 		Node.description.fset(self, new_description)
 
 
@@ -342,9 +371,11 @@ class Axiom(Definition):
 		else:
 			if "justification" in dic:
 				# as Mo pointed out, axioms CAN have dependencies.  Perhaps there are some definitions you create first, and then an AXIOM uses those definitions (but still introduces something you must accept on faith alone).
-				Node.dependencies.fset(self, new_deps)
+				pass
 			else:
-				raise KeyError('Axioms cannot have dependencies!')
+				# now we will even allow the user to make axioms with deps, so the fset is below this block.
+				report("medium", ERR["AXIOM_WITH_DEPENDENCY"])
+		Node.dependencies.fset(self, new_deps)
 
 	@Node.description.setter
 	def description(self, new_description):
@@ -376,14 +407,19 @@ class PreTheorem(Node):
 		assert is_content_clean(good_type_proofs)
 		for proof in good_type_proofs:
 			proof['description'] = move_attribute(proof, {'description', 'content'}, strict=True)
-			assert dunderscore_count(proof['description']) == 0
-			assert 'type' in proof
+			if dunderscore_count(proof['description']) > 0:
+				report("low", ERR["DUNDERSCORES"](proof['description']))
+			if 'type' not in proof:
+				report("low", ERR["NO_PROOF_TYPE"])
+				# then give some default type to the proof
+				proof['type'] = None
 			proof['type'] = check_type_and_clean(proof['type'], str, list_of=True)
 		self._proofs = good_type_proofs
 
 	@Node.description.setter
 	def description(self, new_description):
-		assert dunderscore_count(new_description) == 0
+		if dunderscore_count(new_description) != 0:
+			report("medium", DUNDERSCORE(new_description))
 		Node.description.fset(self, new_description)
 
 
@@ -399,11 +435,13 @@ class Theorem(PreTheorem):
 		self.type = "theorem"
 		if self.importance is None:
 			self.importance = 6
-		assert self.name is not None
+		if self.name is None:
+			report("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
 
 	@PreTheorem.name.setter
 	def name(self, new_name):
-		assert new_name is not None
+		if new_name is not None:
+			report("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
 		PreTheorem.name.fset(self, new_name)
 
 

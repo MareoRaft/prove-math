@@ -75,3 +75,24 @@ DEF_USER_PREFS = {
 # :description: User will always receive every node already included in the client graph.  Nodes will not be removed.
 # :type: bool
 }
+
+ERR = {
+# warnings and error messages for users
+
+# complain that there are NO DUNDERSCORES
+"NO_DUNDERSCORES": (lambda x: "The pattern __ should be used in your string to underline the new term that you are defining.  Your string is: {}".format(x)),
+
+# complain that DUNDERSCORES exist
+"DUNDERSCORES": (lambda x: "The pattern __ is not recommended in your string.  The pattern __ is reserved for underlining a term the very first time it is defined.  Your string is: {}".format(x)),
+
+# complain that there is no name
+"NO_NAME": "Your new node needs a name!  Please provide a name at the top in the name field.  For definitions, there is an alternative way to provide a name.  Simply surround the __new term__ in double underscores in the description.  For definitions, this is recommended.",
+
+# complain that an axiom has a dependency
+"AXIOM_WITH_DEPENDENCY": "You are trying to create an axiom that has a dependency.  This is allowed, but please make sure you know what you are doing.  Axioms are important!",
+
+"NO_PROOF_TYPE": "You have not given your proof a type.  While not required, it can be useful to tag proofs with types, such as 'induction', 'combinatorial', 'algebraic', 'extremal', 'direct', 'contradiction', etc.",
+}
+
+
+
