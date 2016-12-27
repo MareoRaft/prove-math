@@ -197,7 +197,7 @@ thm: A, B char G implies [A, B] char G
 		  1. associativity of scalar multiplication with ring multiplication: a(bv) = (ab)v
 		  2. identity of scalar multiplication: 1v = v (assuming the ring has identity)
 		  3. distributivity of scalar multiplication over vector addition: a(u+v) = au_av
-		  4. distributivity of scalar multiplication over ring addition: (a+b)v = av+bv
+		  4. distributivity of vector multiplication over ring addition: (a+b)v = av+bv
 	",
 }
 {
