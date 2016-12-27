@@ -199,7 +199,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		raw_graph.nodes = _.map(raw_graph.nodes, raw_node => new Node(raw_node))
 
 		let ready_graph = raw_graph
-		for( node of ready_graph.nodes )if( node.id === "c" ) console.log("FOUND C")
+		for( let node of ready_graph.nodes )if( node.id === "c" ) console.log("FOUND C")
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,

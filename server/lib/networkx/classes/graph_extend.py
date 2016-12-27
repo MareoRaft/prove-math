@@ -60,7 +60,7 @@ class _GraphExtended (nx.Graph):
 			nbunch = [nbunch]
 		for node in nbunch:
 			if not self.has_node(node):
-				raise nx.NetworkXError('The input node {} is not in the graph'.format(node))
+				raise nx.NetworkXError('The input node {0} is not in the graph'.format(node))
 		return True
 
 for key, value in _GraphExtended.__dict__.items():
