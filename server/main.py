@@ -351,9 +351,9 @@ class StaticHandler(StaticFileHandler, BaseHandler):
 def make_app():
 	return Application(
 		[
-			url('/', RedirectHandler, {"url": "index.html"}, name="rooth"),
-			url('/websocket', SocketHandler),
-			url('/json', JSONHandler, name="jsonh"),
+			url(r'/?', RedirectHandler, {"url": "index.html"}, name="rooth"),
+			url(r'/websocket', SocketHandler),
+			url(r'/json', JSONHandler, name="jsonh"),
 			url(r'/index(?:\.html?)?', IndexHandler, name="indexh"),
 			url(r'/docs(?:\.html?)?', RedirectHandler, {"url": "docs/index.html"}, name='docsh'),
 			url(r'/docs/(.*)', StaticHandler, {"path": "../docs/build/html/"}),
