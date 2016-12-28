@@ -5,15 +5,41 @@ require.config({
 	paths: { // other paths we want to access
 		// keep in mind that the local and remote URLS are NOT necessarily the SAME VERSION of the library.  :(  because i'm lazy.  but no issues so far.
 		// IF THINGS CONTINUE TO BE SLOW: try www.jsdelivr.com CDN.
-		jquery: ["jquery-min", "http://code.jquery.com/jquery-1.11.2.min", "https://cdn.jsdelivr.net/jquery/2.2.4/jquery.min"],
-		underscore: ["underscore-min", "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min", "https://cdn.jsdelivr.net/underscorejs/1.8.3/underscore-min"],
+		jquery: [
+			"jquery-min",
+			"http://code.jquery.com/jquery-1.11.2.min", "https://cdn.jsdelivr.net/jquery/2.2.4/jquery.min"
+		],
+		underscore: [
+			"underscore-min",
+			"https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
+			"https://cdn.jsdelivr.net/underscorejs/1.8.3/underscore-min"
+		],
 		d3: "d3-for-development", // if we add patches separately, then we can just use https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min, https://cdn.jsdelivr.net/d3js/3.5.17/d3.min
-		katex: ["katex-min", "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min", "https://cdn.jsdelivr.net/katex/0.6.0/katex.min"], // or 0.2.0
-		mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured", // "mathjax-min.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured" "https://cdn.jsdelivr.net/mathjax/2.1/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
-		marked: ["marked", "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min", "https://cdn.jsdelivr.net/marked/0.3.5/marked.min"],
-		chosen: ["chosen-min", "https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min", "https://cdn.jsdelivr.net/chosen/1.1.0/chosen.jquery.min"],
-		jsnetworkx: ["jsnetworkx-min", "https://raw.githubusercontent.com/fkling/JSNetworkX/v0.3.4/jsnetworkx"],
-		main: "../main"
+		// katex: [
+		// 	"katex-min",
+		// 	// "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min",
+		// 	"https://cdn.jsdelivr.net/katex/0.6.0/katex.min"
+		// ], // or 0.2.0
+		mathjax: [
+			"mathjax-min.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured", // we also placed MathMenu and MathZoom in the extensions folder, since mathjax depends on these.
+			"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
+			"https://cdn.jsdelivr.net/mathjax/2.1/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
+		],
+		marked: [
+			"marked",
+			"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min",
+			"https://cdn.jsdelivr.net/marked/0.3.5/marked.min"
+		],
+		chosen: [
+			"chosen-min",
+			"https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min",
+			"https://cdn.jsdelivr.net/chosen/1.1.0/chosen.jquery.min"
+		],
+		jsnetworkx: [
+			"jsnetworkx-min",
+			"https://raw.githubusercontent.com/fkling/JSNetworkX/v0.3.4/jsnetworkx"
+		],
+		main: "../main",
 	},
 	shim: { // allows us to bind variables to global (with exports) and show dependencies without using define()
 		underscore: { exports: "_" },
@@ -29,7 +55,7 @@ require.config({
 				});
 				MathJax.Hub.Startup.onload();
 				return MathJax;
-			}
+			},
 		},
 	},
 })

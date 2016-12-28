@@ -8,6 +8,7 @@ server/data/*.json
 *secrets.txt
 ignore/
 email-backup/
+mongo-dumps/
 octave-core
 # emacs temp files:
 *~

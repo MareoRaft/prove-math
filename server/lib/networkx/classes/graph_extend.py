@@ -31,6 +31,7 @@ class _GraphExtended (nx.Graph):
 
 	def add_node_unique(self):
 		while True:
+			print('adding a UNIQUE node.  This could be a problem because "custom_object" doesn\'t exist!')
 			n = 'node_unique.' + string_unique()
 			if self.has_node(n):
 				warn('The node already existed.')
@@ -46,7 +47,7 @@ class _GraphExtended (nx.Graph):
 			nbunch = [nbunch]
 		for node in nbunch:
 			if not self.has_node(node):
-				raise nx.NetworkXError('The input node {} is not in the graph'.format(node))
+				raise nx.NetworkXError('The input node {0} is not in the graph'.format(node))
 		return True
 
 for key, value in _GraphExtended.__dict__.items():

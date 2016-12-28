@@ -1,6 +1,7 @@
 javascript_kickoff_file = 'config'
 
 starting_nodes = {
+	'test': ['a'],
 	'graph theory': ['set', 'multiset', 'vertex'],
 	'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
 	'category theory': ['equatable', 'type'],

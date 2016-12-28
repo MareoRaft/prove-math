@@ -6,6 +6,7 @@ from lib.networkx.classes import dag
 
 from lib.decorate import record_elapsed_time
 from lib import helper
+from lib.node import Node
 
 ############################ HELPERS #############################
 
@@ -27,6 +28,8 @@ class PMDAG (nx.DAG):
 		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
 			nodebunch = [nodebunch]
 		for node in nodebunch:
+			# verify that the node is legit
+			assert isinstance(node, Node)
 			self.add_node(node.id, attr_dict={"custom_object": node})
 
 	# FROM DIGRAPH:
