@@ -12,9 +12,45 @@ from lib.vote import Votable
 from lib.config import ERR
 
 ######################## INTERNAL HELPERS ########################
-def report(severity, message):
-	# this will become a method of ScoreCard
-	pass
+class ScoreCard: # this will eventually be moved to its own file
+	def __init__(self):
+		# a stack of reports
+		self.stack = []
+
+	FAILING_SCORE = 40
+
+	SEVERITY_WORD_TO_NUMBER = {
+		"low": 5,
+		"medium": 10,
+		"high": 20,
+		"critical": self.FAILING_SCORE,
+	}
+
+	def severity_string_to_number(self, string):
+		assert isinstance(string, str)
+		words = string.split("-")
+		numbers = [SEVERITY_WORD_TO_NUMBER[word] for word in words]
+		number = numbers / len(words)
+		return number
+
+	def report(self, severity_string, message):
+		severity_number = severity_string_to_number(severity_string)
+		self.stack.push((severity_number, message))
+
+	def total_score(self):
+		scores = [report[0] for report in self.stack]
+		return sum(scores)
+
+	def is_passing(self):
+		return self.total_score() >= self.FAILING_SCORE
+
+	def as_dict(self):
+		d = self.__dict__
+		# make sure d.stack is nice
+		# make sure is_passing is nice
+		# delete unneeded keys
+		return d
+
 
 def remove_outer_dunderscores(s):
 	# takes in a string like "__hi__", and returns "hi"

@@ -88,6 +88,8 @@ def read_only(func):
 			return out
 	return new_func
 
+# i need a "get-only".  that cannot be set EVER
+
 
 # other ideas: type enforcement for inputs/outputs
 # and so many more!
