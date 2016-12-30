@@ -12,7 +12,11 @@ from lib.vote import Votable
 from lib.config import ERR
 
 ######################## INTERNAL HELPERS ########################
+
+
 class ScoreCard: # this will eventually be moved to its own file
+
+
 	def __init__(self):
 		# a stack of reports
 		self.stack = []
@@ -23,7 +27,7 @@ class ScoreCard: # this will eventually be moved to its own file
 		"low": 5,
 		"medium": 10,
 		"high": 20,
-		"critical": self.FAILING_SCORE,
+		"critical": FAILING_SCORE,
 	}
 
 	def severity_string_to_number(self, string):
@@ -34,8 +38,8 @@ class ScoreCard: # this will eventually be moved to its own file
 		return number
 
 	def report(self, severity_string, message):
-		severity_number = severity_string_to_number(severity_string)
-		self.stack.push((severity_number, message))
+		severity_number = self.severity_string_to_number(severity_string)
+		self.stack.append((severity_number, message))
 
 	def total_score(self):
 		scores = [report[0] for report in self.stack]
@@ -45,11 +49,11 @@ class ScoreCard: # this will eventually be moved to its own file
 		return self.total_score() >= self.FAILING_SCORE
 
 	def as_dict(self):
-		d = self.__dict__
+		dic = self.__dict__
 		# make sure d.stack is nice
 		# make sure is_passing is nice
 		# delete unneeded keys
-		return d
+		return dic
 
 
 def remove_outer_dunderscores(s):
