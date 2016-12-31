@@ -200,7 +200,8 @@ class Node (Votable):
 
 	def as_dict(self):
 		dic = self.__dict__
-		del dic['score_card']
+		if 'score_card' in dic:
+			del dic['score_card']
 		return dic
 
 	def as_json(self): # returns json version of self
@@ -450,7 +451,11 @@ class PreTheorem(Node):
 
 	def __init__(self, dic):
 		super().__init__(dic)
-		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
+		print('BELOW COMMENTED OUT TO DISABLE PROOFS')
+		# self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
+
+
+
 		# theorems and exercises CANNOT have plurals: (but since we only created plural for Definitions, we shouldn't need this as long as there is a way to block undefined properties (see other Stack Overflow question))
 		if 'plurals' in self.as_dict():
 			raise KeyError('Theorems cannot have plurals.')
