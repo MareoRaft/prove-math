@@ -25,11 +25,11 @@ nodes = dict() # this is just to keep track of what we do and do not add to the 
 for pre_node in new_data_dictionary['nodes']:
 	node = create_appropriate_node(pre_node)
 	try:
-		db_nodes.insert_one(node.__dict__)
+		db_nodes.insert_one(node.as_dict())
 	except:
 		# a blank version of this node already existed, so we need to
 		# upsert it in DB
-		db_nodes.upsert({"_id": node.id}, node.__dict__)
+		db_nodes.upsert({"_id": node.id}, node.as_dict())
 		# then remove it from nodes too and replace with node
 		del nodes[node.id] # errors if no exist
 	nodes[node.id] = node
@@ -45,7 +45,7 @@ for pre_node in new_data_dictionary['nodes']:
 				"type": "axiom",
 			})
 			nodes[dependency_node.id] = dependency_node
-			db_nodes.insert_one(dependency_node.__dict__)
+			db_nodes.insert_one(dependency_node.as_dict())
 
 
 print('Transfer complete!!!!')

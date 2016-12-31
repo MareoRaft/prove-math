@@ -194,11 +194,15 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 'save-node': # hopefully this can handle both new nodes and changes to nodes
 			node_dict = ball['node_dict']
-			if 'importance' in node_dict.keys():
-				node_dict['importance'] = int(node_dict['importance'])
 			try:
 				node_obj = node.create_appropriate_node(node_dict)
-				log.debug('\nnode made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...\n')
+				log.debug('\nnode made.  looks like: '+str(node_obj))
+
+				# take a look at the score card, to see if the node is worthy
+				if not node_obj.score_card.is_passing():
+					raise Exception('your score is {}'.format(node_obj.score_card.total_score()))
+
+				log.debug('Now time to put node into the DB...\n')
 				# take a look at the dependencies now
 
 				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []
@@ -217,7 +221,7 @@ class SocketHandler (WebSocketHandler):
 					H.add_edge(new_dependency_id, node_obj.id)
 					H.validate(node_obj.name + ' cannot depend on ' + our_MG.n(new_dependency_id).name + ' because ' + our_MG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
 
-				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
+				our_mongo.upsert({ "_id": node_obj.id }, node_obj.as_dict())
 				update_our_MG()
 
 				# send an update of the graph to the user if there are new dependencies:
@@ -256,7 +260,7 @@ class SocketHandler (WebSocketHandler):
 			goal_node = our_MG.n(goal_id)
 			self.jsend({
 				'command': 'suggest-goal',
-				'goal': goal_node.__dict__,
+				'goal': goal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'set-goal':
@@ -266,7 +270,7 @@ class SocketHandler (WebSocketHandler):
 			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-goal',
-				'goal': goal_node.__dict__,
+				'goal': goal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'get-pregoal-suggestion':
@@ -274,7 +278,7 @@ class SocketHandler (WebSocketHandler):
 			pregoal_node = our_MG.n(pregoal_id)
 			self.jsend({
 				'command': 'suggest-pregoal',
-				'pregoal': pregoal_node.__dict__,
+				'pregoal': pregoal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'set-pregoal':
@@ -284,7 +288,7 @@ class SocketHandler (WebSocketHandler):
 			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-pregoal',
-				'pregoal': pregoal_node.__dict__,
+				'pregoal': pregoal_node.as_dict(),
 			})
 
 	def request_nodes(self, node_ids, ball):

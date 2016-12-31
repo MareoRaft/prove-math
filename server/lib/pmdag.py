@@ -35,7 +35,7 @@ class PMDAG (nx.DAG):
 	# FROM DIGRAPH:
 	def as_js_ready_dict(self):
 		d = dict()
-		d['nodes'] = [self.n(node_id).__dict__ for node_id in self.nodes()]
+		d['nodes'] = [self.n(node_id).as_dict() for node_id in self.nodes()]
 		d['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
 		return d
 

@@ -93,6 +93,14 @@ ERR = {
 "AXIOM_WITH_DEPENDENCY": "You are trying to create an axiom that has a dependency.  This is allowed, but please make sure you know what you are doing.  Axioms are important!",
 
 "NO_PROOF_TYPE": "You have not given your proof a type.  While not required, it can be useful to tag proofs with types, such as 'induction', 'combinatorial', 'algebraic', 'extremal', 'direct', 'contradiction', etc.",
+
+"IMPORTANCE_TOO_LOW": (lambda node, importance: "The minimum importance for a {} node is {}.  The importance you set was {}.  This value will be replaced with the minimum importance.".format(node.type, node.MIN_IMPORTANCE, importance)),
+
+"IMPORTANCE_TOO_HIGH": (lambda node, importance: "The maximum importance for a {} node is {}.  The importance you set was {}.  This value will be replaced with the maximum importance.".format(node.type, node.MAX_IMPORTANCE, importance)),
+
+"LENGTH_TOO_SHORT": "The length of your content is too short (add more later).",
+
+"NOT_CAPITALIZED": "Capitzlize first sentence.",
 }
 
 

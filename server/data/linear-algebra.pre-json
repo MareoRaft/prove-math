@@ -1,9 +1,9 @@
 {
-	"names": ["a", "b"],
+	"name": "a",
 	"def": "A __thing__ is something."
 }
 {
-	"names": ["c", "d", "e", "f", "g", "h"],
+	"name": "c",
 	"def": "A __thing__ is something else!!!.",
 	"dependencies": ["a"]
 }
