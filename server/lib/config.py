@@ -80,6 +80,9 @@ DEF_USER_PREFS = {
 ERR = {
 # warnings and error messages for users
 
+# bad type
+"BAD_TYPE": (lambda x: "Node's 'type' attribute must be a 'definition' (or 'defn' or 'def'), a 'theorem' (or 'thm'), or an 'exercise'.\nYOUR TYPE WAS: {}".format(x)),
+
 # complain that there are NO DUNDERSCORES
 "NO_DUNDERSCORES": (lambda x: "The pattern __ should be used in your string to underline the new term that you are defining.  Your string is: {}".format(x)),
 

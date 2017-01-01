@@ -152,7 +152,28 @@ def find_node_from_id(list_of_nodes, ID):
 ############################## MAIN ##############################
 
 
-class Node (Votable):
+class Typeable: # created specifically for Node
+
+
+	@property
+	def type(self):
+		return self._type
+	@type.setter
+	def type(self, new_type):
+		clean_type = check_type_and_clean(new_type, str)
+		if clean_type in {'definition', 'defn', 'def'}:
+			self._type = 'definition'
+		elif clean_type in {'axiom'}:
+			self._type = 'axiom'
+		elif clean_type in {'theorem', 'thm'}:
+			self._type = 'theorem'
+		elif clean_type in {'exercise'}:
+			self._type = 'exercise'
+		else:
+			raise TypeError(ERR["BAD_TYPE"](clean_type))
+
+
+class Node(Typeable, Votable):
 
 
 	MIN_IMPORTANCE = 1
@@ -171,6 +192,7 @@ class Node (Votable):
 
 		# create a score card to score this node as it is initialized
 		self.score_card = ScoreCard()
+		print('score ME')
 
 		# populate node
 		self.description = move_attribute(dic, {'description', 'content'}, strict=False)
@@ -249,23 +271,6 @@ class Node (Votable):
 	@id.setter
 	def id(self, new_id_before_reduction):
 		self._id = reduce_string(new_id_before_reduction)
-
-	@property
-	def type(self):
-		return self._type
-	@type.setter
-	def type(self, new_type):
-		clean_type = check_type_and_clean(new_type, str)
-		if clean_type in {'definition', 'defn', 'def'}:
-			self._type = 'definition'
-		elif clean_type in {'axiom'}:
-			self._type = 'axiom'
-		elif clean_type in {'theorem', 'thm'}:
-			self._type = 'theorem'
-		elif clean_type in {'exercise'}:
-			self._type = 'exercise'
-		else:
-			raise ValueError("Node's 'type' attribute must be a 'definition' (or 'defn' or 'def'), a 'theorem' (or 'thm'), or an 'exercise'.\nYOUR TYPE WAS: " + clean_type)
 
 	@property
 	def importance(self):
@@ -365,25 +370,23 @@ class Definition(Node):
 
 	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'plurals']
 
-	def __init__(self,dic):
+	def __init__(self, dic):
 		self.type = "definition"
 		super().__init__(dic)
 		self.plurals = move_attribute(dic, {'plurals', 'plural', 'pl'}, strict=False)
 		self.negation = move_attribute(dic, {'negation'}, strict=False)
 		if self.importance is None:
 			self.importance = 4
-		if self.description is None:
-			if self.name is None:
-				# error
+		if self.description in [None, '']:
+			if self.name in [None, '']:
 				self.score_card.report("critical", NEEDS_NAME)
 		else:
-			if self.name is None and dunderscore_count(self.description) < 2:
-				# error
+			if self.name in [None, ''] and dunderscore_count(self.description) < 2:
 				self.score_card.report("critical", NEEDS_NAME)
-			if self.name is not None and dunderscore_count(self.description) < 2:
-				# we should fine the name in the description and underline it ourselves
+			if self.name not in [None, ''] and dunderscore_count(self.description) < 2:
 				pass
-			if self.name is None and dunderscore_count(self.description) >= 2:
+			if self.name in [None, ''] and dunderscore_count(self.description) >= 2:
+				print('GETTING')
 				self.name = get_contents_of_dunderscores(self.description)
 
 	@property

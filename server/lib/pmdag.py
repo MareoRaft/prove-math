@@ -32,6 +32,12 @@ class PMDAG (nx.DAG):
 			assert isinstance(node, Node)
 			self.add_node(node.id, attr_dict={"custom_object": node})
 
+	def remove_n(self, nodebunch):
+		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
+			nodebunch = [nodebunch]
+		for node in nodebunch:
+			self.remove_node(node.id)
+
 	# FROM DIGRAPH:
 	def as_js_ready_dict(self):
 		d = dict()
