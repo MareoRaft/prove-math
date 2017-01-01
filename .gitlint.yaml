@@ -92,8 +92,7 @@ pylint:
   - .py
   command: pylint
   arguments:
-  - "--rcfile={DEFAULT_CONFIGS}/.pylintrc" # doesn't seem to work
-  - "--disable=all" # doesn't work either
+  - "--rcfile={REPO_HOME}/.pylintrc" # we're just going to use the below instead
   - "--output-format=text"
   - "--msg-template='{{abspath}}:{{line}}:{{column}}: [{{category}}:{{symbol}}] {{obj}}: {{msg}}'"
   - "--reports=n"
