@@ -180,7 +180,6 @@ class Node(Typeable, Votable):
 		dic = deepcopy(self.__dict__)
 		if 'score_card' in dic:
 			del dic['score_card']
-		dic["_id"] = self.id
 		return dic
 
 	def as_json(self): # returns json version of self
@@ -223,7 +222,6 @@ class Node(Typeable, Votable):
 
 	@property
 	def id(self):
-		print(self)
 		return self._id
 	@id.setter
 	def id(self, new_id_before_reduction):

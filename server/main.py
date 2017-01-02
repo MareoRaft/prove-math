@@ -385,7 +385,6 @@ def update_our_MG():
 	for node_dict in all_node_dicts:
 		# try:
 		node = create_appropriate_node(strip_underscores(node_dict))
-		print('node names: {}'.format(node.names))
 
 		# except Exception as e:
 			# print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
