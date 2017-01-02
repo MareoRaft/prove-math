@@ -438,7 +438,7 @@ class PreTheorem(Node):
 	@Node.description.setter
 	def description(self, new_description):
 		if dunderscore_count(new_description) != 0:
-			self.score_card.strike("medium-high", DUNDERSCORE(new_description))
+			self.score_card.strike("medium-high", ERR["DUNDERSCORES"](new_description))
 		Node.description.fset(self, new_description)
 
 

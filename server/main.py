@@ -199,8 +199,9 @@ class SocketHandler (WebSocketHandler):
 				log.debug('\nnode made.  looks like: '+str(node_obj))
 
 				# take a look at the score card, to see if the node is worthy
-				if not node_obj.score_card.is_passing():
-					raise Exception('your score is {}'.format(node_obj.score_card.total_score()))
+				sc = node_obj.score_card
+				if not sc.is_passing():
+					raise Exception('Your score is {}.  Your strikes are: {}'.format(sc.total_score(), sc.as_dict()))
 
 				log.debug('Now time to put node into the DB...\n')
 				# take a look at the dependencies now

@@ -34,7 +34,7 @@ class ScoreCard:
 		# why is my score 0?  Well, since there is no description, it didn't even attempt to set a descruption in the first place.  Maybe the description should be an EMPTY STRING instead of not setting one.  Or maybe some smarter way?
 
 	def is_passing(self):
-		return self.total_score() < self.FAILING_SCORE
+		return self.total_score() < FAILING_SCORE
 
 	def as_dict(self):
 		dic = copy.deepcopy(self.__dict__)
