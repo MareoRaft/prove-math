@@ -30,17 +30,6 @@ class _DAG (nx.DiGraph):
 			currentNode = self.predecessor(currentNode)
 		return currentNode
 
-	# @record_elapsed_time
-	def sources(self): # finds the sources in a Directed A(dir)cyclic Graph
-		dag2 = self.copy()
-		sources = set()
-		while dag2.is_nonnull():
-			source = dag2.source()
-			sources.add(source)
-			sourceAndDescendants = {source} | dag2.descendants(source)
-			dag2 = dag2.subgraph( set(dag2.nodes()) - sourceAndDescendants )
-		return sources
-
 	def common_descendant_sources(self, nbunchA, nbunchB):
 		return self.subgraph(self.common_descendants(nbunchA, nbunchB)).sources()
 

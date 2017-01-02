@@ -4,7 +4,7 @@ import pytest
 import networkx as nx
 
 from lib.pmdag import PMDAG
-from lib.node import create_appropriate_node, Node
+from lib.node import create_appropriate_node
 
 ############################ HELPERS ############################
 def fill_sample_custom_nodes():
@@ -65,7 +65,7 @@ def test_as_js_ready_dict():
 	dl = d['links']
 	dn = d['nodes']
 	assert dl == []
-	assert (dn == [a..as_dict(), b..as_dict()] or dn == [b..as_dict(), a..as_dict()])
+	assert (dn == [a.as_dict(), b.as_dict()] or dn == [b.as_dict(), a.as_dict()])
 
 	G = PMDAG()
 	G.add_n(a)
@@ -75,7 +75,7 @@ def test_as_js_ready_dict():
 	dl = d['links']
 	dn = d['nodes']
 	assert (dl == [{'source': 'a', 'target': 'b'}])
-	assert (dn == [a..as_dict(), b..as_dict()] or dn == [b..as_dict(), a..as_dict()])
+	assert (dn == [a.as_dict(), b.as_dict()] or dn == [b.as_dict(), a.as_dict()])
 
 	G = PMDAG()
 	G.add_n(a)
@@ -91,9 +91,9 @@ def test_as_js_ready_dict():
 		dl == [{'source': 'b', 'target': 'c'}, {'source': 'a', 'target': 'b'}]
 		)
 	assert (
-		dn == [a..as_dict(), b..as_dict(), c..as_dict()] or dn == [a..as_dict(), c..as_dict(), b..as_dict()]
-		or dn == [b..as_dict(), a..as_dict(), c..as_dict()] or dn == [b..as_dict(), c..as_dict(), a..as_dict()]
-		or dn == [c..as_dict(), a..as_dict(), b..as_dict()] or dn == [c..as_dict(), b..as_dict(), a..as_dict()]
+		dn == [a.as_dict(), b.as_dict(), c.as_dict()] or dn == [a.as_dict(), c.as_dict(), b.as_dict()]
+		or dn == [b.as_dict(), a.as_dict(), c.as_dict()] or dn == [b.as_dict(), c.as_dict(), a.as_dict()]
+		or dn == [c.as_dict(), a.as_dict(), b.as_dict()] or dn == [c.as_dict(), b.as_dict(), a.as_dict()]
 		)
 
 def test_unselected_dependency_tree():

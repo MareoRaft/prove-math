@@ -85,10 +85,13 @@ Simon's Foundation   ---->  apply for a grant
 for the user manual --> make it on readthedocs.org !
 
 73. use Zenlog for even cooler logging? https://github.com/ManufacturaInd/python-zenlog
-74. make gerg's next project to go through this ideas file?
+74. make greg's next project to go through this ideas file?
 
 -----------------
-Greg
 75. Have some kind of transparency gradient.  As the user learns deeper nodes the old "shallow" nodes can become progressively more transparent, eventually disappearing from view to reduce clutter
+
 76. We need a really awesome "zoom" feature.  That is, how can multiple nodes be combined into a single node?  For example, consider the theorem "Given the group $G$ and subgroups $A$ and $B$.  Then $AB <= G$ iff $AB = BA$ iff $A <= N_G(B)$ iff $B <= N_G(A)$.".  This is actually multiple theorems combined into a single theorem.  Can we automatically break down and recombine these things?
+
+MATT
+77. Use HeVeA hevea to translate .tex grad school notes into prove-math nodes.
 

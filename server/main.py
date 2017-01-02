@@ -206,11 +206,16 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 'save-node': # hopefully this can handle both new nodes and changes to nodes
 			node_dict = ball['node_dict']
-			if 'importance' in node_dict.keys():
-				node_dict['importance'] = int(node_dict['importance'])
 			try:
 				node_obj = node.create_appropriate_node(node_dict)
-				log.debug('\nnode made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...\n')
+				log.debug('\nnode made.  looks like: '+str(node_obj))
+
+				# take a look at the score card, to see if the node is worthy
+				sc = node_obj.score_card
+				if not sc.is_passing():
+					raise Exception('Your score is {}.  Your strikes are: {}'.format(sc.total_score(), sc.as_dict()))
+
+				log.debug('Now time to put node into the DB...\n')
 				# take a look at the dependencies now
 
 				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []

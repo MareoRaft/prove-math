@@ -49,16 +49,6 @@ def test_source():
 	assert DAG.source() == 'a'
 	assert DAG.source() != 'd'
 
-def test_sources():
-	DAG = nx.DAG()
-	assert DAG.sources() == set()
-
-	DAG.add_path(['a', 'b', 'c', 'd'])
-	assert DAG.sources() == {'a'}
-
-	DAG.add_edge('z', 'd')
-	assert DAG.sources() == {'a', 'z'}
-
 def test_common_descendant_sources():
 	DAG = nx.DAG()
 	DAG.add_path(['a', 'b', 'c', 'd', 'z'])

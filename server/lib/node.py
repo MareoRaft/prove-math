@@ -10,8 +10,16 @@ from copy import deepcopy
 
 from lib import helper
 from lib.vote import Votable
+from lib.config import ERR
+from lib.score import ScoreCard
 
 ######################## INTERNAL HELPERS ########################
+def remove_outer_dunderscores(s):
+	# takes in a string like "__hi__", and returns "hi"
+	if len(s) >= 4 and s[:2] == "__" and s[-2:] == "__":
+		s = s[2:-2]
+	return s
+
 def to_bash():
 	# include commands here to be executed in bash
 	bash_out = subprocess.check_output('ls; cd; ls', shell=True)
@@ -33,16 +41,6 @@ def is_capitalized(value):
 		return True
 	return False
 
-def is_content_clean(value):
-	if type(value) is list:
-		for el in value:
-			assert is_content_clean(el)
-	if type(value) is str:
-		assert len(value) >= 15 # arbitary length to make sure person actually put some content in
-		assert is_capitalized(value) # we need to move this ONLY to the things that need to be capitalized (for example, not names)
-		return True
-	return True
-
 def check_type_and_clean(value, value_type, list_of=False):
 	if list_of:
 		if type(value) is list:
@@ -57,7 +55,7 @@ def check_type_and_clean(value, value_type, list_of=False):
 					raise Exception('Element {} is not of type {}'.format(el, value_type))
 			value = clean_value
 		elif value is None:
-			value = []
+			value = [value_type()] # i'm afraid
 		else:
 			assert type(value) is value_type
 			value = [value]
@@ -109,182 +107,10 @@ def find_node_from_id(list_of_nodes, ID):
 
 
 ############################## MAIN ##############################
-class Name:
-	def __init__(self, info):
-		if isinstance(info, str):
-			self.singular = info
-		elif isinstance(info, list):
-			self.singular = info[0]
-			self.plural = info[1]
-		elif isinstance(info, dict):
-			self.singular = info["singular"]
-			self.plural = info["plural"]
-
-	def __repr__(self):
-		return 'Name({})'.format(self.as_dict())
-
-	def __str__(self):
-		return repr(self)
-
-	@property
-	def singular(self):
-		if not '_singular' in self.__dict__:
-			# first time
-			self._singular = None
-		return self._singular
-	@singular.setter
-	def singular(self, string):
-		if string is not None:
-			clean_string = self.check_and_clean(string)
-			self._singular = clean_string
-
-	@property
-	def plural(self):
-		if not '_plural' in self.__dict__:
-			# first time
-			self._plural = None
-		return self._plural
-	@plural.setter
-	def plural(self, string):
-		if string is not None:
-			clean_string = self.check_and_clean(string)
-			self._plural = clean_string
-
-	def all(self):
-		all_names = {name for name in [self.singular, self.plural] if name is not None}
-		return all_names
-
-	# HELPERS
-	def check_and_clean(self, new_name):
-		assert dunderscore_count(new_name) == 0
-		print('NEW NAME IS: {}'.format(new_name))
-		clean_name = check_type_and_clean(new_name, str)
-		return clean_name
-
-	def as_dict(self):
-		return {
-			"singular": self.singular,
-			"plural": self.plural,
-		}
 
 
-class Names (set):
-	def all(self):
-		# return every name possible
-		all_names = set()
-		for name in self:
-			all_names.update(name.all())
-		return all_names
-	def add(self, new_name):
-		if new_name is not None:
-			clean_name = Name(new_name)
-			super().add(clean_name)
-		else:
-			# ignore None names
-			pass
-	def add_many(self, iterable):
-		if iterable is not None:
-			for new_name in iterable:
-				self.add(new_name)
-	def as_array_of_dicts(self):
-		return [name.as_dict() for name in self]
+class Typeable: # created specifically for Node
 
-
-class Node (Votable):
-
-
-	MIN_IMPORTANCE = 1
-	MAX_IMPORTANCE = 10
-	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', '_importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes']
-
-	# Pass in a single json dictionary (dic) in order to convert to a node
-	def __init__(self, dic):
-		empty_keys = []
-		for key, value in dic.items():
-			if value == "":
-				empty_keys.append(key)
-		for key in empty_keys:
-			del dic[key]
-
-		self.description = move_attribute(dic, {'description', 'content'}, strict=False)
-		self.dependencies = move_attribute(dic, {'dependencies'}, strict=False)
-		self.importance = move_attribute(dic, {'importance', 'weight'}, strict=False)
-		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
-		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
-		self.counterexamples = move_attribute(dic, {'counterexample', 'counterexamples', 'counter example', 'counter examples'}, strict=False)
-		self.notes = move_attribute(dic, {'note', 'notes'}, strict=False)
-		self.name = move_attribute(dic, {'name'}, strict=False)
-		self.names.add_many(move_attribute(dic, {'names'}, strict=False))
-
-	@property
-	def weight(self): # delete this if we get above to work
-		pass
-	@weight.setter
-	def weight(self, new_weight):
-		raise Exception('We are not using "weight" anymore.  We are using "importance".')
-
-	def as_dict(self):
-		d = deepcopy(self.__dict__)
-		d["_names"] = self.names.as_array_of_dicts()
-		d["_id"] = self.id
-		return d
-
-	def as_json(self): # returns json version of self
-		return json.dumps(self.as_dict())
-
-	def __str__(self):
-		return str(self.as_dict())
-
-	def __repr__(self):
-		return 'Node(' + self.__str__() + ')'
-
-	def __hash__(self):
-		return hash(self.as_dict().values())
-
-	def __eq__(self, other):
-		# two nodes are equal if the idification of its name or any of its synonyms is equal to the idification of the others name or any of its synonyms
-		self_ids = [self.id] + self.synonyms
-
-	def __ne__(self, other):
-		return not self.__eq__(other)
-
-	def clone(self):
-		return copy.deepcopy(self)
-
-	@property
-	def names(self):
-		if not '_names' in self.__dict__:
-			# first time
-			self._names = Names()
-		return self._names
-	@names.setter
-	def names(self, *args, **kwargs):
-		raise Exception('You may not overwrite the names directly.')
-
-	@property
-	def name(self):
-		raise Exception('There is no single name. Use self.names instead.')
-	@name.setter
-	def name(self, new_name):
-		# This name setter remains for legacy purposes
-		# if a name already exists, fail:
-		if self.names:
-			raise Exception('A name was already set.  The names are: {}'.format(self.names))
-		else:
-			self.names.add(new_name)
-
-	@property
-	def ids(self):
-		return { reduce_string(name) for name in self.names.all() }
-
-	@property
-	def id(self):
-		ids = self.ids
-		if ids:
-			return sorted(ids)[0]
-		else:
-			# resort to description
-			return reduce_string(self.description)
 
 	@property
 	def type(self):
@@ -301,16 +127,125 @@ class Node (Votable):
 		elif clean_type in {'exercise'}:
 			self._type = 'exercise'
 		else:
-			raise ValueError("Node's 'type' attribute must be a 'definition' (or 'defn' or 'def'), a 'theorem' (or 'thm'), or an 'exercise'.\nYOUR TYPE WAS: " + clean_type)
+			raise TypeError(ERR["BAD_TYPE"](clean_type))
+
+
+class Node(Typeable, Votable):
+
+
+	MIN_IMPORTANCE = 1
+	MAX_IMPORTANCE = 10
+	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', '_importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes']
+
+	# Pass in a single json dictionary (dic) in order to convert to a node
+	def __init__(self, dic):
+		# clean the input dictionary
+		empty_keys = []
+		for key, value in dic.items():
+			if value == "":
+				empty_keys.append(key)
+		for key in empty_keys:
+			del dic[key]
+
+		# create a score card to score this node as it is initialized
+		self.score_card = ScoreCard()
+
+		# populate node
+		self.description = move_attribute(dic, {'description', 'content'}, strict=False)
+		self.dependencies = move_attribute(dic, {'dependencies'}, strict=False)
+		self.importance = move_attribute(dic, {'importance', 'weight'}, strict=False)
+		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
+		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
+		self.counterexamples = move_attribute(dic, {'counterexample', 'counterexamples', 'counter example', 'counter examples'}, strict=False)
+		self.notes = move_attribute(dic, {'note', 'notes'}, strict=False)
+		self.name = move_attribute(dic, {'name'}, strict=False)
+
+		# we might want to freeze the score card here, or something
+
+	def validate_content_clean(self, value):
+		if type(value) is list:
+			for el in value:
+				self.validate_content_clean(el)
+		if type(value) is str:
+			# this needs to know WHICH method is the called.  Description callers should get higher penalties, etc.
+			if not len(value) >= 15: # arbitary length to make sure person actually put some content in
+				self.score_card.strike("low-medium", ERR["LENGTH_TOO_SHORT"])
+			if not is_capitalized(value):
+				# we need to move this ONLY to the things that need to be capitalized (for example, not names)
+				self.score_card.strike("low", ERR["NOT_CAPITALIZED"])
+			return True
+		return True
+
+	def as_dict(self):
+		dic = deepcopy(self.__dict__)
+		if 'score_card' in dic:
+			del dic['score_card']
+		dic["_id"] = self.id
+		return dic
+
+	def as_json(self): # returns json version of self
+		return json.dumps(self.as_dict())
+
+	def __str__(self):
+		return str(self.as_dict())
+
+	def __repr__(self):
+		return 'Node(' + self.__str__() + ')'
+
+	def __hash__(self):
+		return hash(self.as_dict().values())
+
+	def __eq__(self, other):
+		return self.id == other.id
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
+
+	def clone(self):
+		return copy.deepcopy(self)
+
+	@property
+	def name(self):
+		if '_name' in self.as_dict():
+			return self._name
+		else:
+			return None
+	@name.setter
+	def name(self, new_name):
+		if new_name is None:
+			new_name = ""
+		if new_name is not None:
+			assert dunderscore_count(new_name) == 0
+			self._name = check_type_and_clean(new_name, str)
+			self.id = self.name
+		else:
+			self._name = check_type_and_clean(new_name, type(None))
+
+	@property
+	def id(self):
+		print(self)
+		return self._id
+	@id.setter
+	def id(self, new_id_before_reduction):
+		self._id = reduce_string(new_id_before_reduction)
 
 	@property
 	def importance(self):
 		return self._importance
 	@importance.setter
 	def importance(self, new_importance):
+		if new_importance is None:
+			new_importance = -1
 		if new_importance is not None:
+			if isinstance(new_importance, str):
+				new_importance = int(new_importance)
 			new_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
-			assert new_importance >= self.MIN_IMPORTANCE and new_importance <= self.MAX_IMPORTANCE
+			if new_importance < self.MIN_IMPORTANCE:
+				self.score_card.strike("low", ERR["IMPORTANCE_TOO_LOW"](self, new_importance))
+			new_importance = max(self.MIN_IMPORTANCE, new_importance)
+			if new_importance > self.MAX_IMPORTANCE:
+				self.score_card.strike("low", ERR["IMPORTANCE_TOO_HIGH"](self, new_importance))
+			new_importance = min(self.MAX_IMPORTANCE, new_importance)
 		self._importance = new_importance
 
 	@property
@@ -318,8 +253,10 @@ class Node (Votable):
 		return self._description
 	@description.setter
 	def description(self, new_description):
+		if new_description is None:
+			new_description = ""
 		clean_description = check_type_and_clean(new_description, str)
-		assert is_content_clean(clean_description)
+		self.validate_content_clean(clean_description)
 		self._description = clean_description
 
 	@property
@@ -328,9 +265,10 @@ class Node (Votable):
 	@intuitions.setter
 	def intuitions(self, new_intuitions):
 		clean_intuitions = check_type_and_clean(new_intuitions, str, list_of=True)
-		assert is_content_clean(clean_intuitions)
+		self.validate_content_clean(clean_intuitions)
 		for x in clean_intuitions:
-			assert dunderscore_count(x) == 0
+			if dunderscore_count(x) > 0:
+				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
 		self._intuitions = clean_intuitions
 
 	@property
@@ -339,8 +277,10 @@ class Node (Votable):
 	@dependencies.setter
 	def dependencies(self, new_dependencies):
 		cleaned_dependencies = check_type_and_clean(new_dependencies, str, list_of=True)
+		cleaned_dependencies = remove_outer_dunderscores(cleaned_dependencies)
 		for d in cleaned_dependencies:
-			assert dunderscore_count(d) == 0
+			if dunderscore_count(d) > 0:
+				self.score_card.strike("critical", ERR["DUNDERSCORES"](d))
 		self._dependencies = cleaned_dependencies
 
 	@property
@@ -353,9 +293,10 @@ class Node (Votable):
 	@examples.setter
 	def examples(self, new_examples):
 		cleaned_examples = check_type_and_clean(new_examples, str, list_of=True)
-		assert is_content_clean(cleaned_examples)
+		self.validate_content_clean(cleaned_examples)
 		for x in cleaned_examples:
-			assert dunderscore_count(x) == 0
+			if dunderscore_count(x) > 0:
+				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
 		self._examples = cleaned_examples
 
 	@property
@@ -364,9 +305,10 @@ class Node (Votable):
 	@counterexamples.setter
 	def counterexamples(self, new_counterexamples):
 		cleaned_counterexamples = check_type_and_clean(new_counterexamples, str, list_of=True)
-		assert is_content_clean(cleaned_counterexamples)
+		self.validate_content_clean(cleaned_counterexamples)
 		for x in cleaned_counterexamples:
-			assert dunderscore_count(x) == 0
+			if dunderscore_count(x) > 0:
+				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
 		self._counterexamples = cleaned_counterexamples
 
 	@property
@@ -375,24 +317,41 @@ class Node (Votable):
 	@notes.setter
 	def notes(self, new_notes):
 		cleaned_notes = check_type_and_clean(new_notes, str, list_of=True)
-		assert is_content_clean(cleaned_notes)
+		self.validate_content_clean(cleaned_notes)
 		# notes may mention a synonym, so we will allow dunderscores (open to discussion)
 		self._notes = cleaned_notes
 
 
-class Definition (Node):
+class Definition(Node):
 
 
 	def __init__(self,dic):
 		super().__init__(dic)
-		self.type = "definition"
+		self.plurals = move_attribute(dic, {'plurals', 'plural', 'pl'}, strict=False)
 		self.negation = move_attribute(dic, {'negation'}, strict=False)
 		if self.importance is None:
 			self.importance = 4
-		if self.description is not None:
-			assert dunderscore_count(self.description) >=2
-		if not self.names:
-			self.name = get_contents_of_dunderscores(self.description)
+		if self.description in [None, '']:
+			if self.name in [None, '']:
+				self.score_card.strike("critical", ERR["NO_NAME"])
+		else:
+			if self.name in [None, ''] and dunderscore_count(self.description) < 2:
+				self.score_card.strike("critical", ERR["NO_NAME"])
+			if self.name not in [None, ''] and dunderscore_count(self.description) < 2:
+				pass
+			if self.name in [None, ''] and dunderscore_count(self.description) >= 2:
+				self.name = get_contents_of_dunderscores(self.description)
+
+	@property
+	def plurals(self):
+		return self._plurals
+	@plurals.setter
+	def plurals(self, new_plurals):
+		if new_plurals is None:
+			self._plurals = []
+		else:
+			cleaned_plurals = check_type_and_clean(new_plurals, str, list_of=True)
+			self._plurals = cleaned_plurals
 
 	@property
 	def negation(self):
@@ -403,13 +362,17 @@ class Definition (Node):
 			self._negation = None
 		else:
 			clean_negation = check_type_and_clean(new_negation, str)
-			# assert dunderscore_count(clean_negation) >= 2 # let's make BLINDS do that stuff INSTEAD
+			clean_negation = remove_outer_dunderscores(clean_negation)
+			if dunderscore_count(clean_negation) > 0:
+				self.score_card.strike("medium", ERR["DUNDERSCORES"](clean_negation))
 			self._negation = clean_negation
 
 	@Node.description.setter
 	def description(self, new_description):
-		if new_description is not None:
-			assert dunderscore_count(new_description) >= 2
+		if new_description is None:
+			new_description = ""
+		if dunderscore_count(new_description) < 2:
+			self.score_card.strike("low", ERR["NO_DUNDERSCORES"](new_description))
 		Node.description.fset(self, new_description)
 
 
@@ -417,8 +380,8 @@ class Axiom(Definition):
 
 
 	def __init__(self, dic):
-		super().__init__(dic)
 		self.type = "axiom"
+		super().__init__(dic)
 
 	@property
 	def dependencies(self):
@@ -430,17 +393,11 @@ class Axiom(Definition):
 		else:
 			if "justification" in dic:
 				# as Mo pointed out, axioms CAN have dependencies.  Perhaps there are some definitions you create first, and then an AXIOM uses those definitions (but still introduces something you must accept on faith alone).
-				Node.dependencies.fset(self, new_deps)
+				pass
 			else:
-				raise KeyError('Axioms cannot have dependencies!')
-
-	@Node.description.setter
-	def description(self, new_description):
-		if new_description is None:
-			self._description = None
-		else:
-			assert dunderscore_count(new_description) >= 2
-			Node.description.fset(self, new_description)
+				# now we will even allow the user to make axioms with deps, so the fset is below this block.
+				self.score_card.strike("medium", ERR["AXIOM_WITH_DEPENDENCY"])
+		Node.dependencies.fset(self, new_deps)
 
 
 class PreTheorem(Node):
@@ -450,7 +407,14 @@ class PreTheorem(Node):
 
 	def __init__(self, dic):
 		super().__init__(dic)
-		self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
+		print('BELOW COMMENTED OUT TO DISABLE PROOFS')
+		# self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
+
+
+
+		# theorems and exercises CANNOT have plurals: (but since we only created plural for Definitions, we shouldn't need this as long as there is a way to block undefined properties (see other Stack Overflow question))
+		if 'plurals' in self.as_dict():
+			raise KeyError('Theorems cannot have plurals.')
 
 	@property
 	def proofs(self):
@@ -458,17 +422,22 @@ class PreTheorem(Node):
 	@proofs.setter
 	def proofs(self, new_proofs):
 		good_type_proofs = check_type_and_clean(new_proofs, dict, list_of=True)
-		assert is_content_clean(good_type_proofs)
+		self.validate_content_clean(good_type_proofs)
 		for proof in good_type_proofs:
 			proof['description'] = move_attribute(proof, {'description', 'content'}, strict=True)
-			assert dunderscore_count(proof['description']) == 0
-			assert 'type' in proof
+			if dunderscore_count(proof['description']) > 0:
+				self.score_card.strike("low", ERR["DUNDERSCORES"](proof['description']))
+			if 'type' not in proof:
+				self.score_card.strike("low", ERR["NO_PROOF_TYPE"])
+				# then give some default type to the proof
+				proof['type'] = None
 			proof['type'] = check_type_and_clean(proof['type'], str, list_of=True)
 		self._proofs = good_type_proofs
 
 	@Node.description.setter
 	def description(self, new_description):
-		assert dunderscore_count(new_description) == 0
+		if dunderscore_count(new_description) != 0:
+			self.score_card.strike("medium-high", ERR["DUNDERSCORES"](new_description))
 		Node.description.fset(self, new_description)
 
 
@@ -480,17 +449,18 @@ class Theorem(PreTheorem):
 
 
 	def __init__(self, dic):
-		super().__init__(dic)
 		self.type = "theorem"
+		super().__init__(dic)
 		if self.importance is None:
 			self.importance = 6
-		# assert self.name is not None
+		if self.name is None:
+			self.score_card.strike("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
 
 	@PreTheorem.name.setter
 	def name(self, new_name):
-		# assert new_name is not None
 		if new_name is not None:
-			PreTheorem.name.fset(self, new_name)
+			self.score_card.strike("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
+		PreTheorem.name.fset(self, new_name)
 
 
 class Exercise(PreTheorem):
@@ -500,7 +470,13 @@ class Exercise(PreTheorem):
 	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'proofs']
 
 	def __init__(self, dic):
-		super().__init__(dic)
 		self.type = "exercise"
+		super().__init__(dic)
 		if self.importance is None:
 			self.importance = 1
+
+	@PreTheorem.description.setter
+	def description(self, new_description):
+		PreTheorem.description.fset(self, new_description)
+		if self.name is None:
+			self.id = self.description

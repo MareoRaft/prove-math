@@ -3,7 +3,7 @@ define( [
 	"underscore",
 	"browser-detect",
 	"check-types",
-	"katex",
+	// "katex",
 	"mathjax",
 	"profile",
 	"marked",
@@ -18,7 +18,7 @@ define( [
 	_,
 	browser,
 	is,
-	katex,
+	// katex,
 	mathjax,
 	undefined,
 	marked,
@@ -89,23 +89,23 @@ show('svg') // both svg and node-template are hidden on load
 show('#banner')
 
 
-function katexRenderIfPossible(string) {
-	let content = string.substr(1, -1)
-	try{
-		content = katex.renderToString(content) // katex.render takes in element as second parameter
-	}
-	catch(error) {
-		if (error.__proto__ === katex.ParseError.prototype) {
-			alert('error1')
-			return string // the original string unchanged (for mathjax to snatch up later)
-		} else {
-			alert('error2')
-			return "<span class='err' style='color:red;'>"+'ERROR: '+error+"</span>"
-		}
-	}
-	alert(content)
-	return content
-}
+// function katexRenderIfPossible(string) {
+// 	let content = string.substr(1, -1)
+// 	try{
+// 		content = katex.renderToString(content) // katex.render takes in element as second parameter
+// 	}
+// 	catch(error) {
+// 		if (error.__proto__ === katex.ParseError.prototype) {
+// 			alert('error1')
+// 			return string // the original string unchanged (for mathjax to snatch up later)
+// 		} else {
+// 			alert('error2')
+// 			return "<span class='err' style='color:red;'>"+'ERROR: '+error+"</span>"
+// 		}
+// 	}
+// 	alert(content)
+// 	return content
+// }
 
 
 let node_blinds = new Blinds({
