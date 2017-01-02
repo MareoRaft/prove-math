@@ -70,7 +70,7 @@ class Node {
 		_.each(this, function(value, key) { if( node.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
 			dictionary[key] = node[key]
 		}})
-		dictionary.name = node._name // this was node.name in the other version, watch out for a possible glitch
+		dictionary.name = node._name
 		dictionary.id = node.id
 		return dictionary
 	}
@@ -128,7 +128,7 @@ class Node {
 	}
 
 	get name() {
-		if( !def(this._name) || this._name === null ) return ''
+		if (!def(this._name) || this._name === null) return ''
 		return this._name
 	}
 
