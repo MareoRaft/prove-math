@@ -10,53 +10,9 @@ from string import punctuation
 from lib import helper
 from lib.vote import Votable
 from lib.config import ERR
+from lib.score import ScoreCard
 
 ######################## INTERNAL HELPERS ########################
-
-
-class ScoreCard: # this will eventually be moved to its own file
-
-
-	def __init__(self):
-		# a stack of reports
-		self.stack = []
-
-	FAILING_SCORE = 40
-
-	SEVERITY_WORD_TO_NUMBER = {
-		"low": 5,
-		"medium": 10,
-		"high": 20,
-		"critical": FAILING_SCORE,
-	}
-
-	def severity_string_to_number(self, string):
-		assert isinstance(string, str)
-		words = string.split("-")
-		numbers = [self.SEVERITY_WORD_TO_NUMBER[word] for word in words]
-		number = sum(numbers) / len(numbers) # the average severity
-		return number
-
-	def report(self, severity_string, message):
-		severity_number = self.severity_string_to_number(severity_string)
-		self.stack.append((severity_number, message))
-
-	def total_score(self):
-		scores = [report[0] for report in self.stack]
-		return sum(scores)
-		# why is my score 0?  Well, since there is no description, it didn't even attempt to set a descruption in the first place.  Maybe the description should be an EMPTY STRING instead of not setting one.  Or maybe some smarter way?
-
-	def is_passing(self):
-		return self.total_score() < self.FAILING_SCORE
-
-	def as_dict(self):
-		dic = self.as_dict()
-		# make sure d.stack is nice
-		# make sure is_passing is nice
-		# delete unneeded keys
-		return dic
-
-
 def remove_outer_dunderscores(s):
 	# takes in a string like "__hi__", and returns "hi"
 	if len(s) >= 4 and s[:2] == "__" and s[-2:] == "__":
@@ -192,7 +148,6 @@ class Node(Typeable, Votable):
 
 		# create a score card to score this node as it is initialized
 		self.score_card = ScoreCard()
-		print('score ME')
 
 		# populate node
 		self.description = move_attribute(dic, {'description', 'content'}, strict=False)
@@ -213,15 +168,15 @@ class Node(Typeable, Votable):
 		if type(value) is str:
 			# this needs to know WHICH method is the called.  Description callers should get higher penalties, etc.
 			if not len(value) >= 15: # arbitary length to make sure person actually put some content in
-				self.score_card.report("low-medium", ERR["LENGTH_TOO_SHORT"])
+				self.score_card.strike("low-medium", ERR["LENGTH_TOO_SHORT"])
 			if not is_capitalized(value):
 				# we need to move this ONLY to the things that need to be capitalized (for example, not names)
-				self.score_card.report("low", ERR["NOT_CAPITALIZED"])
+				self.score_card.strike("low", ERR["NOT_CAPITALIZED"])
 			return True
 		return True
 
 	def as_dict(self):
-		dic = self.__dict__
+		dic = copy.deepcopy(self.__dict__)
 		if 'score_card' in dic:
 			del dic['score_card']
 		return dic
@@ -284,10 +239,10 @@ class Node(Typeable, Votable):
 				new_importance = int(new_importance)
 			new_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
 			if new_importance < self.MIN_IMPORTANCE:
-				self.score_card.report("low", ERR["IMPORTANCE_TOO_LOW"](self, new_importance))
+				self.score_card.strike("low", ERR["IMPORTANCE_TOO_LOW"](self, new_importance))
 			new_importance = max(self.MIN_IMPORTANCE, new_importance)
 			if new_importance > self.MAX_IMPORTANCE:
-				self.score_card.report("low", ERR["IMPORTANCE_TOO_HIGH"](self, new_importance))
+				self.score_card.strike("low", ERR["IMPORTANCE_TOO_HIGH"](self, new_importance))
 			new_importance = min(self.MAX_IMPORTANCE, new_importance)
 		self._importance = new_importance
 
@@ -311,7 +266,7 @@ class Node(Typeable, Votable):
 		self.validate_content_clean(clean_intuitions)
 		for x in clean_intuitions:
 			if dunderscore_count(x) > 0:
-				self.score_card.report("low", ERR["DUNDERSCORES"](x))
+				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
 		self._intuitions = clean_intuitions
 
 	@property
@@ -323,7 +278,7 @@ class Node(Typeable, Votable):
 		cleaned_dependencies = remove_outer_dunderscores(cleaned_dependencies)
 		for d in cleaned_dependencies:
 			if dunderscore_count(d) > 0:
-				self.score_card.report("critical", ERR["DUNDERSCORES"](d))
+				self.score_card.strike("critical", ERR["DUNDERSCORES"](d))
 		self._dependencies = cleaned_dependencies
 
 	@property
@@ -339,7 +294,7 @@ class Node(Typeable, Votable):
 		self.validate_content_clean(cleaned_examples)
 		for x in cleaned_examples:
 			if dunderscore_count(x) > 0:
-				self.score_card.report("low", ERR["DUNDERSCORES"](x))
+				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
 		self._examples = cleaned_examples
 
 	@property
@@ -351,7 +306,7 @@ class Node(Typeable, Votable):
 		self.validate_content_clean(cleaned_counterexamples)
 		for x in cleaned_counterexamples:
 			if dunderscore_count(x) > 0:
-				self.score_card.report("low", ERR["DUNDERSCORES"](x))
+				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
 		self._counterexamples = cleaned_counterexamples
 
 	@property
@@ -379,14 +334,13 @@ class Definition(Node):
 			self.importance = 4
 		if self.description in [None, '']:
 			if self.name in [None, '']:
-				self.score_card.report("critical", NEEDS_NAME)
+				self.score_card.strike("critical", ERR["NO_NAME"])
 		else:
 			if self.name in [None, ''] and dunderscore_count(self.description) < 2:
-				self.score_card.report("critical", NEEDS_NAME)
+				self.score_card.strike("critical", ERR["NO_NAME"])
 			if self.name not in [None, ''] and dunderscore_count(self.description) < 2:
 				pass
 			if self.name in [None, ''] and dunderscore_count(self.description) >= 2:
-				print('GETTING')
 				self.name = get_contents_of_dunderscores(self.description)
 
 	@property
@@ -411,7 +365,7 @@ class Definition(Node):
 			clean_negation = check_type_and_clean(new_negation, str)
 			clean_negation = remove_outer_dunderscores(clean_negation)
 			if dunderscore_count(clean_negation) > 0:
-				self.score_card.report("medium", ERR["DUNDERSCORES"](clean_negation))
+				self.score_card.strike("medium", ERR["DUNDERSCORES"](clean_negation))
 			self._negation = clean_negation
 
 	@Node.description.setter
@@ -419,7 +373,7 @@ class Definition(Node):
 		if new_description is None:
 			new_description = ""
 		if dunderscore_count(new_description) < 2:
-			self.score_card.report("low", ERR["NO_DUNDERSCORES"](new_description))
+			self.score_card.strike("low", ERR["NO_DUNDERSCORES"](new_description))
 		Node.description.fset(self, new_description)
 
 
@@ -443,7 +397,7 @@ class Axiom(Definition):
 				pass
 			else:
 				# now we will even allow the user to make axioms with deps, so the fset is below this block.
-				self.score_card.report("medium", ERR["AXIOM_WITH_DEPENDENCY"])
+				self.score_card.strike("medium", ERR["AXIOM_WITH_DEPENDENCY"])
 		Node.dependencies.fset(self, new_deps)
 
 
@@ -473,9 +427,9 @@ class PreTheorem(Node):
 		for proof in good_type_proofs:
 			proof['description'] = move_attribute(proof, {'description', 'content'}, strict=True)
 			if dunderscore_count(proof['description']) > 0:
-				self.score_card.report("low", ERR["DUNDERSCORES"](proof['description']))
+				self.score_card.strike("low", ERR["DUNDERSCORES"](proof['description']))
 			if 'type' not in proof:
-				self.score_card.report("low", ERR["NO_PROOF_TYPE"])
+				self.score_card.strike("low", ERR["NO_PROOF_TYPE"])
 				# then give some default type to the proof
 				proof['type'] = None
 			proof['type'] = check_type_and_clean(proof['type'], str, list_of=True)
@@ -484,7 +438,7 @@ class PreTheorem(Node):
 	@Node.description.setter
 	def description(self, new_description):
 		if dunderscore_count(new_description) != 0:
-			self.score_card.report("medium-high", DUNDERSCORE(new_description))
+			self.score_card.strike("medium-high", DUNDERSCORE(new_description))
 		Node.description.fset(self, new_description)
 
 
@@ -501,12 +455,12 @@ class Theorem(PreTheorem):
 		if self.importance is None:
 			self.importance = 6
 		if self.name is None:
-			self.score_card.report("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
+			self.score_card.strike("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
 
 	@PreTheorem.name.setter
 	def name(self, new_name):
 		if new_name is not None:
-			self.score_card.report("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
+			self.score_card.strike("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
 		PreTheorem.name.fset(self, new_name)
 
 

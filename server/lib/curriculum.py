@@ -1,3 +1,5 @@
+import copy
+
 from lib.mongo import Mongo
 from lib import helper
 from lib.vote import Votable
@@ -65,9 +67,9 @@ class Curriculum (Votable):
 		self.CURRICULUMS.insert_one(self.as_dict())
 
 	def as_dict(self):
-		d = self.__dict__
+		dic = copy.deepcopy(self.__dict__)
 		# store the id under "_id", so nothing to adjust for mongo
-		return d
+		return dic
 
 
 
