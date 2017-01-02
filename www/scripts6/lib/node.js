@@ -70,7 +70,7 @@ class Node {
 		_.each(this, function(value, key) { if( node.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
 			dictionary[key] = node[key]
 		}})
-		dictionary.name = node.name
+		dictionary.name = node._name // this was node.name in the other version, watch out for a possible glitch
 		dictionary.id = node.id
 		return dictionary
 	}
@@ -124,25 +124,13 @@ class Node {
 	}
 
 	set name(new_name) {
-		die('you cant set the name now :(.  we want to use "names" (plural) instead.')
 		this._name = new_name
 	}
 
 	get name() {
-		if( !def(this.names) || this.names === null || is.emptyArray(this.names) ) return ''
-		return this.names[0]['singular'] // just pick the first name, singular version
+		if( !def(this._name) || this._name === null ) return ''
+		return this._name
 	}
-
-	set names(new_names) {
-		if( !is.array(new_names) ) die('new_names should be an array.')
-		this._names = new_names
-	}
-
-	get names() {
-		if( !def(this._names) || this._names === null ) return []
-		return this._names
-	}
-
 
 	get display_name() {
 		switch( user.prefs.display_name_capitalization ){

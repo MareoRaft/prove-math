@@ -65,7 +65,6 @@ function _addNodesHereAndJSNetworkX(nodes) {
 			}
 		}
 	})
-
 	// add ids to JSnetworkx too
 }
 
