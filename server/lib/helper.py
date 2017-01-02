@@ -1,7 +1,21 @@
+import re
 import random
 import json
 from itertools import chain
 from collections import OrderedDict
+
+def dunderscore_count(string):
+	dunderscore_list = re.findall(r'__', string)
+	return len(dunderscore_list)
+
+def remove_outer_dunderscores(s):
+	# takes in a string like "__hi__", and returns "hi"
+	if len(s) >= 4 and s[:2] == "__" and s[-2:] == "__":
+		s = s[2:-2]
+	return s
+
+def reduce_string(string):
+	return re.sub(r'[_\W]', '', string).lower()
 
 def random_string(length):
 	word = ''

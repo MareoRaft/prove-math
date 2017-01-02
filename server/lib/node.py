@@ -7,18 +7,14 @@ import json
 from copy import deepcopy
 
 from lib import helper
+from lib.helper import reduce_string, remove_outer_dunderscores, dunderscore_count
 from lib.vote import Votable
 from lib.config import ERR
 from lib.score import ScoreCard
 from lib.attr import Attr
+from lib.node_config import ATTR_DICT
 
 ######################## INTERNAL HELPERS ########################
-def remove_outer_dunderscores(s):
-	# takes in a string like "__hi__", and returns "hi"
-	if len(s) >= 4 and s[:2] == "__" and s[-2:] == "__":
-		s = s[2:-2]
-	return s
-
 def move_attribute(dic, aliases, strict=True):
 	for key, value in dic.items():
 		if key in aliases:
@@ -35,17 +31,10 @@ def find_key(dic, keys):
 			return key
 	raise KeyError('Could not find any of the following keys in the Node input: {}'.format(keys))
 
-def dunderscore_count(string):
-	dunderscore_list = re.findall(r'__', string)
-	return len(dunderscore_list)
-
 def get_contents_of_dunderscores(string):
 	list_contents = re.findall(r'(?<=__)[^_]*(?=__)', string) # we only want the first one, but contents is a list
 	assert list_contents != [] and list_contents[0] != ""
 	return list_contents[0]
-
-def reduce_string(string):
-	return re.sub(r'[_\W]', '', string).lower()
 
 ######################## EXTERNAL HELPERS ########################
 def create_appropriate_node(dic):
@@ -83,15 +72,20 @@ class Node(Votable):
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
-		# populate node
-		self.description = move_attribute(dic, {'description', 'content'}, strict=False)
-		self.dependencies = move_attribute(dic, {'dependencies'}, strict=False)
-		self.importance = move_attribute(dic, {'importance', 'weight'}, strict=False)
-		self.intuitions = move_attribute(dic, {'intuitions', 'intuition'}, strict=False)
-		self.examples = move_attribute(dic, {'examples', 'example'}, strict=False)
-		self.counterexamples = move_attribute(dic, {'counterexample', 'counterexamples', 'counter example', 'counter examples'}, strict=False)
-		self.notes = move_attribute(dic, {'note', 'notes'}, strict=False)
-		self.name = move_attribute(dic, {'name'}, strict=False)
+		# populate type
+		settings = ATTR_DICT['type']
+		attr = Attr(name='type', **settings)
+		setattr(self, attr.name, attr.value)
+
+		# populate other attributes
+		for name, settings in ATTR_DICT:
+			value = move_attribute(dic, settings['keywords'], strict=False)
+			del settings['keywords']
+			attr = Attr(name=name, **settings)
+			setattr(self, attr.name, attr.value)
+
+		# populate id
+		# similar to type
 
 	def score_card(self):
 		score_card = ScoreCard()
@@ -123,131 +117,13 @@ class Node(Votable):
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
-	def clone(self):
-		return deepcopy(self)
-
-	def type_setter(new_type):
-		if new_type in {'definition', 'defn', 'def'}:
-			return 'definition'
-		elif new_type in {'axiom'}:
-			return 'axiom'
-		elif new_type in {'theorem', 'thm'}:
-			return 'theorem'
-		elif new_type in {'exercise'}:
-			return 'exercise'
-		else:
-			raise TypeError(ERR["BAD_TYPE"](new_type))
-	Attr(
-		name='type',
-		ttype=str,
-		required=True,
-		setter=type_setter
-	)
-
-	def name_setter(new_name):
-		if dunderscore_count(new_name) != 0:
-			self.score_card.strike("critical", ERR["DUNDERSCORES_IN_NAME"](new_name))
-		self.id = new_name
-		return new_name
-	Attr(
-		name='name',
-		ttype=str,
-		required=True,
-		setter=name_setter
-	)
-
-	Attr(
-		name='id',
-		ttype=str,
-		required=True,
-		setter=reduce_string
-	)
-
-	def importance_setter(self, new_importance):
-		if new_importance < self.MIN_IMPORTANCE:
-			self.score_card.strike("low", ERR["IMPORTANCE_TOO_LOW"](self, new_importance))
-		new_importance = max(self.MIN_IMPORTANCE, new_importance)
-		if new_importance > self.MAX_IMPORTANCE:
-			self.score_card.strike("low", ERR["IMPORTANCE_TOO_HIGH"](self, new_importance))
-		new_importance = min(self.MAX_IMPORTANCE, new_importance)
-		return new_importance
-	Attr(
-		name='importance',
-		ttype=int,
-		required=True,
-		default=-1,
-		setter=importance_setter
-	)
-
-	Attr(
-		name='description',
-		ttype='list of content str',
-		required=False
-	)
-
-	def intuitions_setter(self, new_intuitions):
-		for x in new_intuitions:
-			if dunderscore_count(x) > 0:
-				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
-		return new_intuitions
-	Attr(
-		name='intuitions',
-		ttype='list of content str',
-		required=False,
-		setter=intuitions_setter
-	)
-
-	def dependencies_setter(self, new_dependencies):
-		new_dependencies = [remove_outer_dunderscores(d) for d in new_dependencies]
-		for d in new_dependencies:
-			if dunderscore_count(d) > 0:
-				self.score_card.strike("critical", ERR["DUNDERSCORES"](d))
-		return new_dependencies
-	Attr(
-		name='dependencies',
-		ttype='list of str',
-		required=False,
-		setter=dependencies_setter
-	)
-
-	# this is NOT an attr, but a getter
+	# a getter
 	@property
 	def dependency_ids(self):
 		return [reduce_string(x) for x in self.dependencies]
 
-	def examples_setter(self, new_examples):
-		for x in new_examples:
-			if dunderscore_count(x) > 0:
-				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
-		return new_examples
-	Attr(
-		name='examples',
-		ttype='list of content str',
-		required=False,
-		setter=examples_setter
-	)
 
-	# @property
-	# def counterexamples(self):
-	# 	return self._counterexamples
-	# @counterexamples.setter
-	# def counterexamples(self, new_counterexamples):
-	# 	cleaned_counterexamples = check_type_and_clean(new_counterexamples, str, list_of=True)
-	# 	self.validate_content_clean(cleaned_counterexamples)
-	# 	for x in cleaned_counterexamples:
-	# 		if dunderscore_count(x) > 0:
-	# 			self.score_card.strike("low", ERR["DUNDERSCORES"](x))
-	# 	self._counterexamples = cleaned_counterexamples
 
-	# @property
-	# def notes(self):
-	# 	return self._notes
-	# @notes.setter
-	# def notes(self, new_notes):
-	# 	cleaned_notes = check_type_and_clean(new_notes, str, list_of=True)
-	# 	self.validate_content_clean(cleaned_notes)
-	# 	# notes may mention a synonym, so we will allow dunderscores (open to discussion)
-	# 	self._notes = cleaned_notes
 
 
 class Definition(Node):
@@ -331,8 +207,6 @@ class Axiom(Definition):
 class PreTheorem(Node):
 
 
-	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'proofs']
-
 	def __init__(self, dic):
 		super().__init__(dic)
 		print('BELOW COMMENTED OUT TO DISABLE PROOFS')
@@ -373,8 +247,6 @@ class Theorem(PreTheorem):
 
 
 	MIN_IMPORTANCE = 3
-	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'proofs']
-
 
 	def __init__(self, dic):
 		self.type = "theorem"
@@ -395,7 +267,6 @@ class Exercise(PreTheorem):
 
 
 	MAX_IMPORTANCE = 3
-	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes', 'proofs']
 
 	def __init__(self, dic):
 		self.type = "exercise"
