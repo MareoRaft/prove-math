@@ -2,16 +2,15 @@
 import sys
 from warnings import warn
 import subprocess
-import copy
 import re
 import json
-from string import punctuation
 from copy import deepcopy
 
 from lib import helper
 from lib.vote import Votable
 from lib.config import ERR
 from lib.score import ScoreCard
+from lib.attr import Attr
 
 ######################## INTERNAL HELPERS ########################
 def remove_outer_dunderscores(s):
@@ -19,12 +18,6 @@ def remove_outer_dunderscores(s):
 	if len(s) >= 4 and s[:2] == "__" and s[-2:] == "__":
 		s = s[2:-2]
 	return s
-
-def to_bash():
-	# include commands here to be executed in bash
-	bash_out = subprocess.check_output('ls; cd; ls', shell=True)
-	print(bash_out)
-	subprocess.call('mkdir test_folder', shell=True)
 
 def move_attribute(dic, aliases, strict=True):
 	for key, value in dic.items():
@@ -36,38 +29,11 @@ def move_attribute(dic, aliases, strict=True):
 	else:
 		return None
 
-def is_capitalized(value):
-	if re.search(r'[\$A-Z]', value): # starts with LaTeX or capital letter
-		return True
-	return False
-
-def check_type_and_clean(value, value_type, list_of=False):
-	if list_of:
-		if type(value) is list:
-			clean_value = []
-			for el in value:
-				if type(el) is value_type:
-					if value_type is not str or el.strip() != '': # if value_type is str, we still exclude ''
-						clean_value.append(el)
-				elif (el is None or el.strip() == '') and value_type != 'NoneType' and value_type is not None:
-					pass # ignore the blank entry
-				else:
-					raise Exception('Element {} is not of type {}'.format(el, value_type))
-			value = clean_value
-		elif value is None:
-			value = [value_type()] # i'm afraid
-		else:
-			assert type(value) is value_type
-			value = [value]
-	else:
-		assert type(value) is value_type
-	return value
-
 def find_key(dic, keys):
 	for key in dic:
 		if key in keys:
 			return key
-	raise KeyError('Could not find any of the following keys in the Node input: ' + str(keys))
+	raise KeyError('Could not find any of the following keys in the Node input: {}'.format(keys))
 
 def dunderscore_count(string):
 	dunderscore_list = re.findall(r'__', string)
@@ -97,59 +63,26 @@ def create_appropriate_node(dic):
 	elif dic['type'] == 'exercise':
 		return Exercise(dic)
 	else:
-		raise ValueError('Cannot detect type of node.  "type" key has value: ' + dic['type'])
+		raise ValueError('Cannot detect type of node.  "type" key has value: {}'.format(dic['type']))
 
 def find_node_from_id(list_of_nodes, ID):
 	for node in list_of_nodes:
 		if node.id == ID:
 			return node
-	warn('Could node find node with ID "' + ID + '" within list_of_nodes.')
+	warn('Could node find node with ID "{}" within list_of_nodes.'.format(ID))
 
 
 ############################## MAIN ##############################
 
 
-class Typeable: # created specifically for Node
-
-
-	@property
-	def type(self):
-		return self._type
-	@type.setter
-	def type(self, new_type):
-		clean_type = check_type_and_clean(new_type, str)
-		if clean_type in {'definition', 'defn', 'def'}:
-			self._type = 'definition'
-		elif clean_type in {'axiom'}:
-			self._type = 'axiom'
-		elif clean_type in {'theorem', 'thm'}:
-			self._type = 'theorem'
-		elif clean_type in {'exercise'}:
-			self._type = 'exercise'
-		else:
-			raise TypeError(ERR["BAD_TYPE"](clean_type))
-
-
-class Node(Typeable, Votable):
+class Node(Votable):
 
 
 	MIN_IMPORTANCE = 1
 	MAX_IMPORTANCE = 10
-	# ALLOWED_ATTRIBUTES = ['name', 'id', 'type', 'importance', '_importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples', 'notes']
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
-		# clean the input dictionary
-		empty_keys = []
-		for key, value in dic.items():
-			if value == "":
-				empty_keys.append(key)
-		for key in empty_keys:
-			del dic[key]
-
-		# create a score card to score this node as it is initialized
-		self.score_card = ScoreCard()
-
 		# populate node
 		self.description = move_attribute(dic, {'description', 'content'}, strict=False)
 		self.dependencies = move_attribute(dic, {'dependencies'}, strict=False)
@@ -160,21 +93,11 @@ class Node(Typeable, Votable):
 		self.notes = move_attribute(dic, {'note', 'notes'}, strict=False)
 		self.name = move_attribute(dic, {'name'}, strict=False)
 
-		# we might want to freeze the score card here, or something
-
-	def validate_content_clean(self, value):
-		if type(value) is list:
-			for el in value:
-				self.validate_content_clean(el)
-		if type(value) is str:
-			# this needs to know WHICH method is the called.  Description callers should get higher penalties, etc.
-			if not len(value) >= 15: # arbitary length to make sure person actually put some content in
-				self.score_card.strike("low-medium", ERR["LENGTH_TOO_SHORT"])
-			if not is_capitalized(value):
-				# we need to move this ONLY to the things that need to be capitalized (for example, not names)
-				self.score_card.strike("low", ERR["NOT_CAPITALIZED"])
-			return True
-		return True
+	def score_card(self):
+		score_card = ScoreCard()
+		for attr in self.attrs:
+			score_card.extend(attr.score_card)
+		return score_card
 
 	def as_dict(self):
 		dic = deepcopy(self.__dict__)
@@ -189,7 +112,7 @@ class Node(Typeable, Votable):
 		return str(self.as_dict())
 
 	def __repr__(self):
-		return 'Node(' + self.__str__() + ')'
+		return 'Node({})'.format(self)
 
 	def __hash__(self):
 		return hash(self.as_dict().values())
@@ -201,123 +124,130 @@ class Node(Typeable, Votable):
 		return not self.__eq__(other)
 
 	def clone(self):
-		return copy.deepcopy(self)
+		return deepcopy(self)
 
-	@property
-	def name(self):
-		if '_name' in self.as_dict():
-			return self._name
+	def type_setter(new_type):
+		if new_type in {'definition', 'defn', 'def'}:
+			return 'definition'
+		elif new_type in {'axiom'}:
+			return 'axiom'
+		elif new_type in {'theorem', 'thm'}:
+			return 'theorem'
+		elif new_type in {'exercise'}:
+			return 'exercise'
 		else:
-			return None
-	@name.setter
-	def name(self, new_name):
-		if new_name is None:
-			new_name = ""
-		if new_name is not None:
-			assert dunderscore_count(new_name) == 0
-			self._name = check_type_and_clean(new_name, str)
-			self.id = self.name
-		else:
-			self._name = check_type_and_clean(new_name, type(None))
+			raise TypeError(ERR["BAD_TYPE"](new_type))
+	Attr(
+		name='type',
+		ttype=str,
+		required=True,
+		setter=type_setter
+	)
 
-	@property
-	def id(self):
-		return self._id
-	@id.setter
-	def id(self, new_id_before_reduction):
-		self._id = reduce_string(new_id_before_reduction)
+	def name_setter(new_name):
+		if dunderscore_count(new_name) != 0:
+			self.score_card.strike("critical", ERR["DUNDERSCORES_IN_NAME"](new_name))
+		self.id = new_name
+		return new_name
+	Attr(
+		name='name',
+		ttype=str,
+		required=True,
+		setter=name_setter
+	)
 
-	@property
-	def importance(self):
-		return self._importance
-	@importance.setter
-	def importance(self, new_importance):
-		if new_importance is None:
-			new_importance = -1
-		if new_importance is not None:
-			if isinstance(new_importance, str):
-				new_importance = int(new_importance)
-			new_importance = check_type_and_clean(new_importance, int) # but in the future we will accept decimals (floats) too!
-			if new_importance < self.MIN_IMPORTANCE:
-				self.score_card.strike("low", ERR["IMPORTANCE_TOO_LOW"](self, new_importance))
-			new_importance = max(self.MIN_IMPORTANCE, new_importance)
-			if new_importance > self.MAX_IMPORTANCE:
-				self.score_card.strike("low", ERR["IMPORTANCE_TOO_HIGH"](self, new_importance))
-			new_importance = min(self.MAX_IMPORTANCE, new_importance)
-		self._importance = new_importance
+	Attr(
+		name='id',
+		ttype=str,
+		required=True,
+		setter=reduce_string
+	)
 
-	@property
-	def description(self):
-		return self._description
-	@description.setter
-	def description(self, new_description):
-		if new_description is None:
-			new_description = ""
-		clean_description = check_type_and_clean(new_description, str)
-		self.validate_content_clean(clean_description)
-		self._description = clean_description
+	def importance_setter(self, new_importance):
+		if new_importance < self.MIN_IMPORTANCE:
+			self.score_card.strike("low", ERR["IMPORTANCE_TOO_LOW"](self, new_importance))
+		new_importance = max(self.MIN_IMPORTANCE, new_importance)
+		if new_importance > self.MAX_IMPORTANCE:
+			self.score_card.strike("low", ERR["IMPORTANCE_TOO_HIGH"](self, new_importance))
+		new_importance = min(self.MAX_IMPORTANCE, new_importance)
+		return new_importance
+	Attr(
+		name='importance',
+		ttype=int,
+		required=True,
+		default=-1,
+		setter=importance_setter
+	)
 
-	@property
-	def intuitions(self):
-		return self._intuitions
-	@intuitions.setter
-	def intuitions(self, new_intuitions):
-		clean_intuitions = check_type_and_clean(new_intuitions, str, list_of=True)
-		self.validate_content_clean(clean_intuitions)
-		for x in clean_intuitions:
+	Attr(
+		name='description',
+		ttype='list of content str',
+		required=False
+	)
+
+	def intuitions_setter(self, new_intuitions):
+		for x in new_intuitions:
 			if dunderscore_count(x) > 0:
 				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
-		self._intuitions = clean_intuitions
+		return new_intuitions
+	Attr(
+		name='intuitions',
+		ttype='list of content str',
+		required=False,
+		setter=intuitions_setter
+	)
 
-	@property
-	def dependencies(self):
-		return self._dependencies
-	@dependencies.setter
-	def dependencies(self, new_dependencies):
-		cleaned_dependencies = check_type_and_clean(new_dependencies, str, list_of=True)
-		cleaned_dependencies = remove_outer_dunderscores(cleaned_dependencies)
-		for d in cleaned_dependencies:
+	def dependencies_setter(self, new_dependencies):
+		new_dependencies = [remove_outer_dunderscores(d) for d in new_dependencies]
+		for d in new_dependencies:
 			if dunderscore_count(d) > 0:
 				self.score_card.strike("critical", ERR["DUNDERSCORES"](d))
-		self._dependencies = cleaned_dependencies
+		return new_dependencies
+	Attr(
+		name='dependencies',
+		ttype='list of str',
+		required=False,
+		setter=dependencies_setter
+	)
 
+	# this is NOT an attr, but a getter
 	@property
 	def dependency_ids(self):
 		return [reduce_string(x) for x in self.dependencies]
 
-	@property
-	def examples(self):
-		return self._examples
-	@examples.setter
-	def examples(self, new_examples):
-		cleaned_examples = check_type_and_clean(new_examples, str, list_of=True)
-		self.validate_content_clean(cleaned_examples)
-		for x in cleaned_examples:
+	def examples_setter(self, new_examples):
+		for x in new_examples:
 			if dunderscore_count(x) > 0:
 				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
-		self._examples = cleaned_examples
+		return new_examples
+	Attr(
+		name='examples',
+		ttype='list of content str',
+		required=False,
+		setter=examples_setter
+	)
 
-	@property
-	def counterexamples(self):
-		return self._counterexamples
-	@counterexamples.setter
-	def counterexamples(self, new_counterexamples):
-		cleaned_counterexamples = check_type_and_clean(new_counterexamples, str, list_of=True)
-		self.validate_content_clean(cleaned_counterexamples)
-		for x in cleaned_counterexamples:
-			if dunderscore_count(x) > 0:
-				self.score_card.strike("low", ERR["DUNDERSCORES"](x))
-		self._counterexamples = cleaned_counterexamples
+	# @property
+	# def counterexamples(self):
+	# 	return self._counterexamples
+	# @counterexamples.setter
+	# def counterexamples(self, new_counterexamples):
+	# 	cleaned_counterexamples = check_type_and_clean(new_counterexamples, str, list_of=True)
+	# 	self.validate_content_clean(cleaned_counterexamples)
+	# 	for x in cleaned_counterexamples:
+	# 		if dunderscore_count(x) > 0:
+	# 			self.score_card.strike("low", ERR["DUNDERSCORES"](x))
+	# 	self._counterexamples = cleaned_counterexamples
 
-	@property
-	def notes(self):
-		return self._notes
-	@notes.setter
-	def notes(self, new_notes):
-		cleaned_notes = check_type_and_clean(new_notes, str, list_of=True)
-		self.validate_content_clean(cleaned_notes)
-		# notes may mention a synonym, so we will allow dunderscores (open to discussion)
-		self._notes = cleaned_notes
+	# @property
+	# def notes(self):
+	# 	return self._notes
+	# @notes.setter
+	# def notes(self, new_notes):
+	# 	cleaned_notes = check_type_and_clean(new_notes, str, list_of=True)
+	# 	self.validate_content_clean(cleaned_notes)
+	# 	# notes may mention a synonym, so we will allow dunderscores (open to discussion)
+	# 	self._notes = cleaned_notes
 
 
 class Definition(Node):

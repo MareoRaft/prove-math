@@ -42,3 +42,6 @@ class ScoreCard:
 		# make sure is_passing is nice
 		# delete unneeded keys
 		return dic
+
+	def extend(self, score_card):
+		self.strikes.extend(score_card.strikes)
