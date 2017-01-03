@@ -4,6 +4,15 @@ import json
 from itertools import chain
 from collections import OrderedDict
 
+def string_to_bool(string):
+	string = string.lower()
+	if string == "true":
+		return True
+	elif string == "false":
+		return False
+	else:
+		raise ValueError('Cannot convert string to bool.')
+
 def dunderscore_count(string):
 	dunderscore_list = re.findall(r'__', string)
 	return len(dunderscore_list)

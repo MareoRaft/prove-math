@@ -12,7 +12,7 @@ from lib.vote import Votable
 from lib.config import ERR
 from lib.score import ScoreCard
 from lib.attr import Attr
-from lib.node_config import ATTR_DICT
+from lib.node_config import NODE_MIN_IMPORTANCE, NODE_MAX_IMPORTANCE, THEOREM_MIN_IMPORTANCE, EXERCISE_MAX_IMPORTANCE, NODE_ATTR_SETTINGS, DEFINITION_ATTR_SETTINGS, AXIOM_ATTR_SETTINGS, PRETHEOREM_ATTR_SETTINGS, THEOREM_ATTR_SETTINGS, EXERCISE_ATTR_SETTINGS, type_setter
 
 ######################## INTERNAL HELPERS ########################
 def move_attribute(dic, aliases, strict=True):
@@ -67,25 +67,29 @@ def find_node_from_id(list_of_nodes, ID):
 class Node(Votable):
 
 
-	MIN_IMPORTANCE = 1
-	MAX_IMPORTANCE = 10
+	ATTR_SETTINGS = NODE_ATTR_SETTINGS
+
+	MIN_IMPORTANCE = NODE_MIN_IMPORTANCE
+	MAX_IMPORTANCE = NODE_MAX_IMPORTANCE
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
 		# populate type
-		settings = ATTR_DICT['type']
-		attr = Attr(name='type', **settings)
-		setattr(self, attr.name, attr.value)
+		self.type = type_setter(dic['type'])
 
 		# populate other attributes
-		for name, settings in ATTR_DICT:
+		self.attrs = dict()
+		self.update_attrs_from_dict(dic, self.ATTR_SETTINGS)
+
+		# populate id (why can't ID be a getter?)
+		self.id = reduce_string(self.attrs['name'].value)
+
+	def update_attrs_from_dict(self, dic, settings_dict):
+		for name, settings in settings_dict:
 			value = move_attribute(dic, settings['keywords'], strict=False)
 			del settings['keywords']
-			attr = Attr(name=name, **settings)
-			setattr(self, attr.name, attr.value)
-
-		# populate id
-		# similar to type
+			attr = Attr(node=self, name=name, **settings)
+			self.attrs[name] = attr
 
 	def score_card(self):
 		score_card = ScoreCard()
@@ -123,159 +127,78 @@ class Node(Votable):
 		return [reduce_string(x) for x in self.dependencies]
 
 
-
-
-
 class Definition(Node):
 
 
-	def __init__(self,dic):
+	ATTR_SETTINGS = DEFINITION_ATTR_SETTINGS
+
+	def __init__(self, dic):
 		super().__init__(dic)
-		self.plurals = move_attribute(dic, {'plurals', 'plural', 'pl'}, strict=False)
-		self.negation = move_attribute(dic, {'negation'}, strict=False)
-		if self.importance is None:
-			self.importance = 4
+
+		# penalize empty name
 		if self.description in [None, '']:
 			if self.name in [None, '']:
-				self.score_card.strike("critical", ERR["NO_NAME"])
+				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
 		else:
 			if self.name in [None, ''] and dunderscore_count(self.description) < 2:
-				self.score_card.strike("critical", ERR["NO_NAME"])
+				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
 			if self.name not in [None, ''] and dunderscore_count(self.description) < 2:
-				pass
+				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
 			if self.name in [None, ''] and dunderscore_count(self.description) >= 2:
 				self.name = get_contents_of_dunderscores(self.description)
-
-	@property
-	def plurals(self):
-		return self._plurals
-	@plurals.setter
-	def plurals(self, new_plurals):
-		if new_plurals is None:
-			self._plurals = []
-		else:
-			cleaned_plurals = check_type_and_clean(new_plurals, str, list_of=True)
-			self._plurals = cleaned_plurals
-
-	@property
-	def negation(self):
-		return self._negation
-	@negation.setter
-	def negation(self, new_negation):
-		if new_negation is None:
-			self._negation = None
-		else:
-			clean_negation = check_type_and_clean(new_negation, str)
-			clean_negation = remove_outer_dunderscores(clean_negation)
-			if dunderscore_count(clean_negation) > 0:
-				self.score_card.strike("medium", ERR["DUNDERSCORES"](clean_negation))
-			self._negation = clean_negation
-
-	@Node.description.setter
-	def description(self, new_description):
-		if new_description is None:
-			new_description = ""
-		if dunderscore_count(new_description) < 2:
-			self.score_card.strike("low", ERR["NO_DUNDERSCORES"](new_description))
-		Node.description.fset(self, new_description)
 
 
 class Axiom(Definition):
 
 
-	def __init__(self, dic):
-		self.type = "axiom"
-		super().__init__(dic)
-
-	@property
-	def dependencies(self):
-		return []
-	@dependencies.setter
-	def dependencies(self, new_deps):
-		if new_deps is None or (isinstance(new_deps, list) and not new_deps):
-			self._dependencies = []
-		else:
-			if "justification" in dic:
-				# as Mo pointed out, axioms CAN have dependencies.  Perhaps there are some definitions you create first, and then an AXIOM uses those definitions (but still introduces something you must accept on faith alone).
-				pass
-			else:
-				# now we will even allow the user to make axioms with deps, so the fset is below this block.
-				self.score_card.strike("medium", ERR["AXIOM_WITH_DEPENDENCY"])
-		Node.dependencies.fset(self, new_deps)
+	ATTR_SETTINGS = AXIOM_ATTR_SETTINGS
 
 
 class PreTheorem(Node):
 
+
+	ATTR_SETTINGS = PRETHEOREM_ATTR_SETTINGS
 
 	def __init__(self, dic):
 		super().__init__(dic)
 		print('BELOW COMMENTED OUT TO DISABLE PROOFS')
 		# self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
 
-
-
 		# theorems and exercises CANNOT have plurals: (but since we only created plural for Definitions, we shouldn't need this as long as there is a way to block undefined properties (see other Stack Overflow question))
-		if 'plurals' in self.as_dict():
-			raise KeyError('Theorems cannot have plurals.')
+		# if 'plurals' in self.as_dict():
+		# 	raise KeyError('Theorems cannot have plurals.')
 
-	@property
-	def proofs(self):
-		return self._proofs
-	@proofs.setter
-	def proofs(self, new_proofs):
-		good_type_proofs = check_type_and_clean(new_proofs, dict, list_of=True)
-		self.validate_content_clean(good_type_proofs)
-		for proof in good_type_proofs:
-			proof['description'] = move_attribute(proof, {'description', 'content'}, strict=True)
-			if dunderscore_count(proof['description']) > 0:
-				self.score_card.strike("low", ERR["DUNDERSCORES"](proof['description']))
-			if 'type' not in proof:
-				self.score_card.strike("low", ERR["NO_PROOF_TYPE"])
-				# then give some default type to the proof
-				proof['type'] = None
-			proof['type'] = check_type_and_clean(proof['type'], str, list_of=True)
-		self._proofs = good_type_proofs
-
-	@Node.description.setter
-	def description(self, new_description):
-		if dunderscore_count(new_description) != 0:
-			self.score_card.strike("medium-high", ERR["DUNDERSCORES"](new_description))
-		Node.description.fset(self, new_description)
+	# @property
+	# def proofs(self):
+	# 	return self._proofs
+	# @proofs.setter
+	# def proofs(self, new_proofs):
+	# 	good_type_proofs = check_type_and_clean(new_proofs, dict, list_of=True)
+	# 	self.validate_content_clean(good_type_proofs)
+	# 	for proof in good_type_proofs:
+	# 		proof['description'] = move_attribute(proof, {'description', 'content'}, strict=True)
+	# 		if dunderscore_count(proof['description']) > 0:
+	# 			self.score_card.strike("low", ERR["DUNDERSCORES"](proof['description']))
+	# 		if 'type' not in proof:
+	# 			self.score_card.strike("low", ERR["NO_PROOF_TYPE"])
+	# 			# then give some default type to the proof
+	# 			proof['type'] = None
+	# 		proof['type'] = check_type_and_clean(proof['type'], str, list_of=True)
+	# 	self._proofs = good_type_proofs
 
 
 class Theorem(PreTheorem):
 
 
-	MIN_IMPORTANCE = 3
+	ATTR_SETTINGS = THEOREM_ATTR_SETTINGS
 
-	def __init__(self, dic):
-		self.type = "theorem"
-		super().__init__(dic)
-		if self.importance is None:
-			self.importance = 6
-		if self.name is None:
-			self.score_card.strike("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
-
-	@PreTheorem.name.setter
-	def name(self, new_name):
-		if new_name is not None:
-			self.score_card.strike("critical", ERR["NO_NAME"]) # maybe lower this if we can auto-assign a name
-		PreTheorem.name.fset(self, new_name)
+	MIN_IMPORTANCE = THEOREM_MIN_IMPORTANCE
 
 
 class Exercise(PreTheorem):
 
 
-	MAX_IMPORTANCE = 3
+	ATTR_SETTINGS = EXERCISE_ATTR_SETTINGS
 
-	def __init__(self, dic):
-		self.type = "exercise"
-		super().__init__(dic)
-		if self.importance is None:
-			self.importance = 1
+	MAX_IMPORTANCE = EXERCISE_MAX_IMPORTANCE
 
-	@PreTheorem.description.setter
-	def description(self, new_description):
-		PreTheorem.description.fset(self, new_description)
-		if self.name is None:
-			self.id = self.description
