@@ -304,5 +304,3 @@ def test_as_dict():
 		"examples": ["Example 1 is now long enough.", "Example 2 is now long."],
 		"proof": {"type": ["fake"], "content": "Left side: You have complete the committee."},
 	}
-
-

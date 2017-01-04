@@ -76,7 +76,7 @@ class PMDAG (nx.DAG):
 		NEIGHBOR_NORMALIZATION_FRACTION = 1/10 #rescales the sum of all neighbor importances to match the scale of the original node's own importance, i.e. [1,10]
 		EXPECTED_NEIGHBORS_PER_NODE = 3
 
-		norm_importances = [self.n(node).importance] #normalized importance of the nodes in each depth level
+		norm_importances = [self.n(node).attrs['importance'].value] #normalized importance of the nodes in each depth level
 		SEARCH_DEPTH_LIMIT = 4
 		while distance_from_node < SEARCH_DEPTH_LIMIT:
 			distance_from_node += 1
@@ -91,8 +91,8 @@ class PMDAG (nx.DAG):
 			if (len(successors) + len(predecessors)) == 0:	#no more neighbors, don't look any further
 				norm_importances.append(0)
 				break
-			predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).importance for n in predecessors]
-			successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).importance for n in successors]	#weighted toward descendants
+			predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).attrs['importance'].value for n in predecessors]
+			successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).attrs['importance'].value for n in successors]	#weighted toward descendants
 			current_depth_importances = predecessors_importances + successors_importances
 
 			current_depth_normalized_sum = sum(current_depth_importances) * NEIGHBOR_NORMALIZATION_FRACTION / (EXPECTED_NEIGHBORS_PER_NODE**distance_from_node)

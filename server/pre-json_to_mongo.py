@@ -69,14 +69,14 @@ for pre_node in new_data_dictionary['nodes']:
 		our_MG.remove_n(node)
 	our_MG.add_n(node)
 
-	for i in range(len(node.dependencies)):
+	for i in range(len(node.attrs['dependencies'].value)):
 		if node.dependency_ids[i] in our_MG.nodes():
 			# this is not because we need to find the node that is the dependency.  This is merely to make sure the dependency exists!  This is just error checking!
 			pass
 		else:
 			# dependency doesn't exist or won't until later on in loop.  so create blank node, add to nodes and db:
 			dependency_node = create_appropriate_node({
-				"name": node.dependencies[i],
+				"name": node.attrs['dependencies'].value[i],
 				"type": "axiom",
 			})
 			our_MG.add_n(dependency_node)
