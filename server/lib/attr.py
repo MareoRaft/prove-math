@@ -5,13 +5,13 @@ from lib import helper
 from lib.config import ERR
 from lib.score import ScoreCard
 from lib.decorate import read_only
-from lib.score import ScoreCard
-from lib.node import Node
 
 def is_cclass(thing, cclass):
 	# this could even be smarter, splitting by "of" and recursing down, if needed.
-	if cclass in ('list of content str', 'list of str'):
+	if cclass in ['list of content str', 'list of str']:
 		return isinstance(thing, list) and all([isinstance(el, str) for el in thing])
+	elif cclass in ['list of dict']:
+		return isinstance(thing, list) and all([isinstance(el, dict) for el in thing])
 	else:
 		return isinstance(thing, cclass)
 
@@ -42,6 +42,7 @@ class Attr:
 		self.cclass = cclass
 		self.default = default
 		self.setter = setter
+		print('value is {}'.format(value))
 		self.value = value
 
 	@property
@@ -50,8 +51,9 @@ class Attr:
 	@node.setter
 	@read_only
 	def node(self, new_in):
-		if not isinstance(new_in, Node) or not new_in:
-			raise ValueError('bad node')
+		# we can't check if new_in is of the Node class because we would have to import Node, which is circular
+		if not new_in:
+			raise ValueError('empty node')
 		self._node = new_in
 
 	@property
@@ -80,7 +82,7 @@ class Attr:
 	@read_only
 	def cclass(self, new_in):
 		# a list of allowed types, which can grow over time:
-		ALLOWED_TYPES = [str, int, 'list of content str', 'list of str']
+		ALLOWED_TYPES = [str, int, 'list of content str', 'list of str', 'list of dict']
 		if new_in not in ALLOWED_TYPES:
 			raise TypeError('type not yet permitted')
 		self._cclass = new_in
@@ -95,16 +97,21 @@ class Attr:
 
 		# Set default
 		if new_in is None:
-			if self.default != "no default":
-				new_in = self.default
+			if self.default == "no default":
+				if self.cclass in ['list of content str', 'list of str', 'list of dict']:
+					new_in = list()
+				else:
+					new_in = self.cclass()
 			else:
-				new_in = self.cclass()
+				new_in = self.default
 
 		# Clean up shorthand inputs
 		if isinstance(new_in, str) and self.cclass in [int]:
 			new_in = self.cclass(new_in)
 		if isinstance(new_in, str) and self.cclass in ['list of str', 'list of content str']:
-			new_in = list(new_in)
+			new_in = [new_in]
+		if isinstance(new_in, dict) and self.cclass in ['list of dict']:
+			new_in = [new_in]
 
 		# Check type
 		assert is_cclass(new_in, self.cclass)

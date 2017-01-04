@@ -7,30 +7,14 @@ import json
 from copy import deepcopy
 
 from lib import helper
-from lib.helper import reduce_string, remove_outer_dunderscores, dunderscore_count
+from lib.helper import reduce_string, dunderscore_count, move_attribute, find_key
 from lib.vote import Votable
 from lib.config import ERR
 from lib.score import ScoreCard
 from lib.attr import Attr
-from lib.node_config import NODE_MIN_IMPORTANCE, NODE_MAX_IMPORTANCE, THEOREM_MIN_IMPORTANCE, EXERCISE_MAX_IMPORTANCE, NODE_ATTR_SETTINGS, DEFINITION_ATTR_SETTINGS, AXIOM_ATTR_SETTINGS, PRETHEOREM_ATTR_SETTINGS, THEOREM_ATTR_SETTINGS, EXERCISE_ATTR_SETTINGS, type_setter
+from lib.node_config import NODE_MIN_IMPORTANCE, NODE_MAX_IMPORTANCE, THEOREM_MIN_IMPORTANCE, EXERCISE_MAX_IMPORTANCE, NODE_ATTR_SETTINGS, DEFINITION_ATTR_SETTINGS, AXIOM_ATTR_SETTINGS, PRETHEOREM_ATTR_SETTINGS, THEOREM_ATTR_SETTINGS, EXERCISE_ATTR_SETTINGS
 
 ######################## INTERNAL HELPERS ########################
-def move_attribute(dic, aliases, strict=True):
-	for key, value in dic.items():
-		if key in aliases:
-			del dic[key]
-			return value
-	if strict:
-		raise KeyError('Could not find any of the following keys: {} in the soon-to-be Node {}.'.format(aliases, dic))
-	else:
-		return None
-
-def find_key(dic, keys):
-	for key in dic:
-		if key in keys:
-			return key
-	raise KeyError('Could not find any of the following keys in the Node input: {}'.format(keys))
-
 def get_contents_of_dunderscores(string):
 	list_contents = re.findall(r'(?<=__)[^_]*(?=__)', string) # we only want the first one, but contents is a list
 	assert list_contents != [] and list_contents[0] != ""
@@ -74,21 +58,42 @@ class Node(Votable):
 
 	# Pass in a single json dictionary (dic) in order to convert to a node
 	def __init__(self, dic):
-		# populate type
-		self.type = type_setter(dic['type'])
-
-		# populate other attributes
+		# populate attributes, excluding type, id, and dependency ids
 		self.attrs = dict()
 		self.update_attrs_from_dict(dic, self.ATTR_SETTINGS)
 
-		# populate id (why can't ID be a getter?)
-		self.id = reduce_string(self.attrs['name'].value)
+	# getter attributes...
+	@property
+	def type(self):
+		the_class = self.__class__
+		string = str(the_class)
+		full_type_string = string[8:-2]
+		truncated_type_string = re.sub(r'^.*\.', '', full_type_string)
+		return truncated_type_string.lower()
 
+	@property
+	def id(self):
+		if self.attrs['name'].value != '':
+			return reduce_string(self.attrs['name'].value)
+		elif self.type == 'exercise':
+			return reduce_string(self.attrs['description'].value)
+
+	@property
+	def dependency_ids(self):
+		return [reduce_string(x) for x in self.attrs['dependencies'].value]
+
+	# other methods...
 	def update_attrs_from_dict(self, dic, settings_dict):
-		for name, settings in settings_dict:
+		for name, settings in settings_dict.items():
+			print('name {}'.format(name))
+			print('settings {}'.format(settings))
 			value = move_attribute(dic, settings['keywords'], strict=False)
-			del settings['keywords']
-			attr = Attr(node=self, name=name, **settings)
+
+			# edit the settings, without altering self.ATTR_SETTINGS itself
+			settings_new = deepcopy(settings)
+			del settings_new['keywords']
+
+			attr = Attr(node=self, name=name, value=value, **settings_new)
 			self.attrs[name] = attr
 
 	def score_card(self):
@@ -121,11 +126,6 @@ class Node(Votable):
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
-	# a getter
-	@property
-	def dependency_ids(self):
-		return [reduce_string(x) for x in self.dependencies]
-
 
 class Definition(Node):
 
@@ -136,16 +136,16 @@ class Definition(Node):
 		super().__init__(dic)
 
 		# penalize empty name
-		if self.description in [None, '']:
-			if self.name in [None, '']:
+		if self.attrs['description'].value in [None, '']:
+			if self.attrs['name'].value in [None, '']:
 				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
 		else:
-			if self.name in [None, ''] and dunderscore_count(self.description) < 2:
+			if self.attrs['name'].value in [None, ''] and dunderscore_count(self.attrs['description'].value) < 2:
 				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
-			if self.name not in [None, ''] and dunderscore_count(self.description) < 2:
+			if self.attrs['name'].value not in [None, ''] and dunderscore_count(self.attrs['description'].value) < 2:
 				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
-			if self.name in [None, ''] and dunderscore_count(self.description) >= 2:
-				self.name = get_contents_of_dunderscores(self.description)
+			if self.attrs['name'].value in [None, ''] and dunderscore_count(self.attrs['description'].value) >= 2:
+				self.attrs['name'].value = get_contents_of_dunderscores(self.attrs['description'].value)
 
 
 class Axiom(Definition):
@@ -158,33 +158,6 @@ class PreTheorem(Node):
 
 
 	ATTR_SETTINGS = PRETHEOREM_ATTR_SETTINGS
-
-	def __init__(self, dic):
-		super().__init__(dic)
-		print('BELOW COMMENTED OUT TO DISABLE PROOFS')
-		# self.proofs = move_attribute(dic, {'proofs', 'proof'}, strict=False)
-
-		# theorems and exercises CANNOT have plurals: (but since we only created plural for Definitions, we shouldn't need this as long as there is a way to block undefined properties (see other Stack Overflow question))
-		# if 'plurals' in self.as_dict():
-		# 	raise KeyError('Theorems cannot have plurals.')
-
-	# @property
-	# def proofs(self):
-	# 	return self._proofs
-	# @proofs.setter
-	# def proofs(self, new_proofs):
-	# 	good_type_proofs = check_type_and_clean(new_proofs, dict, list_of=True)
-	# 	self.validate_content_clean(good_type_proofs)
-	# 	for proof in good_type_proofs:
-	# 		proof['description'] = move_attribute(proof, {'description', 'content'}, strict=True)
-	# 		if dunderscore_count(proof['description']) > 0:
-	# 			self.score_card.strike("low", ERR["DUNDERSCORES"](proof['description']))
-	# 		if 'type' not in proof:
-	# 			self.score_card.strike("low", ERR["NO_PROOF_TYPE"])
-	# 			# then give some default type to the proof
-	# 			proof['type'] = None
-	# 		proof['type'] = check_type_and_clean(proof['type'], str, list_of=True)
-	# 	self._proofs = good_type_proofs
 
 
 class Theorem(PreTheorem):

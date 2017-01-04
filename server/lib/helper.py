@@ -4,6 +4,22 @@ import json
 from itertools import chain
 from collections import OrderedDict
 
+def move_attribute(dic, aliases, strict=True):
+	for key, value in dic.items():
+		if key in aliases:
+			del dic[key]
+			return value
+	if strict:
+		raise KeyError('Could not find any of the following keys: {} in the soon-to-be Node {}.'.format(aliases, dic))
+	else:
+		return None
+
+def find_key(dic, keys):
+	for key in dic:
+		if key in keys:
+			return key
+	raise KeyError('Could not find any of the following keys in the Node input: {}'.format(keys))
+
 def string_to_bool(string):
 	string = string.lower()
 	if string == "true":

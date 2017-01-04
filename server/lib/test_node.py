@@ -1,10 +1,12 @@
 import sys
 import pytest
+
 from lib.node import get_contents_of_dunderscores
 from lib.node import create_appropriate_node
 from lib.node import Definition
 from lib.node import Theorem
 from lib.node import Exercise
+from lib.score import FAILING_SCORE
 
 sample_theorem = {
   "name": "Pythagorean theorem",
@@ -33,9 +35,9 @@ def test_theorem_copy():
   a = create_appropriate_node(sample_theorem)
   assert isinstance(a, Theorem)
 
-  b = a.clone()
-  assert id(a) != id(b)
-  #assert a == b #node equality not implemented as this point.  we probably won't be needing it.
+  # b = a.clone() # cloning not needed at this point.
+  # assert id(a) != id(b)
+  # assert a == b
 
 
 def test_theorem_setter_getter():
@@ -50,13 +52,13 @@ def test_theorem_setter_getter():
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Theorem)
 
-  assert node.name == "Pythagorean theorem"
+  assert node.attrs['name'].value == "Pythagorean theorem"
   assert node.type == "theorem"
-  assert node.importance == 6
-  assert node.description == "When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2."
-  assert node.intuitions == ["A simple explanation."]
-  assert node.examples ==  ["Example 1 is now long enough.", "Example 2 is now long."]
-  assert node.proofs ==  [{"type": ["fake"], "description": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}]
+  assert node.attrs['importance'].value == 6
+  assert node.attrs['description'].value == "When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2."
+  assert node.attrs['intuitions'].value == ["A simple explanation."]
+  assert node.attrs['examples'].value ==  ["Example 1 is now long enough.", "Example 2 is now long."]
+  assert node.attrs['proofs'].value ==  [{"type": ["fake"], "description": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}]
   assert node.id == "pythagoreantheorem"
 
 def test_theorem_bad_attributes():
@@ -88,12 +90,12 @@ def test_exercise_setter_getter():
   }
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Exercise)
-  assert node.name == None
+  assert node.attrs['name'].value == ''
   assert node.type == "exercise"
-  assert node.importance == 2
-  assert node.description == "Three Four Five Triangle"
+  assert node.attrs['importance'].value == 2
+  assert node.attrs['description'].value == "Three Four Five Triangle"
   assert node.id == "threefourfivetriangle"
-  assert node.dependencies == ["one", "TWO!", "Pythag Thrm", "2-plexes"]
+  assert node.attrs['dependencies'].value == ["one", "TWO!", "Pythag Thrm", "2-plexes"]
   assert node.dependency_ids == ["one", "two", "pythagthrm", "2plexes"]
 
 def test_exercise_bad_attributes():
@@ -129,7 +131,7 @@ def test_definition_no_name():
     "content": "Every pair of __empanadas__ of bla dee bla |V|-1.",
   }
   node = create_appropriate_node(pre_node)
-  assert node.name == "empanadas" # definitions take their names from the dunderscored term.
+  assert node.attrs['name'].value == "empanadas" # definitions take their names from the dunderscored term.
 
 def test_definition_negation():
   pre_node = {
@@ -137,15 +139,16 @@ def test_definition_negation():
     "negation": "__nonpheonix__",
   }
   node = create_appropriate_node(pre_node)
-  assert node.negation == "__nonpheonix__"
+  assert node.attrs['negation'].value == "nonpheonix"
 
 def test_theorem_no_name():
   pre_node = {
     "type": "thm",
     "content": "For every pair of bla dee bla |V|-1.  Then $G$ is connected.",
   }
-  with pytest.raises(AssertionError): # because theorems must have names!
-    node = create_appropriate_node(pre_node)
+  # theorems get a critical score for lack of a name
+  node = create_appropriate_node(pre_node)
+  assert node.attrs['name'].score_card.strikes[0][0] == FAILING_SCORE
 
 def test_exercise_no_name():
   pre_node = {
@@ -154,7 +157,7 @@ def test_exercise_no_name():
   }
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Exercise)
-  assert node.name is None # exercises are allowed to not have names!
+  assert node.attrs['name'].value == '' # exercises are allowed to not have names!
   assert node.type == "exercise"
 
 def test_exercise_name_lowercase():
@@ -164,7 +167,7 @@ def test_exercise_name_lowercase():
     "content": "Given the simple graph $G=(V,E)$, bla blacted.",
   }
   node = create_appropriate_node(pre_node)
-  assert node.name == "pigeonhole principle 1" # exercises do NOT need capitalized names
+  assert node.attrs['name'].value == "pigeonhole principle 1" # exercises do NOT need capitalized names
 
 def test_definition_setters_getters():
   pre_node = {
@@ -178,12 +181,12 @@ def test_definition_setters_getters():
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Definition)
 
-  assert node.name == "Custom Name"
+  assert node.attrs['name'].value == "Custom Name"
   assert node.type == "definition"
-  assert node.importance == 1
-  assert node.description == "A __triangle__ is a 3 sided polygon."
-  assert node.plurals == ["__triangles__"]
-  assert node.examples == ["Long Long Long Example 1", "text text text Example 2"]
+  assert node.attrs['importance'].value == 1
+  assert node.attrs['description'].value == "A __triangle__ is a 3 sided polygon."
+  assert node.attrs['plurals'].value == ["__triangles__"]
+  assert node.attrs['examples'].value == ["Long Long Long Example 1", "text text text Example 2"]
 
 
 def test_definition_bad_attributes():
@@ -199,26 +202,22 @@ def test_definition_bad_attributes():
 
   with pytest.raises(AttributeError): # because the correct attribute is intuitions (PLURAL FORM!)
     node.intuition == "A simple explanation"
-  assert node.intuitions == ["A simple explanation"]
-  with pytest.raises(AttributeError): # simply because the attribute doesn't exist
-    node.proofs == ""
-  with pytest.raises(ValueError):
-    node.type = "Something Weird"
+  assert node.attrs['intuitions'].value == ["A simple explanation"]
 
-def test_definition_blank_elements_in_lists():
-  sample_definition = {
-    "name": "Triangle",
-    "weight": 1,
-    "definition": "A __triangle__ is a 3 sided polygon.",
-    "intuition": "A simple explanation",
-    "examples": ["Long Long Long Example 1", "text text text Example 2", "", '', None],
-    "plural": ["one", "", "two"],
-  }
-  node = create_appropriate_node(sample_definition)
+# def test_definition_blank_elements_in_lists(): # we now allow blank values
+#   sample_definition = {
+#     "name": "Triangle",
+#     "weight": 1,
+#     "definition": "A __triangle__ is a 3 sided polygon.",
+#     "intuition": "A simple explanation",
+#     "examples": ["Long Long Long Example 1", "text text text Example 2", "", ''],
+#     "plural": ["one", "", "two"],
+#   }
+#   node = create_appropriate_node(sample_definition)
 
-  assert node.intuitions == ["A simple explanation"]
-  assert node.examples == ["Long Long Long Example 1", "text text text Example 2"]
-  assert node.plurals == ["one", "two"]
+#   assert node.attrs['intuitions'].value == ["A simple explanation"]
+#   assert node.attrs['examples'].value == ["Long Long Long Example 1", "text text text Example 2"]
+#   assert node.attrs['plurals'].value == ["one", "two"]
 
 
 ############################ DUNDERSCORE, WEIGHT TESTS ##########################################
@@ -235,10 +234,10 @@ def test_definition_dunderscore_exists_content():
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Definition)
 
-  with pytest.raises(AssertionError): # because a Definition's description MUST have dunderscores!
-    node.description = "A triangle is a 3 sided polygon."
-  with pytest.raises(AssertionError): # because we will automatically add the dunderscores to the names (of definitions) on the fly (this will be an optional setting for users, since some would not prefer the clutter of the underlines in the DAG itself
-    node.name = "__DunderScore__"
+  # with pytest.raises(AssertionError): # because a Definition's description MUST have dunderscores!
+  #   node.attrs['description'].value = "A triangle is a 3 sided polygon."
+  # with pytest.raises(AssertionError): # because we will automatically add the dunderscores to the names (of definitions) on the fly (this will be an optional setting for users, since some would not prefer the clutter of the underlines in the DAG itself
+  #   node.attrs['name'].value = "__DunderScore__"
 
 def test_theorem_no_dunderscore():
   pre_node = {
@@ -247,49 +246,80 @@ def test_theorem_no_dunderscore():
     "description": "When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2.",
     "intuition": "A simple explanation.",
     "examples": ["Example 1 is now long enough.", "Example 2 is now long."],
-    "proof": {"type": "fake", "content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}
+    "proof": {
+      "type": "fake",
+      "content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee.",
+    },
   }
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Theorem)
 
-  with pytest.raises(AssertionError): # because a theorem cannot have dunderscores
-    node.description = "A __triangle__ is a 3 sided polygon."
-  with pytest.raises(AssertionError): # again, because a name should not have dunderscore (but we may add them on the fly)
-    node.name = "__DunderScore__"
+  # with pytest.raises(AssertionError): # because a theorem cannot have dunderscores
+  #   node.attrs['description'].value = "A __triangle__ is a 3 sided polygon."
+  # with pytest.raises(AssertionError): # again, because a name should not have dunderscore (but we may add them on the fly)
+  #   node.attrs['name'].value = "__DunderScore__"
 
 def test_exercise_no_dunderscore():
-  pre_node={ "weight": 2, "exercise": "Three Four Five Triangle", "intuition": "Long enough 3^2+4^2=5^2", "examples": ["Example 1 is now long enough.", "Example 2 is now long."],"proof": {"type": "fake", "content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}}
+  pre_node = { "weight": 2, "exercise": "Three Four Five Triangle", "intuition": "Long enough 3^2+4^2=5^2", "examples": ["Example 1 is now long enough.", "Example 2 is now long."],"proof": {"type": "fake", "content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}}
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Exercise)
 
-  with pytest.raises(AssertionError): # exercises should NOT have dunderscores, anywhere
-    node.description = "A __triangle__ is a 3 sided polygon."
-  with pytest.raises(AssertionError):
-    node.examples = ["__DunderScore__ is in here", "In here as __well__", "Will this pass?"]
+  # with pytest.raises(AssertionError): # exercises should NOT have dunderscores, anywhere
+  #   node.attrs['description'].value = "A __triangle__ is a 3 sided polygon."
+  # with pytest.raises(AssertionError):
+  #   node.attrs['examples'].value = ["__DunderScore__ is in here", "In here as __well__", "Will this pass?"]
 
 def test_definition_weights():
   pre_node = {"name": "Triangle", "weight": 1, "def": "A __triangle__ is a 3 sided polygon.", "intuition": "A simple explanation", "examples": ["Long Long Long Example 1", "text text text Example 2"]}
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Definition)
 
-  with pytest.raises(Exception): # we are no longer using the term "weight"
-    node.weight = 5
-  with pytest.raises(AssertionError): # importance can't be more than 10!
-    node.importance = 100
+  node.attrs['importance'].value = 100
+  assert node.attrs['importance'].value == 10
 
 def test_theorem_weights():
   pre_node = {"name": "Pythagorean theorem", "weight": 6, "thm": "When the leg is a and the leg is b and the hypotenuse is c, then a^2+b^2=c^2.", "intuition": "A simple explanation.", "examples": ["Example 1 is now long enough.", "Example 2 is now long."],"proof": {"type": "fake", "content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}}
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Theorem)
 
-  with pytest.raises(AssertionError): # importance must be at least 3!
-    node.importance = 2
+  # importance must be at least 3!
+  node.attrs['importance'].value = 2
+  assert node.attrs['importance'].value == 3
 
 def test_exercise_weights():
-  pre_node={ "weight": 2, "exercise": "Three Four Five Triangle", "intuition": "Long enough 3^2+4^2=5^2", "examples": ["Example 1 is now long enough.", "Example 2 is now long."],"proof": {"type": "fake", "content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}}
+  pre_node = { "weight": 2, "exercise": "Three Four Five Triangle", "intuition": "Long enough 3^2+4^2=5^2", "examples": ["Example 1 is now long enough.", "Example 2 is now long."],"proof": {"type": "fake", "content": "Left side: You have $n$ people.  You choose $k$ of them to be in a committee, and from the committee, you choose $1$ to be the chairperson.  Right side: You have $n$ people.  You choose $1$ of them to be the chairperson.  From the remaining $n-1$ of them, you choose $k-1$ of them to complete the committee."}}
   node = create_appropriate_node(pre_node)
   assert isinstance(node, Exercise)
 
-  with pytest.raises(AssertionError): # importance must be 3 or less
-    node.importance = 6
+  # importance must be 3 or less
+  node.attrs['importance'].value = 6
+  assert node.attrs['importance'].value == 3
+
+def test_as_dict():
+  pre_node = {
+    "weight": 2,
+    "exercise": "Three Four Five Triangle",
+    "intuition": "Long enough 3^2+4^2=5^2",
+    "examples": ["Example 1 is now long enough.", "Example 2 is now long."],
+    "proof": {"type": "fake", "content": "Left side: You have complete the committee."},
+  }
+  node = create_appropriate_node(pre_node)
+  assert node.as_dict() == {
+    "importance": 2,
+    "description": "Three Four Five Triangle",
+    "intuitions": ["Long enough 3^2+4^2=5^2"],
+    "examples": ["Example 1 is now long enough.", "Example 2 is now long."],
+    "proof": {"type": ["fake"], "content": "Left side: You have complete the committee."},
+  }
+
+
+
+
+
+
+
+
+
+
+
 

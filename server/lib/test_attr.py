@@ -2,32 +2,39 @@ import pytest
 
 from lib.attr import *
 
+class Node:
+	pass
+
 def test_init():
+	node = Node()
+
 	# minimal
-	a = Attr('thing', ttype=int)
+	a = Attr(node=node, name='thing', cclass=int)
 	assert a.name == 'thing'
-	assert a.ttype == int
+	assert a.cclass == int
 
 	# str
-	a = Attr(name='color', value='green', ttype=str)
+	a = Attr(node=node, name='color', value='green', cclass=str)
 	assert a.value == 'green'
 
 	# int, with a default
 	a = Attr(
+		node=node,
 		name='importance',
-		ttype=int,
+		cclass=int,
 		default=-1
 	)
 	assert a.value == -1
 
 	# maximal
-	def examples_setter(new_examples):
+	def examples_setter(attr, new_examples):
 		for x in new_examples:
 			print("complain")
 		return new_examples
 	a = Attr(
+		node=node,
 		name='examples',
-		ttype='list of content str',
+		cclass='list of content str',
 		setter=examples_setter,
 		value=['one', 'two']
 	)
