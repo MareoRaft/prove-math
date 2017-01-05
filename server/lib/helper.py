@@ -3,6 +3,7 @@ import random
 import json
 from itertools import chain
 from collections import OrderedDict
+from copy import deepcopy
 
 def move_attribute(dic, aliases, strict=True):
 	for key, value in dic.items():
@@ -18,7 +19,7 @@ def find_key(dic, keys):
 	for key in dic:
 		if key in keys:
 			return key
-	raise KeyError('Could not find any of the following keys in the Node input: {}'.format(keys))
+	raise KeyError('Could not find any of the following keys {} in the input dictionary {}'.format(keys, dic))
 
 def string_to_bool(string):
 	string = string.lower()
@@ -65,7 +66,8 @@ def json_export(json_list, file_path):
 		print("Pass in object as example.__dict__")
 
 def strip_underscores(dictionary):
-	for key, value in dictionary.items():
+	dic_copy = deepcopy(dictionary)
+	for key, value in dic_copy.items():
 		if key[0] == '_':
 			del dictionary[key]
 			dictionary[key[1:]] = value

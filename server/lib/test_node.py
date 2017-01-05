@@ -3,9 +3,7 @@ import pytest
 
 from lib.node import get_contents_of_dunderscores
 from lib.node import create_appropriate_node
-from lib.node import Definition
-from lib.node import Theorem
-from lib.node import Exercise
+from lib.node import Node, Definition, Theorem, Exercise
 from lib.score import FAILING_SCORE
 
 sample_theorem = {
@@ -18,6 +16,17 @@ sample_theorem = {
 
 
 ##########################INIT, SETTERS/GETTERS, ATTRIBUTE TESTS################
+
+def test_id():
+	dic = {
+		"id": "c",
+		"dependencies": [
+			"a"
+		],
+		"description": "A __thing__ is something else!!!.",
+	}
+	n = Node(dic)
+	assert n.id == 'c'
 
 def test_get_contents_of_dunderscores():
 	with pytest.raises(AssertionError):
@@ -298,7 +307,8 @@ def test_as_dict():
 	}
 	node = create_appropriate_node(pre_node)
 	assert node.as_dict() == {
-		'id': 'threefourfivetriangle',
+		'_id': 'threefourfivetriangle',
+		'type': 'exercise',
 		'dependency_ids': ["one", "two"],
 		'attrs': {
 			'counterexamples': {
@@ -352,3 +362,31 @@ def test_as_dict():
 			},
 		},
 	}
+
+def test_new_style_dic():
+	pre_node = {
+		"_id": "c",
+		"type": "definition",
+		"dependency_ids": ["a"],
+		"attrs": {
+			"name": {
+				"name": "name",
+				"value": "tame",
+				"score_card": {"strikes": [ ],},
+			},
+			"negation": {
+				"name": "negation",
+				"value": "",
+				"score_card": {"strikes": [ ],},
+			},
+			"description": {
+				"name": "description",
+				"value": "",
+				"score_card": {"strikes": [ ],},
+			},
+		},
+	}
+	node = create_appropriate_node(pre_node)
+	assert node.id == "c"
+	assert node.attrs['name'].value == "tame"
+	assert node.attrs['negation'].value == ""

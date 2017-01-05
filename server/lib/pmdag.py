@@ -22,7 +22,7 @@ class PMDAG (nx.DAG):
 
 	# FROM GRAPH:
 	def n(self, node_id):
-		assert isinstance(node_id, str)
+		assert isinstance(node_id, str) # or isinstance(node_id, bytes)
 		return self.node[node_id]["custom_object"]
 
 	def add_n(self, nodebunch):
@@ -31,6 +31,9 @@ class PMDAG (nx.DAG):
 		for node in nodebunch:
 			# verify that the node is legit
 			assert isinstance(node, Node)
+			# make sure the node doesn't already exist, as this would overwrite it
+			assert not self.has_node(node.id)
+			# add it
 			self.add_node(node.id, attr_dict={"custom_object": node})
 
 	def remove_n(self, nodebunch):
@@ -108,8 +111,11 @@ class PMDAG (nx.DAG):
 
 	# @record_elapsed_time
 	def most_important(self, nbunch, number=1):
-		def most_important_sorter(node):
-			return (self.importance_weight(node), self.n(node).id)
+		def most_important_sorter(node): # the "node" here is actually a node_id!
+			# two sanity checks before returning
+			assert isinstance(node, str)
+			self.n(node)
+			return (self.importance_weight(node), node)
 		if number <= 0:
 			raise ValueError('Must give number > 0')
 		if len(nbunch) < number:

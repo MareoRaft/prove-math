@@ -6,8 +6,7 @@ import re
 import json
 from copy import deepcopy
 
-from lib import helper
-from lib.helper import reduce_string, dunderscore_count, move_attribute, find_key
+from lib.helper import reduce_string, dunderscore_count, move_attribute, find_key, strip_underscores
 from lib.vote import Votable
 from lib.config import ERR
 from lib.score import ScoreCard
@@ -22,6 +21,9 @@ def get_contents_of_dunderscores(string):
 
 ######################## EXTERNAL HELPERS ########################
 def create_appropriate_node(dic):
+	# if there are underscored prefixed keys, clear them
+	strip_underscores(dic)
+
 	# for writers that use shortcut method, we must seek out the type:
 	if not 'type' in dic:
 		dic['type'] = find_key(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
@@ -62,17 +64,30 @@ class Node(Votable):
 		self.attrs = dict()
 		self.update_attrs_from_dict(dic, self.ATTR_SETTINGS)
 
-	# getter attributes...
-	@property
-	def type(self):
-		return type(self).__name__.lower()
+		# populate id
+		ID = move_attribute(dic, {'id'}, strict=False)
+		if ID is not None and ID != '':
+			self._id = ID
+		else:
+			if self.attrs['name'].value != '':
+				self._id = reduce_string(self.attrs['name'].value)
+			elif self.type == 'definition' and 'description' in self.attrs:
+				self._id = get_contents_of_dunderscores(self.attrs['description'].value)
+			elif self.type == 'exercise':
+				self._id = reduce_string(self.attrs['description'].value)
+			elif self.type == 'theorem': # maybe in the future we won't allow this
+				self._id = reduce_string(self.attrs['description'].value)
+			else:
+				raise ValueError('There is no id!')
 
 	@property
 	def id(self):
-		if self.attrs['name'].value != '':
-			return reduce_string(self.attrs['name'].value)
-		elif self.type == 'exercise':
-			return reduce_string(self.attrs['description'].value)
+		return self._id
+
+	# getters...
+	@property
+	def type(self):
+		return type(self).__name__.lower()
 
 	@property
 	def dependency_ids(self):
@@ -81,9 +96,13 @@ class Node(Votable):
 	# other methods...
 	def update_attrs_from_dict(self, dic, settings_dict):
 		for name, settings in settings_dict.items():
-			print('name {}'.format(name))
-			print('settings {}'.format(settings))
-			value = move_attribute(dic, settings['keywords'], strict=False)
+			if 'attrs' in dic: # new-style dic {"attrs": {"note": {"name": "note", "value": "bla"}}}
+				if name in dic['attrs']:
+					value = dic['attrs'][name]["value"]
+				else:
+					value = None
+			else: # for an old-style dic {"note": "bla"}
+				value = move_attribute(dic, settings['keywords'], strict=False)
 
 			# edit the settings, without altering self.ATTR_SETTINGS itself
 			settings_new = deepcopy(settings)
@@ -101,7 +120,8 @@ class Node(Votable):
 	def as_dict(self):
 		dic = deepcopy(self.__dict__)
 		dic.update({
-			"id": self.id,
+			# the "_id" key is already set, and SHOULD use an underscore, for Mongo.
+			"type": self.type,
 			"dependency_ids": self.dependency_ids,
 		})
 		dic['attrs'] = {key: val.as_dict() for key, val in dic['attrs'].items()}

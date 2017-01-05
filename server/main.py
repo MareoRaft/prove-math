@@ -19,14 +19,13 @@ from tornado.web import Finish
 from lib import config
 from lib import clogging
 log = clogging.getLogger('main', filename='main.log') # this must come BEFORE imports that use getLogger('main')
-from lib.helper import strip_underscores, random_string
+from lib.helper import random_string, reduce_string
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 from lib.user import User
 from lib.math_graph import MathGraph
 from lib import user
 from lib import auth
-from lib import node
 import inspect
 import traceback
 # this and relevant code should eventually be migrated into auth module
@@ -207,7 +206,7 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'save-node': # hopefully this can handle both new nodes and changes to nodes
 			node_dict = ball['node_dict']
 			try:
-				node_obj = node.create_appropriate_node(node_dict)
+				node_obj = create_appropriate_node(node_dict)
 				log.debug('\nnode made.  looks like: '+str(node_obj))
 
 				# take a look at the score card, to see if the node is worthy
@@ -219,7 +218,7 @@ class SocketHandler (WebSocketHandler):
 				# take a look at the dependencies now
 
 				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []
-				previous_dependency_ids = [node.reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
+				previous_dependency_ids = [reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
 				log.debug('prev deps are: '+str(previous_dependency_ids))
 				current_dependency_ids = node_obj.dependency_ids
 				log.debug('curr deps are: '+str(current_dependency_ids))
@@ -377,15 +376,14 @@ def make_app_and_start_listening():
 def update_our_MG():
 	# 1. grab nodes and edges from database
 	all_node_dicts = list(Mongo("provemath", "nodes").find())
-	# print(
+	# print('number of node dicts is: {}'.format(len(all_node_dicts)))
 
 	# 2. create a networkx graph with the info...
 	global our_MG
 	our_MG = MathGraph()
 	for node_dict in all_node_dicts:
 		# try:
-		node = create_appropriate_node(strip_underscores(node_dict))
-
+		node = create_appropriate_node(node_dict)
 		# except Exception as e:
 			# print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
 		our_MG.add_n(node)
@@ -395,8 +393,8 @@ def update_our_MG():
 			our_MG.add_edge(dependency_id, node_id)
 	our_MG.validate() # make sure it's still Acyclic
 	our_MG.remove_redundant_edges()
-	print('Node array loaded with length: ' + str(len(our_MG.nodes())))
-	print('Edge array loaded with length: ' + str(len(our_MG.edges())))
+	print('Node array loaded with length: {}'.format(len(our_MG.nodes())))
+	print('Edge array loaded with length: {}'.format(len(our_MG.edges())))
 
 if __name__ == "__main__":
 	# 0. create a global mongo object for later use (for upserts in the future)

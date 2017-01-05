@@ -1,7 +1,7 @@
 import re
 import subprocess
 
-from lib.helper import json_import, strip_underscores
+from lib.helper import json_import
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 from lib.math_graph import MathGraph
@@ -38,18 +38,21 @@ global our_MG
 our_MG = MathGraph()
 for node_dict in all_node_dicts:
 	# try:
-	node = create_appropriate_node(strip_underscores(node_dict))
+	node = create_appropriate_node(node_dict)
 	# except Exception as e:
-		# print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
+		# print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(node_dict))
 	our_MG.add_n(node)
 for node_id in our_MG.nodes():
 	node = our_MG.n(node_id)
 	for dependency_id in node.dependency_ids:
 		our_MG.add_edge(dependency_id, node_id)
 our_MG.validate() # make sure it's still Acyclic
-print('Node array loaded with length: ' + str(len(our_MG.nodes())))
-print('Edge array loaded with length: ' + str(len(our_MG.edges())))
 
+num_nodes = len(our_MG.nodes())
+num_edges = len(our_MG.edges())
+print('Node array loaded with length: {}'.format(num_nodes))
+print('Edge array loaded with length: {}'.format(num_edges))
+print('Already extand nodes loaded.\n')
 
 
 # populate new nodes into DB
@@ -83,4 +86,7 @@ for pre_node in new_data_dictionary['nodes']:
 			db_nodes.insert_one(dependency_node.as_dict())
 
 
-print('Transfer complete!!!!')
+print('Transfer complete!!!!\n')
+new_num_nodes = len(our_MG.nodes())
+node_diff = new_num_nodes - num_nodes
+print('Number of nodes added: {}'.format(node_diff))
