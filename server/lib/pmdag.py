@@ -22,6 +22,7 @@ class PMDAG (nx.DAG):
 
 	# FROM GRAPH:
 	def n(self, node_id):
+		assert isinstance(node_id, str)
 		return self.node[node_id]["custom_object"]
 
 	def add_n(self, nodebunch):

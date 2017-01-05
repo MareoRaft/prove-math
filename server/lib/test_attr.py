@@ -1,5 +1,6 @@
 import pytest
 
+from lib.score import ScoreCard
 from lib.attr import *
 
 class Node:
@@ -40,4 +41,13 @@ def test_init():
 	)
 	assert a.value == ['one', 'two']
 
+def test_as_dict():
+	node = Node()
+	a = Attr(node=node, name='thing', cclass=int)
+	dic = a.as_dict()
+	del dic['score_card']
+	assert dic == {
+		"name": "thing",
+		"value": 0,
+	}
 

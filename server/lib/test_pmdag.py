@@ -4,7 +4,7 @@ import pytest
 import networkx as nx
 
 from lib.pmdag import PMDAG
-from lib.node import create_appropriate_node
+from lib.node import create_appropriate_node, Node, Theorem
 
 ############################ HELPERS ############################
 def fill_sample_custom_nodes():
@@ -36,8 +36,9 @@ def test_n():
 	a = create_appropriate_node({"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3})
 	G = PMDAG()
 	G.add_n(a)
-	out = G.n(a)
-	assert type(out) == Node
+	out = G.n(a.id)
+	assert isinstance(out, Node)
+	assert isinstance(out, Theorem)
 	assert out.type == 'theorem'
 	assert out.attrs['description'].value == "This is node aaaaaaaaaa"
 

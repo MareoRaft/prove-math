@@ -1,4 +1,4 @@
-import copy
+from copy import deepcopy
 
 FAILING_SCORE = 40
 
@@ -37,7 +37,7 @@ class ScoreCard:
 		return self.total_score() < FAILING_SCORE
 
 	def as_dict(self):
-		dic = copy.deepcopy(self.__dict__)
+		dic = deepcopy(self.__dict__)
 		# make sure d.strikes is nice
 		# make sure is_passing is nice
 		# delete unneeded keys

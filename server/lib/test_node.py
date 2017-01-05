@@ -39,7 +39,6 @@ def test_theorem_copy():
 	# assert id(a) != id(b)
 	# assert a == b
 
-
 def test_theorem_setter_getter():
 	pre_node = {
 		"name": "Pythagorean theorem",
@@ -291,16 +290,65 @@ def test_exercise_weights():
 def test_as_dict():
 	pre_node = {
 		"weight": 2,
-		"exercise": "Three Four Five Triangle",
-		"intuition": "Long enough 3^2+4^2=5^2",
+		"exercise": "Three Four Five Triangle", # it is an Exercise node
+		"intuition": "tooshort",
 		"examples": ["Example 1 is now long enough.", "Example 2 is now long."],
 		"proof": {"type": "fake", "content": "Left side: You have complete the committee."},
+		"dependencies": ["o n e", "two"],
 	}
 	node = create_appropriate_node(pre_node)
 	assert node.as_dict() == {
-		"importance": 2,
-		"description": "Three Four Five Triangle",
-		"intuitions": ["Long enough 3^2+4^2=5^2"],
-		"examples": ["Example 1 is now long enough.", "Example 2 is now long."],
-		"proof": {"type": ["fake"], "content": "Left side: You have complete the committee."},
+		'id': 'threefourfivetriangle',
+		'dependency_ids': ["one", "two"],
+		'attrs': {
+			'counterexamples': {
+				'value': [],
+				'score_card': {'strikes': []},
+				'name': 'counterexamples'
+			},
+			'examples': {
+				'value': ['Example 1 is now long enough.', 'Example 2 is now long.'],
+				'score_card': {'strikes': []},
+				'name': 'examples'
+			},
+			'name': {
+				'value': '',
+				'score_card': {'strikes': []},
+				'name': 'name'
+			},
+			'notes': {
+				'value': [],
+				'score_card': {'strikes': []},
+				'name': 'notes'
+			},
+			'description': {
+				'value': 'Three Four Five Triangle',
+				'score_card': {'strikes': []},
+				'name': 'description'
+			},
+			'intuitions': {
+				'value': ['tooshort'],
+				'score_card': {'strikes': [(7.5,
+				'The length of your content is too short (add more later).'),
+				(5.0,
+				'Capitzlize first sentence.')]},
+				'name': 'intuitions'
+			},
+			'importance': {
+				'value': 2,
+				'score_card': {
+				'strikes': []},
+				'name': 'importance'
+			},
+			'dependencies': {
+				'value': ["o n e", "two"],
+				'score_card': {'strikes': []},
+				'name': 'dependencies'
+			},
+			'proofs': {
+				'value': [{'description': 'Left side: You have complete the committee.', 'type': ['fake']}],
+				'score_card': {'strikes': []},
+				'name': 'proofs'
+			},
+		},
 	}

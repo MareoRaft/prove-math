@@ -42,7 +42,6 @@ class Attr:
 		self.cclass = cclass
 		self.default = default
 		self.setter = setter
-		print('value is {}'.format(value))
 		self.value = value
 
 	@property
@@ -128,4 +127,13 @@ class Attr:
 
 		# Set value
 		self._value = self.setter(self, new_in)
+
+	def as_dict(self):
+		dic = {
+			"name": self.name,
+			"value": self.value,
+			"score_card": self.score_card.as_dict(),
+		}
+		return dic
+
 

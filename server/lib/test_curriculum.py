@@ -19,7 +19,7 @@ def test_init():
 	# one element list
 	# VERTEX and ONEDGESONVERTICES must be in the nodes collection of the provemath database on your local mongo for this to work!
 	ids = ["vertex"]
-	c = Curriculum(ids)
+	c = Curriculum(ids) # this errors if vertex is not in the DB, which it should.
 	assert c.ids == ["vertex"]
 
 	# multiple element list

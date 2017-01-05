@@ -23,7 +23,7 @@ class Curriculum (Votable):
 
 	def __init__(self, node_ids, name=None):
 		self.name = name
-		self.ids = node_ids
+		self.node_ids = node_ids
 		self.set_id()
 
 		# TODO: verify the curriculum doesn't already exist? Allow override?
@@ -48,10 +48,10 @@ class Curriculum (Votable):
 		self._id = unique_string(curriculum_ids)
 
 	@property
-	def ids(self):
-		return self._ids
-	@ids.setter
-	def ids(self, node_ids):
+	def node_ids(self):
+		return self._node_ids
+	@node_ids.setter
+	def node_ids(self, node_ids):
 		# verify nonempty
 		if not node_ids:
 			raise ValueError('A {} needs a NONEMPTY list of node ids.'.format(type(self).__name__))
@@ -60,7 +60,7 @@ class Curriculum (Votable):
 			next(self.NODES.find({"_id": node_id}))
 			# the above should error if no node exists, so we have verified that the id exists
 		# TODO: verify that node_ids follow LOGICAL order?
-		self._ids = node_ids
+		self._node_ids = node_ids
 
 	def store(self):
 		""" Store self in DB. """

@@ -65,11 +65,7 @@ class Node(Votable):
 	# getter attributes...
 	@property
 	def type(self):
-		the_class = self.__class__
-		string = str(the_class)
-		full_type_string = string[8:-2]
-		truncated_type_string = re.sub(r'^.*\.', '', full_type_string)
-		return truncated_type_string.lower()
+		return type(self).__name__.lower()
 
 	@property
 	def id(self):
@@ -104,8 +100,11 @@ class Node(Votable):
 
 	def as_dict(self):
 		dic = deepcopy(self.__dict__)
-		if 'score_card' in dic:
-			del dic['score_card']
+		dic.update({
+			"id": self.id,
+			"dependency_ids": self.dependency_ids,
+		})
+		dic['attrs'] = {key: val.as_dict() for key, val in dic['attrs'].items()}
 		return dic
 
 	def as_json(self): # returns json version of self
