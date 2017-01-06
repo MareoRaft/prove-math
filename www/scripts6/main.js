@@ -3,7 +3,6 @@ define( [
 	"underscore",
 	"browser-detect",
 	"check-types",
-	// "katex",
 	"mathjax",
 	"profile",
 	"marked",
@@ -18,7 +17,6 @@ define( [
 	_,
 	browser,
 	is,
-	// katex,
 	mathjax,
 	undefined,
 	marked,
@@ -72,7 +70,7 @@ let pref_blinds = new Blinds({
 graphAnimation.init({
 	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
 	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
-	node_radius: node => 7.9 * Math.sqrt(node.importance),
+	node_radius: node => 7.9 * Math.sqrt(node.attrs.importance.value),
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom' || node.type === null,
@@ -81,32 +79,12 @@ graphAnimation.init({
 		'exercise-circle': node => node.type === 'exercise',
 	},
 	circle_events: { // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
-		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.description },
+		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.attrs.description.value },
 		mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
 	},
 })
 show('svg') // both svg and node-template are hidden on load
 show('#banner')
-
-
-// function katexRenderIfPossible(string) {
-// 	let content = string.substr(1, -1)
-// 	try{
-// 		content = katex.renderToString(content) // katex.render takes in element as second parameter
-// 	}
-// 	catch(error) {
-// 		if (error.__proto__ === katex.ParseError.prototype) {
-// 			alert('error1')
-// 			return string // the original string unchanged (for mathjax to snatch up later)
-// 		} else {
-// 			alert('error2')
-// 			return "<span class='err' style='color:red;'>"+'ERROR: '+error+"</span>"
-// 		}
-// 	}
-// 	alert(content)
-// 	return content
-// }
-
 
 let node_blinds = new Blinds({
 	window_id: 'node-template-blinds',
@@ -415,10 +393,18 @@ function push_pull_drawer() {
 //////////////////////////// TOGGLE STUFF ////////////////////////////
 $(document).on('node-click', function(Event){
 	current_node = graph.nodes[Event.message] // graph.nodes is a DICTIONARY of nodes
+
+	// we need to flatten this for it to be blinds friendly (or something...)
+	let node_for_blinds = {}
+	_.each(current_node.attrs, function(attr, name){
+		node_for_blinds[name] = current_node.attrs[name].value
+	})
+	node_for_blinds.type = current_node.type
+
 	updateNodeTemplateLearnedState()
 	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
 		node_blinds.open({
-			object: current_node,
+			object: node_for_blinds,
 		})
 		hide('svg')
 		hide('#overlay')

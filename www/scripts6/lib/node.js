@@ -48,6 +48,7 @@ class Node {
 	}
 
 	fillWithNullKeys() {
+		// construct the keys relevant to the node, depending on its type
 		// if node.py is edited, then this needs to be edited to reflect that:
 		let keys = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples']
 		if( this.type === 'axiom' ) pushArray(keys, ['synonyms', 'plurals', 'notes', 'negation'])
@@ -58,7 +59,9 @@ class Node {
 		let node = this // this changes within the anonymous function
 		_.each(keys, function(key) {
 			if( !key in node || !def(node[key]) ) {
+				// for plural things, set to []
 				if( _.contains(["synonyms", "plurals", "dependencies"], key) ) node[key] = []
+				// for singular things, set to null
 				else node[key] = null
 			}
 		})
@@ -124,12 +127,12 @@ class Node {
 	}
 
 	set name(new_name) {
-		this._name = new_name
+		this.attrs.name.value = new_name
 	}
 
 	get name() {
-		if (!def(this._name) || this._name === null) return ''
-		return this._name
+		if (!def(this.attrs.name.value) || this.attrs.name.value === null) return ''
+		return this.attrs.name.value
 	}
 
 	get display_name() {
