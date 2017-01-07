@@ -3,23 +3,23 @@ define( ["jquery", "underscore", "profile", "check-types", "graph"], function($,
 //////////////////////////// HELPERS ////////////////////////////
 $.fn.selectRange = function(start, end) {
 // see http://stackoverflow.com/questions/499126/jquery-set-cursor-position-in-text-area
-    if (typeof end === 'undefined') {
-        end = start
-    }
-    return this.each(function() {
-        if('selectionStart' in this) {
-            this.selectionStart = start
-            this.selectionEnd = end
-        } else if(this.setSelectionRange) {
-            this.setSelectionRange(start, end)
-        } else if(this.createTextRange) {
-            var range = this.createTextRange()
-            range.collapse(true)
-            range.moveEnd('character', end)
-            range.moveStart('character', start)
-            range.select()
-        }
-    })
+	if (typeof end === 'undefined') {
+		end = start
+	}
+	return this.each(function() {
+		if('selectionStart' in this) {
+			this.selectionStart = start
+			this.selectionEnd = end
+		} else if(this.setSelectionRange) {
+			this.setSelectionRange(start, end)
+		} else if(this.createTextRange) {
+			var range = this.createTextRange()
+			range.collapse(true)
+			range.moveEnd('character', end)
+			range.moveStart('character', start)
+			range.select()
+		}
+	})
 }
 
 //////////////////////////// BLINDS CLASS ////////////////////////////
@@ -124,6 +124,7 @@ class Blinds {
 			}
 		}
 		// ASSUMING that when we open a blind, it is always in read mode, then we would run post_render here:
+		// TODO -- check this isn't messing things up, when we start blinds in edit mode.
 		this.post_render()
 	}
 
@@ -353,13 +354,8 @@ class Blind {
 		return classes
 	}
 
-	// get index() {
-	// 	// may not need this //
-	// }
-
 	get htmlified() {
 		return	'<div id="' + this.id + '" class="' + this.classes_htmlified + '">'
-					// + '<span class="key" data-key="'+this.key+'"' + this.index_htmlified + '>' // may not need this info at all!
 					+ '<div class="key" data-key="'+this.key+'">'
 						+ this.display_key_htmlified + '&nbsp&nbsp'
 					+ '</div>'

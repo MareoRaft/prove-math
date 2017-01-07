@@ -12,6 +12,7 @@ define( [
 	"blinds",
 	"chosen",
 	"user",
+	"mousetrap",
 ], function(
 	$,
 	_,
@@ -25,12 +26,14 @@ define( [
 	graphAnimation,
 	Blinds,
 	chosen,
-	user
+	user,
+	mousetrap
 ){
 
 
 ////////////////////////////// GLOBALS ///////////////////////////////
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
+let show_hide_dict = {}
 
 
 /////////////////////////// INITIALIZATION ///////////////////////////
@@ -257,29 +260,14 @@ $(document).on('save-node', function(){
 ////////////////////////// LOGIN/LOGOUT STUFF //////////////////////////
 var oauth_url_dict = undefined
 
-$('#x').click(function() {
-	hide('#login')
-		hide('#avatar')
-		hide('.logout-circle')
-		hide('.see-preferences')
-		show('#login-circle')
-	show('#overlay')
-})
+$('#x').click(guestLogin)
 $('#login-circle').click(function() {
 	hide('#overlay')
 	show('#login')
 })
 $('#login-button').click(login)
-$('#password, #username').keypress(function(event) { if(event.which === 13 /* Enter */) {
-	login()
-}})
 $('.image-wrapper').click(function() {
 	$('.image-wrapper').removeClass('invalid')
-})
-$('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE whatever was just typed in .val()
-	if($(this).val() !== '') {
-		$(this).removeClass('invalid')
-	}
 })
 $('.logout-circle').click(function() {
 	push_pull_drawer()
@@ -301,6 +289,14 @@ function login() { // this is what runs when the user clicks "login"
 		location.href = oauth_url_dict[account_type]
 	}
 }
+function guestLogin() { // this is when user uses the temp account on hand
+	hide('#login')
+		hide('#avatar')
+		hide('.logout-circle')
+		hide('.see-preferences')
+		show('#login-circle')
+	show('#overlay')
+}
 function logout(){ // this is what runs when the user clicks "logout"
 	delete_cookie()
 	hide('#overlay')
@@ -309,10 +305,16 @@ function logout(){ // this is what runs when the user clicks "logout"
 
 
 ///////////////////////////// SEARCH BAR /////////////////////////////
-$('#search-box').keypress(function(event) { if(event.which === 13 /* Enter */) {
+$mousetrap('#search-box').bind('enter', function(){
 	ws.jsend({ command: 'search', search_term: $('#search-box').val() })
-}})
-$('#search-wrapper').click(expand_search_wrapper)
+})
+$('#search-wrapper').click(function(){
+	$('#search-box').focus()
+})
+mousetrap.bind('mod+f', function(){
+	$('#search-box').focus()
+	return false // to prevent default
+})
 $('#search-box').focus(expand_search_wrapper)
 $(document).click(function(event) { // click anywhere BUT the #search-wrapper
 	if (!$(event.target).closest('#search-wrapper').length && !$(event.target).is('#search-wrapper')) {
@@ -354,8 +356,10 @@ function collapse_search_wrapper() {
 
 //////////////////////////// ACTION STUFF ////////////////////////////
 $('#avatar').click(push_pull_drawer)
-$('#get-starting-nodes').click(function(){
+$('#get-starting-nodes').click(promptStartingNodes)
+mousetrap.bind('mod+a', function(){
 	promptStartingNodes()
+	return false
 })
 $('#get-goal-suggestion').click(function(){
 	ws.jsend({command: 'get-goal-suggestion'})
@@ -367,6 +371,10 @@ $('#push').click(expand_search_wrapper)
 
 $('#add-node').click(function(){
 	graph.addNode(new Node())
+})
+mousetrap.bind('mod+n', function(){
+	graph.addNode(new Node())
+	return false // this is working fine, it's just that the above line is giving an error right now
 })
 
 function push_pull_drawer() {
@@ -414,19 +422,23 @@ $(document).on('node-click', function(Event){
 		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
 	}
 })
-$('.see-preferences').click(function() {
-	pref_blinds.open({
-		object: user.prefs,
-	})
-	hide('svg')
-	hide('#overlay')
-	show('#preference-pane')
+$('.see-preferences').click(seePreferences)
+mousetrap.bind('mod+,', function(){
+	seePreferences()
+	return false
 })
 
 $('.back').click(fromBlindsToGraphAnimation)
-$(document).keyup(function(event) { if(event.which === 27 /* Esc */) { // right now this runs even if the blinds are NOT the frontmost thing, which could lead to unpredictable behavior
-	fromBlindsToGraphAnimation()
-}})
+mousetrap.bind('esc', function(){
+	// if blinds are showing, hide them
+	if( show_hide_dict['#node-template'] === 'visible' || show_hide_dict['#preference-pane'] === 'visible' ){
+		fromBlindsToGraphAnimation()
+	}
+	// else if login screen is up, hide it / guest login
+	else if( show_hide_dict['#login'] === 'visible' ){
+		guestLogin()
+	}
+})
 function fromBlindsToGraphAnimation(){
 	if( user.prefs.animate_blinds ){
 		$('.node-attribute').addClass('animated flipOutX')
@@ -446,6 +458,19 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////////// HELPERS //////////////////////////////
+function $mousetrap(selector) { // create a shortcut for mousetrap selectors
+	return mousetrap(document.querySelector(selector))
+}
+
+function seePreferences() {
+	pref_blinds.open({
+		object: user.prefs,
+	})
+	hide('svg')
+	hide('#overlay')
+	show('#preference-pane')
+}
+
 function promptStartingNodes(){
 	let subjects_clone = _.clone(subjects)
 	let last_subject = subjects_clone.pop()
@@ -466,6 +491,8 @@ function hide(css_selector) {
 		// $selected.addClass('hidden')
 		$selected.css('visibility', 'hidden')
 	}
+	// record whats hidden
+	show_hide_dict[css_selector] = 'hidden'
 }
 function show(css_selector) { // this stuff fails for svg when using .addClass, so we can just leave show and hide stuff in the JS.
 	let $selected = $(css_selector)
@@ -477,6 +504,8 @@ function show(css_selector) { // this stuff fails for svg when using .addClass, 
 		// $selected.removeClass('hidden')
 		$selected.css('visibility', 'visible')
 	}
+	// record whats visible
+	show_hide_dict[css_selector] = 'visible'
 }
 
 function nodeKeyToDisplayKey(word, node) {
