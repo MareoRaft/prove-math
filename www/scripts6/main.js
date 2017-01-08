@@ -97,6 +97,7 @@ show('svg') // both svg and node-template are hidden on load
 show('#banner')
 
 let node_blinds = new Blinds({
+	working_with_nodes: true, // patch
 	window_id: 'node-template-blinds',
 	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
 	expand_array: true,
@@ -205,7 +206,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		})
 	}
 	else if( ball.command === 'display-error' ) {
-		alert('error: '+ball.message)
+		alert('Server-Side Error: '+ball.message)
 	}
 		else if(ball.command === 'search-results'){
 		alert('Search results: '+JSON.stringify(ball.results))
@@ -459,6 +460,7 @@ function toggleToGraphAnimation() {
 function openNode(node_id) {
 	current_node = graph.nodes[node_id] // graph.nodes is a DICTIONARY of nodes
 
+	// PATCH
 	// we need to flatten this for it to be blinds friendly (or something...)
 	let node_for_blinds = {}
 	_.each(current_node.attrs, function(attr, name){
@@ -470,6 +472,7 @@ function openNode(node_id) {
 	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
 		node_blinds.open({
 			object: node_for_blinds,
+			node: current_node, // patch
 		})
 		hide('svg')
 		hide('#overlay')

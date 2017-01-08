@@ -16,7 +16,7 @@ from lib.node_config import NODE_MIN_IMPORTANCE, NODE_MAX_IMPORTANCE, THEOREM_MI
 ######################## INTERNAL HELPERS ########################
 def get_contents_of_dunderscores(string):
 	list_contents = re.findall(r'(?<=__)[^_]*(?=__)', string) # we only want the first one, but contents is a list
-	assert list_contents != [] and list_contents[0] != ""
+	assert list_contents != [] and list_contents[0] != ''
 	return list_contents[0]
 
 ######################## EXTERNAL HELPERS ########################
@@ -38,13 +38,13 @@ def create_appropriate_node(dic):
 	elif dic['type'] == 'exercise':
 		return Exercise(dic)
 	else:
-		raise ValueError('Cannot detect type of node.  "type" key has value: {}'.format(dic['type']))
+		raise ValueError('Cannot detect type of node.  \'type\' key has value: {}'.format(dic['type']))
 
 def find_node_from_id(list_of_nodes, ID):
 	for node in list_of_nodes:
 		if node.id == ID:
 			return node
-	warn('Could node find node with ID "{}" within list_of_nodes.'.format(ID))
+	warn('Could node find node with ID \'{}\' within list_of_nodes.'.format(ID))
 
 
 ############################## MAIN ##############################
@@ -96,12 +96,12 @@ class Node(Votable):
 	# other methods...
 	def update_attrs_from_dict(self, dic, settings_dict):
 		for name, settings in settings_dict.items():
-			if 'attrs' in dic: # new-style dic {"attrs": {"note": {"name": "note", "value": "bla"}}}
+			if 'attrs' in dic: # new-style dic {'attrs': {'note': {'name': 'note', 'value': 'bla'}}}
 				if name in dic['attrs']:
-					value = dic['attrs'][name]["value"]
+					value = dic['attrs'][name]['value']
 				else:
 					value = None
-			else: # for an old-style dic {"note": "bla"}
+			else: # for an old-style dic {'note': 'bla'}
 				value = move_attribute(dic, settings['keywords'], strict=False)
 
 			# edit the settings, without altering self.ATTR_SETTINGS itself
@@ -113,16 +113,16 @@ class Node(Votable):
 
 	def score_card(self):
 		score_card = ScoreCard()
-		for attr in self.attrs:
+		for name, attr in self.attrs.items():
 			score_card.extend(attr.score_card)
 		return score_card
 
 	def as_dict(self):
 		dic = deepcopy(self.__dict__)
 		dic.update({
-			# the "_id" key is already set, and SHOULD use an underscore, for Mongo.
-			"type": self.type,
-			"dependency_ids": self.dependency_ids,
+			# the '_id' key is already set, and SHOULD use an underscore, for Mongo.
+			'type': self.type,
+			'dependency_ids': self.dependency_ids,
 		})
 		dic['attrs'] = {key: val.as_dict() for key, val in dic['attrs'].items()}
 		return dic
@@ -157,12 +157,12 @@ class Definition(Node):
 		# penalize empty name
 		if self.attrs['description'].value in [None, '']:
 			if self.attrs['name'].value in [None, '']:
-				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
+				self.attrs['name'].score_card.strike('critical', ERR['NO_NAME'])
 		else:
 			if self.attrs['name'].value in [None, ''] and dunderscore_count(self.attrs['description'].value) < 2:
-				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
+				self.attrs['name'].score_card.strike('critical', ERR['NO_NAME'])
 			if self.attrs['name'].value not in [None, ''] and dunderscore_count(self.attrs['description'].value) < 2:
-				self.attrs['name'].score_card.strike("critical", ERR["NO_NAME"])
+				self.attrs['name'].score_card.strike('critical', ERR['NO_NAME'])
 			if self.attrs['name'].value in [None, ''] and dunderscore_count(self.attrs['description'].value) >= 2:
 				self.attrs['name'].value = get_contents_of_dunderscores(self.attrs['description'].value)
 

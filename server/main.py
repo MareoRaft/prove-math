@@ -25,6 +25,7 @@ from lib.mongo import Mongo
 from lib.user import User
 from lib.math_graph import MathGraph
 from lib import user
+from lib.score import ScoreCard
 from lib import auth
 import inspect
 import traceback
@@ -207,10 +208,12 @@ class SocketHandler (WebSocketHandler):
 			node_dict = ball['node_dict']
 			try:
 				node_obj = create_appropriate_node(node_dict)
-				log.debug('\nnode made.  looks like: '+str(node_obj))
+				log.debug('\nnode made.  looks like: {}'.format(node_obj))
 
 				# take a look at the score card, to see if the node is worthy
-				sc = node_obj.score_card
+				sc = node_obj.score_card()
+				if not isinstance(sc, ScoreCard):
+					raise TypeError('sc is not a ScoreCard.')
 				if not sc.is_passing():
 					raise Exception('Your score is {}.  Your strikes are: {}'.format(sc.total_score(), sc.as_dict()))
 
@@ -218,7 +221,9 @@ class SocketHandler (WebSocketHandler):
 				# take a look at the dependencies now
 
 				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []
-				previous_dependency_ids = [reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
+				previous_node_dict = our_mongo.find_one({"_id": node_obj.id})
+				previous_node = create_appropriate_node(previous_node_dict)
+				previous_dependency_ids = previous_node.dependency_ids
 				log.debug('prev deps are: '+str(previous_dependency_ids))
 				current_dependency_ids = node_obj.dependency_ids
 				log.debug('curr deps are: '+str(current_dependency_ids))
@@ -241,11 +246,13 @@ class SocketHandler (WebSocketHandler):
 				self.remove_client_edges(node_obj.id, removed_dependency_ids)
 			except Exception as error:
 				# stuff didn't work, send error back to user
-				log.warning('ERROR: '+str(error))
 				self.jsend({
 					'command': 'display-error',
 					'message': str(error),
 				})
+				log.warning('Error: '+str(error))
+				(typ, val, tb) = sys.exc_info()
+				traceback.print_tb(tb)
 
 		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors

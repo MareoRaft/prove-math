@@ -7,6 +7,7 @@ function _removeParenthesizedThing(string){ // not yet correctly integrated into
 
 function _removeOneContextFromNames(){ // not yet correctly integrated into project
 	// go through nodes and update the displayNames to be the _names with removal (above function)
+	throw 'not yet done'
 	_.each(d3AndSVG.nodes, function(node){
 		// node.displayName = removeParenthesizedThing( node.name[0] )
 	})
@@ -14,6 +15,7 @@ function _removeOneContextFromNames(){ // not yet correctly integrated into proj
 }
 
 function _showFullContextInNames(){ // not yet correctly integrated into project
+	throw 'not yet done'
 	_.each(d3AndSVG.nodes, function(node){
 		// node.displayName = node.name[0]
 	})
@@ -46,6 +48,76 @@ class Node {
 		}
 		this.fillWithNullKeys()
 	}
+
+	// convenient getters n setters so that other things can treat a node like a normal object and not know the difference
+	get name() {
+		return this.attrs['name'].value
+	}
+	set name(new_in) {
+		this.attrs['name'].value = new_in
+	}
+	get examples() {
+		return this.attrs['examples'].value
+	}
+	set examples(new_in) {
+		this.attrs['examples'].value = new_in
+	}
+	get counterexamples() {
+		return this.attrs['counterexamples'].value
+	}
+	set counterexamples(new_in) {
+		this.attrs['counterexamples'].value = new_in
+	}
+	get importance() {
+		return this.attrs['importance'].value
+	}
+	set importance(new_in) {
+		this.attrs['importance'].value = new_in
+	}
+	get description() {
+		return this.attrs['description'].value
+	}
+	set description(new_in) {
+		alert('setting the description')
+		this.attrs['description'].value = new_in
+	}
+	get intuitions() {
+		return this.attrs['intuitions'].value
+	}
+	set intuitions(new_in) {
+		this.attrs['intuitions'].value = new_in
+	}
+	get notes() {
+		return this.attrs['notes'].value
+	}
+	set notes(new_in) {
+		this.attrs['notes'].value = new_in
+	}
+	get dependencies() {
+		return this.attrs['dependencies'].value
+	}
+	set dependencies(new_in) {
+		this.attrs['dependencies'].value = new_in
+	}
+	get plurals() {
+		return this.attrs['plurals'].value
+	}
+	set plurals(new_in) {
+		this.attrs['plurals'].value = new_in
+	}
+	get negation() {
+		return this.attrs['negation'].value
+	}
+	set negation(new_in) {
+		this.attrs['negation'].value = new_in
+	}
+	get proofs() {
+		return this.attrs['proofs'].value
+	}
+	set proofs(new_in) {
+		this.attrs['proofs'].value = new_in
+	}
+
 
 	fillWithNullKeys() {
 		// construct the keys relevant to the node, depending on its type
