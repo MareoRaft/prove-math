@@ -344,6 +344,7 @@ class SocketHandler (WebSocketHandler):
 		nodes_to_send = our_MG.nodes_to_send(self.user, client_node_ids=ball['client_node_ids'])
 		subgraph_to_send = our_MG.subgraph(nodes_to_send)
 		dict_graph = subgraph_to_send.as_js_ready_dict()
+		log.debug('js ready dict is {}'.format(dict_graph))
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,

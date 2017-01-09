@@ -41,8 +41,6 @@ class Blinds {
 			blind_class_conditions: {},
 			read_mode_events: [],
 			edit_save_icon: true,
-			working_with_nodes: false, // patch
-			node: null, //patch
 		})
 		_.extend(this, options)
 
@@ -58,16 +56,14 @@ class Blinds {
 				expand_array_keys = this.expand_array_keys,
 				collapse_array_keys = this.collapse_array_keys,
 				append_keys = this.append_keys,
-				node = null, // patch
 			}) {
-		this.node = node // patch
+		if( object === null ) die('Tried to open the blinds with no object to open (object input was null or undefined).')
+		this.object = object
 		keys = def(keys)? keys: 'own'
 		expand_array_keys = def(expand_array_keys)? expand_array_keys: []
 		collapse_array_keys = def(collapse_array_keys)? collapse_array_keys: []
 		append_keys = def(append_keys)? append_keys: []
 
-		if( object === null ) die('Tried to open the blinds with no object to open (object input was null or undefined).')
-		this.object = object
 		let iterable = (keys === 'own')? this.object: keys
 		for( let key in iterable ){
 			if( is.array(iterable) ) key = iterable[key] // for the keys array, grab the STRINGS, not the INDECIS
@@ -259,20 +255,10 @@ class Blinds {
 				if( $(this).prop('selected') ) selected_elements.push($(this).val())
 			})
 			blind.value = selected_elements
-			// PATCH, as below
-			if( this.working_with_nodes ){
-				let node = this.node
-				node[blind.key] = selected_elements
-			}
 		}
 		else if( blind.mode === 'standard' ){
 			$value.prop('contenteditable', false)
 			blind.value = $value.html()
-			// patch.  if dealing with nodes, set the value manually
-			if( this.working_with_nodes ){
-				let node = this.node
-				node[blind.key] = $value.html()
-			}
 		}
 		else die('Unexpected blind mode.')
 

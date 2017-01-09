@@ -38,8 +38,7 @@ class Node {
 	constructor(object={}) {
 		_removeLeadingUnderscoresFromKeys(object)
 		_.defaults(object, {
-			type: 'axiom',
-			importance: 5,
+			type: 'axiom', // not yet addressed
 		})
 		_.extend(this, object)
 		// TODO: SEE IF THE DICT ID IS SET OR NOT
@@ -69,17 +68,16 @@ class Node {
 	set counterexamples(new_in) {
 		this.attrs['counterexamples'].value = new_in
 	}
-	get importance() {
-		return this.attrs['importance'].value
+	get importance() { // as a STRING
+		return this.attrs['importance'].value.toString()
 	}
 	set importance(new_in) {
-		this.attrs['importance'].value = new_in
+		this.attrs['importance'].value = parseInt(new_in)
 	}
 	get description() {
 		return this.attrs['description'].value
 	}
 	set description(new_in) {
-		alert('setting the description')
 		this.attrs['description'].value = new_in
 	}
 	get intuitions() {
@@ -119,23 +117,31 @@ class Node {
 		this.attrs['proofs'].value = new_in
 	}
 
-
-	fillWithNullKeys() {
+	get key_list() {
 		// construct the keys relevant to the node, depending on its type
 		// if node.py is edited, then this needs to be edited to reflect that:
-		let keys = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples']
-		if( this.type === 'axiom' ) pushArray(keys, ['synonyms', 'plurals', 'notes', 'negation'])
-		else if( this.type === 'definition') pushArray(keys, ['synonyms', 'plurals', 'notes', 'negation'])
+		let keys = ['name', 'importance', 'description', 'intuitions', 'notes', 'dependencies', 'examples', 'counterexamples']
+		if( this.type === 'axiom' ) pushArray(keys, ['plurals', 'negation'])
+		else if( this.type === 'definition') pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'theorem' ) pushArray(keys, ['proofs'])
 		else if( this.type === 'exercise' ) pushArray(keys, ['proofs'])
+		else die('Node has no type.')
+		return keys
+	}
 
+	fillWithNullKeys() {
+		let keys = this.key_list
 		let node = this // this changes within the anonymous function
 		_.each(keys, function(key) {
 			if( !key in node || !def(node[key]) ) {
 				// for plural things, set to []
-				if( _.contains(["synonyms", "plurals", "dependencies"], key) ) node[key] = []
+				if( _.contains(["synonyms", "plurals", "dependencies", "examples", "counterexamples", "intuitions", "notes", "proofs"], key) ){
+					node[key] = []
+				}
 				// for singular things, set to null
-				else node[key] = null
+				else{
+					node[key] = null
+				}
 			}
 		})
 	}
@@ -147,7 +153,6 @@ class Node {
 			dictionary[key] = node[key]
 		}})
 		dictionary.name = node._name
-		dictionary.id = node.id
 		dictionary._id = node.id // for the server-side
 		alert('dic id is '+dictionary._id)
 		return dictionary

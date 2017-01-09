@@ -32,6 +32,9 @@ define( [
 
 
 ////////////////////////////// GLOBALS ///////////////////////////////
+// expose some things as true globals, so i can access them from the JS console!
+window.graph = graph
+
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 let show_hide_dict = {}
 
@@ -167,6 +170,7 @@ ws.onopen = function() {
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
+	window.ball = ball
 	logj('got message: ', ball)
 	if( ball.command === 'populate-oauth-urls' ) {
 		oauth_url_dict = ball.url_dict
@@ -188,6 +192,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		raw_graph.nodes = _.map(raw_graph.nodes, raw_node => new Node(raw_node))
 
 		let ready_graph = raw_graph
+		window.ready_graph = ready_graph
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,
@@ -461,19 +466,11 @@ function toggleToGraphAnimation() {
 function openNode(node_id) {
 	current_node = graph.nodes[node_id] // graph.nodes is a DICTIONARY of nodes
 
-	// PATCH
-	// we need to flatten this for it to be blinds friendly (or something...)
-	let node_for_blinds = {}
-	_.each(current_node.attrs, function(attr, name){
-		node_for_blinds[name] = current_node.attrs[name].value
-	})
-	node_for_blinds.type = current_node.type
-
 	updateNodeTemplateLearnedState()
 	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
 		node_blinds.open({
-			object: node_for_blinds,
-			node: current_node, // patch
+			object: current_node,
+			keys: current_node.key_list,
 		})
 		hide('svg')
 		hide('#overlay')
