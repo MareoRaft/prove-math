@@ -42,6 +42,7 @@ class Node {
 			importance: 5,
 		})
 		_.extend(this, object)
+		// TODO: SEE IF THE DICT ID IS SET OR NOT
 		if( this.empty ){
 			// then it's an "axiom"...
 			this.name = object.id // and remember the ID is generated from this too
@@ -147,6 +148,8 @@ class Node {
 		}})
 		dictionary.name = node._name
 		dictionary.id = node.id
+		dictionary._id = node.id // for the server-side
+		alert('dic id is '+dictionary._id)
 		return dictionary
 	}
 
@@ -193,9 +196,9 @@ class Node {
 	}
 
 	get id() {
-		if( this.name !== null && this.name !== '' ) return reduce_string(this.name)
-		else if( this._id !== null && this._id !== '' ) return this._id
-		else return ''
+		if( this._id !== null && this._id !== '' ) return this._id
+		else if( this.name !== null && this.name !== '' ) return reduce_string(this.name)
+		else die('not sure what the id should be')
 	}
 
 	set name(new_name) {

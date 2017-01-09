@@ -221,8 +221,11 @@ class SocketHandler (WebSocketHandler):
 				# take a look at the dependencies now
 
 				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []
+				log.debug('node.id: {}'.format(node_obj.id))
 				previous_node_dict = our_mongo.find_one({"_id": node_obj.id})
+				log.debug('prev_node_dict: {}'.format(previous_node_dict))
 				previous_node = create_appropriate_node(previous_node_dict)
+				log.debug('prev_node: {}'.format(previous_node))
 				previous_dependency_ids = previous_node.dependency_ids
 				log.debug('prev deps are: '+str(previous_dependency_ids))
 				current_dependency_ids = node_obj.dependency_ids

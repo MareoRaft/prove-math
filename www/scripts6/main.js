@@ -261,6 +261,7 @@ $(document).on('request-node', function(Event) {
 	ws.jsend({command: 'request-node', node_id: Event.message})
 })
 $(document).on('save-node', function(){
+	alert('sending dict: '+JSON.stringify(current_node.dict()))
 	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
 })
 
@@ -501,7 +502,8 @@ function promptStartingNodes(){
 	let last_subject = subjects_clone.pop()
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
 	let default_subject = 'graph theory'
-	let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
+	// let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
+	let subject = 'test' // DEVELOPMENT CONVENIENCE
 	if( !_.contains(subjects, subject) ) subject = default_subject
 	ws.jsend({'command': 'get-starting-nodes', 'subject': subject})
 }
