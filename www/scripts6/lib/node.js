@@ -7,6 +7,7 @@ function _removeParenthesizedThing(string){ // not yet correctly integrated into
 
 function _removeOneContextFromNames(){ // not yet correctly integrated into project
 	// go through nodes and update the displayNames to be the _names with removal (above function)
+	throw 'not yet done'
 	_.each(d3AndSVG.nodes, function(node){
 		// node.displayName = removeParenthesizedThing( node.name[0] )
 	})
@@ -14,19 +15,25 @@ function _removeOneContextFromNames(){ // not yet correctly integrated into proj
 }
 
 function _showFullContextInNames(){ // not yet correctly integrated into project
+	throw 'not yet done'
 	_.each(d3AndSVG.nodes, function(node){
 		// node.displayName = node.name[0]
 	})
 	graphAnimation.update()
 }
 
-function _removeLeadingUnderscoresFromKeys(obj) {
-	_.each(obj, function(value, key){ if( key[0] === '_' ){
-		delete obj[key]
+function deepcopy(object){
+	return $.extend({}, object)
+}
+
+function _removedLeadingUnderscoresFromKeys(obj) {
+	let new_obj = deepcopy(obj)
+	_.each(new_obj, function(value, key){ if( key[0] === '_' ){
+		delete new_obj[key]
 		key = key.substr(1)
-		obj[key] = value
+		new_obj[key] = value
 	}})
-	return obj
+	return new_obj
 }
 
 
@@ -34,12 +41,14 @@ function _removeLeadingUnderscoresFromKeys(obj) {
 class Node {
 
 	constructor(object={}) {
-		_removeLeadingUnderscoresFromKeys(object)
+		object = _removedLeadingUnderscoresFromKeys(object)
 		_.defaults(object, {
-			type: 'axiom',
-			importance: 5,
+			type: 'axiom', // not yet addressed
 		})
+		object['_id'] = object['id']
+		delete object['id']
 		_.extend(this, object)
+		// TODO: SEE IF THE DICT ID IS SET OR NOT
 		if( this.empty ){
 			// then it's an "axiom"...
 			this.name = object.id // and remember the ID is generated from this too
@@ -47,19 +56,101 @@ class Node {
 		this.fillWithNullKeys()
 	}
 
-	fillWithNullKeys() {
+	// convenient getters n setters so that other things can treat a node like a normal object and not know the difference
+	// idea: we might create a "reader" function which we pass into blinds.  blinds would call reader(object, key) instead of object[key], and the reader would do what the below does.  Also, a writer.  But for now, this is unneeded.
+	get name() {
+		if (!def(this.attrs['name'].value) || this.attrs['name'].value === null) return ''
+		return this.attrs['name'].value
+	}
+	set name(new_in) {
+		this.attrs['name'].value = new_in
+	}
+	get examples() {
+		return this.attrs['examples'].value
+	}
+	set examples(new_in) {
+		this.attrs['examples'].value = new_in
+	}
+	get counterexamples() {
+		return this.attrs['counterexamples'].value
+	}
+	set counterexamples(new_in) {
+		this.attrs['counterexamples'].value = new_in
+	}
+	get importance() { // as a STRING
+		return this.attrs['importance'].value.toString()
+	}
+	set importance(new_in) {
+		this.attrs['importance'].value = parseInt(new_in)
+	}
+	get description() {
+		return this.attrs['description'].value
+	}
+	set description(new_in) {
+		this.attrs['description'].value = new_in
+	}
+	get intuitions() {
+		return this.attrs['intuitions'].value
+	}
+	set intuitions(new_in) {
+		this.attrs['intuitions'].value = new_in
+	}
+	get notes() {
+		return this.attrs['notes'].value
+	}
+	set notes(new_in) {
+		this.attrs['notes'].value = new_in
+	}
+	get dependencies() {
+		return this.attrs['dependencies'].value
+	}
+	set dependencies(new_in) {
+		this.attrs['dependencies'].value = new_in
+	}
+	get plurals() {
+		return this.attrs['plurals'].value
+	}
+	set plurals(new_in) {
+		this.attrs['plurals'].value = new_in
+	}
+	get negation() {
+		return this.attrs['negation'].value
+	}
+	set negation(new_in) {
+		this.attrs['negation'].value = new_in
+	}
+	get proofs() {
+		return this.attrs['proofs'].value
+	}
+	set proofs(new_in) {
+		this.attrs['proofs'].value = new_in
+	}
+
+	get key_list() {
+		// construct the keys relevant to the node, depending on its type
 		// if node.py is edited, then this needs to be edited to reflect that:
-		let keys = ['name', 'id', 'type', 'importance', 'description', 'intuitions', 'dependencies', 'examples', 'counterexamples']
-		if( this.type === 'axiom' ) pushArray(keys, ['synonyms', 'plurals', 'notes', 'negation'])
-		else if( this.type === 'definition') pushArray(keys, ['synonyms', 'plurals', 'notes', 'negation'])
+		let keys = ['name', 'importance', 'description', 'intuitions', 'notes', 'dependencies', 'examples', 'counterexamples']
+		if( this.type === 'axiom' ) pushArray(keys, ['plurals', 'negation'])
+		else if( this.type === 'definition') pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'theorem' ) pushArray(keys, ['proofs'])
 		else if( this.type === 'exercise' ) pushArray(keys, ['proofs'])
+		else die('Node has no type.')
+		return keys
+	}
 
+	fillWithNullKeys() {
+		let keys = this.key_list
 		let node = this // this changes within the anonymous function
 		_.each(keys, function(key) {
 			if( !key in node || !def(node[key]) ) {
-				if( _.contains(["synonyms", "plurals", "dependencies"], key) ) node[key] = []
-				else node[key] = null
+				// for plural things, set to []
+				if( _.contains(["synonyms", "plurals", "dependencies", "examples", "counterexamples", "intuitions", "notes", "proofs"], key) ){
+					node.attrs[key].value = []
+				}
+				// for singular things, set to null
+				else{
+					node.attrs[key].value = null
+				}
 			}
 		})
 	}
@@ -70,8 +161,7 @@ class Node {
 		_.each(this, function(value, key) { if( node.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
 			dictionary[key] = node[key]
 		}})
-		dictionary.name = node._name
-		dictionary.id = node.id
+		dictionary["_id"] = node.id // for the server-side
 		return dictionary
 	}
 
@@ -80,7 +170,6 @@ class Node {
 			+ "\n\nspecial attributes:"
 			+ "\n\nlearned: " + this.learned
 			+ "\ndisplay_name: " + this.display_name
-			+ "\nname: " + this.name
 			+ "\nid: " + this.id
 	}
 
@@ -108,28 +197,10 @@ class Node {
 		return this.display_name
 	}
 
-	// set display_name(string) { // well we may never need to set it, if we check user pref object every time
-	// 	if( !is.string(string) ) die("A node's display_name must be a string.")
-	// 	this._display_name = string
-	// }
-
-	set id(new_id) {
-		if( this.name === null || this.name === '' ) this._id = new_id
-	}
-
 	get id() {
-		if( this.name !== null && this.name !== '' ) return reduce_string(this.name)
-		else if( this._id !== null && this._id !== '' ) return this._id
-		else return ''
-	}
-
-	set name(new_name) {
-		this._name = new_name
-	}
-
-	get name() {
-		if (!def(this._name) || this._name === null) return ''
-		return this._name
+		if( this._id !== null && this._id !== '' ) return this._id
+		else if( this.name !== null && this.name !== '' ) return reduce_string(this.name)
+		else die('not sure what the id should be')
 	}
 
 	get display_name() {

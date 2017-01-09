@@ -43,27 +43,27 @@ scss:
 # Javascript
 # Sample output:
 # Line 1, E:0002: Missing space before "="
-gjslint:
-  extensions:
-  - .js
-  command: gjslint
-  arguments:
-  - "--disable"
-  - "10,5"
-  filter: "^Line\\s+(?P<line>{lines}), (?P<severity>[^: ]+):((?P<message_id>\\d+):)? (?P<message>.+)"
-  installation: "Run pip install http://closure-linter.googlecode.com/files/closure_linter-latest.tar.gz, or visit https://developers.google.com/closure/utilities/docs/linter_howto for installation instructions."
+# gjslint:
+#   extensions:
+#   - .js
+#   command: gjslint
+#   arguments:
+#   - "--disable"
+#   - "10,5"
+#   filter: "^Line\\s+(?P<line>{lines}), (?P<severity>[^: ]+):((?P<message_id>\\d+):)? (?P<message>.+)"
+#   installation: "Run pip install http://closure-linter.googlecode.com/files/closure_linter-latest.tar.gz, or visit https://developers.google.com/closure/utilities/docs/linter_howto for installation instructions."
 
 # Sample output:
 # /home/skreft/opensource/git-lint/test/e2etest/data/jshint/error.js: line 1, col 3, Use '===' to compare with ''.
-jshint:
-  extensions:
-  - .js
-  command: jshint
-  arguments:
-  - "--config"
-  - "{DEFAULT_CONFIGS}/jshint.json"
-  filter: "^{filename}: line (?P<line>{lines}), col (?P<column>\\d+), (?P<message>.+)"
-  installation: "Visit http://www.jshint.com/install/ for installation instructions."
+# jshint:
+#   extensions:
+#   - .js
+#   command: jshint
+#   arguments:
+#   - "--config"
+#   - "{DEFAULT_CONFIGS}/jshint.json"
+#   filter: "^{filename}: line (?P<line>{lines}), col (?P<column>\\d+), (?P<message>.+)"
+#   installation: "Visit http://www.jshint.com/install/ for installation instructions."
 
 # PHP
 # Sample output:

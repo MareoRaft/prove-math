@@ -1,5 +1,18 @@
-Math ppl
-=========
+People!  Connections!
+======================
+
+artists
+---------------
+Danielle Lalonde
+http://danilalo.com
+He was involved in Homebrew project
+
+That guy that you sent some money to on paypal once or twice.  He designed the illustrations for a Norwegian Pharma company or something.
+
+Natalie Fitzgerald, the KA employee.
+
+
+
 
 others
 -------
@@ -141,11 +154,6 @@ atjang@cs.rutgers.edu
 
 
 
-
-
-
-----------------------
-gyon and mike are meeting Mon. and Wed. to do complex and real analysis over the summer.
 
 
 

@@ -3,7 +3,6 @@ define( [
 	"underscore",
 	"browser-detect",
 	"check-types",
-	// "katex",
 	"mathjax",
 	"profile",
 	"marked",
@@ -13,12 +12,12 @@ define( [
 	"blinds",
 	"chosen",
 	"user",
+	"mousetrap",
 ], function(
 	$,
 	_,
 	browser,
 	is,
-	// katex,
 	mathjax,
 	undefined,
 	marked,
@@ -27,12 +26,24 @@ define( [
 	graphAnimation,
 	Blinds,
 	chosen,
-	user
+	user,
+	mousetrap
 ){
 
 
 ////////////////////////////// GLOBALS ///////////////////////////////
+// expose some things as true globals, so i can access them from the JS console!
+window.graph = graph
+
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
+let show_hide_dict = {}
+
+// the problem is that mousetrap needs this info ONLOAD.  And then how could we update?  so putting this into the user object is not immediate / needs some thought
+// keyboard shortcuts here (see https://craig.is/killing/mice for options)
+let search_keycut = 'mod+f'
+let start_subject_keycut = 'mod+a'
+let new_node_keycut = 'mod+n'
+let prefs_keycut = 'mod+,'
 
 
 /////////////////////////// INITIALIZATION ///////////////////////////
@@ -72,7 +83,7 @@ let pref_blinds = new Blinds({
 graphAnimation.init({
 	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
 	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
-	node_radius: node => 7.9 * Math.sqrt(node.importance),
+	node_radius: node => 7.9 * Math.sqrt(node.attrs.importance.value),
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom' || node.type === null,
@@ -81,34 +92,15 @@ graphAnimation.init({
 		'exercise-circle': node => node.type === 'exercise',
 	},
 	circle_events: { // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
-		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.description },
+		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.attrs.description.value },
 		mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
 	},
 })
 show('svg') // both svg and node-template are hidden on load
 show('#banner')
 
-
-// function katexRenderIfPossible(string) {
-// 	let content = string.substr(1, -1)
-// 	try{
-// 		content = katex.renderToString(content) // katex.render takes in element as second parameter
-// 	}
-// 	catch(error) {
-// 		if (error.__proto__ === katex.ParseError.prototype) {
-// 			alert('error1')
-// 			return string // the original string unchanged (for mathjax to snatch up later)
-// 		} else {
-// 			alert('error2')
-// 			return "<span class='err' style='color:red;'>"+'ERROR: '+error+"</span>"
-// 		}
-// 	}
-// 	alert(content)
-// 	return content
-// }
-
-
 let node_blinds = new Blinds({
+	working_with_nodes: true, // patch
 	window_id: 'node-template-blinds',
 	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
 	expand_array: true,
@@ -178,6 +170,7 @@ ws.onopen = function() {
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
+	window.ball = ball
 	logj('got message: ', ball)
 	if( ball.command === 'populate-oauth-urls' ) {
 		oauth_url_dict = ball.url_dict
@@ -199,6 +192,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		raw_graph.nodes = _.map(raw_graph.nodes, raw_node => new Node(raw_node))
 
 		let ready_graph = raw_graph
+		window.ready_graph = ready_graph
 		graph.addNodesAndLinks({
 			nodes: ready_graph.nodes,
 			links: ready_graph.links,
@@ -217,7 +211,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		})
 	}
 	else if( ball.command === 'display-error' ) {
-		alert('error: '+ball.message)
+		alert('Server-Side Error: '+ball.message)
 	}
 		else if(ball.command === 'search-results'){
 		alert('Search results: '+JSON.stringify(ball.results))
@@ -272,6 +266,7 @@ $(document).on('request-node', function(Event) {
 	ws.jsend({command: 'request-node', node_id: Event.message})
 })
 $(document).on('save-node', function(){
+	console.log('sending dict: '+JSON.stringify(current_node.dict()))
 	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
 })
 
@@ -279,29 +274,14 @@ $(document).on('save-node', function(){
 ////////////////////////// LOGIN/LOGOUT STUFF //////////////////////////
 var oauth_url_dict = undefined
 
-$('#x').click(function() {
-	hide('#login')
-		hide('#avatar')
-		hide('.logout-circle')
-		hide('.see-preferences')
-		show('#login-circle')
-	show('#overlay')
-})
+$('#x').click(guestLogin)
 $('#login-circle').click(function() {
 	hide('#overlay')
 	show('#login')
 })
 $('#login-button').click(login)
-$('#password, #username').keypress(function(event) { if(event.which === 13 /* Enter */) {
-	login()
-}})
 $('.image-wrapper').click(function() {
 	$('.image-wrapper').removeClass('invalid')
-})
-$('#account-type, #username, #password').keyup(function() { // keyup to INCLUDE whatever was just typed in .val()
-	if($(this).val() !== '') {
-		$(this).removeClass('invalid')
-	}
 })
 $('.logout-circle').click(function() {
 	push_pull_drawer()
@@ -323,6 +303,14 @@ function login() { // this is what runs when the user clicks "login"
 		location.href = oauth_url_dict[account_type]
 	}
 }
+function guestLogin() { // this is when user uses the temp account on hand
+	hide('#login')
+		hide('#avatar')
+		hide('.logout-circle')
+		hide('.see-preferences')
+		show('#login-circle')
+	show('#overlay')
+}
 function logout(){ // this is what runs when the user clicks "logout"
 	delete_cookie()
 	hide('#overlay')
@@ -331,10 +319,16 @@ function logout(){ // this is what runs when the user clicks "logout"
 
 
 ///////////////////////////// SEARCH BAR /////////////////////////////
-$('#search-box').keypress(function(event) { if(event.which === 13 /* Enter */) {
+$mousetrap('#search-box').bind('enter', function(){
 	ws.jsend({ command: 'search', search_term: $('#search-box').val() })
-}})
-$('#search-wrapper').click(expand_search_wrapper)
+})
+$('#search-wrapper').click(function(){
+	$('#search-box').focus()
+})
+mousetrap.bind(search_keycut, function(){
+	$('#search-box').focus()
+	return false // to prevent default
+})
 $('#search-box').focus(expand_search_wrapper)
 $(document).click(function(event) { // click anywhere BUT the #search-wrapper
 	if (!$(event.target).closest('#search-wrapper').length && !$(event.target).is('#search-wrapper')) {
@@ -376,8 +370,10 @@ function collapse_search_wrapper() {
 
 //////////////////////////// ACTION STUFF ////////////////////////////
 $('#avatar').click(push_pull_drawer)
-$('#get-starting-nodes').click(function(){
+$('#get-starting-nodes').click(promptStartingNodes)
+mousetrap.bind(start_subject_keycut, function(){
 	promptStartingNodes()
+	return false
 })
 $('#get-goal-suggestion').click(function(){
 	ws.jsend({command: 'get-goal-suggestion'})
@@ -385,10 +381,24 @@ $('#get-goal-suggestion').click(function(){
 $('#get-pregoal-suggestion').click(function(){
 	ws.jsend({command: 'get-pregoal-suggestion'})
 })
-$('#push').click(expand_search_wrapper)
+$('#push').click(function(){
+	alert('pull')
+})
 
 $('#add-node').click(function(){
 	graph.addNode(new Node())
+	// open up the node too?
+})
+mousetrap.bind(new_node_keycut, function(){
+	// if a node is open, close (and save) it
+	if( show_hide_dict['#node-template'] === 'visible' ){
+		fromBlindsToGraphAnimation()
+	}
+	new_node = new Node() // need to verify this works
+	graph.addNode(new_node) // need to verify this works
+	node_id = new_node.id // which is maybe an empty string, for all i know (check this)
+	openNode(node_id)
+	return false // this is working fine, it's just that the above line is giving an error right now
 })
 
 function push_pull_drawer() {
@@ -414,33 +424,26 @@ function push_pull_drawer() {
 
 //////////////////////////// TOGGLE STUFF ////////////////////////////
 $(document).on('node-click', function(Event){
-	current_node = graph.nodes[Event.message] // graph.nodes is a DICTIONARY of nodes
-	updateNodeTemplateLearnedState()
-	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
-		node_blinds.open({
-			object: current_node,
-		})
-		hide('svg')
-		hide('#overlay')
-		show('#node-template')
-	}, 0);
-	if( false /*mode !== 'learn'*/){
-		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
-	}
+	let node_id = Event.message
+	openNode(node_id)
 })
-$('.see-preferences').click(function() {
-	pref_blinds.open({
-		object: user.prefs,
-	})
-	hide('svg')
-	hide('#overlay')
-	show('#preference-pane')
+$('.see-preferences').click(seePreferences)
+mousetrap.bind(prefs_keycut, function(){
+	seePreferences()
+	return false
 })
 
 $('.back').click(fromBlindsToGraphAnimation)
-$(document).keyup(function(event) { if(event.which === 27 /* Esc */) { // right now this runs even if the blinds are NOT the frontmost thing, which could lead to unpredictable behavior
-	fromBlindsToGraphAnimation()
-}})
+mousetrap.bind('esc', function(){
+	// if blinds are showing, hide them
+	if( show_hide_dict['#node-template'] === 'visible' || show_hide_dict['#preference-pane'] === 'visible' ){
+		fromBlindsToGraphAnimation()
+	}
+	// else if login screen is up, hide it / guest login
+	else if( show_hide_dict['#login'] === 'visible' ){
+		guestLogin()
+	}
+})
 function fromBlindsToGraphAnimation(){
 	if( user.prefs.animate_blinds ){
 		$('.node-attribute').addClass('animated flipOutX')
@@ -460,12 +463,44 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////////// HELPERS //////////////////////////////
+function openNode(node_id) {
+	current_node = graph.nodes[node_id] // graph.nodes is a DICTIONARY of nodes
+
+	updateNodeTemplateLearnedState()
+	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
+		node_blinds.open({
+			object: current_node,
+			keys: current_node.key_list,
+		})
+		hide('svg')
+		hide('#overlay')
+		show('#node-template')
+	}, 0);
+	if( false /*mode !== 'learn'*/){
+		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
+	}
+}
+
+function $mousetrap(selector) { // create a shortcut for mousetrap selectors
+	return mousetrap(document.querySelector(selector))
+}
+
+function seePreferences() {
+	pref_blinds.open({
+		object: user.prefs,
+	})
+	hide('svg')
+	hide('#overlay')
+	show('#preference-pane')
+}
+
 function promptStartingNodes(){
 	let subjects_clone = _.clone(subjects)
 	let last_subject = subjects_clone.pop()
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
 	let default_subject = 'graph theory'
-	let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
+	// let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
+	let subject = 'test' // DEVELOPMENT CONVENIENCE
 	if( !_.contains(subjects, subject) ) subject = default_subject
 	ws.jsend({'command': 'get-starting-nodes', 'subject': subject})
 }
@@ -480,6 +515,8 @@ function hide(css_selector) {
 		// $selected.addClass('hidden')
 		$selected.css('visibility', 'hidden')
 	}
+	// record whats hidden
+	show_hide_dict[css_selector] = 'hidden'
 }
 function show(css_selector) { // this stuff fails for svg when using .addClass, so we can just leave show and hide stuff in the JS.
 	let $selected = $(css_selector)
@@ -491,6 +528,8 @@ function show(css_selector) { // this stuff fails for svg when using .addClass, 
 		// $selected.removeClass('hidden')
 		$selected.css('visibility', 'visible')
 	}
+	// record whats visible
+	show_hide_dict[css_selector] = 'visible'
 }
 
 function nodeKeyToDisplayKey(word, node) {

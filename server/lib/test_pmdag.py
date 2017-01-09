@@ -4,7 +4,7 @@ import pytest
 import networkx as nx
 
 from lib.pmdag import PMDAG
-from lib.node import create_appropriate_node
+from lib.node import create_appropriate_node, Node, Theorem
 
 ############################ HELPERS ############################
 def fill_sample_custom_nodes():
@@ -36,10 +36,11 @@ def test_n():
 	a = create_appropriate_node({"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3})
 	G = PMDAG()
 	G.add_n(a)
-	out = G.n(a)
-	assert type(out) == Node
+	out = G.n(a.id)
+	assert isinstance(out, Node)
+	assert isinstance(out, Theorem)
 	assert out.type == 'theorem'
-	assert out.description == "This is node aaaaaaaaaa"
+	assert out.attrs['description'].value == "This is node aaaaaaaaaa"
 
 def test_as_js_ready_dict():
 	pre_a = {"type":"theorem","description":"This is node aaaaaaaaaa","name":"A","importance":3}
@@ -256,8 +257,8 @@ def test_choose_destination():
 	G.add_edges_from([
 		('a', 'c'), ('a', 'd'), ('e', 'd')
 	])
-	d.importance = 10
-	c.importance = 3
+	d.attrs['importance'].value = 10
+	c.attrs['importance'].value = 3
 	# d now has a higher unselected count than c but the same depth (d is more important)
 	assert G.choose_destination(['a'], ['a']) == 'c'
 
@@ -267,8 +268,8 @@ def test_choose_destination():
 	G.add_edges_from([
 		('a', 'd'), ('a', 'c'), ('e', 'c')
 	])
-	d.importance = 10
-	c.importance = 3
+	d.attrs['importance'].value = 10
+	c.attrs['importance'].value = 3
 	# d now has a higher unselected count than c but the same depth (d is more important)
 	assert G.choose_destination(['a'], ['a']) == 'd'
 
@@ -278,8 +279,8 @@ def test_choose_destination():
 	G.add_edges_from([
 		('a', 'b'), ('b', 'c'), ('b', 'd')
 	])
-	d.importance = 10
-	c.importance = 3
+	d.attrs['importance'].value = 10
+	c.attrs['importance'].value = 3
 	# same depth and unselected count but d is more important than c
 	assert G.choose_destination(['a'], ['b']) == 'd'
 

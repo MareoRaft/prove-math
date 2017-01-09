@@ -60,7 +60,6 @@ function _addNodesHereAndJSNetworkX(nodes) {
 				//die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
 			}
 			else{
-				if(node.id == "c") console.log('added C.')
 				graph.nodes[node.id] = node
 			}
 		}

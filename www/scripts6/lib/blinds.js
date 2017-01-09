@@ -3,23 +3,23 @@ define( ["jquery", "underscore", "profile", "check-types", "graph"], function($,
 //////////////////////////// HELPERS ////////////////////////////
 $.fn.selectRange = function(start, end) {
 // see http://stackoverflow.com/questions/499126/jquery-set-cursor-position-in-text-area
-    if (typeof end === 'undefined') {
-        end = start
-    }
-    return this.each(function() {
-        if('selectionStart' in this) {
-            this.selectionStart = start
-            this.selectionEnd = end
-        } else if(this.setSelectionRange) {
-            this.setSelectionRange(start, end)
-        } else if(this.createTextRange) {
-            var range = this.createTextRange()
-            range.collapse(true)
-            range.moveEnd('character', end)
-            range.moveStart('character', start)
-            range.select()
-        }
-    })
+	if (typeof end === 'undefined') {
+		end = start
+	}
+	return this.each(function() {
+		if('selectionStart' in this) {
+			this.selectionStart = start
+			this.selectionEnd = end
+		} else if(this.setSelectionRange) {
+			this.setSelectionRange(start, end)
+		} else if(this.createTextRange) {
+			var range = this.createTextRange()
+			range.collapse(true)
+			range.moveEnd('character', end)
+			range.moveStart('character', start)
+			range.select()
+		}
+	})
 }
 
 //////////////////////////// BLINDS CLASS ////////////////////////////
@@ -57,13 +57,13 @@ class Blinds {
 				collapse_array_keys = this.collapse_array_keys,
 				append_keys = this.append_keys,
 			}) {
+		if( object === null ) die('Tried to open the blinds with no object to open (object input was null or undefined).')
+		this.object = object
 		keys = def(keys)? keys: 'own'
 		expand_array_keys = def(expand_array_keys)? expand_array_keys: []
 		collapse_array_keys = def(collapse_array_keys)? collapse_array_keys: []
 		append_keys = def(append_keys)? append_keys: []
 
-		if( object === null ) die('Tried to open the blinds with no blinds (object input was null or undefined).')
-		this.object = object
 		let iterable = (keys === 'own')? this.object: keys
 		for( let key in iterable ){
 			if( is.array(iterable) ) key = iterable[key] // for the keys array, grab the STRINGS, not the INDECIS
@@ -124,6 +124,7 @@ class Blinds {
 			}
 		}
 		// ASSUMING that when we open a blind, it is always in read mode, then we would run post_render here:
+		// TODO -- check this isn't messing things up, when we start blinds in edit mode.
 		this.post_render()
 	}
 
@@ -353,13 +354,8 @@ class Blind {
 		return classes
 	}
 
-	// get index() {
-	// 	// may not need this //
-	// }
-
 	get htmlified() {
 		return	'<div id="' + this.id + '" class="' + this.classes_htmlified + '">'
-					// + '<span class="key" data-key="'+this.key+'"' + this.index_htmlified + '>' // may not need this info at all!
 					+ '<div class="key" data-key="'+this.key+'">'
 						+ this.display_key_htmlified + '&nbsp&nbsp'
 					+ '</div>'

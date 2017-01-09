@@ -101,6 +101,9 @@ ERR = {
 # complain that DUNDERSCORES exist
 "DUNDERSCORES": (lambda x: "The pattern __ is not recommended in your string.  The pattern __ is reserved for underlining a term the very first time it is defined.  Your string is: {}".format(x)),
 
+# names can't have dunderscores
+"DUNDERSCORES_IN_NAME": (lambda x: "The pattern __ is not allowed in a name.  Your name is: {}".format(x)),
+
 # complain that there is no name
 "NO_NAME": "Your new node needs a name!  Please provide a name at the top in the name field.  For definitions, there is an alternative way to provide a name.  Simply surround the __new term__ in double underscores in the description.  For definitions, this is recommended.",
 

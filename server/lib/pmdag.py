@@ -22,6 +22,7 @@ class PMDAG (nx.DAG):
 
 	# FROM GRAPH:
 	def n(self, node_id):
+		assert isinstance(node_id, str) # or isinstance(node_id, bytes)
 		return self.node[node_id]["custom_object"]
 
 	def add_n(self, nodebunch):
@@ -30,6 +31,9 @@ class PMDAG (nx.DAG):
 		for node in nodebunch:
 			# verify that the node is legit
 			assert isinstance(node, Node)
+			# make sure the node doesn't already exist, as this would overwrite it
+			assert not self.has_node(node.id)
+			# add it
 			self.add_node(node.id, attr_dict={"custom_object": node})
 
 	def remove_n(self, nodebunch):
@@ -76,7 +80,7 @@ class PMDAG (nx.DAG):
 		NEIGHBOR_NORMALIZATION_FRACTION = 1/10 #rescales the sum of all neighbor importances to match the scale of the original node's own importance, i.e. [1,10]
 		EXPECTED_NEIGHBORS_PER_NODE = 3
 
-		norm_importances = [self.n(node).importance] #normalized importance of the nodes in each depth level
+		norm_importances = [self.n(node).attrs['importance'].value] #normalized importance of the nodes in each depth level
 		SEARCH_DEPTH_LIMIT = 4
 		while distance_from_node < SEARCH_DEPTH_LIMIT:
 			distance_from_node += 1
@@ -91,8 +95,8 @@ class PMDAG (nx.DAG):
 			if (len(successors) + len(predecessors)) == 0:	#no more neighbors, don't look any further
 				norm_importances.append(0)
 				break
-			predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).importance for n in predecessors]
-			successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).importance for n in successors]	#weighted toward descendants
+			predecessors_importances = [ANCESTORS_DESCENDANTS_WEIGHT_FRACTION * self.n(n).attrs['importance'].value for n in predecessors]
+			successors_importances = [(1-ANCESTORS_DESCENDANTS_WEIGHT_FRACTION) * self.n(n).attrs['importance'].value for n in successors]	#weighted toward descendants
 			current_depth_importances = predecessors_importances + successors_importances
 
 			current_depth_normalized_sum = sum(current_depth_importances) * NEIGHBOR_NORMALIZATION_FRACTION / (EXPECTED_NEIGHBORS_PER_NODE**distance_from_node)
@@ -107,8 +111,11 @@ class PMDAG (nx.DAG):
 
 	# @record_elapsed_time
 	def most_important(self, nbunch, number=1):
-		def most_important_sorter(node):
-			return (self.importance_weight(node), self.n(node).id)
+		def most_important_sorter(node): # the "node" here is actually a node_id!
+			# two sanity checks before returning
+			assert isinstance(node, str)
+			self.n(node)
+			return (self.importance_weight(node), node)
 		if number <= 0:
 			raise ValueError('Must give number > 0')
 		if len(nbunch) < number:
