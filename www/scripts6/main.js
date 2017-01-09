@@ -266,7 +266,7 @@ $(document).on('request-node', function(Event) {
 	ws.jsend({command: 'request-node', node_id: Event.message})
 })
 $(document).on('save-node', function(){
-	alert('sending dict: '+JSON.stringify(current_node.dict()))
+	console.log('sending dict: '+JSON.stringify(current_node.dict()))
 	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
 })
 

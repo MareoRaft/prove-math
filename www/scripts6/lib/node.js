@@ -22,13 +22,18 @@ function _showFullContextInNames(){ // not yet correctly integrated into project
 	graphAnimation.update()
 }
 
-function _removeLeadingUnderscoresFromKeys(obj) {
-	_.each(obj, function(value, key){ if( key[0] === '_' ){
-		delete obj[key]
+function deepcopy(object){
+	return $.extend({}, object)
+}
+
+function _removedLeadingUnderscoresFromKeys(obj) {
+	let new_obj = deepcopy(obj)
+	_.each(new_obj, function(value, key){ if( key[0] === '_' ){
+		delete new_obj[key]
 		key = key.substr(1)
-		obj[key] = value
+		new_obj[key] = value
 	}})
-	return obj
+	return new_obj
 }
 
 
@@ -36,10 +41,12 @@ function _removeLeadingUnderscoresFromKeys(obj) {
 class Node {
 
 	constructor(object={}) {
-		_removeLeadingUnderscoresFromKeys(object)
+		object = _removedLeadingUnderscoresFromKeys(object)
 		_.defaults(object, {
 			type: 'axiom', // not yet addressed
 		})
+		object['_id'] = object['id']
+		delete object['id']
 		_.extend(this, object)
 		// TODO: SEE IF THE DICT ID IS SET OR NOT
 		if( this.empty ){
@@ -50,7 +57,9 @@ class Node {
 	}
 
 	// convenient getters n setters so that other things can treat a node like a normal object and not know the difference
+	// idea: we might create a "reader" function which we pass into blinds.  blinds would call reader(object, key) instead of object[key], and the reader would do what the below does.  Also, a writer.  But for now, this is unneeded.
 	get name() {
+		if (!def(this.attrs['name'].value) || this.attrs['name'].value === null) return ''
 		return this.attrs['name'].value
 	}
 	set name(new_in) {
@@ -136,11 +145,11 @@ class Node {
 			if( !key in node || !def(node[key]) ) {
 				// for plural things, set to []
 				if( _.contains(["synonyms", "plurals", "dependencies", "examples", "counterexamples", "intuitions", "notes", "proofs"], key) ){
-					node[key] = []
+					node.attrs[key].value = []
 				}
 				// for singular things, set to null
 				else{
-					node[key] = null
+					node.attrs[key].value = null
 				}
 			}
 		})
@@ -152,9 +161,7 @@ class Node {
 		_.each(this, function(value, key) { if( node.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
 			dictionary[key] = node[key]
 		}})
-		dictionary.name = node._name
-		dictionary._id = node.id // for the server-side
-		alert('dic id is '+dictionary._id)
+		dictionary["_id"] = node.id // for the server-side
 		return dictionary
 	}
 
@@ -163,7 +170,6 @@ class Node {
 			+ "\n\nspecial attributes:"
 			+ "\n\nlearned: " + this.learned
 			+ "\ndisplay_name: " + this.display_name
-			+ "\nname: " + this.name
 			+ "\nid: " + this.id
 	}
 
@@ -191,28 +197,10 @@ class Node {
 		return this.display_name
 	}
 
-	// set display_name(string) { // well we may never need to set it, if we check user pref object every time
-	// 	if( !is.string(string) ) die("A node's display_name must be a string.")
-	// 	this._display_name = string
-	// }
-
-	set id(new_id) {
-		if( this.name === null || this.name === '' ) this._id = new_id
-	}
-
 	get id() {
 		if( this._id !== null && this._id !== '' ) return this._id
 		else if( this.name !== null && this.name !== '' ) return reduce_string(this.name)
 		else die('not sure what the id should be')
-	}
-
-	set name(new_name) {
-		this.attrs.name.value = new_name
-	}
-
-	get name() {
-		if (!def(this.attrs.name.value) || this.attrs.name.value === null) return ''
-		return this.attrs.name.value
 	}
 
 	get display_name() {
