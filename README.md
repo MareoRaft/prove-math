@@ -32,11 +32,10 @@ Programming to make this work
 
 Credits
 ------------
-  - Matthew Lancellotti - founder
-  - Theodore Siu - Python programmer
+  - Matthew Lancellotti - contributor
+  - Theodore Siu - Python contributor
+  - Greg Mattson - Python NetworkX contributor
   - Tim Naumovitz - The combinatorics material is based on his lectures
-  - Greg Mattson - Python NetworkX programmer
-  - Sid Patel - HTML/CSS programmer
 
 Copyright 
 --------------
