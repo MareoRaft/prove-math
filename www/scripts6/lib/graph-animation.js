@@ -8,7 +8,7 @@ function init(input) {
 		links: [],
 		node_id: function(node){ if( !def(node) ) die('got undefined node..'); return node.id },
 		node_label: '',
-		node_radius: node => node.r,
+		node_radius: node => 5,
 		circle_class_conditions: {},
 		circle_events: {},
 		width: () => $(window).width(),
@@ -96,8 +96,8 @@ function endpointLessRadius(link, attr_name) { // subtract radius away from line
 	let y2 = link.target.y
 
 	let distance = cartesianDistance([x1, y1], [x2, y2])
-	let radius1 = gA.node_radius(link.source)
-	let radius2 = gA.node_radius(link.target)
+	let radius1 = _node_radius(link.source)
+	let radius2 = _node_radius(link.target)
 
 	if( attr_name === 'x1' ) return x1 + (x2-x1) * radius1/distance
 	if( attr_name === 'y1' ) return y1 + (y2-y1) * radius1/distance
@@ -130,7 +130,7 @@ function update() { // this function gets called AGAIN when new nodes come in
 			.call(gA.drag)
 		node_group.append('circle')
 			.classed('node-circle', true)
-			.attr('r', gA.node_radius) // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
+			.attr('r', _node_radius) // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
 			.on('mousedown', mousedown)
 			.on('mouseup', mouseup)
 			.on(gA.circle_events)
@@ -143,6 +143,15 @@ function update() { // this function gets called AGAIN when new nodes come in
 		.text(gA.node_label)
 	gA.svg.selectAll('circle')
 		.classed(gA.circle_class_conditions)
+}
+
+function _node_radius(node) {
+	// this runs the inputted node_radius and makes sure the output is sane
+	let r = gA.node_radius(node)
+	if (!is.number(r)) die('configured node_radius function gave non number radius.')
+	if (r < 1) die('configured node_radius function gave a very small radius.')
+	if (r < 0) die('configured node_radius function gave a *negative* radius.')
+	return r
 }
 
 function mousedown(node) {

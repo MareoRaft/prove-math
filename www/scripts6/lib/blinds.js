@@ -47,7 +47,7 @@ class Blinds {
 		this.$window = $('#' + this.window_id)
 		delete this.window_id
 
-		this.blind_id_counter = 0
+		this.blind_id_counter = 0 // this would fail in the future if we allow more than one Blinds to be used simultaneously.  We might need to add an ID for the specific instance of blinds.
 	}
 
 	open({

@@ -36,7 +36,6 @@ window.die = function(string) {
 	throw(string)
 }
 window.def = function(input) {
-	// die("This function should return TRUE for empty arrays [].  verify that it does.  then see why blorg populated synonyms in all our nodes!.")
 	return typeof(input) !== 'undefined'
 }
 

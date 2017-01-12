@@ -106,3 +106,6 @@ When a user upvotes, the disk can animate, increasing in radius and greening in 
 After a user has upvoted, the upvote arrow remains highlighted in green.  (and red for downvote).  woohoo!
 
 79. A SAVE and EDIT button on the top right for the WHOLE node.  This should make node editing a BREEZE.  It would populate EVERY attr with a blank string (if it was empty), and put EVERYTHING in edit mode.  Then the user can just tab through.  ALSO, i want to support keyboard shortcuts for EDIT and SAVE, and NEW NODE, so we can go direct.
+
+80.  both of the following can be helpful: 1. A markdown/html or html to LaTeX translation for internal content.  That way, content can be outputted on the site (as always) AND as a pdf (new feature) and as latex (the 'source' for grad students).  2. A latex subset to markdown/html translator.  That way, grad student written material can be translated to the DB.
+

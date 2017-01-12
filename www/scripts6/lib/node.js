@@ -1,6 +1,15 @@
 define(["underscore", "check-types", "profile", "user"], function(_, is, undefined, user) {
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
+let LOCAL_ID_PREFIX = 'Local-Node-ID-'
+
+let type_to_default_importance = {
+	'definition': 4,
+	'axiom': 4,
+	'theorem': 6,
+	'exercise': 1,
+}
+
 function _removeParenthesizedThing(string){ // not yet correctly integrated into project
 	return string.replace(/\([^\)]*\)/, '');
 }
@@ -26,35 +35,68 @@ function deepcopy(object){
 	return $.extend({}, object)
 }
 
-function _removedLeadingUnderscoresFromKeys(obj) {
+function _removedLeadingUnderscoresFromKeys(obj, exclusions) {
 	let new_obj = deepcopy(obj)
-	_.each(new_obj, function(value, key){ if( key[0] === '_' ){
-		delete new_obj[key]
-		key = key.substr(1)
-		new_obj[key] = value
-	}})
+	_.each(new_obj, function(value, key){
+		if( def(exclusions) && _.contains(exclusions, key) ){
+			// pass
+		}
+		else{
+			if( key[0] === '_' ){
+				delete new_obj[key]
+				key = key.substr(1)
+				new_obj[key] = value
+			}
+		}
+	})
 	return new_obj
 }
 
 
 ///////////////////////////////////// MAIN ////////////////////////////////////
+let local_node_id_counter = 0
 class Node {
 
 	constructor(object={}) {
-		object = _removedLeadingUnderscoresFromKeys(object)
-		_.defaults(object, {
-			type: 'axiom', // not yet addressed
-		})
-		object['_id'] = object['id']
-		delete object['id']
+		object = _removedLeadingUnderscoresFromKeys(object, ['_id']) // but exclude '_id' key
+
+		// Set some reasonable things for new nodes
+
+		// detect if its "new" or not (although i'm actually not using this info now)
+		let is_new = _.isEmpty(object)? true: false
+
 		_.extend(this, object)
-		// TODO: SEE IF THE DICT ID IS SET OR NOT
+
+		// set default type if necessary
+		_.defaults(this, {
+			type: 'definition', // in Abramenko's 7751 class, defs are a little more common than thms.
+		})
+
+		// fill blank or undefined attr values with empty things
+		this.fillWithNullAttrs()
+
+		// set default importance if necessary (depending on type)
+		if( this.attrs['importance'].value === null ){
+			this.attrs['importance'].value = type_to_default_importance[this.type]
+		}
+
+		this['_id'] = this.choose_id(this)
+
 		if( this.empty ){
 			// then it's an "axiom"...
+			alert('emptyy. havent used (or payed attention to) this feature in a while...')
 			this.name = object.id // and remember the ID is generated from this too
 		}
-		this.fillWithNullKeys()
 	}
+
+	choose_id(object) {
+		if ('_id' in object) {
+			return object['_id']
+		}
+		let id = LOCAL_ID_PREFIX + (local_node_id_counter++).toString()
+		return id
+	}
+
 
 	// convenient getters n setters so that other things can treat a node like a normal object and not know the difference
 	// idea: we might create a "reader" function which we pass into blinds.  blinds would call reader(object, key) instead of object[key], and the reader would do what the below does.  Also, a writer.  But for now, this is unneeded.
@@ -138,11 +180,13 @@ class Node {
 		return keys
 	}
 
-	fillWithNullKeys() {
+	fillWithNullAttrs() {
+		if (!('attrs' in this)) this.attrs = {}
 		let keys = this.key_list
 		let node = this // this changes within the anonymous function
 		_.each(keys, function(key) {
-			if( !key in node || !def(node[key]) ) {
+			if (!(key in node.attrs)) node.attrs[key] = {}
+			if (!('value' in node.attrs[key]) || !def(node.attrs[key])) {
 				// for plural things, set to []
 				if( _.contains(["synonyms", "plurals", "dependencies", "examples", "counterexamples", "intuitions", "notes", "proofs"], key) ){
 					node.attrs[key].value = []
@@ -182,7 +226,6 @@ class Node {
 		else if( bool === false ) user.unlearnNode(this)
 		else die('You can only set node.learned to a boolean value.')
 	}
-
 	get learned() {
 		return user.hasLearned(this)
 	}
@@ -191,16 +234,33 @@ class Node {
 		if( !is.string(new_name) ) die('gA_display_name must be a string.')
 		this._gA_display_name = new_name
 	}
-
 	get gA_display_name() {
 		if( def(this._gA_display_name ) ) return this._gA_display_name
 		return this.display_name
 	}
 
 	get id() {
-		if( this._id !== null && this._id !== '' ) return this._id
-		else if( this.name !== null && this.name !== '' ) return reduce_string(this.name)
+		return this._id
+	}
+	update_id() {
+		// if old id is satisfactory, do nothing
+		if (!starts_with(this._id, LOCAL_ID_PREFIX)){
+			return
+		}
+		// if old id is local, look for a new id
+		else{
+			if (this.name !== '') {
+				this._set_id(reduce_string(this.name))
+			}
+
 		else die('not sure what the id should be')
+
+
+		}
+	}
+	_set_id(new_id) { // this should only be accessed by update_id
+		let old_id = this.id
+		this.graph._changeNodeId(old_id, new_id)
 	}
 
 	get display_name() {

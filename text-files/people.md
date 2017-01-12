@@ -26,6 +26,15 @@ http://www.math.ucla.edu/people/visiting/tova
 
 students
 ----------
+Arsalan Udin
+https://www.facebook.com/mohammad.arsalan.3348?fref=hovercard
+a guy i knew at Rutgers, but didn't know he was into comp sci...
+he made hubintern.com
+
+
+
+
+
 Elliot
 glaze240@gmail.com
 maybe a junior, undergrad

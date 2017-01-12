@@ -83,7 +83,10 @@ let pref_blinds = new Blinds({
 graphAnimation.init({
 	// window_id: 'graph-containter', // had to use 'body' // after animation actually works, put init inside $(document).ready() to guarantee that container was loaded first.  if that DOES NOT WORK, then respond to http://stackoverflow.com/questions/13865606/append-svg-canvas-to-element-other-than-body-using-d3 with that issue
 	node_label: node => { if(node.type !== 'exercise') return node.gA_display_name }, // exercise names should NOT appear
-	node_radius: node => 7.9 * Math.sqrt(node.attrs.importance.value),
+	node_radius: function(node){
+		let val = (node.attrs.importance.value === null)? 5: node.attrs.importance.value
+		return 7.9 * Math.sqrt(val)
+	},
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom' || node.type === null,

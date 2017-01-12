@@ -55,6 +55,7 @@ function _addNodesHereAndJSNetworkX(nodes) {
 			_removeNodes([node])
 		}
 		else{
+
 			if( node.id in graph.nodes ){
 				console.log('redundant node')
 				//die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
@@ -117,6 +118,14 @@ function removeLinks({ node_id, dependency_ids }) {
 	graphAnimation.removeLinks(links)
 }
 
+function _changeNodeId(old_id, new_id) {
+	if ( ! _.contains(this.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
+	if ( _.contains(this.nodeIdsList(), new_id) ) die('That id is already being used for another node!')
+	this.nodes[new_id] = this.nodes[old_id]
+	delete this.nodes[old_id]
+	// but the problem is that the old id is still being used elsewhere in the program.  We could force the user to give the node a name so that we update the ID BEFORE setting any dependencies.
+}
+
 return {
 	init: init,
 	addNode: addNode,
@@ -127,6 +136,7 @@ return {
 	nodes: graph.nodes,
 	nodeIdsList: nodeIdsList,
 	nodeNamesList: nodeNamesList,
+	_changeNodeId: _changeNodeId,
 }
 
 }) // end define
