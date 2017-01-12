@@ -39,14 +39,6 @@ window.is = is
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 let show_hide_dict = {}
 
-// the problem is that mousetrap needs this info ONLOAD.  And then how could we update?  so putting this into the user object is not immediate / needs some thought
-// keyboard shortcuts here (see https://craig.is/killing/mice for options)
-let search_keycut = 'mod+f'
-let start_subject_keycut = 'mod+a'
-let new_node_keycut = 'mod+n'
-let prefs_keycut = 'mod+,'
-
-
 /////////////////////////// INITIALIZATION ///////////////////////////
 let subjects = JSON.parse($('body').attr('data-subjects'))
 
@@ -353,7 +345,7 @@ $mousetrap('#search-box').bind('enter', function(){
 $('#search-wrapper').click(function(){
 	$('#search-box').focus()
 })
-mousetrap.bind(search_keycut, function(){
+mousetrap.bind(user.prefs.search_keycut, function(){
 	$('#search-box').focus()
 	return false // to prevent default
 })
@@ -399,7 +391,7 @@ function collapse_search_wrapper() {
 //////////////////////////// ACTION STUFF ////////////////////////////
 $('#avatar').click(push_pull_drawer)
 $('#get-starting-nodes').click(promptStartingNodes)
-mousetrap.bind(start_subject_keycut, function(){
+mousetrap.bind(user.prefs.start_subject_keycut, function(){
 	promptStartingNodes()
 	return false
 })
@@ -413,20 +405,14 @@ $('#push').click(function(){
 	alert('pull')
 })
 
-$('#add-node').click(function(){
-	graph.addNode(new Node())
-	// open up the node too?
-})
-mousetrap.bind(new_node_keycut, function(){
+$('#add-node').click(addNode)
+mousetrap.bind(user.prefs.new_node_keycut, function(){
 	// if a node is open, close (and save) it
 	if( show_hide_dict['#node-template'] === 'visible' ){
 		fromBlindsToGraphAnimation()
 	}
-	new_node = new Node() // need to verify this works
-	graph.addNode(new_node) // need to verify this works
-	node_id = new_node.id // which is maybe an empty string, for all i know (check this)
-	openNode(node_id)
-	return false // this is working fine, it's just that the above line is giving an error right now
+	addNode()
+	return false
 })
 
 function push_pull_drawer() {
@@ -456,7 +442,7 @@ $(document).on('node-click', function(Event){
 	openNode(node_id)
 })
 $('.see-preferences').click(seePreferences)
-mousetrap.bind(prefs_keycut, function(){
+mousetrap.bind(user.prefs.prefs_keycut, function(){
 	seePreferences()
 	return false
 })
@@ -491,6 +477,15 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////////// HELPERS //////////////////////////////
+function addNode() {
+	let new_node = new Node()
+	graph.addNode(new_node)
+	if( user.prefs.open_new_nodes ){
+		let node_id = new_node.id
+		openNode(node_id)
+	}
+}
+
 function openNode(node_id) {
 	current_node = graph.nodes[node_id] // graph.nodes is a DICTIONARY of nodes
 

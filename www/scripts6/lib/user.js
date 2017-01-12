@@ -14,6 +14,12 @@ let user = {
 		show_description_on_hover: false, // can be true or false
 		// view_node_trigger: 'dblclick', // can be dblclick or click // obsolete
 		animate_blinds: false,
+		open_new_nodes: true,
+		// Keyboard shortcuts. See https://craig.is/killing/mice for options. Currently, we do NOT have functionality to update the mousetrap.bind ings if the user changes their preference without reloading. (That's a TODO).
+		search_keycut: 'alt+f',
+		start_subject_keycut: 'alt+a',
+		new_node_keycut: 'alt+n',
+		prefs_keycut: 'alt+,',
 	},
 	learned_node_ids: [],
 }
