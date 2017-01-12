@@ -96,7 +96,7 @@ show('#banner')
 let node_blinds = new Blinds({
 	working_with_nodes: true, // patch
 	window_id: 'node-template-blinds',
-	keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
+	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // if you change this, you may also need to edit the Node.keylist method.
 	expand_array: true,
 	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
 	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],

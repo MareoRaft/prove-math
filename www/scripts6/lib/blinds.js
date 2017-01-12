@@ -214,6 +214,14 @@ class Blinds {
 		if(blind.state === 'write') this._startWriteMode(blind, $value)
 	}
 
+	_toggleBlinds() {
+		// TODO: somehow obtain an array of all blind objects
+		let blinds = undefined
+		for (let blind in blinds) {
+			_toggleBlind(blind)
+		}
+	}
+
 	_appendValueOrCollapsedBlind(blind, expand_array) {
 		let $this = $('#'+blind.id)
 		let key = undefined

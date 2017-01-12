@@ -9,6 +9,7 @@ let user = {
 		id: null,
 	},
 	prefs: {
+		display_number_instead_of_name: true, // can true or false.
 		display_name_capitalization: null, // can be null, "sentence", or "title"
 		underline_definitions: false, // can be true or false // do you want definitions to be underlined in the DAG view?
 		show_description_on_hover: false, // can be true or false

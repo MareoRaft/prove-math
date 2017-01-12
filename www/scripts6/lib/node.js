@@ -131,6 +131,12 @@ class Node {
 	set description(new_in) {
 		this.attrs['description'].value = new_in
 	}
+	get number() {
+		return this.attrs['number'].value
+	}
+	set number(new_in) {
+		this.attrs['number'].value = new_in
+	}
 	get intuitions() {
 		return this.attrs['intuitions'].value
 	}
@@ -171,7 +177,7 @@ class Node {
 	get key_list() {
 		// construct the keys relevant to the node, depending on its type
 		// if node.py is edited, then this needs to be edited to reflect that:
-		let keys = ['name', 'importance', 'description', 'intuitions', 'notes', 'dependencies', 'examples', 'counterexamples']
+		let keys = ['type', 'number', 'name', 'importance', 'description', 'intuitions', 'notes', 'dependencies', 'examples', 'counterexamples']
 		if( this.type === 'axiom' ) pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'definition') pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'theorem' ) pushArray(keys, ['proofs'])
@@ -244,6 +250,9 @@ class Node {
 	}
 
 	get display_name() {
+		if( user.prefs.display_number_instead_of_name && is.nonEmptyString(this.number) ){
+			return this.number
+		}
 		switch( user.prefs.display_name_capitalization ){
 			case null:
 				return this.name

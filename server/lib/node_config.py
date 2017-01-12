@@ -83,6 +83,10 @@ EXERCISE_MAX_IMPORTANCE = 3
 
 
 NODE_ATTR_SETTINGS = {
+	'number': {
+		'keywords': ['number', 'num'],
+		'cclass': str,
+	},
 	'name': {
 		'keywords': ['name'],
 		'cclass': str,
