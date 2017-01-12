@@ -242,26 +242,6 @@ class Node {
 	get id() {
 		return this._id
 	}
-	update_id() {
-		// if old id is satisfactory, do nothing
-		if (!starts_with(this._id, LOCAL_ID_PREFIX)){
-			return
-		}
-		// if old id is local, look for a new id
-		else{
-			if (this.name !== '') {
-				this._set_id(reduce_string(this.name))
-			}
-
-		else die('not sure what the id should be')
-
-
-		}
-	}
-	_set_id(new_id) { // this should only be accessed by update_id
-		let old_id = this.id
-		this.graph._changeNodeId(old_id, new_id)
-	}
 
 	get display_name() {
 		switch( user.prefs.display_name_capitalization ){

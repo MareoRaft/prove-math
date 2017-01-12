@@ -218,15 +218,18 @@ class SocketHandler (WebSocketHandler):
 					raise Exception('Your score is {}.  Your strikes are: {}'.format(sc.total_score(), sc.as_dict()))
 
 				log.debug('Now time to put node into the DB...\n')
-				# take a look at the dependencies now
 
-				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []
+				# take a look at the dependencies now
 				log.debug('node.id: {}'.format(node_obj.id))
 				previous_node_dict = our_mongo.find_one({"_id": node_obj.id})
-				log.debug('prev_node_dict: {}'.format(previous_node_dict))
-				previous_node = create_appropriate_node(previous_node_dict)
-				log.debug('prev_node: {}'.format(previous_node))
-				previous_dependency_ids = previous_node.dependency_ids
+				if previous_node_dict is None: # it must be a brand new node!
+					previous_dependency_ids = []
+				else:
+					log.debug('prev_node_dict: {}'.format(previous_node_dict))
+					previous_node = create_appropriate_node(previous_node_dict)
+					log.debug('prev_node: {}'.format(previous_node))
+					previous_dependency_ids = previous_node.dependency_ids
+
 				log.debug('prev deps are: '+str(previous_dependency_ids))
 				current_dependency_ids = node_obj.dependency_ids
 				log.debug('curr deps are: '+str(current_dependency_ids))
@@ -408,6 +411,8 @@ def update_our_MG():
 	print('Edge array loaded with length: {}'.format(len(our_MG.edges())))
 
 if __name__ == "__main__":
+	print('\nSERVER RESTART.')
+
 	# 0. create a global mongo object for later use (for upserts in the future)
 	our_mongo = Mongo("provemath", "nodes")
 

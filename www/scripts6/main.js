@@ -34,6 +34,7 @@ define( [
 ////////////////////////////// GLOBALS ///////////////////////////////
 // expose some things as true globals, so i can access them from the JS console!
 window.graph = graph
+window.is = is
 
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 let show_hide_dict = {}
@@ -74,9 +75,7 @@ let pref_blinds = new Blinds({
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
 	},
-	read_mode_triggers: [
-		user.setPref,
-	],
+	read_mode_action: user.setPref,
 })
 
 
@@ -122,9 +121,35 @@ let node_blinds = new Blinds({
 		// the following should be equivalent to // mathjax.Hub.Queue(['Typeset', mathjax.Hub])
 		mathjax.Hub.Typeset() // this can't be passed in without the parenthesis
 	},
-	read_mode_triggers: [
-		{ type: 'save-node' }, // request-node will happen on the server side
-	],
+	read_mode_action: function(value, key, node){
+		if (node._id.startsWith('Local-Node-ID-')) { // if it was a temp ID, update the id
+			if (node.name !== '') {
+				let old_id = node.id
+				let new_id = reduce_string(node.name)
+
+				// update id in graph
+				if ( ! _.contains(graph.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
+				if ( _.contains(graph.nodeIdsList(), new_id) ) die('That id is already being used for another node!')
+				// update id key in graph
+				graph.nodes[new_id] = graph.nodes[old_id]
+				delete graph.nodes[old_id]
+
+				// update id in the node
+				node._id = new_id
+
+				// update id in the graph animation (but see below comment)
+				graphAnimation.update()
+
+				// but the problem is that the old id is still being used elsewhere in the program (like the graph animation).  We could force the user to give the node a name so that we update the ID BEFORE setting any dependencies.
+				// if any nodes depend on this node, we have a problem
+			}
+			else{
+				die('not sure what the id should be')
+			}
+		}
+
+		$.event.trigger({ type: 'save-node' }) // request-node will happen on the server side
+	},
 	transform_key: nodeKeyToDisplayKey,
 	blind_class_conditions: {
 		'node-attribute': true,

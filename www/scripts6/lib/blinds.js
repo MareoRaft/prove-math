@@ -39,7 +39,7 @@ class Blinds {
 			expand_array: false,
 			open_empty_blind: true,
 			blind_class_conditions: {},
-			read_mode_events: [],
+			read_mode_action: function(){},
 			edit_save_icon: true,
 		})
 		_.extend(this, options)
@@ -266,10 +266,12 @@ class Blinds {
 		$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit.svg')
 		this.post_render()
 
-		_.each(this.read_mode_triggers, function(e){
-			if( is.function(e) ) e(blind.key, blind.value)
-			else $.event.trigger(e)
-		})
+		if( is.function(this.read_mode_action) ){
+			this.read_mode_action(blind.value, blind.key, blind.parent_object)
+		}
+		else{
+			die('A read mode action must be a function.')
+		}
 	}
 
 	_startWriteMode(blind, $value) {
