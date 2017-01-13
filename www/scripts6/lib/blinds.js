@@ -185,8 +185,9 @@ class Blinds {
 	}
 
 	_enableRenderToggling(blind) {
-		let blinds = this // because 'this' won't work inside the following function...
-		$('#'+blind.id+' '+'.edit-save').click(function(){ blinds._toggleBlind(blind) })
+		$('#'+blind.id+' '+'.edit-save').click(function(){
+			this._toggleBlind(blind)
+		}.bind(this))
 	}
 
 	_enableAppending(blind, expand_array, is_one_time_only) {
@@ -195,13 +196,13 @@ class Blinds {
 				let new_blind = this._appendValueOrCollapsedBlind(blind, expand_array)
 				this._toggleBlind(new_blind)
 				$('#'+blind.id).remove()
-			})
+			}.bind(this))
 		}
 		else{
 			$('#'+blind.id+' '+'.append').click(function(){
 				let new_blind = this._appendValueOrCollapsedBlind(blind, expand_array)
 				this._toggleBlind(new_blind)
-			})
+			}.bind(this))
 		}
 	}
 

@@ -182,36 +182,43 @@ class Node {
 		else if( this.type === 'definition') pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'theorem' ) pushArray(keys, ['proofs'])
 		else if( this.type === 'exercise' ) pushArray(keys, ['proofs'])
-		else die('Node has no type.')
+		else die('Node has bad type: '+this.type)
 		return keys
 	}
 
 	fillWithNullAttrs() {
 		if (!('attrs' in this)) this.attrs = {}
 		let keys = this.key_list
-		let node = this // this changes within the anonymous function
-		_.each(keys, function(key) {
-			if (!(key in node.attrs)) node.attrs[key] = {}
-			if (!('value' in node.attrs[key]) || !def(node.attrs[key])) {
-				// for plural things, set to []
-				if( _.contains(["synonyms", "plurals", "dependencies", "examples", "counterexamples", "intuitions", "notes", "proofs"], key) ){
-					node.attrs[key].value = []
-				}
-				// for singular things, set to null
-				else{
-					node.attrs[key].value = null
-				}
+		_.each(keys, function(key){
+			if(key !== 'type') {
+				this.fillWithNullAttr(key)
 			}
-		})
+		}.bind(this))
+	}
+
+	fillWithNullAttr(attr_name) {
+		let key = attr_name
+		if (!(key in this.attrs)) this.attrs[key] = {}
+		if (!('value' in this.attrs[key]) || !def(this.attrs[key])) {
+			// for a plural attr, set to []
+			if( _.contains(["synonyms", "plurals", "dependencies", "examples", "counterexamples", "intuitions", "notes", "proofs"], key) ){
+				this[key] = []
+			}
+			// for a singular attr, set to null
+			else{
+				this[key] = null
+			}
+		}
 	}
 
 	dict() {
 		let dictionary = {}
-		let node = this
-		_.each(this, function(value, key) { if( node.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
-			dictionary[key] = node[key]
-		}})
-		dictionary["_id"] = node.id // for the server-side
+		_.each(this, function(value, key) {
+			if( node.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
+				dictionary[key] = this[key]
+			}
+		}.bind(this))
+		dictionary["_id"] = this.id // for the server-side
 		return dictionary
 	}
 
