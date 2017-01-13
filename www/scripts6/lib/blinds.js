@@ -1,4 +1,4 @@
-define( ["jquery", "underscore", "profile", "check-types", "graph"], function($, _, undefined, is, graph){
+define( ["jquery", "underscore", "profile", "check-types", "graph", "mousetrap", "user"], function($, _, undefined, is, graph, mousetrap, user){
 
 //////////////////////////// HELPERS ////////////////////////////
 $.fn.selectRange = function(start, end) {
@@ -188,6 +188,10 @@ class Blinds {
 		$('#'+blind.id+' '+'.edit-save').click(function(){
 			this._toggleBlind(blind)
 		}.bind(this))
+		// the below only works for the saving direction, since the div can't really be in focus otherwise
+		$mousetrap('#'+blind.id+' '+'.value').bind(user.prefs.save_blind_keycut, function(){
+			this._toggleBlind(blind)
+		}.bind(this))
 	}
 
 	_enableAppending(blind, expand_array, is_one_time_only) {
@@ -256,7 +260,7 @@ class Blinds {
 		})
 	}
 
-	_startReadMode(blind, $value) {
+	_startReadMode(blind, $value) { // save
 		if( blind.mode === 'chosen' ){
 			let selected_elements = []
 			// grab the options that have the selected property (jQuery)
@@ -283,7 +287,7 @@ class Blinds {
 		}
 	}
 
-	_startWriteMode(blind, $value) {
+	_startWriteMode(blind, $value) { // edit
 		$value.html(blind.value_htmlified)
 		if( blind.mode === 'chosen' ){
 			$('#'+blind.id+' > .value > .tags').chosen({ // this seems to work, as opposed to '#'+blind.id+'.tags'
@@ -370,7 +374,7 @@ class Blind {
 					+ '<div class="key" data-key="'+this.key+'">'
 						+ this.display_key_htmlified + '&nbsp&nbsp'
 					+ '</div>'
-					+ '<div class="value" ' + this.contenteditable_htmlified + '>'
+					+ '<div class="value mousetrap" ' + this.contenteditable_htmlified + '>'
 						+ this.value_htmlified
 					+ '</div>'
 					+ this.icon_htmlified

@@ -141,6 +141,12 @@ let node_blinds = new Blinds({
 		}
 
 		$.event.trigger({ type: 'save-node' }) // request-node will happen on the server side
+
+		// update the node (close and reopen) if internal things have changed
+		if( key === 'type' ){
+			node_blinds.close()
+			openNode(node.id)
+		}
 	},
 	transform_key: nodeKeyToDisplayKey,
 	blind_class_conditions: {
@@ -487,8 +493,7 @@ function addNode() {
 }
 
 function openNode(node_id) {
-	current_node = graph.nodes[node_id] // graph.nodes is a DICTIONARY of nodes
-
+	current_node = graph.nodes[node_id]
 	updateNodeTemplateLearnedState()
 	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
 		node_blinds.open({
@@ -502,10 +507,6 @@ function openNode(node_id) {
 	if( false /*mode !== 'learn'*/){
 		ws.jsend({ command: "re-center-graph", central_node_id: current_node.id })
 	}
-}
-
-function $mousetrap(selector) { // create a shortcut for mousetrap selectors
-	return mousetrap(document.querySelector(selector))
 }
 
 function seePreferences() {

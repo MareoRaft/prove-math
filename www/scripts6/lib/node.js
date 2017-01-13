@@ -65,12 +65,15 @@ class Node {
 		// detect if its "new" or not (although i'm actually not using this info now)
 		let is_new = _.isEmpty(object)? true: false
 
-		_.extend(this, object)
 
 		// set default type if necessary
-		_.defaults(this, {
-			type: 'definition', // in Abramenko's 7751 class, defs are a little more common than thms.
-		})
+		if( !('type' in object) || !is.assigned(object['type']) ){
+			object['type'] = user.prefs.new_node_default_type
+		}
+		object['_type'] = object['type']
+		delete object['type']
+
+		_.extend(this, object)
 
 		// fill blank or undefined attr values with empty things
 		this.fillWithNullAttrs()
@@ -84,7 +87,7 @@ class Node {
 
 		if( this.empty ){
 			// then it's an "axiom"...
-			alert('emptyy. havent used (or payed attention to) this feature in a while...')
+			alert('emptyy. havent used (or payed attention to) this feature in a while.  If you dont encounter this by January 18, just delete all .empty stuff.')
 			this.name = object.id // and remember the ID is generated from this too
 		}
 	}
@@ -99,6 +102,26 @@ class Node {
 
 
 	// convenient getters n setters so that other things can treat a node like a normal object and not know the difference
+	get type() {
+		return this._type
+	}
+	set type(new_in) {
+		if( _.contains(['definition', 'theorem', 'axiom', 'exercise'], new_in) ){
+			let old_keys = new Set(this.key_list)
+			this._type = new_in
+			let new_keys = new Set(this.key_list)
+			let obsolete_keys = old_keys.difference(new_keys)
+			for( let key of obsolete_keys ){
+				delete this.attrs[key]
+			}
+			this.fillWithNullAttrs()
+			// updating the blinds attrs is part of read_mode_action in main.js
+		}
+		else{
+			alert('Bad node type.  The node type will not be changed.')
+		}
+	}
+
 	// idea: we might create a "reader" function which we pass into blinds.  blinds would call reader(object, key) instead of object[key], and the reader would do what the below does.  Also, a writer.  But for now, this is unneeded.
 	get name() {
 		if (!def(this.attrs['name'].value) || this.attrs['name'].value === null) return ''
@@ -214,7 +237,7 @@ class Node {
 	dict() {
 		let dictionary = {}
 		_.each(this, function(value, key) {
-			if( node.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
+			if( this.hasOwnProperty(key) && !_.contains(["index", "weight", "x", "y", "px", "py", "fixed", "_name", "_id"], key) ) {
 				dictionary[key] = this[key]
 			}
 		}.bind(this))

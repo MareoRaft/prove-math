@@ -9,6 +9,8 @@ let user = {
 		id: null,
 	},
 	prefs: {
+		new_node_default_type: 'definition', // can be 'definition', 'theorem', 'axiom', or 'exercise'
+		// visuals
 		display_number_instead_of_name: true, // can true or false.
 		display_name_capitalization: null, // can be null, "sentence", or "title"
 		underline_definitions: false, // can be true or false // do you want definitions to be underlined in the DAG view?
@@ -21,6 +23,7 @@ let user = {
 		start_subject_keycut: 'alt+a',
 		new_node_keycut: 'alt+n',
 		prefs_keycut: 'alt+,',
+		save_blind_keycut: 'alt+s',
 	},
 	learned_node_ids: [],
 }
