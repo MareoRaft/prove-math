@@ -41,6 +41,7 @@ class Blinds {
 			blind_class_conditions: {},
 			read_mode_action: function(){},
 			edit_save_icon: true,
+			blinds: [], // stores created blinds, so we can fetch them later
 		})
 		_.extend(this, options)
 
@@ -48,6 +49,12 @@ class Blinds {
 		delete this.window_id
 
 		this.blind_id_counter = 0 // this would fail in the future if we allow more than one Blinds to be used simultaneously.  We might need to add an ID for the specific instance of blinds.
+
+		// enable toggleBlinds keycut
+		mousetrap.bind(user.prefs.edit_save_all_blinds, function(){
+			this._toggleBlinds()
+			return false
+		}.bind(this))
 	}
 
 	open({
@@ -131,6 +138,7 @@ class Blinds {
 	close() {
 		// save strings of any opened things (or just startReadMode on them)
 		this.$window.empty() // attached triggers and things are automatically removed by jQuery (see http://stackoverflow.com/questions/34189052/if-i-bind-a-javascript-event-to-an-element-then-delete-the-element-what-happen)
+		this.blinds = []
 		this.object = undefined
 	}
 
@@ -138,7 +146,7 @@ class Blinds {
 		if( expand_array && is.array(this.object[key]) ) {
 			let array = this.object[key]
 			// if( is.emptyArray(array) && this.open_empty_blind ) array.push('') // empty arrays get a single empty string element
-			for( var index in array ){
+			for( let index in array ){
 				this._openBlind({
 					parent_object: this.object[key],
 					key: index,
@@ -220,10 +228,12 @@ class Blinds {
 	}
 
 	_toggleBlinds() {
-		// TODO: somehow obtain an array of all blind objects
-		let blinds = undefined
-		for (let blind in blinds) {
-			_toggleBlind(blind)
+		// we go through the blinds backwards, so that the cursor will end up focused on the FIRST blind.
+		for (let i = this.blinds.length - 1; i >= 0; i--) {
+			let blind = this.blinds[i]
+			if( blind.mode !== 'append' ){
+				this._toggleBlind(blind)
+			}
 		}
 	}
 
@@ -330,6 +340,8 @@ class Blind {
 		_.extendOwn(this, input)
 		// verify that a blinds object was attached
 		if( !('blinds' in this) ) die('No Blinds object attached to this little Blind object :)')
+		// add self to list of blinds in the Blinds object
+		this.blinds.blinds.push(this)
 	}
 
 	get id() {

@@ -23,7 +23,8 @@ let user = {
 		start_subject_keycut: 'alt+a',
 		new_node_keycut: 'alt+n',
 		prefs_keycut: 'alt+,',
-		save_blind_keycut: 'alt+s',
+		save_blind_keycut: 'alt+p',
+		edit_save_all_blinds: 'alt+s',
 	},
 	learned_node_ids: [],
 }

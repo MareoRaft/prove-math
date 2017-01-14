@@ -101,7 +101,7 @@ let node_blinds = new Blinds({
 	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
 	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
 	render: function(string) {
-		if (typeof string !== "string") die('The inputted variable "string" is NOT a string!  It has type ' + typeof string + '!')
+		if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
 		// run katex
 		// string = string.replace(/\$[^\$]*\$/g, katexRenderIfPossible)
 		// return string
