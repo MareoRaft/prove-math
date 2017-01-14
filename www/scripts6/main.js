@@ -94,12 +94,12 @@ show('svg') // both svg and node-template are hidden on load
 show('#banner')
 
 let node_blinds = new Blinds({
-	working_with_nodes: true, // patch
+	open_blind_default_state: user.prefs.open_node_default_state,
 	window_id: 'node-template-blinds',
-	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // if you change this, you may also need to edit the Node.keylist method.
+	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // if you change this, you may also need to edit the Node.key_list method.
 	expand_array: true,
 	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
-	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'],
+	append_keys: [], //['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // but remember, arrays ALWAYS have an append key
 	render: function(string) {
 		if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
 		// run katex

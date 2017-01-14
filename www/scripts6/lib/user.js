@@ -10,11 +10,13 @@ let user = {
 	},
 	prefs: {
 		new_node_default_type: 'definition', // can be 'definition', 'theorem', 'axiom', or 'exercise'
+		open_node_default_state: 'write', // can be 'read' or 'write'
 		// visuals
 		display_number_instead_of_name: true, // can true or false.
 		display_name_capitalization: null, // can be null, "sentence", or "title"
 		underline_definitions: false, // can be true or false // do you want definitions to be underlined in the DAG view?
 		show_description_on_hover: false, // can be true or false
+		give_arrays_a_blank_value: true, // can be true or false // not in use // meant for adding '' to an array // check out line 149 of blinds.js
 		// view_node_trigger: 'dblclick', // can be dblclick or click // obsolete
 		animate_blinds: false,
 		open_new_nodes: true,

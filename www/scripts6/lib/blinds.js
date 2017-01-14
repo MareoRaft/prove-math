@@ -42,6 +42,7 @@ class Blinds {
 			read_mode_action: function(){},
 			edit_save_icon: true,
 			blinds: [], // stores created blinds, so we can fetch them later
+			open_blind_default_state: 'read',
 		})
 		_.extend(this, options)
 
@@ -166,6 +167,7 @@ class Blinds {
 					key: key,
 					display_key: display_key,
 					mode: (this.chosen && is.array(parent_object[key]) )? 'chosen': 'standard',
+					state: this.open_blind_default_state,
 				})
 				this._displayBlind(blind, $before)
 				this._enableRenderToggling(blind)
@@ -189,7 +191,7 @@ class Blinds {
 
 	_displayBlind(blind, $before) {
 		if( def($before) ) $before.before(blind.htmlified)
-		else this.$window.append(blind.htmlified) // we could grab the jQuery $sel here by using last() (or possibly the return value of append()).  Then we would not need '#'+blind.id to tie the trigger.  But we *may* need blind.id for something else.  That is, resuing blind objects if we wanted to do that for some reason.
+		else this.$window.append(blind.htmlified) // we could grab the jQuery $sel here by using last() (or possibly the return value of append()).  Then we would not need '#'+blind.id to tie the trigger.  But we *may* need blind.id for something else.  That is, reusing blind objects if we wanted to do that for some reason.
 	}
 
 	_enableRenderToggling(blind) {
@@ -299,6 +301,7 @@ class Blinds {
 
 	_startWriteMode(blind, $value) { // edit
 		$value.html(blind.value_htmlified)
+		// TODO: MAYBE THIS CHOSEN STUFF SHOULD BELONG SOMEWHERE ELSE.  If a blind is created in WRITE mode to BEGIN with, this doesn't run.  Perhaps it's an organizational mistake?  Otherwise, we can cheat by having even 'write' mode blinds start in read mode, but then run _startWriteMode immediately.  not advised.
 		if( blind.mode === 'chosen' ){
 			$('#'+blind.id+' > .value > .tags').chosen({ // this seems to work, as opposed to '#'+blind.id+'.tags'
 				inherit_select_classes: true,
