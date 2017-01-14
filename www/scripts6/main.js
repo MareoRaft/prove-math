@@ -99,7 +99,7 @@ let node_blinds = new Blinds({
 	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // if you change this, you may also need to edit the Node.key_list method.
 	expand_array: true,
 	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
-	append_keys: [], //['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // but remember, arrays ALWAYS have an append key
+	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // but remember, expand_arrays always have an append key (this excludes 'dependencies')
 	render: function(string) {
 		if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
 		// run katex

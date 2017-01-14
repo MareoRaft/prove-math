@@ -200,12 +200,18 @@ class Node {
 	get key_list() {
 		// construct the keys relevant to the node, depending on its type
 		// if node.py is edited, then this needs to be edited to reflect that:
-		let keys = ['type', 'number', 'name', 'importance', 'description', 'intuitions', 'notes', 'dependencies', 'examples', 'counterexamples']
+		let keys = ['type', 'number', 'name', 'description', 'intuitions', 'notes', 'examples', 'counterexamples']
+
+		// add keys specific to certain node types
 		if( this.type === 'axiom' ) pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'definition') pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'theorem' ) pushArray(keys, ['proofs'])
 		else if( this.type === 'exercise' ) pushArray(keys, ['proofs'])
 		else die('Node has bad type: '+this.type)
+
+		// add remaining keys (not added up top because we want them to be in a specific order)
+		pushArray(keys, ['importance', 'dependencies'])
+
 		return keys
 	}
 
@@ -225,11 +231,11 @@ class Node {
 		if (!('value' in this.attrs[key]) || !def(this.attrs[key])) {
 			// for a plural attr, set to []
 			if( _.contains(["synonyms", "plurals", "dependencies", "examples", "counterexamples", "intuitions", "notes", "proofs"], key) ){
-				this[key] = []
+				this.attrs[key].value = []
 			}
 			// for a singular attr, set to null
 			else{
-				this[key] = null
+				this.attrs[key].value = null
 			}
 		}
 	}
