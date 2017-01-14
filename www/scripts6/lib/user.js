@@ -10,7 +10,8 @@ let user = {
 	},
 	prefs: {
 		new_node_default_type: 'definition', // can be 'definition', 'theorem', 'axiom', or 'exercise'
-		open_node_default_state: 'write', // can be 'read' or 'write'
+		// 'write' state DOESNT FULLY WORK YET
+		open_node_default_state: 'read', // can be 'read' or 'write'
 		// visuals
 		display_number_instead_of_name: true, // can true or false.
 		display_name_capitalization: null, // can be null, "sentence", or "title"
