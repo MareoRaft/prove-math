@@ -31,7 +31,7 @@ define( [
 ){
 
 
-////////////////////////////// GLOBALS ///////////////////////////////
+///////////////////////// GLOBALS //////////////////////////
 // expose some things as true globals, so i can access them from the JS console!
 window.graph = graph
 window.is = is
@@ -39,7 +39,7 @@ window.is = is
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 let show_hide_dict = {}
 
-/////////////////////////// INITIALIZATION ///////////////////////////
+////////////////////// INITIALIZATION //////////////////////
 let subjects = JSON.parse($('body').attr('data-subjects'))
 
 let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'))
@@ -114,7 +114,8 @@ let node_blinds = new Blinds({
 		mathjax.Hub.Typeset() // this can't be passed in without the parenthesis
 	},
 	read_mode_action: function(value, key, node){
-		if (node._id.startsWith('Local-Node-ID-')) { // if it was a temp ID, update the id
+		if (!is.assigned(node.id)) die('No node id.')
+		if (node.id.startsWith('Local-Node-ID-')) { // if it was a temp ID, update the id
 			if (node.name !== '') {
 				let old_id = node.id
 				let new_id = reduce_string(node.name)
@@ -193,6 +194,9 @@ ws.jsend = function(raw_object) {
 }
 ws.onopen = function() {
 	ws.jsend({command: 'first-steps'})
+	//TEMP
+	guestLogin()
+	promptStartingNodes()
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -229,6 +233,9 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// 	let node = raw_graph.nodes[0]
 		// 	display_search_results([node])
 		// }
+
+		// TEMP FOR COLORS
+		openNode('a')
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -297,7 +304,7 @@ $(document).on('save-node', function(){
 })
 
 
-////////////////////////// LOGIN/LOGOUT STUFF //////////////////////////
+//////////////////// LOGIN/LOGOUT STUFF ////////////////////
 var oauth_url_dict = undefined
 
 $('#x').click(guestLogin)
@@ -344,7 +351,7 @@ function logout(){ // this is what runs when the user clicks "logout"
 }
 
 
-///////////////////////////// SEARCH BAR /////////////////////////////
+//////////////////////// SEARCH BAR ////////////////////////
 $mousetrap('#search-box').bind('enter', function(){
 	ws.jsend({ command: 'search', search_term: $('#search-box').val() })
 })
@@ -394,7 +401,7 @@ function collapse_search_wrapper() {
 }
 
 
-//////////////////////////// ACTION STUFF ////////////////////////////
+/////////////////////// ACTION STUFF ///////////////////////
 $('#avatar').click(push_pull_drawer)
 $('#get-starting-nodes').click(promptStartingNodes)
 mousetrap.bind(user.prefs.start_subject_keycut, function(){
@@ -442,7 +449,7 @@ function push_pull_drawer() {
 	else die('unexpected drawer position')
 }
 
-//////////////////////////// TOGGLE STUFF ////////////////////////////
+/////////////////////// TOGGLE STUFF ///////////////////////
 $(document).on('node-click', function(Event){
 	let node_id = Event.message
 	openNode(node_id)
@@ -482,7 +489,7 @@ function toggleToGraphAnimation() {
 	pref_blinds.close()
 }
 
-////////////////////////////// HELPERS //////////////////////////////
+////////////////////////// HELPERS /////////////////////////
 function addNode() {
 	let new_node = new Node()
 	graph.addNode(new_node)
@@ -524,7 +531,7 @@ function promptStartingNodes(){
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
 	let default_subject = 'graph theory'
 	// let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
-	let subject = 'test' // DEVELOPMENT CONVENIENCE
+	let subject = 'test' // DEVELOPMENT CONVENIENCE, TEMP
 	if( !_.contains(subjects, subject) ) subject = default_subject
 	ws.jsend({'command': 'get-starting-nodes', 'subject': subject})
 }
@@ -577,5 +584,6 @@ function loginInit() {
 function delete_cookie() {
 	document.cookie = 'mycookie=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
 }
+
 
 }) // end define

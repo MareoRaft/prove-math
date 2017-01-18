@@ -1,0 +1,73 @@
+/* Baby color scheme */
+
+/* This is a compilation of the new color_variable_names for existing scss files. As of now, their values are the same as those in the existing scss file. Once all of these values have been mapped, and the new color_variable_names approved, we will be able to change the values of the color_variable_names to match our color palette, which would give us control over all colors on the provemath site from this one file! */
+
+
+/* Color Palette */
+$black: #633d11; $darkgrey: #333; $grey: #555; $lightgrey: #777; $transgrey: rgba( 80, 80, 80, 0.5 );
+$lightestgrey: #bbb; $darkwhite: #999; $white: #eee;
+
+$darkbrown: #6a3500;
+
+$eggshell: #f9e2c7; $yellow: #fd0; $gold: #e6d460; $blue: #0af;
+$rose: #f02b4c; $pink: #f12772; $red: $rose;
+$brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $mediumgreen;
+
+
+/* From _animate.scss */
+
+	/* Data does not exist */
+
+
+/* From _blinds.scss */
+
+	$mixin_white: white;
+
+	$blind_nth-child4n1_background-color: #fffdd0;
+	$blind_nth-child4n1_color: $darkbrown;
+
+	$blind_nth-child4n2_background-color: #fff5ee;
+	$blind_nth-child4n2_color: $darkbrown;
+
+	$blind_nth-child4n3_background-color: #fff8dc;
+	$blind_nth-child4n3_color: $darkbrown;
+
+	$blind_nth-child4n4_background-color: #fdf5e6;
+	$blind_nth-child4n4_color: $darkbrown;
+
+	$tags_chosen-results_color: #444;
+
+	$tags_chosen-results_background-color: purple;
+
+		$disabled-result: #ccc;
+
+		$highlighted_background-color: pink;
+
+		$highlighted_color: #fff;
+
+		$no-results_color: #777;
+
+		$no-results_background: red;
+
+	$tags_chosen-drop_background-color: yellow;
+
+	$tags_chosen-drop_result-selected_color: $grey;
+
+
+
+/* From _chosen.scss */
+
+	/* This is problematic since it's a third party file*/
+
+
+/* From _chosen_normalize.scss */
+
+	$chosen-container-multi_chosen-choices_background-color: transparent; // makes the BIG box see-through
+
+	$chosen-container-multi_chosen-choices_background-image: none;
+
+	$chosen-container-multi_chosen-drop_result-selected: red;
+
+	$chosen-container_chosen-results: green;
+
+

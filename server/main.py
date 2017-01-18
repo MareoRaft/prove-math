@@ -240,9 +240,10 @@ class SocketHandler (WebSocketHandler):
 				# VERIFY THAT THE GRAPH WITH THESE NEW ARCS IS STILL ACYCLIC:
 				H = our_MG.copy()
 				for new_dependency_id in new_dependency_ids:
-					print('from '+str(our_MG.n(new_dependency_id))+' to '+str(node_obj))
+					print('from {} to {}'.format(our_MG.n(new_dependency_id), node_obj))
 					H.add_edge(new_dependency_id, node_obj.id)
-					H.validate(node_obj.attrs['name'].value + ' cannot depend on ' + our_MG.n(new_dependency_id).attrs['name'].value + ' because ' + our_MG.n(new_dependency_id).attrs['name'].value + ' already depends on ' + node_obj.attrs['name'].value + '!')
+					# print node_obj.attrs['name'].value + ' cannot depend on ' + our_MG.n(new_dependency_id).attrs['name'].value + ' because ' + our_MG.n(new_dependency_id).attrs['name'].value + ' already depends on ' + node_obj.attrs['name'].value + '!'
+					H.validate()
 
 				our_mongo.upsert({ "_id": node_obj.id }, node_obj.as_dict())
 				update_our_MG()

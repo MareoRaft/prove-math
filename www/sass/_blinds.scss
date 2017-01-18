@@ -70,25 +70,30 @@
 }
 
 @mixin white {
-	color: white;
+	color: $mixin_white;
 	img {
 		filter: invert(1);
 	}
 }
 .blind {
 	&:nth-child(4n+1) {
-		background-color: #7A6;
-		@include white;
+		background-color: $blind_nth-child4n1_background-color;
+		color: $blind_nth-child4n1_color;
+		// how can we make the image colored too?
+		// @include white;
 	}
 	&:nth-child(4n+2) {
-		background-color: #198;
-		@include white;
+		background-color: $blind_nth-child4n2_background-color;
+		color: $blind_nth-child4n2_color;
+		// @include white;
 	}
 	&:nth-child(4n+3) {
-		background-color: white;
+		background-color: $blind_nth-child4n3_background-color;
+		color: $blind_nth-child4n3_color;
 	}
 	&:nth-child(4n+4) {
-		background-color: #0DD;
+		background-color: $blind_nth-child4n4_background-color;
+		color: $blind_nth-child4n4_color;
 	}
 }
 // OVERRIDE for user prefs:
@@ -122,31 +127,31 @@
 //////////////////////////////////////// WITHIN A BLIND ////////////////////////////////////////
 // chosen-related blinds stuff...
 .tags .chosen-results {
-	color: #444;
-	background-color: transparent;
+	color: $tags_chosen-results_color;
+	background-color: $tags_chosen-results_background-color;
 	li {
 		&.disabled-result {
-			color: #ccc;
+			color: $disabled-result;
 		}
 		&.highlighted {
 			// background-image: none;
-			background-color: pink;
-			// color: #fff;
+			background-color: $highlighted_background-color;
+			// color: $highlighted_color;
 		}
 		&.no-results {
-			color: #777;
-			background: red;
+			color: $no-results_color;
+			background: $no-results_background;
 		}
 	}
 }
 
 .tags .chosen-drop {
-	background-color: transparent;
+	background-color: $tags_chosen-drop_background-color;
 	// THE PROBLEM WITH THE DROPDOWN GETTING CUTOFF IS THAT THE BLINDS CONTAINER IS SET TO OVERFLOW: SCROLL.  but changing that may be a bad idea because that was good for other reasons...
 }
 
 .tags .chosen-drop .result-selected { // already selected stuff
-	color: $grey;
+	color: $tags_chosen-drop_result-selected_color;
 }
 
 .empty {

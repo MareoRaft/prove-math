@@ -22,12 +22,12 @@ let user = {
 		animate_blinds: false,
 		open_new_nodes: true,
 		// Keyboard shortcuts. See https://craig.is/killing/mice for options. Currently, we do NOT have functionality to update the mousetrap.bind ings if the user changes their preference without reloading. (That's a TODO).
-		search_keycut: 'alt+f',
-		start_subject_keycut: 'alt+a',
-		new_node_keycut: 'alt+n',
-		prefs_keycut: 'alt+,',
-		save_blind_keycut: 'alt+p',
-		edit_save_all_blinds: 'alt+s',
+		search_keycut: 'ctrl+f',
+		start_subject_keycut: 'ctrl+a',
+		new_node_keycut: 'ctrl+n',
+		prefs_keycut: 'ctrl+,',
+		save_blind_keycut: 'alt+s',
+		edit_save_all_blinds: 'ctrl+s',
 	},
 	learned_node_ids: [],
 }
