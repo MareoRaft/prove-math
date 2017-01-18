@@ -151,8 +151,10 @@ PRETHEOREM_ATTR_SETTINGS = deepcopy(NODE_ATTR_SETTINGS)
 PRETHEOREM_ATTR_SETTINGS.update({
 	'proofs': {
 		'keywords': ['proofs', 'proof'],
-		'cclass': 'list of dict',
-		'setter': proofs_setter,
+		# 'cclass': 'list of dict', for the semester, proofs will just be a list of content
+		'cclass': 'list of content str',
+		# 'setter': proofs_setter, for the semester, proofs will just be a list of content
+		'setter': list_of_content_setter,
 	},
 })
 PRETHEOREM_ATTR_SETTINGS['description']['setter'] = pretheorem_description_setter

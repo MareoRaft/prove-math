@@ -113,7 +113,8 @@ class Attr:
 			new_in = [new_in]
 
 		# Check type
-		assert is_cclass(new_in, self.cclass)
+		if not is_cclass(new_in, self.cclass):
+			raise TypeError('Input value {} is not of class {}.  The Attr is {}.'.format(new_in, self.cclass, self))
 
 		# Clean any whitespace in strings
 		if self.cclass in ('list of content str', 'list of str'):
@@ -130,10 +131,16 @@ class Attr:
 
 	def as_dict(self):
 		dic = {
-			"name": self.name,
-			"value": self.value,
-			"score_card": self.score_card.as_dict(),
+			'name': self.name,
+			'score_card': self.score_card.as_dict(),
 		}
+
+		# only if there is a value, show it too
+		if hasattr(self, '_value'):
+			dic['value'] = self.value
+
 		return dic
 
+	def __str__(self):
+		return 'Attr{}'.format(self.as_dict())
 

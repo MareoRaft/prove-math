@@ -113,12 +113,26 @@ let node_blinds = new Blinds({
 		// the following should be equivalent to // mathjax.Hub.Queue(['Typeset', mathjax.Hub])
 		mathjax.Hub.Typeset() // this can't be passed in without the parenthesis
 	},
-	read_mode_action: function(value, key, node){
+	read_mode_action: function(value, key, parent_object){
+		// retrieve the node
+		let node = undefined
+		if (is.instance(parent_object, Node)) {
+			node = parent_object
+		}
+		else { // parent_object is usually an array in this case
+			node = current_node
+		}
+
 		if (!is.assigned(node.id)) die('No node id.')
 		if (node.id.startsWith('Local-Node-ID-')) { // if it was a temp ID, update the id
-			if (node.name !== '') {
+			let potential_id = reduce_string(node.name)
+			if (is.emptyString(potential_id)) {
+				// pass.  do not update id.  do not save node.
+				console.log('Cannot create a real ID yet.')
+			}
+			else {
 				let old_id = node.id
-				let new_id = reduce_string(node.name)
+				let new_id = potential_id
 
 				// update id in graph
 				if ( ! _.contains(graph.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
@@ -136,14 +150,14 @@ let node_blinds = new Blinds({
 				// but the problem is that the old id is still being used elsewhere in the program (like the graph animation).  We could force the user to give the node a name so that we update the ID BEFORE setting any dependencies.
 				// if any nodes depend on this node, we have a problem
 			}
-			else{
-				die('not sure what the id should be')
-			}
 		}
 
-		$.event.trigger({ type: 'save-node' }) // request-node will happen on the server side
+		// if the ID is not local, save it to the server (request-node will happen on the server side)
+		if (!node.id.startsWith('Local-Node-ID-')) {
+			$.event.trigger({ type: 'save-node' })
+		}
 
-		// update the node (close and reopen) if internal things have changed
+		// update the node (close and reopen node-template) if internal things have changed
 		if( key === 'type' ){
 			node_blinds.close()
 			openNode(node.id)
@@ -196,7 +210,8 @@ ws.onopen = function() {
 	ws.jsend({command: 'first-steps'})
 	//TEMP
 	guestLogin()
-	promptStartingNodes()
+	// promptStartingNodes()
+	addNode()
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -235,7 +250,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// }
 
 		// TEMP FOR COLORS
-		openNode('a')
+		// openNode('a')
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({

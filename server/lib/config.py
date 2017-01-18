@@ -118,7 +118,7 @@ ERR = {
 
 "LENGTH_TOO_SHORT": "The length of your content is too short (add more later).",
 
-"NOT_CAPITALIZED": "Capitzlize first sentence.",
+"NOT_CAPITALIZED": "Please capitalize the first letter of your first sentence.",
 }
 
 

@@ -231,11 +231,21 @@ class Node {
 		if (!('value' in this.attrs[key]) || !def(this.attrs[key])) {
 			// for a plural attr, set to []
 			if( _.contains(["synonyms", "plurals", "dependencies", "examples", "counterexamples", "intuitions", "notes", "proofs"], key) ){
-				this.attrs[key].value = []
+				if (key === 'dependencies') {
+					this.attrs[key].value = [] // patch for dependencies for below convenience
+				}
+				else {
+					this.attrs[key].value = [''] // this is a convenience // was []
+				}
 			}
 			// for a singular attr, set to null
 			else{
-				this.attrs[key].value = null
+				if (key === 'importance') {
+					this.attrs[key].value = 4 // patch for importance for below convenience
+				}
+				else {
+					this.attrs[key].value = '' // this is a convenience // was null
+				}
 			}
 		}
 	}
