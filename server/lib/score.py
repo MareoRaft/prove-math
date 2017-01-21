@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-FAILING_SCORE = 70 # convenience for semester.
+FAILING_SCORE = 9999 # convenience for semester.
 
 SEVERITY_WORD_TO_NUMBER = {
 	"low": 5,

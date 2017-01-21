@@ -27,6 +27,15 @@ function nodeNamesList() {
 	return node_names
 }
 
+function nodeNamesAndIdsList() {
+	let list = []
+	_.each(graph.nodes, function(node){
+		let string = node.name + ' (NODE-ID is ' + node.id + ')'
+		list.push(string)
+	})
+	return list
+}
+
 function addNode(node) {
 	addNodesAndLinks({
 		nodes: [node],
@@ -128,7 +137,7 @@ return {
 	removeLinks: removeLinks,
 	nodes: graph.nodes,
 	nodeIdsList: nodeIdsList,
-	nodeNamesList: nodeNamesList,
+	nodeNamesAndIdsList: nodeNamesAndIdsList,
 }
 
 }) // end define

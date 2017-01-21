@@ -176,7 +176,17 @@ class Node {
 		return this.attrs['dependencies'].value
 	}
 	set dependencies(new_in) {
-		this.attrs['dependencies'].value = new_in
+		var re = /.*\(NODE-ID is (.*)\)$/
+		let clean_in = _.map(new_in, function(el) {
+			if( re.test(el) ){ // if the string matches the regex
+				let id = re.exec(el)[1]
+				return id
+			}
+			else {
+				return reduce_string(el)
+			}
+		})
+		this.attrs['dependencies'].value = clean_in
 	}
 	get plurals() {
 		return this.attrs['plurals'].value

@@ -22,6 +22,29 @@ $.fn.selectRange = function(start, end) {
 	})
 }
 
+function handlePaste(jEvent) {
+// strip HTML tags from pasted content.  See http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser#6804718
+
+	// get non-jQuery event
+	let event = jEvent.originalEvent
+
+	// Stop data actually being pasted into div
+	event.stopPropagation()
+	event.preventDefault()
+
+	// Get pasted data via clipboard API
+	let clipboardData = event.clipboardData || window.clipboardData
+	let pastedData = clipboardData.getData('Text')
+
+	// Clean the pasteddata
+	// here I opted to use the jQuery method.  See http://stackoverflow.com/questions/5002111/javascript-how-to-strip-html-tags-from-string#5002618
+	let strippedData = $('<body>'+pastedData+'</body>').text()
+
+	// Actually paste the data
+	window.document.execCommand('insertText', false, strippedData)
+}
+
+
 //////////////////////////// BLINDS CLASS ////////////////////////////
 class Blinds {
 
@@ -202,6 +225,10 @@ class Blinds {
 		$mousetrap('#'+blind.id+' '+'.value').bind(user.prefs.save_blind_keycut, function(){
 			this._toggleBlind(blind)
 		}.bind(this))
+
+		// also enable html stripping on paste operation
+		// document.getElementById('editableDiv').addEventListener('paste', handlePaste);
+		$('#'+blind.id+' '+'.value').on('paste', handlePaste)
 	}
 
 	_enableAppending(blind, expand_array, is_one_time_only) {
@@ -481,7 +508,7 @@ class BlindValue {
 
 ////////////////////////////// HELPERS //////////////////////////////
 function as_select_html(array_selected) {
-	let client_node_names = graph.nodeNamesList()
+	let client_node_names = graph.nodeNamesAndIdsList()
 
 	let string = '<select class="tags" multiple>'
 	_.each(client_node_names, function(el){

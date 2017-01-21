@@ -17,6 +17,7 @@ starting_nodes = {
 	'calculus': MULTIVARIABLE_CALCULUS,
 	'calc': MULTIVARIABLE_CALCULUS,
 	'differential topology': ['n-sphere', 'tangent bundle'],
+	'a': ['leftrmodule', 'leftrmoduleconsequences'],
 }
 
 DEF_USER_PREFS = {

@@ -13,7 +13,7 @@ let user = {
 		// 'write' state DOESNT FULLY WORK YET
 		open_node_default_state: 'read', // can be 'read' or 'write'
 		// visuals
-		display_number_instead_of_name: true, // can true or false.
+		display_number_instead_of_name: false, // can true or false.
 		display_name_capitalization: null, // can be null, "sentence", or "title"
 		underline_definitions: false, // can be true or false // do you want definitions to be underlined in the DAG view?
 		show_description_on_hover: false, // can be true or false

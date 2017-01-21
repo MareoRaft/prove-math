@@ -211,7 +211,7 @@ ws.onopen = function() {
 	//TEMP
 	guestLogin()
 	// promptStartingNodes()
-	addNode()
+	// addNode()
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -250,7 +250,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// }
 
 		// TEMP FOR COLORS
-		// openNode('a')
+		// openNode('leftrmoduleconsequences')
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -546,7 +546,7 @@ function promptStartingNodes(){
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
 	let default_subject = 'graph theory'
 	// let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
-	let subject = 'test' // DEVELOPMENT CONVENIENCE, TEMP
+	let subject = 'a' // DEVELOPMENT CONVENIENCE, TEMP
 	if( !_.contains(subjects, subject) ) subject = default_subject
 	ws.jsend({'command': 'get-starting-nodes', 'subject': subject})
 }

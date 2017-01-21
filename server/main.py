@@ -419,6 +419,7 @@ if __name__ == "__main__":
 
 	# 1 and 2
 	update_our_MG()
+	print('ids are: {}'.format(our_MG.nodes()))
 
 	# 3. launch!
 	make_app_and_start_listening()

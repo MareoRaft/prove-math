@@ -42,6 +42,7 @@
 	}
 	.value {
 		display: inline-flex;
+		flex-direction: column;
 		// vertical-align: top;
 		width: 85%;
 	}
