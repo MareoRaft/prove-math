@@ -30,7 +30,7 @@ function nodeNamesList() {
 function nodeNamesAndIdsList() {
 	let list = []
 	_.each(graph.nodes, function(node){
-		let string = node.name + ' (NODE-ID is ' + node.id + ')'
+		let string = node.nameAndId()
 		list.push(string)
 	})
 	return list

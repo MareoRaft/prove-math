@@ -96,10 +96,10 @@ show('#banner')
 let node_blinds = new Blinds({
 	open_blind_default_state: user.prefs.open_node_default_state,
 	window_id: 'node-template-blinds',
-	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // if you change this, you may also need to edit the Node.key_list method.
+	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependency_name_and_ids'], // if you change this, you may also need to edit the Node.key_list method.
 	expand_array: true,
-	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
-	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // but remember, expand_arrays always have an append key (this excludes 'dependencies')
+	collapse_array_keys: ['dependency_name_and_ids', 'synonyms', 'plurals'],
+	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependency_name_and_ids'], // but remember, expand_arrays always have an append key (this excludes dependencies)
 	render: function(string) {
 		if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
 		// run katex
@@ -209,7 +209,7 @@ ws.jsend = function(raw_object) {
 ws.onopen = function() {
 	ws.jsend({command: 'first-steps'})
 	//TEMP
-	guestLogin()
+	// guestLogin()
 	// promptStartingNodes()
 	// addNode()
 }
@@ -250,7 +250,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// }
 
 		// TEMP FOR COLORS
-		// openNode('leftrmoduleconsequences')
+		openNode('consequencesofannihilator')
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -580,6 +580,7 @@ function show(css_selector) { // this stuff fails for svg when using .addClass, 
 
 function nodeKeyToDisplayKey(word, node) {
 	if( word === 'description' ) return node.type
+	if( word === 'dependency_name_and_ids' ) return 'dependencies'
 	if( word === 'dependencies' || word === 'synonyms' || word === 'plurals' ) return word // we want these to stay plural
 	if( word[word.length - 1] === 's' ) return word.substr(0, word.length - 1)
 	return word // word may have ALREADY been singular

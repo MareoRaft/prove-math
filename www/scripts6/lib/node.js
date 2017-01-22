@@ -1,4 +1,4 @@
-define(["underscore", "check-types", "profile", "user"], function(_, is, undefined, user) {
+define(["underscore", "check-types", "profile", "user", "graph"], function(_, is, undefined, user, graph) {
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
 let LOCAL_ID_PREFIX = 'Local-Node-ID-'
@@ -100,6 +100,9 @@ class Node {
 		return id
 	}
 
+	nameAndId() {
+		return this.name + ' (NODE-ID is ' + this.id + ')'
+	}
 
 	// convenient getters n setters so that other things can treat a node like a normal object and not know the difference
 	get type() {
@@ -172,11 +175,20 @@ class Node {
 	set notes(new_in) {
 		this.attrs['notes'].value = new_in
 	}
-	get dependencies() {
+	get dependencies() { // the dependency IDs
 		return this.attrs['dependencies'].value
 	}
 	set dependencies(new_in) {
-		var re = /.*\(NODE-ID is (.*)\)$/
+		this.attrs['dependencies'].value = new_in
+	}
+	get dependency_name_and_ids() {
+		return _.map(this.dependencies, function(dependency_id){
+			let dependency_node = graph.nodes[dependency_id] // i think it's BAD for the Node module to depend on the graph module
+			return dependency_node.nameAndId()
+		})
+	}
+	set dependency_name_and_ids(new_in) {
+		let re = /.*\(NODE-ID is (.*)\)$/
 		let clean_in = _.map(new_in, function(el) {
 			if( re.test(el) ){ // if the string matches the regex
 				let id = re.exec(el)[1]
@@ -186,7 +198,7 @@ class Node {
 				return reduce_string(el)
 			}
 		})
-		this.attrs['dependencies'].value = clean_in
+		this.dependencies = clean_in
 	}
 	get plurals() {
 		return this.attrs['plurals'].value
@@ -220,7 +232,7 @@ class Node {
 		else die('Node has bad type: '+this.type)
 
 		// add remaining keys (not added up top because we want them to be in a specific order)
-		pushArray(keys, ['importance', 'dependencies'])
+		pushArray(keys, ['importance', 'dependency_name_and_ids'])
 
 		return keys
 	}
