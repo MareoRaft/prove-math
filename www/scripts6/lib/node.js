@@ -5,8 +5,10 @@ let LOCAL_ID_PREFIX = 'Local-Node-ID-'
 
 let type_to_default_importance = {
 	'definition': 4,
+	'equivdefs': 5,
 	'axiom': 4,
 	'theorem': 6,
+	'example': 2,
 	'exercise': 1,
 }
 
@@ -109,7 +111,7 @@ class Node {
 		return this._type
 	}
 	set type(new_in) {
-		if( _.contains(['definition', 'equivdefs', 'theorem', 'axiom', 'exercise'], new_in) ){
+		if( _.contains(['definition', 'equivdefs', 'axiom', 'theorem', 'example', 'exercise'], new_in) ){
 			let old_keys = new Set(this.key_list())
 			this._type = new_in
 			let new_keys = new Set(this.key_list())
@@ -229,6 +231,7 @@ class Node {
 		else if( this.type === 'definition') pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'equivdefs') pushArray(keys, ['plurals', 'negation', 'proofs'])
 		else if( this.type === 'theorem' ) pushArray(keys, ['proofs'])
+		else if( this.type === 'example' ) pushArray(keys, ['proofs'])
 		else if( this.type === 'exercise' ) pushArray(keys, ['proofs'])
 		else die('Node has bad type: '+this.type)
 

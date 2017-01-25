@@ -11,7 +11,7 @@ from lib.vote import Votable
 from lib.config import ERR
 from lib.score import ScoreCard
 from lib.attr import Attr
-from lib.node_config import NODE_MIN_IMPORTANCE, NODE_MAX_IMPORTANCE, THEOREM_MIN_IMPORTANCE, EXERCISE_MAX_IMPORTANCE, NODE_ATTR_SETTINGS, DEFINITION_ATTR_SETTINGS, AXIOM_ATTR_SETTINGS, PRETHEOREM_ATTR_SETTINGS, THEOREM_ATTR_SETTINGS, EXERCISE_ATTR_SETTINGS, EQUIV_DEFS_SETTINGS
+from lib.node_config import NODE_MIN_IMPORTANCE, NODE_MAX_IMPORTANCE, THEOREM_MIN_IMPORTANCE, EXERCISE_MAX_IMPORTANCE, EXAMPLE_MAX_IMPORTANCE, NODE_ATTR_SETTINGS, DEFINITION_ATTR_SETTINGS, AXIOM_ATTR_SETTINGS, PRETHEOREM_ATTR_SETTINGS, THEOREM_ATTR_SETTINGS, EXERCISE_ATTR_SETTINGS, EQUIV_DEFS_SETTINGS, EXAMPLE_ATTR_SETTINGS
 
 ######################## INTERNAL HELPERS ########################
 def get_contents_of_dunderscores(string):
@@ -26,8 +26,8 @@ def create_appropriate_node(dic):
 
 	# for writers that use shortcut method, we must seek out the type:
 	if not 'type' in dic:
-		dic['type'] = find_key(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise', 'equivdefs', 'equivdef'})
-		dic['description'] = move_attribute(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise', 'equivdefs', 'equivdef'})
+		dic['type'] = find_key(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise', 'equivdefs', 'equivdef', 'example'})
+		dic['description'] = move_attribute(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise', 'equivdefs', 'equivdef', 'example'})
 
 	if dic['type'] in {'definition', 'defn', 'def'}:
 		return Definition(dic)
@@ -37,6 +37,8 @@ def create_appropriate_node(dic):
 		return Axiom(dic)
 	elif dic['type'] in {'theorem', 'thm'}:
 		return Theorem(dic)
+	elif dic['type'] == 'example':
+		return Example(dic)
 	elif dic['type'] == 'exercise':
 		return Exercise(dic)
 	else:
@@ -193,6 +195,14 @@ class Theorem(PreTheorem):
 	ATTR_SETTINGS = THEOREM_ATTR_SETTINGS
 
 	MIN_IMPORTANCE = THEOREM_MIN_IMPORTANCE
+
+
+class Example(Theorem):
+
+
+	ATTR_SETTINGS = EXAMPLE_ATTR_SETTINGS
+
+	MAX_IMPORTANCE = EXAMPLE_MAX_IMPORTANCE
 
 
 class Exercise(PreTheorem):

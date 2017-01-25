@@ -79,6 +79,8 @@ NODE_MAX_IMPORTANCE = 10
 
 THEOREM_MIN_IMPORTANCE = 3
 
+EXAMPLE_MAX_IMPORTANCE = 7
+
 EXERCISE_MAX_IMPORTANCE = 3
 
 
@@ -169,6 +171,9 @@ PRETHEOREM_ATTR_SETTINGS['description']['setter'] = pretheorem_description_sette
 THEOREM_ATTR_SETTINGS = deepcopy(PRETHEOREM_ATTR_SETTINGS)
 THEOREM_ATTR_SETTINGS['importance']['default'] = 6
 THEOREM_ATTR_SETTINGS['name']['setter'] = theorem_name_setter
+
+EXAMPLE_ATTR_SETTINGS = deepcopy(THEOREM_ATTR_SETTINGS)
+EXAMPLE_ATTR_SETTINGS['importance']['default'] = 2
 
 EXERCISE_ATTR_SETTINGS = deepcopy(PRETHEOREM_ATTR_SETTINGS)
 EXERCISE_ATTR_SETTINGS['importance']['default'] = 1

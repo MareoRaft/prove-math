@@ -82,7 +82,7 @@ graphAnimation.init({
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom' || node.type === null,
 		'definition-circle': node => node.type === 'definition' || node.type === 'equivdefs',
-		'theorem-circle': node => node.type === 'theorem',
+		'theorem-circle': node => node.type === 'theorem' || node.type === 'example',
 		'exercise-circle': node => node.type === 'exercise',
 	},
 	circle_events: { // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
