@@ -81,7 +81,7 @@ graphAnimation.init({
 	circle_class_conditions: {
 		'bright-circle': node => node.learned,
 		'axiom-circle': node => node.type === 'axiom' || node.type === null,
-		'definition-circle': node => node.type === 'definition',
+		'definition-circle': node => node.type === 'definition' || node.type === 'equivdefs',
 		'theorem-circle': node => node.type === 'theorem',
 		'exercise-circle': node => node.type === 'exercise',
 	},
@@ -250,7 +250,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// }
 
 		// TEMP FOR COLORS
-		openNode('consequencesofannihilator')
+		// openNode('consequencesofannihilator')
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -520,7 +520,7 @@ function openNode(node_id) {
 	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
 		node_blinds.open({
 			object: current_node,
-			keys: current_node.key_list,
+			keys: current_node.key_list(true),
 		})
 		hide('svg')
 		hide('#overlay')

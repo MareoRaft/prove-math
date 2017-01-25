@@ -16,6 +16,8 @@ Natalie Fitzgerald, the KA employee.
 
 others
 -------
+Anthony -- Sarasij's roomate.  He is in math AND the curry school of education.
+
 Mike Wexler's friend (fb)
 
 Kayley's son Jason (said she's mention it to him)

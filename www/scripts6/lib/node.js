@@ -109,10 +109,10 @@ class Node {
 		return this._type
 	}
 	set type(new_in) {
-		if( _.contains(['definition', 'theorem', 'axiom', 'exercise'], new_in) ){
-			let old_keys = new Set(this.key_list)
+		if( _.contains(['definition', 'equivdefs', 'theorem', 'axiom', 'exercise'], new_in) ){
+			let old_keys = new Set(this.key_list())
 			this._type = new_in
-			let new_keys = new Set(this.key_list)
+			let new_keys = new Set(this.key_list())
 			let obsolete_keys = old_keys.difference(new_keys)
 			for( let key of obsolete_keys ){
 				delete this.attrs[key]
@@ -219,7 +219,7 @@ class Node {
 		this.attrs['proofs'].value = new_in
 	}
 
-	get key_list() {
+	key_list(user_friendly=false) {
 		// construct the keys relevant to the node, depending on its type
 		// if node.py is edited, then this needs to be edited to reflect that:
 		let keys = ['type', 'number', 'name', 'description', 'intuitions', 'notes', 'examples', 'counterexamples']
@@ -227,19 +227,22 @@ class Node {
 		// add keys specific to certain node types
 		if( this.type === 'axiom' ) pushArray(keys, ['plurals', 'negation'])
 		else if( this.type === 'definition') pushArray(keys, ['plurals', 'negation'])
+		else if( this.type === 'equivdefs') pushArray(keys, ['plurals', 'negation', 'proofs'])
 		else if( this.type === 'theorem' ) pushArray(keys, ['proofs'])
 		else if( this.type === 'exercise' ) pushArray(keys, ['proofs'])
 		else die('Node has bad type: '+this.type)
 
 		// add remaining keys (not added up top because we want them to be in a specific order)
-		pushArray(keys, ['importance', 'dependency_name_and_ids'])
+		let deps_key = (user_friendly)? 'dependency_name_and_ids': 'dependencies'
+		pushArray(keys, ['importance', deps_key])
 
 		return keys
 	}
 
 	fillWithNullAttrs() {
 		if (!('attrs' in this)) this.attrs = {}
-		let keys = this.key_list
+		let keys = this.key_list()
+
 		_.each(keys, function(key){
 			if(key !== 'type') {
 				this.fillWithNullAttr(key)

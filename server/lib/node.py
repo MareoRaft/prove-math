@@ -11,7 +11,7 @@ from lib.vote import Votable
 from lib.config import ERR
 from lib.score import ScoreCard
 from lib.attr import Attr
-from lib.node_config import NODE_MIN_IMPORTANCE, NODE_MAX_IMPORTANCE, THEOREM_MIN_IMPORTANCE, EXERCISE_MAX_IMPORTANCE, NODE_ATTR_SETTINGS, DEFINITION_ATTR_SETTINGS, AXIOM_ATTR_SETTINGS, PRETHEOREM_ATTR_SETTINGS, THEOREM_ATTR_SETTINGS, EXERCISE_ATTR_SETTINGS
+from lib.node_config import NODE_MIN_IMPORTANCE, NODE_MAX_IMPORTANCE, THEOREM_MIN_IMPORTANCE, EXERCISE_MAX_IMPORTANCE, NODE_ATTR_SETTINGS, DEFINITION_ATTR_SETTINGS, AXIOM_ATTR_SETTINGS, PRETHEOREM_ATTR_SETTINGS, THEOREM_ATTR_SETTINGS, EXERCISE_ATTR_SETTINGS, EQUIV_DEFS_SETTINGS
 
 ######################## INTERNAL HELPERS ########################
 def get_contents_of_dunderscores(string):
@@ -26,11 +26,13 @@ def create_appropriate_node(dic):
 
 	# for writers that use shortcut method, we must seek out the type:
 	if not 'type' in dic:
-		dic['type'] = find_key(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
-		dic['description'] = move_attribute(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise'})
+		dic['type'] = find_key(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise', 'equivdefs', 'equivdef'})
+		dic['description'] = move_attribute(dic, {'axiom', 'definition', 'defn', 'def', 'theorem', 'thm', 'exercise', 'equivdefs', 'equivdef'})
 
 	if dic['type'] in {'definition', 'defn', 'def'}:
 		return Definition(dic)
+	if dic['type'] in {'equivdefs', 'equivdef'}:
+		return EquivDefs(dic)
 	elif dic['type'] == 'axiom':
 		return Axiom(dic)
 	elif dic['type'] in {'theorem', 'thm'}:
@@ -165,6 +167,12 @@ class Definition(Node):
 				self.attrs['name'].score_card.strike('critical', ERR['NO_NAME'])
 			if self.attrs['name'].value in [None, ''] and dunderscore_count(self.attrs['description'].value) >= 2:
 				self.attrs['name'].value = get_contents_of_dunderscores(self.attrs['description'].value)
+
+
+class EquivDefs(Definition):
+
+
+	ATTR_SETTINGS = EQUIV_DEFS_SETTINGS
 
 
 class Axiom(Definition):

@@ -147,15 +147,22 @@ DEFINITION_ATTR_SETTINGS['description']['setter'] = definition_description_sette
 AXIOM_ATTR_SETTINGS = deepcopy(DEFINITION_ATTR_SETTINGS)
 AXIOM_ATTR_SETTINGS['dependencies']['setter'] = axiom_dependencies_setter
 
+proofs_dict = {
+	'keywords': ['proofs', 'proof'],
+	# 'cclass': 'list of dict', for the semester, proofs will just be a list of content
+	'cclass': 'list of content str',
+	# 'setter': proofs_setter, for the semester, proofs will just be a list of content
+	'setter': list_of_content_setter,
+}
+
+EQUIV_DEFS_SETTINGS = deepcopy(DEFINITION_ATTR_SETTINGS)
+EQUIV_DEFS_SETTINGS.update({
+	'proofs': proofs_dict,
+})
+
 PRETHEOREM_ATTR_SETTINGS = deepcopy(NODE_ATTR_SETTINGS)
 PRETHEOREM_ATTR_SETTINGS.update({
-	'proofs': {
-		'keywords': ['proofs', 'proof'],
-		# 'cclass': 'list of dict', for the semester, proofs will just be a list of content
-		'cclass': 'list of content str',
-		# 'setter': proofs_setter, for the semester, proofs will just be a list of content
-		'setter': list_of_content_setter,
-	},
+	'proofs': proofs_dict,
 })
 PRETHEOREM_ATTR_SETTINGS['description']['setter'] = pretheorem_description_setter
 
