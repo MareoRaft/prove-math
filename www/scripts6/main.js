@@ -469,6 +469,12 @@ $(document).on('node-click', function(Event){
 	let node_id = Event.message
 	openNode(node_id)
 })
+$(document).on('node-right-click', function(Event){
+	let node_id = Event.message
+	let node = graph.nodes[node_id]
+	node.learned = !node.learned
+	graphAnimation.update()
+})
 $('.see-preferences').click(seePreferences)
 mousetrap.bind(user.prefs.prefs_keycut, function(){
 	seePreferences()
