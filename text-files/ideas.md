@@ -109,3 +109,6 @@ After a user has upvoted, the upvote arrow remains highlighted in green.  (and r
 
 80.  both of the following can be helpful: 1. A markdown/html or html to LaTeX translation for internal content.  That way, content can be outputted on the site (as always) AND as a pdf (new feature) and as latex (the 'source' for grad students).  2. A latex subset to markdown/html translator.  That way, grad student written material can be translated to the DB.
 
+81.  just like "importance", there could be a "difficulty" too.
+
+introduce an edit history for node values, etc., nodes, etc.
