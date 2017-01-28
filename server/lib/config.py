@@ -1,4 +1,4 @@
-javascript_kickoff_file = 'config-optimized.min'
+javascript_kickoff_file = 'config'
 
 LINEAR_ALGEBRA = ['rank', 'a'] # soon: null space, row space, matrix, etc
 ABSTRACT_ALGEBRA = ['set', 'magma', 'composition']
