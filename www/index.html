@@ -5,30 +5,30 @@
 	<title>Prove Math</title>
 	<link rel="icon" type="image/png" sizes="256x256" href="favicon/256.png">
 	<link rel='stylesheet' href='stylesheets/main.css' />
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" />
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" /> -->
 	<script src='scripts/lib/require-min.js?' data-main='scripts/{{ javascript_kickoff_file }}'></script>
 </head>
 <body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}" data-subjects="{{ subjects }}">
 <section id='login'>
-	<img id='x' src="images/x.svg" />
+	<img id='x' src="images/x.svg">
 	<div>
 		<div>
 			<div id="social-icon-container">
 				<label>
 					<input type="radio" name="provider" value="facebook" />
-					<div class="image-wrapper"><img src="images/social-icons/facebook.png" alt="Facebook" /></div>
+					<div class="image-wrapper"><img src="images/social-icons/facebook.png" alt="Facebook"></div>
 				</label>
 				<label>
 					<input type="radio" name="provider" value="google" />
-					<div class="image-wrapper"><img src="images/social-icons/google.png" alt="Google+" /></div>
+					<div class="image-wrapper"><img src="images/social-icons/google.png" alt="Google+"></div>
 				</label>
 				<label>
 					<input type="radio" name="provider" value="github" />
-					<div class="image-wrapper"><img src="images/social-icons/github.png" alt="GitHub" /></div>
+					<div class="image-wrapper"><img src="images/social-icons/github.png" alt="GitHub"></div>
 				</label>
 				<label>
 					<input type="radio" name="provider" value="linkedin" />
-					<div class="image-wrapper"><img src="images/social-icons/linkedin.png" alt="LinkedIn" /></div>
+					<div class="image-wrapper"><img src="images/social-icons/linkedin.png" alt="LinkedIn"></div>
 				</label>
 			</div>
 			<br /><br />
@@ -36,11 +36,21 @@
 		</div>
 	</div>
 </section>
-<section id='node-template'>
+<section id='preference-pane' class='blinds'>
 	<header>
-		<img id='back' src='images/arrow-left.svg'>
+		<img class='back' src='images/arrow-left.svg'>
+		<div>These are your user preferences!</div>
+		<div>:)</div>
+	</header>
+	<section id='preference-pane-blinds'>
+	</section>
+</section>
+<section id='node-template' class='blinds'>
+	<header>
+		<img class='back' src='images/arrow-left.svg'>
 		<div id='toggle-learn-state'></div>
 		<div id='discard-node'>discard node</div>
+		<!-- <div><img class='icon edit-save' src='images/edit.svg'></div> -->
 	</header>
 	<section id='node-template-blinds'>
 	</section>
@@ -62,13 +72,14 @@
 	<div id='login-circle'>login</div> <!-- overlaps avatar.  never should both appear at the same time -->
 	<div class='logout-circle'>logout</div> <!-- placed BEFORE avatar so that it will appear UNDER the avatar -->
 	<div class='display-name'>not logged in</div> <!-- also under avatar, behaves just like logout-cirlce in CSS -->
+	<div class='see-preferences'>prefs</div> <!-- also under avatar, behaves just like logout-cirlce in CSS -->
 	<img id='avatar' src='images/smiley-face.png'>
 	<div id='get-starting-nodes'>start<br />subject</div>
 	<div id='get-goal-suggestion'>start<br />goal</div>
 	<div id='get-pregoal-suggestion'>start<br />pregoal</div>
-	<div id='push'>push<br />me:)</div>
+	<div id='push'>push me</div>
 	<img id="add-node" src="images/add.svg">
 </section>
-<!-- svg should appear here (populated by JS) -->
+<!-- svg should appear here, the FINAL thing before </body> (populated by JS) -->
 </body>
 </html>

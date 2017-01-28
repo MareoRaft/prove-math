@@ -85,8 +85,27 @@ Simon's Foundation   ---->  apply for a grant
 for the user manual --> make it on readthedocs.org !
 
 73. use Zenlog for even cooler logging? https://github.com/ManufacturaInd/python-zenlog
-74. make gerg's next project to go through this ideas file?
+74. make greg's next project to go through this ideas file?
 
 -----------------
-Greg
 75. Have some kind of transparency gradient.  As the user learns deeper nodes the old "shallow" nodes can become progressively more transparent, eventually disappearing from view to reduce clutter
+
+76. We need a really awesome "zoom" feature.  That is, how can multiple nodes be combined into a single node?  For example, consider the theorem "Given the group $G$ and subgroups $A$ and $B$.  Then $AB <= G$ iff $AB = BA$ iff $A <= N_G(B)$ iff $B <= N_G(A)$.".  This is actually multiple theorems combined into a single theorem.  Can we automatically break down and recombine these things?
+
+MATT
+77. Use HeVeA hevea to translate .tex grad school notes into prove-math nodes.
+
+78. IDEA for the upvote/downvote counter!!  Humans are visual, so the counter will be exactly like the SO counter, with the following exceptions.  Instead of a number, there will be a filled-in disk.
+
+The disk will have a minimum and maximum radius.  The maximum radius will be so that the disk is just barely touching (tangent) to the up and down arrows.  The area of the disk will be based on the number of total votes the issue has received ("popularity").  The maximum area can be acheived for the node with the most votes compared to all other nodes on the graph.  The size-increasing of the radius can be logarithmic, or whatever is reasonable.
+
+The disk's color will represent the upvote/totalvote percentage.  50% is grey.  100% is green.  0% is red.  Anything in between will be a smooth gradient between the two values it is closest to.  For example, 20% will be a mixture of red and grey.
+
+When a user upvotes, the disk can animate, increasing in radius and greening in color, then settle back to the new average.
+
+After a user has upvoted, the upvote arrow remains highlighted in green.  (and red for downvote).  woohoo!
+
+79. A SAVE and EDIT button on the top right for the WHOLE node.  This should make node editing a BREEZE.  It would populate EVERY attr with a blank string (if it was empty), and put EVERYTHING in edit mode.  Then the user can just tab through.  ALSO, i want to support keyboard shortcuts for EDIT and SAVE, and NEW NODE, so we can go direct.
+
+80.  both of the following can be helpful: 1. A markdown/html or html to LaTeX translation for internal content.  That way, content can be outputted on the site (as always) AND as a pdf (new feature) and as latex (the 'source' for grad students).  2. A latex subset to markdown/html translator.  That way, grad student written material can be translated to the DB.
+

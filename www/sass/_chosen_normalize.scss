@@ -1,11 +1,13 @@
+@import 'chosen';
+
 // these things apply to ALL chosen containers on website...
 .chosen-container {
 	font-size: 13px; // was 13. probably could be bigger, but then we need to increase some sort of padding too
 }
 
 .chosen-container-multi .chosen-choices { // this is the BIG box with everything else in it
-	background-color: transparent; // makes the BIG box see-through
-	background-image: none;
+	background-color: $chosen-container-multi_chosen-choices_background-color;
+	background-image: $chosen-container-multi_chosen-choices_background-image;
 	border: none;
 }
 
@@ -17,11 +19,11 @@
 }
 
 .chosen-container-multi .chosen-drop .result-selected {
-	// color: red;
+	color: $chosen-container-multi_chosen-drop_result-selected;
 }
 
 .chosen-container .chosen-results {
-	// color: #444;
+	color: $chosen-container_chosen-results;
 	li {
 		&.disabled-result {
 			// color: #ccc;

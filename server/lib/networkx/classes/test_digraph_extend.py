@@ -105,6 +105,52 @@ def test_successors():
 	assert DG.successors(['y', 'c']) == {'L', 'd'}
 	assert DG.successors(['c', 'a']) == {'L', 'd', 'b'}
 
+def test_sources():
+	DG = nx.DiGraph()
+	assert DG.sources() == set()
+
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'b', 'c', 'd'])
+	assert DG.sources() == {'a'}
+
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'b', 'c', 'd'])
+	DG.add_edge('z', 'd')
+	assert DG.sources() == {'a', 'z'}
+
+	DG = nx.DiGraph()
+	DG.add_cycle(['a', 'b'])
+	assert DG.sources() == set()
+
+	DG = nx.DiGraph()
+	DG.add_edge('s', 'a')
+	DG.add_cycle(['a', 'b', 'c', 'd'])
+	DG.add_edge('d', 't')
+	assert DG.sources() == {'s'}
+
+def test_sinks():
+	DG = nx.DiGraph()
+	assert DG.sinks() == set()
+
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'b', 'c', 'd'])
+	assert DG.sinks() == {'d'}
+
+	DG = nx.DiGraph()
+	DG.add_path(['a', 'b', 'c', 'd'])
+	DG.add_edge('z', 'd')
+	assert DG.sinks() == {'d'}
+
+	DG = nx.DiGraph()
+	DG.add_cycle(['a', 'b'])
+	assert DG.sinks() == set()
+
+	DG = nx.DiGraph()
+	DG.add_edge('s', 'a')
+	DG.add_cycle(['a', 'b', 'c', 'd'])
+	DG.add_edge('d', 't')
+	assert DG.sinks() == {'t'}
+
 def test_anydirectional_neighbors():
 	DG = nx.DiGraph()
 	DG.add_edges_from([

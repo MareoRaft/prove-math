@@ -19,14 +19,14 @@ from tornado.web import Finish
 from lib import config
 from lib import clogging
 log = clogging.getLogger('main', filename='main.log') # this must come BEFORE imports that use getLogger('main')
-from lib.helper import strip_underscores, random_string
+from lib.helper import random_string, reduce_string
 from lib.node import create_appropriate_node
 from lib.mongo import Mongo
 from lib.user import User
 from lib.math_graph import MathGraph
 from lib import user
+from lib.score import ScoreCard
 from lib import auth
-from lib import node
 import inspect
 import traceback
 # this and relevant code should eventually be migrated into auth module
@@ -35,6 +35,16 @@ import xml.etree.ElementTree as ET
 ################################# HELPERS #####################################
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
+
+def clean_node_ids(dic):
+	node_id_key_names = ['node_id', 'central_node_id', 'goal_id', 'pregoal_id']
+	for key in node_id_key_names:
+		if key in dic:
+			print('got unclean id: {}'.format(dic[key]))
+			dic[key] = our_MG.n(dic[key]).id
+			print('replaced with clean id: {}'.format(dic[key]))
+	return dic
+
 
 ################################## MAIN #######################################
 
@@ -155,6 +165,8 @@ class SocketHandler (WebSocketHandler):
 	def on_message(self, message):
 		log.debug('got message: ' + message+"\n")
 		ball = json.loads(message)
+		# clean any node ids that ball might have (to allow for multiple names)
+		clean_node_ids(ball)
 
 		if ball['command'] == 'print':
 			print(ball['message'])
@@ -184,7 +196,7 @@ class SocketHandler (WebSocketHandler):
 			if ball['mode'] == 'learn':
 				self.send_graph(ball)
 			else:
-				raise Exception('mode is not learn')
+				raise Exception('Mode is not learn.  Warning: That mode might not be implemented yet.')
 
 		elif ball['command'] == 'unlearn-node':
 			self.user.unlearn_node(ball['node_id'])
@@ -194,15 +206,30 @@ class SocketHandler (WebSocketHandler):
 
 		elif ball['command'] == 'save-node': # hopefully this can handle both new nodes and changes to nodes
 			node_dict = ball['node_dict']
-			if 'importance' in node_dict.keys():
-				node_dict['importance'] = int(node_dict['importance'])
 			try:
-				node_obj = node.create_appropriate_node(node_dict)
-				log.debug('\nnode made.  looks like: '+str(node_obj)+'.  Now time to put it into the DB...\n')
-				# take a look at the dependencies now
+				node_obj = create_appropriate_node(node_dict)
+				log.debug('\nnode made.  looks like: {}'.format(node_obj))
 
-				# TODO if the node is brand new (mongo can't find it), then let previous_dep_ids = []
-				previous_dependency_ids = [node.reduce_string(dependency) for dependency in list(our_mongo.find({"_id": node_obj.id}))[0]["_dependencies"]] # if this works, try using set() instead of list and elimination the set()s below
+				# take a look at the score card, to see if the node is worthy
+				sc = node_obj.score_card()
+				if not isinstance(sc, ScoreCard):
+					raise TypeError('sc is not a ScoreCard.')
+				if not sc.is_passing():
+					raise Exception('Your score is {}.  Your strikes are: {}'.format(sc.total_score(), sc.as_dict()))
+
+				log.debug('Now time to put node into the DB...\n')
+
+				# take a look at the dependencies now
+				log.debug('node.id: {}'.format(node_obj.id))
+				previous_node_dict = our_mongo.find_one({"_id": node_obj.id})
+				if previous_node_dict is None: # it must be a brand new node!
+					previous_dependency_ids = []
+				else:
+					log.debug('prev_node_dict: {}'.format(previous_node_dict))
+					previous_node = create_appropriate_node(previous_node_dict)
+					log.debug('prev_node: {}'.format(previous_node))
+					previous_dependency_ids = previous_node.dependency_ids
+
 				log.debug('prev deps are: '+str(previous_dependency_ids))
 				current_dependency_ids = node_obj.dependency_ids
 				log.debug('curr deps are: '+str(current_dependency_ids))
@@ -213,11 +240,12 @@ class SocketHandler (WebSocketHandler):
 				# VERIFY THAT THE GRAPH WITH THESE NEW ARCS IS STILL ACYCLIC:
 				H = our_MG.copy()
 				for new_dependency_id in new_dependency_ids:
-					print('from '+str(our_MG.n(new_dependency_id))+' to '+str(node_obj))
+					print('from {} to {}'.format(our_MG.n(new_dependency_id), node_obj))
 					H.add_edge(new_dependency_id, node_obj.id)
-					H.validate(node_obj.name + ' cannot depend on ' + our_MG.n(new_dependency_id).name + ' because ' + our_MG.n(new_dependency_id).name + ' already depends on ' + node_obj.name + '!')
+					# print node_obj.attrs['name'].value + ' cannot depend on ' + our_MG.n(new_dependency_id).attrs['name'].value + ' because ' + our_MG.n(new_dependency_id).attrs['name'].value + ' already depends on ' + node_obj.attrs['name'].value + '!'
+					H.validate()
 
-				our_mongo.upsert({ "_id": node_obj.id }, node_obj.__dict__)
+				our_mongo.upsert({ "_id": node_obj.id }, node_obj.as_dict())
 				update_our_MG()
 
 				# send an update of the graph to the user if there are new dependencies:
@@ -225,11 +253,13 @@ class SocketHandler (WebSocketHandler):
 				self.remove_client_edges(node_obj.id, removed_dependency_ids)
 			except Exception as error:
 				# stuff didn't work, send error back to user
-				log.warning('ERROR: '+str(error))
 				self.jsend({
 					'command': 'display-error',
 					'message': str(error),
 				})
+				log.warning('Error: '+str(error))
+				(typ, val, tb) = sys.exc_info()
+				traceback.print_tb(tb)
 
 		elif ball['command'] == 're-center-graph':
 			# We get the 5th nearest neighbors
@@ -252,11 +282,11 @@ class SocketHandler (WebSocketHandler):
 			})
 
 		elif ball['command'] == 'get-goal-suggestion':
-			goal_id = our_MG.choose_goal(user=self.user)
+			goal_id = our_MG.choose_goal(self.user)
 			goal_node = our_MG.n(goal_id)
 			self.jsend({
 				'command': 'suggest-goal',
-				'goal': goal_node.__dict__,
+				'goal': goal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'set-goal':
@@ -266,38 +296,43 @@ class SocketHandler (WebSocketHandler):
 			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-goal',
-				'goal': goal_node.__dict__,
+				'goal': goal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'get-pregoal-suggestion':
-			pregoal_id = our_MG.choose_learnable_pregoals(user=self.user)[0]
+			pregoal_id = our_MG.choose_learnable_pregoals(self.user, number=1)[0]
 			pregoal_node = our_MG.n(pregoal_id)
 			self.jsend({
 				'command': 'suggest-pregoal',
-				'pregoal': pregoal_node.__dict__,
+				'pregoal': pregoal_node.as_dict(),
 			})
 
 		elif ball['command'] == 'set-pregoal':
 			pregoal_id = ball['pregoal_id']
 			pregoal_node = our_MG.n(pregoal_id)
-			self.user.set_pref({'pregoal_id': pregoal_id})
+			self.user.set_pref({'requested_pregoal_id': pregoal_id})
 			self.send_graph(ball)
 			self.jsend({
 				'command': 'highlight-pregoal',
-				'pregoal': pregoal_node.__dict__,
+				'pregoal': pregoal_node.as_dict(),
 			})
 
 	def request_nodes(self, node_ids, ball):
+		# user manually requests a node.  So we want to preserve client_node_ids as not to change anything for them.  We only want to ADD the requested nodes additionally.
 		for node_id in node_ids:
 			if node_id not in our_MG.nodes():
 				raise ValueError('The node_id "'+node_id+'" does not exist.')
-		ids = set(self.ids()).union(set(node_ids))
-		H = our_MG.subgraph(list(ids))
+		ids = set(self.ids(ball)).union(set(node_ids))
+		H = our_MG.subgraph(ids)
 		dict_graph = H.as_js_ready_dict()
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
 		})
+
+	def ids(self, ball):
+		learned_ids = self.user.dict['learned_node_ids']
+		return list(set(learned_ids).union(set(ball['client_node_ids'])))
 
 	def remove_client_edges(self, node_id, dependency_ids):
 		self.jsend({
@@ -306,17 +341,14 @@ class SocketHandler (WebSocketHandler):
 			'dependency_ids': list(dependency_ids),
 		})
 
-	def ids(self, ball):
-		learned_ids = self.user.dict['learned_node_ids']
-		return list(set(learned_ids).union(set(ball['client_node_ids'])))
-
 	def send_graph(self, ball):
 		subject = self.user.dict['prefs']['subject']
 		log.debug('SUBJECT IS: ' + str(subject))
 		log.debug('LOGGED IN AS: ' + str(self.user.identifier))
-		nodes_to_send = our_MG.nodes_to_send(user=self.user, client_node_ids=ball['client_node_ids'])
+		nodes_to_send = our_MG.nodes_to_send(self.user, client_node_ids=ball['client_node_ids'])
 		subgraph_to_send = our_MG.subgraph(nodes_to_send)
 		dict_graph = subgraph_to_send.as_js_ready_dict()
+		log.debug('js ready dict is {}'.format(dict_graph))
 		self.jsend({
 			'command': 'load-graph',
 			'new_graph': dict_graph,
@@ -338,9 +370,9 @@ class StaticHandler(StaticFileHandler, BaseHandler):
 def make_app():
 	return Application(
 		[
-			url('/', RedirectHandler, {"url": "index.html"}, name="rooth"),
-			url('/websocket', SocketHandler),
-			url('/json', JSONHandler, name="jsonh"),
+			url(r'/?', RedirectHandler, {"url": "index.html"}, name="rooth"),
+			url(r'/websocket', SocketHandler),
+			url(r'/json', JSONHandler, name="jsonh"),
 			url(r'/index(?:\.html?)?', IndexHandler, name="indexh"),
 			url(r'/docs(?:\.html?)?', RedirectHandler, {"url": "docs/index.html"}, name='docsh'),
 			url(r'/docs/(.*)', StaticHandler, {"path": "../docs/build/html/"}),
@@ -359,31 +391,35 @@ def make_app_and_start_listening():
 def update_our_MG():
 	# 1. grab nodes and edges from database
 	all_node_dicts = list(Mongo("provemath", "nodes").find())
+	# print('number of node dicts is: {}'.format(len(all_node_dicts)))
 
 	# 2. create a networkx graph with the info...
 	global our_MG
 	our_MG = MathGraph()
 	for node_dict in all_node_dicts:
-		try:
-			node = create_appropriate_node(strip_underscores(node_dict))
-		except Exception as e:
-			print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
+		# try:
+		node = create_appropriate_node(node_dict)
+		# except Exception as e:
+			# print('\nerror.  could not create_appropriate_node.  node_dict was: '+str(strip_underscores(node_dict)))
 		our_MG.add_n(node)
 	for node_id in our_MG.nodes():
 		node = our_MG.n(node_id)
 		for dependency_id in node.dependency_ids:
 			our_MG.add_edge(dependency_id, node_id)
 	our_MG.validate() # make sure it's still Acyclic
-	print('Node array loaded with length: ' + str(len(our_MG.nodes())))
-	print('Edge array loaded with length: ' + str(len(our_MG.edges())))
 	our_MG.remove_redundant_edges()
+	print('Node array loaded with length: {}'.format(len(our_MG.nodes())))
+	print('Edge array loaded with length: {}'.format(len(our_MG.edges())))
 
 if __name__ == "__main__":
+	print('\nSERVER RESTART.')
+
 	# 0. create a global mongo object for later use (for upserts in the future)
 	our_mongo = Mongo("provemath", "nodes")
 
 	# 1 and 2
 	update_our_MG()
+	print('ids are: {}'.format(our_MG.nodes()))
 
 	# 3. launch!
 	make_app_and_start_listening()

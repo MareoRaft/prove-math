@@ -1,7 +1,47 @@
+import re
 import random
 import json
 from itertools import chain
 from collections import OrderedDict
+from copy import deepcopy
+
+def move_attribute(dic, aliases, strict=True):
+	for key, value in dic.items():
+		if key in aliases:
+			del dic[key]
+			return value
+	if strict:
+		raise KeyError('Could not find any of the following keys: {} in the soon-to-be Node {}.'.format(aliases, dic))
+	else:
+		return None
+
+def find_key(dic, keys):
+	for key in dic:
+		if key in keys:
+			return key
+	raise KeyError('Could not find any of the following keys {} in the input dictionary {}'.format(keys, dic))
+
+def string_to_bool(string):
+	string = string.lower()
+	if string == "true":
+		return True
+	elif string == "false":
+		return False
+	else:
+		raise ValueError('Cannot convert string to bool.')
+
+def dunderscore_count(string):
+	dunderscore_list = re.findall(r'__', string)
+	return len(dunderscore_list)
+
+def remove_outer_dunderscores(s):
+	# takes in a string like "__hi__", and returns "hi"
+	if len(s) >= 4 and s[:2] == "__" and s[-2:] == "__":
+		s = s[2:-2]
+	return s
+
+def reduce_string(string):
+	return re.sub(r'[_\W]', '', string).lower()
 
 def random_string(length):
 	word = ''
@@ -26,7 +66,8 @@ def json_export(json_list, file_path):
 		print("Pass in object as example.__dict__")
 
 def strip_underscores(dictionary):
-	for key, value in dictionary.items():
+	dic_copy = deepcopy(dictionary)
+	for key, value in dic_copy.items():
 		if key[0] == '_':
 			del dictionary[key]
 			dictionary[key[1:]] = value

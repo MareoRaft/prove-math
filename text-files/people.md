@@ -1,8 +1,23 @@
-Math ppl
-=========
+People!  Connections!
+======================
+
+artists
+---------------
+Danielle Lalonde
+http://danilalo.com
+He was involved in Homebrew project
+
+That guy that you sent some money to on paypal once or twice.  He designed the illustrations for a Norwegian Pharma company or something.
+
+Natalie Fitzgerald, the KA employee.
+
+
+
 
 others
 -------
+Anthony -- Sarasij's roomate.  He is in math AND the curry school of education.
+
 Mike Wexler's friend (fb)
 
 Kayley's son Jason (said she's mention it to him)
@@ -13,6 +28,15 @@ http://www.math.ucla.edu/people/visiting/tova
 
 students
 ----------
+Arsalan Udin
+https://www.facebook.com/mohammad.arsalan.3348?fref=hovercard
+a guy i knew at Rutgers, but didn't know he was into comp sci...
+he made hubintern.com
+
+
+
+
+
 Elliot
 glaze240@gmail.com
 maybe a junior, undergrad
@@ -52,6 +76,9 @@ google hangouts
 
 professors
 ----------
+Keith Webber --> prof @ GSE
+There are some math ed ppl at GSE
+
 Kahn, Jeffry
 jkahn at math
 Hill 728
@@ -89,6 +116,7 @@ Mon-Fri 10-12
 Tahvildar-Zadeh, Shadi Abdolre
 head of undergrad math.
 good idea to ask him.
+
 
 
 
@@ -137,11 +165,6 @@ atjang@cs.rutgers.edu
 
 
 
-
-
-
-----------------------
-gyon and mike are meeting Mon. and Wed. to do complex and real analysis over the summer.
 
 
 

@@ -1,7 +1,6 @@
 @import 'reset';
 @import 'variables';
 @import 'normalize';
-// @import 'chosen';
 @import 'chosen_normalize';
 @import 'graph_animation';
 @import 'blinds';
@@ -20,14 +19,6 @@
 
 
 //////////////////////////////////////// INDEX ////////////////////////////////////////
-#node-template {
-	@include hide;
-	z-index: 4;
-	section {
-		overflow-y: scroll;
-	}
-}
-
 svg {
 	user-select: none;
 }
@@ -113,6 +104,9 @@ svg {
 @mixin side-hover-option {
 	@include side-hover;
 	@include hover-opacity;
+	cursor: default;
+	user-select: none;
+	// the cursor still changes to 'text' on drag, as this is normal universal behavior
 }
 
 #banner {
@@ -163,11 +157,24 @@ $circle-diameter: 60px;
 	right: 0;
 	opacity: 0;
 
-	transition: all 0.4s ease; // or transition: top 0.4s ease, right 0.4s ease, opacity 0.4s ease;
+	transition: all 0.4s ease;
 }
 .logout-circle-out {
-	top: 40px;
+	top: 76px;
 	right: 55px;
+	opacity: 0.5;
+}
+.see-preferences {
+	@extend .hover-circle-with-text;
+	top: 0;
+	right: 0;
+	opacity: 0;
+
+	transition: all 0.4s ease;
+}
+.see-preferences-out {
+	top: 40px;
+	right: 97px;
 	opacity: 0.5;
 }
 .display-name {
@@ -183,7 +190,7 @@ $circle-diameter: 60px;
 	transition: all 0.4s ease;
 }
 .display-name-out {
-	right: 70px; // calc(right, "#{$circle-diameter} + 10px");
+	right: 80px; // calc(right, "#{$circle-diameter} + 10px");
 	opacity: 0.8;
 }
 #avatar {
@@ -222,26 +229,6 @@ $circle-diameter: 60px;
 .invalid {
 	border-style: solid;
 	border-color: $yellow !important; // soft red: rgba( 255, 51, 0, 0.9 )
-}
-
-@mixin center-content {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-#node-template > header {
-	display: flex;
-}
-#node-template > header > * {
-	@include center-content;
-	margin: 0;
-	height: 60px;
-	padding: 0 30px;
-	@include hover-opacity;
-}
-#back {
-	@include hover-opacity;
 }
 
 $search-font: 300 normal 26px Helvetica, Tahoma, Arial, sans-serif;

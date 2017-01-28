@@ -124,6 +124,14 @@ my @nonlines_containing_comment = (
 );
 	ok_all_mismatch( \@nonlines_containing_comment, qr/^$JSONRegex::line_containing_comment_with_illegal_sloshes_allowed$/, 'line_containing_comment_with_illegal_sloshes_allowed' );
 
+my @mid_strings = (
+	'this "is a mid',
+	'this "is" a "m',
+);
+	ok_all_match( \@mid_strings, qr/^$JSONRegex::gobble_mid_strings$/, 'gobble_mid_strings' );
+
+
+
 my @matched_braces = (
 	qw({} {{}} {{{}}} {{}{}} {{{}}{}} {{}{}{}} {{}{{}}{{{}}}{{}}{}}),
 	qw<{27365} {({}{((}} {oo({}{)}} {p}>,

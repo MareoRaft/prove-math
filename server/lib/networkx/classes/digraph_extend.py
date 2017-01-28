@@ -77,6 +77,22 @@ class _DiGraphExtended (nx.DiGraph):
 				succ = succ.union(set(self.successors_iter(node)))
 		return succ - set(nbunch)
 
+	def sources(self):
+		all_nodes = set(self.nodes())
+		all_successors = set()
+		for node in all_nodes:
+			all_successors.update(self.successors(node))
+		all_sources = all_nodes - all_successors
+		return all_sources
+
+	def sinks(self):
+		all_nodes = set(self.nodes())
+		all_predecessors = set()
+		for node in all_nodes:
+			all_predecessors.update(self.predecessors(node))
+		all_sinks = all_nodes - all_predecessors
+		return all_sinks
+
 	def anydirectional_neighbors(self, nbunch):
 		return set.union(self.predecessors(nbunch), self.successors(nbunch))
 

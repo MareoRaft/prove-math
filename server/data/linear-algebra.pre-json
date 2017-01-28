@@ -1,0 +1,18 @@
+{
+	"name": "a",
+	"def": "A __thing__ is something."
+}
+{
+	"name": "c",
+	"def": "A __thing__ is something else!!!.",
+	"dependencies": ["a"]
+}
+{
+	"name": "row and col space dimensions",
+	"thm": "Given any matrix, the dimension of its row space is equal to the dimension of its column space.",
+	"dependencies": ["a"]
+}
+{
+	"def": "The __rank__ of a matrix is the dimension of its row space (and column space too)."
+}
+

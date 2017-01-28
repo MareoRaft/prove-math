@@ -4,6 +4,8 @@ from warnings import warn
 
 import networkx as nx
 
+from lib.node import Node
+
 ############################ HELPERS #############################
 def string_unique():
 	# this could be improved.  it should guarantee to create a unique string.
@@ -13,6 +15,7 @@ def string_unique():
 
 
 class _GraphExtended (nx.Graph):
+
 
 	ACCEPTABLE_ITERABLES = [list, set, type(dict().keys())]	# dict, nx.Graph later
 
@@ -28,33 +31,37 @@ class _GraphExtended (nx.Graph):
 	def is_null(self):
 		return not self.is_nonnull()
 
+	#PM specific
+	def n(self, node_id):
+		return self.node[node_id]["custom_object"]
+
+	#PM specific
+	def add_n(self, nodebunch):
+		if not self.acceptable_iterable(nodebunch): # nodebunch must be a single node
+			nodebunch = [nodebunch]
+		for node in nodebunch:
+			self.add_node(node.id, attr_dict={"custom_object": node})
+
 	def add_node_unique(self):
 		while True:
-			n = 'node_unique.' + string_unique()
-			if self.has_node(n):
+			n_id = 'node_unique.' + string_unique()
+			if self.has_node(n_id):
 				warn('The node already existed.')
 				continue
 			else:
-				self.add_node(n)
+				node = Node({"name":n_id,"type":"thm","description":"This is a unique nodeeeeeee","importance":1})
+				self.add_n(node)
 				break
-		return n
+		return n_id
 
 	def validate_input_nodes(self, nbunch):
-		#checks that all given inputs exist in the graph
+		# checks that all given inputs exist in the graph
 		if not self.acceptable_iterable(nbunch):
 			nbunch = [nbunch]
-#		if len(nbunch) == 0:	#empty iterable
-#			raise ValueError('Argument {} is empty'.format(nbunch))
-		if len(nbunch) == 1:	#single node
-			if not self.has_node(nbunch[0]):
-				raise nx.NetworkXError('The input node {} is not in the graph'.format(nbunch[0]))
-			return True
-		else:	#multiple nodes
-			for node in nbunch:
-				if not self.has_node(node):
-					raise nx.NetworkXError('One of the listed nodes is not in the graph')
-			return True
-
+		for node in nbunch:
+			if not self.has_node(node):
+				raise nx.NetworkXError('The input node {0} is not in the graph'.format(node))
+		return True
 
 for key, value in _GraphExtended.__dict__.items():
 	try:

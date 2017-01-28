@@ -1,4 +1,9 @@
-define( [], function() {
+define( ["check-types", "mousetrap"], function(is, mousetrap) {
+
+// create a shortcut for mousetrap selectors
+window.$mousetrap = function(selector) {
+	return mousetrap(document.querySelector(selector))
+}
 
 // we want to grab magic values too!
 window.hasOwnPropertyOrGetter = function(obj, key) {
@@ -26,8 +31,19 @@ String.prototype.singularize = function() {
 	if( this.charAt(this.length-1) === 's' ) return this.slice(0, this.length-1)
 	else return this
 }
+
+// Set operations (see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)
+Set.prototype.difference = function(setB) {
+	let difference = new Set(this)
+	for (let elem of setB) {
+		difference.delete(elem)
+	}
+	return difference
+}
+
 // we are appending these to window in order to make them global variables
 window.reduce_string = function(string) {
+	if( !is.string(string) ) die('Expected type string.  Got type: ' + typeof string)
 	return string.replace(/[_\W]/g, '').toLowerCase()
 }
 window.die = function(string) {
@@ -35,7 +51,6 @@ window.die = function(string) {
 	throw(string)
 }
 window.def = function(input) {
-	// die("This function should return TRUE for empty arrays [].  verify that it does.  then see why blorg populated synonyms in all our nodes!.")
 	return typeof(input) !== 'undefined'
 }
 

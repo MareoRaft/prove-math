@@ -1,10 +1,32 @@
 @import 'variables';
-// @import 'chosen';
 @import 'chosen_normalize';
 @import 'animate';
 
 //////////////////////////////////////// BLINDS ////////////////////////////////////////
-.node-attribute {
+.blinds { // #node-template and #preference-pane need to be hidden onload
+	@include hide;
+	z-index: 4;
+	section {
+		overflow-y: scroll;
+	}
+}
+.blinds > header {
+	display: flex;
+}
+.blinds > header > * {
+	@include center-content;
+	margin: 0;
+	height: 60px;
+	padding: 0 30px;
+	@include hover-opacity;
+}
+.back {
+	@include hover-opacity;
+}
+
+
+//////////////////////////////////////// BLIND ////////////////////////////////////////
+.blind {
 	display: flex;
 	padding: 44px;
 	font: 300 normal 19px Helvetica, Tahoma, Arial, sans-serif; /* somewhere in 18-22 range feels right */
@@ -19,6 +41,7 @@
 	}
 	.value {
 		display: inline-flex;
+		flex-direction: column;
 		// vertical-align: top;
 		width: 85%;
 	}
@@ -35,64 +58,101 @@
 		font-style: italic;
 	}
 }
+// OVERRIDE for user prefs:
+.pref-attribute {
+	.key {
+		width: 30%;
+		min-width: 200px; // this is to prevent stuff getting cut-off when width of window is very narrow
+	}
+	.value {
+		width: 70%;
+	}
+}
 
 @mixin white {
-	color: white;
+	color: $mixin_white;
 	img {
 		filter: invert(1);
 	}
 }
-.node-attribute {
+.blind {
 	&:nth-child(4n+1) {
-		background-color: #7A6;
+		background-color: $blind_nth-child4n1_background-color;
+		color: $blind_nth-child4n1_color;
+		// how can we make the image colored too?
+		// @include white;
+	}
+	&:nth-child(4n+2) {
+		background-color: $blind_nth-child4n2_background-color;
+		color: $blind_nth-child4n2_color;
+		// @include white;
+	}
+	&:nth-child(4n+3) {
+		background-color: $blind_nth-child4n3_background-color;
+		color: $blind_nth-child4n3_color;
+	}
+	&:nth-child(4n+4) {
+		background-color: $blind_nth-child4n4_background-color;
+		color: $blind_nth-child4n4_color;
+	}
+}
+// OVERRIDE for user prefs:
+.pref-attribute {
+	&:nth-child(4n+1) {
+		background-color: #4b0054;
 		@include white;
 	}
 	&:nth-child(4n+2) {
-		background-color: #198;
+		background-color: #6a0059;
 		@include white;
 	}
 	&:nth-child(4n+3) {
-		background-color: white;
+		background-color: #f0f888;
 	}
 	&:nth-child(4n+4) {
-		background-color: #0DD;
+		background-color: #a2dc8a;
 	}
-}
-
-
-// chosen-related blinds stuff...
-.tags .chosen-results {
-	color: #444;
-	background-color: transparent;
-	li {
-		&.disabled-result {
-			color: #ccc;
-		}
-		&.highlighted {
-			// background-image: none;
-			background-color: pink;
-			// color: #fff;
-		}
-		&.no-results {
-			color: #777;
-			background: red;
-		}
+	&:nth-child(4n+5) {
+		background-color: #004873;
+		@include white;
 	}
-}
-
-.tags .chosen-drop {
-	background-color: transparent;
-	// THE PROBLEM WITH THE DROPDOWN GETTING CUTOFF IS THAT THE BLINDS CONTAINER IS SET TO OVERFLOW: SCROLL.  but changing that may be a bad idea because that was good for other reasons...
-}
-
-.tags .chosen-drop .result-selected { // already selected stuff
-	color: $grey;
-}
-
-.empty {
 }
 
 .blind-append {
 	padding-top: 9px;
 	padding-bottom: 9px;
+}
+
+
+//////////////////////////////////////// WITHIN A BLIND ////////////////////////////////////////
+// chosen-related blinds stuff...
+.tags .chosen-results {
+	color: $tags_chosen-results_color;
+	background-color: $tags_chosen-results_background-color;
+	li {
+		&.disabled-result {
+			color: $disabled-result;
+		}
+		&.highlighted {
+			// background-image: none;
+			background-color: $highlighted_background-color;
+			// color: $highlighted_color;
+		}
+		&.no-results {
+			color: $no-results_color;
+			background: $no-results_background;
+		}
+	}
+}
+
+.tags .chosen-drop {
+	background-color: $tags_chosen-drop_background-color;
+	// THE PROBLEM WITH THE DROPDOWN GETTING CUTOFF IS THAT THE BLINDS CONTAINER IS SET TO OVERFLOW: SCROLL.  but changing that may be a bad idea because that was good for other reasons...
+}
+
+.tags .chosen-drop .result-selected { // already selected stuff
+	color: $tags_chosen-drop_result-selected_color;
+}
+
+.empty {
 }

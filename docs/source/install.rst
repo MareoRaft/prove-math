@@ -1,8 +1,7 @@
 Installation
 ================
 
-If you are a provemath developer, there are a number of tools you may need to install.  Below is a list of tools and how to install them.  It's always a good idea to check if a tool is already installed on your computer before spending time trying to install it.
-
+If you are a provemath developer, there are a number of tools you may need to install.  Below is a list of tools and how to install them.  MongoDB is not included here, as it has it's own page the Programmers section.  It's always a good idea to check if a tool is already installed on your computer before spending time trying to install it.
 
 
 
