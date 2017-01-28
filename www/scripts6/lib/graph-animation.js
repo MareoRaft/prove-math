@@ -131,8 +131,9 @@ function update() { // this function gets called AGAIN when new nodes come in
 		node_group.append('circle')
 			.classed('node-circle', true)
 			.attr('r', _node_radius) // we may consider adding the position too. it will get updated on the next tick anyway, so we will only add it here if things look glitchy
-			.on('mousedown', mousedown)
+			.on('mousedown', mousedown) // this is triggered by RIGHT CLICKS also!
 			.on('mouseup', mouseup)
+			.on('contextmenu', function(){d3.event.preventDefault()}) // disable the browser's default contextmenu
 			.on(gA.circle_events)
 		node_group.append('text') // must appear ABOVE node-circle
 			.classed('node-text', true)
@@ -158,17 +159,29 @@ function mousedown(node) {
 	node.time_before = getShortTime(new Date())
 	node.client_x_before = d3.event.clientX
 	node.client_y_before = d3.event.clientY
-	// d3.event.stopPropagation() // need cancelBubble for MS
 }
 function mouseup(node) {
 	if( mod(getShortTime(new Date()) - node.time_before, 60) < 0.85
 			&& cartesianDistance([node.client_x_before, node.client_y_before], [d3.event.clientX, d3.event.clientY]) < 55
 		) {
-		$.event.trigger({ type: 'node-click', message: node.id })
+		// their action was truly a "click", not a "drag", so execute appropriate action.
+		if( d3.event.button === 0 /* left click */ ){
+			mouseLeftClick(node)
+		}
+		else if( d3.event.button === 1 || d3.event.button === 2 /* right click */ ){ // sometimes i got 1, sometimes 2
+			mouseRightClick(node)
+		}
+		else console.log('Unknown mouse click ' + d3.event.button)
 	}
 	delete node.time_before
 	delete node.client_x_before
 	delete node.client_y_before
+}
+function mouseLeftClick(node) {
+	$.event.trigger({ type: 'node-click', message: node.id })
+}
+function mouseRightClick(node) {
+	$.event.trigger({ type: 'node-right-click', message: node.id })
 }
 function getShortTime(date) {
   return date.getSeconds() + date.getMilliseconds()/1000
