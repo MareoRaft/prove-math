@@ -28,6 +28,7 @@ let user = {
 		prefs_keycut: 'ctrl+,',
 		save_blind_keycut: 'alt+s',
 		edit_save_all_blinds: 'ctrl+s',
+		toggle_name_display: 'ctrl+t',
 	},
 	learned_node_ids: [],
 }

@@ -417,6 +417,11 @@ function collapse_search_wrapper() {
 
 
 /////////////////////// ACTION STUFF ///////////////////////
+mousetrap.bind(user.prefs.toggle_name_display, function(){
+	user.prefs.display_number_instead_of_name = !user.prefs.display_number_instead_of_name
+	graphAnimation.update()
+	return false
+})
 $('#avatar').click(push_pull_drawer)
 $('#get-starting-nodes').click(promptStartingNodes)
 mousetrap.bind(user.prefs.start_subject_keycut, function(){
