@@ -188,7 +188,7 @@ class Node {
 			let dependency_node = graph.nodes[dependency_id] // i think it's BAD for the Node module to depend on the graph module
 
 			// HOTFIX: if the node is absent from the graph, return just the ID
-			if( is.undefined(dependeny_node) ){
+			if( is.undefined(dependency_node) ){
 				return dependency_id
 			}
 
