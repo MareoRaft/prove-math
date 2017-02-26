@@ -187,7 +187,7 @@ class Node {
 		return _.map(this.dependencies, function(dependency_id){
 			let dependency_node = graph.nodes[dependency_id] // i think it's BAD for the Node module to depend on the graph module
 
-			// HOTFIX: if the node is absent from the graph, return just the ID
+			// FALLBACK: if the node is absent from the graph, return just the ID (see issue #32, #33)
 			if( is.undefined(dependency_node) ){
 				return dependency_id
 			}
