@@ -186,6 +186,12 @@ class Node {
 	get dependency_name_and_ids() {
 		return _.map(this.dependencies, function(dependency_id){
 			let dependency_node = graph.nodes[dependency_id] // i think it's BAD for the Node module to depend on the graph module
+
+			// HOTFIX: if the node is absent from the graph, return just the ID
+			if( is.undefined(dependeny_node) ){
+				return dependency_id
+			}
+
 			return dependency_node.nameAndId()
 		})
 	}
