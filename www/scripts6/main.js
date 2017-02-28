@@ -35,6 +35,7 @@ define( [
 // expose some things as true globals, so i can access them from the JS console!
 window.graph = graph
 window.is = is
+// window.user = user
 
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 let show_hide_dict = {}
@@ -67,7 +68,7 @@ let pref_blinds = new Blinds({
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
 	},
-	read_mode_action: user.setPref,
+	read_mode_action: function(val, key){ user.setPref(key, val) },
 })
 
 
