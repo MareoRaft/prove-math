@@ -63,6 +63,14 @@ gulp.task('minify', function(cb) {
 	})
 })
 
+gulp.task('search', function(cb) {
+	exec('mongo provemath build/mongo-create-search-index.js', function (err, stdout, stderr) {
+		console.log(stdout)
+		console.log(stderr)
+		cb(err)
+	})
+})
+
 gulp.task('watch', function() {
 	// css watcher
 	var watch_css = gulp.watch(src_scss, ['css'])
