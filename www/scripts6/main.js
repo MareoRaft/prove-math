@@ -213,6 +213,7 @@ ws.onopen = function() {
 	// guestLogin()
 	// promptStartingNodes()
 	// addNode()
+	// ws.jsend({ command: 'search', search_term: 'fundthmforfx' })
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -262,9 +263,18 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	else if( ball.command === 'display-error' ) {
 		alert('Server-Side Error: '+ball.message)
 	}
-		else if(ball.command === 'search-results'){
-		alert('Search results: '+JSON.stringify(ball.results))
-		document.getElementById("search_results_return").innerHTML = JSON.stringify(ball.results);
+	else if(ball.command === 'search-results'){
+		let $search_results_wrapper = $('#search-results-wrapper')
+		for( let result of ball.results ){
+			let node = new Node(result)
+			let html = result_htmlified(node)
+			$search_results_wrapper.append(html)
+			// Bind a click event! This must be done AFTER the html element is created.
+			let $result = $search_results_wrapper.children().last()
+			$result.click(function(){
+				preview_box_clicked(node.id)
+			})
+		}
 	}
 	else if (ball.command === "suggest-goal") {
 		let goal = new Node(ball.goal)
@@ -369,6 +379,9 @@ function logout(){ // this is what runs when the user clicks "logout"
 
 //////////////////////// SEARCH BAR ////////////////////////
 $mousetrap('#search-box').bind('enter', function(){
+	// empty the search results (in case there were old searches)
+	$('#search-results-wrapper').empty()
+	// perform a new search
 	ws.jsend({ command: 'search', search_term: $('#search-box').val() })
 })
 $('#search-wrapper').click(function(){
@@ -381,6 +394,7 @@ mousetrap.bind(user.prefs.search_keycut, function(){
 $('#search-box').focus(expand_search_wrapper)
 $(document).click(function(event) { // click anywhere BUT the #search-wrapper
 	if (!$(event.target).closest('#search-wrapper').length && !$(event.target).is('#search-wrapper')) {
+		$('#search-results-wrapper').empty()
 		collapse_search_wrapper()
 	}
 })
@@ -418,6 +432,14 @@ function collapse_search_wrapper() {
 
 
 /////////////////////// ACTION STUFF ///////////////////////
+function preview_box_clicked(node_id){
+	// 1. add the node to the actual graph (REQUEST node to get any needed edges)
+	ws.jsend({command: 'request-node', node_id: node_id})
+	// 2. open the node (maybe we could use one color on hover's for 'request node', and another for 'open node'.)
+	// this must be done later
+	openNode(node_id) // need to MOVE FOCUS TO NODE, so the 'Esc' keycut works (do this WITHIN the openNode function)
+}
+
 mousetrap.bind(user.prefs.toggle_name_display, function(){
 	user.prefs.display_number_instead_of_name = !user.prefs.display_number_instead_of_name
 	graphAnimation.update()
@@ -517,6 +539,18 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////// HELPERS /////////////////////////
+function result_htmlified(node){
+	return '<div class="preview-box">'
+			+ '<div class="preview-top-bar">'
+				+ '<div class="preview-circle-wrapper"></div>'
+				+ '<div class="preview-name">'+node.name+'</div>'
+			+ '</div>'
+			+ '<div class="preview-description">'
+				+ node.description
+			+ '</div>'
+		+ '</div>'
+}
+
 function addNode() {
 	let new_node = new Node()
 	graph.addNode(new_node)

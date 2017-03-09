@@ -283,6 +283,9 @@ $search-border: 4px solid $eggshell;
 	flex-direction: column;
 	justify-content: space-around;
 	align-items: stretch;
+	&:hover {
+		background-color: lightyellow;
+	}
 }
 .preview-top-bar {
 	height: 60px;
@@ -298,7 +301,7 @@ $search-border: 4px solid $eggshell;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	& > div{
+	& > div{ // the circle itself
 		height: 84%;
 		width: 84%;
 		border-radius: 50%;
