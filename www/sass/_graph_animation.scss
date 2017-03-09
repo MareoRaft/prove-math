@@ -5,30 +5,6 @@
 //   background-color: green;
 svg {
 	@include hide;
-	@mixin bright-and-unbright-fill-and-opacity($color) {
-		fill: mix(gray, $color, 70%);
-		opacity: 0.3;
-		&.bright-circle {
-			fill: $color;
-			opacity: 0.49;
-		}
-	}
-
-	.axiom-circle {
-		@include bright-and-unbright-fill-and-opacity($grey);
-	}
-	.definition-circle {
-		@include bright-and-unbright-fill-and-opacity($green);
-		$col: red;
-		box-shadow: 3px 3px 4px $col;
-		fill: orange;
-	}
-	.theorem-circle {
-		@include bright-and-unbright-fill-and-opacity(blue);
-	}
-	.exercise-circle {
-		@include bright-and-unbright-fill-and-opacity($darkwhite);
-	}
 
 	.node-text {
 		@include font; // we won't need this if we end up overriding everything...

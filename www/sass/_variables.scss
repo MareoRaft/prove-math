@@ -20,3 +20,14 @@
 	justify-content: center;
 	align-items: center;
 }
+
+@mixin bright-and-unbright-bg-and-opacity($color) {
+  fill: mix(gray, $color, 70%); // for SVG
+  background-color: mix(gray, $color, 70%); // for DIV
+  opacity: 0.3;
+  &.bright-circle {
+    fill: $color;
+    background-color: $color;
+    opacity: 0.49;
+  }
+}

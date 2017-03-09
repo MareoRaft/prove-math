@@ -283,34 +283,36 @@ $search-border: 4px solid $eggshell;
 	flex-direction: column;
 	justify-content: space-around;
 	align-items: stretch;
+	background-color: rgba(white, 0.85);
 	&:hover {
-		background-color: lightyellow;
+		background-color: rgba(lightyellow, 0.96);
 	}
 }
+$bar-height: 60px;
 .preview-top-bar {
-	height: 60px;
+	height: $bar-height;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
 	align-items: stretch;
 }
 .preview-circle-wrapper {
-	$side-length: 60px;
+	$side-length: $bar-height;
 	height: $side-length;
 	min-width: $side-length; max-width: $side-length;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	& > div{ // the circle itself
-		height: 84%;
-		width: 84%;
+		$size: 56%;
+		height: $size;
+		width: $size;
 		border-radius: 50%;
-		background-color: green; // should be smart in future
 	}
 }
 .preview-name {
 	width: 100%;
-	padding-left: 10px;
+	padding-left: 2px;
 	font: $search-font;
 	display: flex;
 	align-items: center;
@@ -321,4 +323,18 @@ $search-border: 4px solid $eggshell;
 	padding-left: 10px;
 	padding-right: 10px;
 	overflow: hidden;
+}
+
+// for nodes, both in SVG and in search results:
+.axiom-circle {
+	@include bright-and-unbright-bg-and-opacity($grey);
+}
+.definition-circle {
+	@include bright-and-unbright-bg-and-opacity($green);
+}
+.theorem-circle {
+	@include bright-and-unbright-bg-and-opacity(blue);
+}
+.exercise-circle {
+	@include bright-and-unbright-bg-and-opacity($darkwhite);
 }

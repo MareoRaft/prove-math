@@ -39,6 +39,13 @@ window.is = is
 
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 let show_hide_dict = {}
+let circleClassConditions = {
+	'bright-circle': node => node.learned,
+	'axiom-circle': node => node.type === 'axiom' || node.type === null,
+	'definition-circle': node => node.type === 'definition' || node.type === 'equivdefs',
+	'theorem-circle': node => node.type === 'theorem' || node.type === 'example',
+	'exercise-circle': node => node.type === 'exercise',
+}
 
 ////////////////////// INITIALIZATION //////////////////////
 let subjects = JSON.parse($('body').attr('data-subjects'))
@@ -79,13 +86,7 @@ graphAnimation.init({
 		let val = is.number(node.attrs['importance'].value)? node.attrs['importance'].value: 5
 		return 7.9 * Math.sqrt(val)
 	},
-	circle_class_conditions: {
-		'bright-circle': node => node.learned,
-		'axiom-circle': node => node.type === 'axiom' || node.type === null,
-		'definition-circle': node => node.type === 'definition' || node.type === 'equivdefs',
-		'theorem-circle': node => node.type === 'theorem' || node.type === 'example',
-		'exercise-circle': node => node.type === 'exercise',
-	},
+	circle_class_conditions: circleClassConditions,
 	circle_events: { // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
 		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.attrs.description.value },
 		mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
@@ -213,7 +214,7 @@ ws.onopen = function() {
 	// guestLogin()
 	// promptStartingNodes()
 	// addNode()
-	// ws.jsend({ command: 'search', search_term: 'fundthmforfx' })
+	// ws.jsend({ command: 'search', search_term: 'monic' })
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -437,7 +438,9 @@ function preview_box_clicked(node_id){
 	ws.jsend({command: 'request-node', node_id: node_id})
 	// 2. open the node (maybe we could use one color on hover's for 'request node', and another for 'open node'.)
 	// this must be done later
-	openNode(node_id) // need to MOVE FOCUS TO NODE, so the 'Esc' keycut works (do this WITHIN the openNode function)
+	if( node_id in graph.nodes ){
+		openNode(node_id) // need to MOVE FOCUS TO NODE, so the 'Esc' keycut works (do this WITHIN the openNode function)
+	}
 }
 
 mousetrap.bind(user.prefs.toggle_name_display, function(){
@@ -540,15 +543,35 @@ function toggleToGraphAnimation() {
 
 ////////////////////////// HELPERS /////////////////////////
 function result_htmlified(node){
+	let classNames = getClassesFromClassConditions(circleClassConditions, node)
+	let classString = classNames.join(' ')
 	return '<div class="preview-box">'
 			+ '<div class="preview-top-bar">'
-				+ '<div class="preview-circle-wrapper"></div>'
+				+ '<div class="preview-circle-wrapper">'
+					+ '<div class="'+classString+'"></div>' // the circle itself
+				+ '</div>'
 				+ '<div class="preview-name">'+node.name+'</div>'
 			+ '</div>'
 			+ '<div class="preview-description">'
 				+ node.description
 			+ '</div>'
 		+ '</div>'
+}
+
+function getClassesFromClassConditions(class_conditions, node) {
+	let class_names = []
+	for( let class_name in class_conditions ){
+		let value = class_conditions[class_name]
+		if( is.function(value) ){
+			let bool_func = value
+			if( bool_func(node) ) class_names.push(class_name)
+		}
+		else if( is.boolean(value) ){
+			let bool = value
+			if( bool ) class_names.push(class_name)
+		}
+	}
+	return class_names
 }
 
 function addNode() {
