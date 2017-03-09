@@ -84,4 +84,4 @@ gulp.task('watch', function() {
 })
 
 gulp.task('default', ['js', 'css', 'docs', 'watch'])
-gulp.task('deploy', ['js', 'css', 'docs', 'minify', 'watch'])
+gulp.task('deploy', ['search', 'js', 'css', 'docs', 'minify', 'watch'])
