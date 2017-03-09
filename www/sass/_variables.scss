@@ -1,18 +1,18 @@
 @import 'color_scheme';
 
 @mixin font {
-  color: $black;
-  font-family: Monaco, "Lucida Console", Courier, "Courier New", monospace;
-  font-size: 0.9rem; //0.9rem == 14px
-  line-height: 1.2rem; //1.2 rem ~~ 19px
+	color: $black;
+	font-family: Monaco, "Lucida Console", Courier, "Courier New", monospace;
+	font-size: 0.9rem; //0.9rem == 14px
+	line-height: 1.2rem; //1.2 rem ~~ 19px
 }
 
 @mixin hide { // we can't move the JS completely here because of grabbing window dimensions.  but we can at least initialize the sections to be hidden.
-  position: absolute;
-  overflow: hidden;
-  border-width: 0;
-  height: 0;
-  width: 0; // prevent rogue width overflows
+	position: absolute;
+	overflow: hidden;
+	border-width: 0;
+	height: 0;
+	width: 0; // prevent rogue width overflows
 }
 
 @mixin center-content {
@@ -22,12 +22,12 @@
 }
 
 @mixin bright-and-unbright-bg-and-opacity($color) {
-  fill: mix(gray, $color, 70%); // for SVG
-  background-color: mix(gray, $color, 70%); // for DIV
-  opacity: 0.3;
-  &.bright-circle {
-    fill: $color;
-    background-color: $color;
-    opacity: 0.49;
-  }
+	fill: mix(gray, $color, 70%); // for SVG
+	background-color: mix(gray, $color, 70%); // for DIV
+	opacity: 0.3;
+	&.bright-circle {
+		fill: $color;
+		background-color: $color;
+		opacity: 0.49;
+	}
 }
