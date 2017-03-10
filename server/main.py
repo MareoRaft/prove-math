@@ -36,14 +36,18 @@ import xml.etree.ElementTree as ET
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
 	raise SystemExit('Please use Python version 3.4 or above')
 
-def clean_node_ids(dic):
+def clean_and_verify_node_ids(dic):
 	node_id_key_names = ['node_id', 'central_node_id', 'goal_id', 'pregoal_id']
 	for key in node_id_key_names:
 		if key in dic:
-			print('got unclean id: {}'.format(dic[key]))
-			dic[key] = our_MG.n(dic[key]).id
-			print('replaced with clean id: {}'.format(dic[key]))
-	return dic
+			the_id = dic[key]
+			if the_id in our_MG.nodes():
+				print('got unclean id: {}'.format(the_id))
+				dic[key] = our_MG.n(the_id).id
+				print('replaced with clean id: {}'.format(dic[key]))
+			else:
+				return False # to indicate failure
+	return True
 
 
 ################################## MAIN #######################################
@@ -166,8 +170,15 @@ class SocketHandler (WebSocketHandler):
 		log.debug('got message: ' + message+"\n")
 		ball = json.loads(message)
 		# clean any node ids that ball might have (to allow for multiple names)
-		clean_node_ids(ball)
+		success = clean_and_verify_node_ids(ball)
+		if not success:
+			self.jsend({
+				'command': 'display-error',
+				'message': 'The node you are trying to manipulate is not stored in the server, so no action will be taken on the server side.',
+			})
+			return
 
+		# Respond to commands!
 		if ball['command'] == 'print':
 			print(ball['message'])
 
