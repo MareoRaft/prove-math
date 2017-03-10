@@ -329,6 +329,8 @@ $(document).on('save-node', function(){
 	console.log('sending dict: '+JSON.stringify(current_node.dict()))
 	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
 })
+updateSearchResultsWrapperMaxHeight()
+$(window).resize(updateSearchResultsWrapperMaxHeight)
 
 
 //////////////////// LOGIN/LOGOUT STUFF ////////////////////
@@ -542,6 +544,10 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////// HELPERS /////////////////////////
+function updateSearchResultsWrapperMaxHeight() {
+	$('#search-results-wrapper').css('max-height', $(window).height() - 90)
+}
+
 function result_htmlified(node){
 	let classNames = getClassesFromClassConditions(circleClassConditions, node)
 	let classString = classNames.join(' ')
