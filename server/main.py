@@ -289,7 +289,7 @@ class SocketHandler (WebSocketHandler):
 			search_results = our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
 			self.jsend({
 				'command': 'search-results',
-				'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(10)),
+				'results': list(search_results.sort([('score', {'$meta': 'textScore'})]).limit(18)),
 			})
 
 		elif ball['command'] == 'get-goal-suggestion':
