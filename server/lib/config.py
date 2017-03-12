@@ -18,7 +18,6 @@ starting_nodes = {
 	'calc': MULTIVARIABLE_CALCULUS,
 	'differential topology': ['n-sphere', 'tangent bundle'],
 	'a': ['leftrmodule'],
-	# 'a': ['endomorphismgroupofmodules', 'isomorphismtheoremformodules', '3111example', 'indecomposable', 'leftrmodule', 'kernelofamodulemorphism', 'remarkson3112', 'corollaryof316', 'quotientmodule', 'homgroupofmodules', '3112example', 'examplesofprevious', 'consequencesofannihilator', 'rmodulemorphism', 'submodule', 'generate', 'internaldirectsum', 'annihilator', 'leftrmoduleconsequences', 'consequencesofrlinear'],
 }
 
 DEF_USER_PREFS = {
