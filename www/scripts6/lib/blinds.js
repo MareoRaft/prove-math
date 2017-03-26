@@ -248,6 +248,7 @@ class Blinds {
 	}
 
 	_toggleBlind(blind) {
+		console.log('toggle')
 		let $this = $('#'+blind.id)
 		let $value = $this.children('.value:first')
 

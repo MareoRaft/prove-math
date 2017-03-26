@@ -211,15 +211,15 @@ ws.jsend = function(raw_object) {
 ws.onopen = function() {
 	ws.jsend({command: 'first-steps'})
 	//TEMP
-	// guestLogin()
-	// promptStartingNodes()
+	guestLogin()
+	promptStartingNodes()
 	// addNode()
 	// ws.jsend({ command: 'search', search_term: 'monic' })
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
 	window.ball = ball
-	logj('got message: ', ball)
+	// logj('got message: ', ball)
 	if( ball.command === 'populate-oauth-urls' ) {
 		oauth_url_dict = ball.url_dict
 	}
@@ -253,7 +253,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// }
 
 		// TEMP FOR COLORS
-		// openNode('consequencesofannihilator')
+		openNode('module')
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -326,7 +326,7 @@ $(document).on('request-node', function(Event) {
 	ws.jsend({command: 'request-node', node_id: Event.message})
 })
 $(document).on('save-node', function(){
-	console.log('sending dict: '+JSON.stringify(current_node.dict()))
+	// console.log('sending dict: '+JSON.stringify(current_node.dict()))
 	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
 })
 updateSearchResultsWrapperMaxHeight()
