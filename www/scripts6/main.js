@@ -111,9 +111,9 @@ let node_blinds = new Blinds({
 		string = string.replace(/\\/g, '\\\\')
 		return marked(string)
 	},
-	post_render: function() {
-		// the following should be equivalent to // mathjax.Hub.Queue(['Typeset', mathjax.Hub])
-		mathjax.Hub.Typeset() // this can't be passed in without the parenthesis
+	post_render: function(idToEdit) {
+		// See https://github.com/MareoRaft/prove-math/issues/37 for info.
+		mathjax.Hub.Queue(['Typeset', mathjax.Hub, idToEdit])
 	},
 	read_mode_action: function(value, key, parent_object){
 		// retrieve the node
@@ -211,8 +211,8 @@ ws.jsend = function(raw_object) {
 ws.onopen = function() {
 	ws.jsend({command: 'first-steps'})
 	//TEMP
-	guestLogin()
-	promptStartingNodes()
+	// guestLogin()
+	// promptStartingNodes()
 	// addNode()
 	// ws.jsend({ command: 'search', search_term: 'monic' })
 }
@@ -253,7 +253,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// }
 
 		// TEMP FOR COLORS
-		openNode('module')
+		// openNode('module')
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({

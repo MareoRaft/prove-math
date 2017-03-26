@@ -248,7 +248,6 @@ class Blinds {
 	}
 
 	_toggleBlind(blind) {
-		console.log('toggle')
 		let $this = $('#'+blind.id)
 		let $value = $this.children('.value:first')
 
@@ -317,7 +316,7 @@ class Blinds {
 
 		$value.html(blind.value_htmlified)
 		$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit.svg')
-		this.post_render()
+		this.post_render(blind.id)
 
 		if( is.function(this.read_mode_action) ){
 			this.read_mode_action(blind.value, blind.key, blind.parent_object)
