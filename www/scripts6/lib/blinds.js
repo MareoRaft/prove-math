@@ -330,7 +330,7 @@ class Blinds {
 		$value.html(blind.value_htmlified)
 		// TODO: MAYBE THIS CHOSEN STUFF SHOULD BELONG SOMEWHERE ELSE.  If a blind is created in WRITE mode to BEGIN with, this doesn't run.  Perhaps it's an organizational mistake?  Otherwise, we can cheat by having even 'write' mode blinds start in read mode, but then run _startWriteMode immediately.  not advised.
 		if( blind.mode === 'chosen' ){
-			$('#'+blind.id+' > .value > .tags').chosen({ // this seems to work, as opposed to '#'+blind.id+'.tags'
+			$('#'+blind.id+' > .value > .tags').chosen({
 				inherit_select_classes: true,
 				search_contains: true,
 				width: '100%'
@@ -338,7 +338,7 @@ class Blinds {
 			// $('.tags').append('<option value="new" selected>NEW</option>')
 			// the following might be messing things up.  leave it commented until we need that feature
 			$('#'+blind.id+' > .value > .tags').trigger('chosen:updated') // this is how to update chosen after adding more options
-
+			$('#'+blind.id+' '+'.search-field > input').focus()
 		}
 		else if( blind.mode === 'standard' ){
 			$value.prop('contenteditable', true)
