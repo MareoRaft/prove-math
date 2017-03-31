@@ -12,7 +12,7 @@ define( [
 	"blinds",
 	"chosen",
 	"user",
-	"mousetrap",
+	"mousetrap-extended",
 ], function(
 	$,
 	_,
@@ -29,7 +29,6 @@ define( [
 	user,
 	mousetrap
 ){
-
 
 ///////////////////////// GLOBALS //////////////////////////
 // expose some things as true globals, so i can access them from the JS console!
@@ -401,8 +400,7 @@ mousetrap.bind(user.prefs.search_keycut, function(){
 $('#search-box').focus(expand_search_wrapper)
 $(document).click(function(event) { // click anywhere BUT the #search-wrapper
 	if (!$(event.target).closest('#search-wrapper').length && !$(event.target).is('#search-wrapper')) {
-		$('#search-results-wrapper').empty()
-		collapse_search_wrapper()
+		close_search()
 	}
 })
 
@@ -435,6 +433,12 @@ function expand_search_wrapper() {
 function collapse_search_wrapper() {
 	$('#search-wrapper').width('300px')
 	// $('#search-wrapper').height('50px')
+}
+function close_search() {
+	$('#search-results-wrapper').empty()
+	collapse_search_wrapper()
+	// move focus off search, to make sure CSS will shrink it
+	$('#search-box').blur()
 }
 
 
@@ -522,7 +526,12 @@ mousetrap.bind(user.prefs.prefs_keycut, function(){
 })
 
 $('.back').click(fromBlindsToGraphAnimation)
-mousetrap.bind(user.prefs.back_keycut, function(){
+mousetrap.bindGlobal(user.prefs.back_keycut, function(){
+	// if search bar is in focus, shrink it
+	if( $('#search-box').is(':focus') ){
+		close_search()
+	}
+
 	// if blinds are showing, hide them
 	if( show_hide_dict['#node-template'] === 'visible' || show_hide_dict['#preference-pane'] === 'visible' ){
 		fromBlindsToGraphAnimation()
