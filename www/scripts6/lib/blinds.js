@@ -75,7 +75,7 @@ class Blinds {
 		this.blind_id_counter = 0 // this would fail in the future if we allow more than one Blinds to be used simultaneously.  We might need to add an ID for the specific instance of blinds.
 
 		// enable toggleBlinds keycut
-		mousetrap.bind(user.prefs.edit_save_all_blinds, function(){
+		mousetrap.bind(user.prefs.edit_save_all_blinds_keycut, function(){
 			this._toggleBlinds()
 			return false
 		}.bind(this))

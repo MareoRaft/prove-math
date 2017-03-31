@@ -214,7 +214,7 @@ ws.onopen = function() {
 	// guestLogin()
 	// promptStartingNodes()
 	// addNode()
-	// ws.jsend({ command: 'search', search_term: 'monic' })
+	// ws.jsend({ command: 'search', search_term: 'dual' })
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -274,6 +274,10 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			let $result = $search_results_wrapper.children().last()
 			$result.click(function(){
 				preview_box_clicked(node.id)
+			})
+			let $nodecircle = $result.find('.preview-circle-wrapper > div')
+			$nodecircle.click(function(){
+				node_in_preview_box_clicked(node.id)
 			})
 		}
 	}
@@ -438,14 +442,17 @@ function collapse_search_wrapper() {
 function preview_box_clicked(node_id){
 	// 1. add the node to the actual graph (REQUEST node to get any needed edges)
 	ws.jsend({command: 'request-node', node_id: node_id})
-	// 2. open the node (maybe we could use one color on hover's for 'request node', and another for 'open node'.)
-	// this must be done later
+}
+function node_in_preview_box_clicked(node_id){
+	// get the node (in the FUTURE we should not actually put it on the GRAPH ANIMATION though)
+	ws.jsend({command: 'request-node', node_id: node_id})
+	// display node
 	if( node_id in graph.nodes ){
-		openNode(node_id) // need to MOVE FOCUS TO NODE, so the 'Esc' keycut works (do this WITHIN the openNode function)
+		openNode(node_id)
 	}
 }
 
-mousetrap.bind(user.prefs.toggle_name_display, function(){
+mousetrap.bind(user.prefs.toggle_name_display_keycut, function(){
 	user.prefs.display_number_instead_of_name = !user.prefs.display_number_instead_of_name
 	graphAnimation.update()
 	return false
@@ -515,7 +522,7 @@ mousetrap.bind(user.prefs.prefs_keycut, function(){
 })
 
 $('.back').click(fromBlindsToGraphAnimation)
-mousetrap.bind('esc', function(){
+mousetrap.bind(user.prefs.back_keycut, function(){
 	// if blinds are showing, hide them
 	if( show_hide_dict['#node-template'] === 'visible' || show_hide_dict['#preference-pane'] === 'visible' ){
 		fromBlindsToGraphAnimation()
