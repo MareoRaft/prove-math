@@ -248,7 +248,6 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// // TEMP TEST
 		// if (raw_graph.nodes.length > 0) {
 		// 	let node = raw_graph.nodes[0]
-		// 	display_search_results([node])
 		// }
 
 		// TEMP FOR COLORS
@@ -404,28 +403,6 @@ $(document).click(function(event) { // click anywhere BUT the #search-wrapper
 	}
 })
 
-function display_search_results(nodes) {
-	_.each(nodes, function(node) {
-		let box_html = 	"<div class='preview-box'>"
-		+	"<div class='preview-top-bar'>"
-		+		"<div class='preview-circle-wrapper'>"
-		+			"<div><!--the circle itself--></div>"
-		+		"</div>"
-		+		"<div class='preview-name'>"
-		+			"<!--node name goes here-->The Inclusion-Exclusion Principal"
-		+		"</div>"
-		+	"</div>"
-		+	"<div class='preview-description'>"
-		+		"<!--node description goes here-->Given $n\in\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\left|\cup_{i=1}^{n} A_i\right| = \sum_{S\subset [n]} (-1)^{|S|+1} \left|\cap_{j\in S} A_j\right|$."
-		+	"</div>"
-		+"</div>"
-
-		$('#search-results-wrapper').append(box_html)
-		$('#search-results-wrapper').append(box_html)
-	})
-	expand_search_wrapper()
-}
-
 function expand_search_wrapper() {
 	$('#search-wrapper').width('800px')
 	// $('#search-wrapper').height('auto')
@@ -572,7 +549,7 @@ function result_htmlified(node){
 				+ '<div class="preview-circle-wrapper">'
 					+ '<div class="'+classString+'"></div>' // the circle itself
 				+ '</div>'
-				+ '<div class="preview-name">'+node.name+'</div>'
+				+ '<div class="preview-name">'+node.display_name+'</div>'
 			+ '</div>'
 			+ '<div class="preview-description">'
 				+ node.description
