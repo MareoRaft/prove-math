@@ -1,0 +1,174 @@
+/*
+THIS LICENSE APPLIES TO THIS FILE ONLY:
+see http://www.cssscript.com/native-javascript-growl-notification-library-vanilla-notify/
+The MIT License (MIT)
+
+Copyright (c) 2014 Martin Laritz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+$vn-info-background: #3498db !default;
+$vn-success-background: #2ecc71 !default;
+$vn-error-background: #e74c3c !default;
+$vn-warning-background: #f39c12 !default;
+$vn-notify-background: #333 !default;
+
+$vn-info-color: #fff !default;
+$vn-success-color: #fff !default;
+$vn-error-color: #fff !default;
+$vn-warning-color: #fff !default;
+$vn-notify-color: #fff !default;
+$vn-close-color: #fff !default;
+
+$vn-border-radius: 5px !default;
+$vn-container-top: 10px !default;
+$vn-container-bottom: 10px !default;
+$vn-container-left: 10px !default;
+$vn-container-right: 10px !default;
+
+$vn-close-size: 15px !default;
+
+$vn-opacity: .75;
+$vn-hover-opacity: 1;
+
+@mixin vn-border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+
+@mixin vn-opacity($vn-value){
+  $vn-IEValue: $vn-value*100;
+  opacity: $vn-value;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity="+$vn-IEValue+")";
+  filter: alpha(opacity=$vn-IEValue);
+}
+
+@mixin vn-transform($vn-deg) {
+  -webkit-transform: rotate($vn-deg);
+  -moz-transform: rotate($vn-deg);
+  transform: rotate($vn-deg);
+}
+
+.vnotify-container {
+  position: fixed;
+
+  &.vn-top-right {
+    right: $vn-container-right;
+    top: $vn-container-top;
+  }
+
+  &.vn-top-left {
+    top: $vn-container-top;
+    left: $vn-container-left;
+  }
+
+  &.vn-bottom-right {
+    bottom: $vn-container-bottom;
+    right: $vn-container-right;
+  }
+
+  &.vn-bottom-left {
+    bottom: $vn-container-bottom;
+    left: $vn-container-left;
+  }
+
+  &.vn-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &.vn-top-center {
+    top: $vn-container-top;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+
+  .vn-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    width: $vn-close-size;
+    height: $vn-close-size;
+    padding: 2px;
+    cursor: pointer;
+
+    &:before, &:after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      height: 2px;
+      background: $vn-close-color;
+    }
+
+    &:before {
+      @include vn-transform(45deg);
+    }
+
+    &:after {
+      @include vn-transform(-45deg);
+    }
+  }
+}
+
+.vnotify-item {
+  width: 30em;
+  padding: 15px;
+  position: relative;
+  @include vn-border-radius($vn-border-radius);
+  margin-bottom: 15px;
+  @include vn-opacity($vn-opacity);
+
+  &:hover {
+    opacity: $vn-hover-opacity;
+  }
+}
+
+.vnotify-title {
+  font-weight: bold;
+}
+
+.vnotify-info {
+  background: $vn-info-background;
+  color: $vn-info-color;
+}
+
+.vnotify-success {
+  background: $vn-success-background;
+  color: $vn-success-color;
+}
+
+.vnotify-error {
+  background: $vn-error-background;
+  color: $vn-error-color;
+}
+
+.vnotify-warning {
+  background: $vn-warning-background;
+  color: $vn-warning-color;
+}
+
+.vnotify-notify {
+  background: $vn-notify-background;
+  color: $vn-notify-color;
+}

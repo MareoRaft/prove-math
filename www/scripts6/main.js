@@ -13,6 +13,7 @@ define( [
 	"chosen",
 	"user",
 	"mousetrap-extended",
+	"vanilla-notify",
 ], function(
 	$,
 	_,
@@ -27,8 +28,10 @@ define( [
 	Blinds,
 	chosen,
 	user,
-	mousetrap
+	mousetrap,
+	notify
 ){
+
 
 ///////////////////////// GLOBALS //////////////////////////
 // expose some things as true globals, so i can access them from the JS console!
@@ -206,6 +209,11 @@ if( !def(ws) ) die('Your browser does not support websockets, which are essentia
 ws.jsend = function(raw_object) {
 	$.extend(raw_object, {identifier: user.get_identifier(), client_node_ids: graph.nodeIdsList()})
 	ws.send(JSON.stringify(raw_object))
+}
+ws.onclose = function() {
+	notify.warning({
+		text: 'You are disconnected from the server.  Any changes you make at this time will not be saved.',
+	})
 }
 ws.onopen = function() {
 	ws.jsend({command: 'first-steps'})
