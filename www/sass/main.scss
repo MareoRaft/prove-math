@@ -123,6 +123,18 @@ svg {
 	background-color: rgba( white, 0.7 );
 }
 
+#notify-overlay {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	overflow: hidden;
+	border-width: 0;
+
+	z-index: 4;
+	pointer-events: none;
+	background-color: transparent;
+}
+
 #overlay {
 	@include hide;
 	z-index: 3;

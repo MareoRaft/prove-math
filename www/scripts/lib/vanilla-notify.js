@@ -169,7 +169,7 @@ var createNotifyContainer = function(positionClass) {
   container.setAttribute('role', 'alert');
 
   frag.appendChild(container);
-  document.body.appendChild(frag);
+  document.getElementById('notify-overlay').appendChild(frag); // changed by matt
 
   return container;
 };

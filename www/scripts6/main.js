@@ -390,6 +390,14 @@ function logout(){ // this is what runs when the user clicks "logout"
 }
 
 
+/////////// TEMP
+mousetrap.bind('ctrl+z', function(){
+	notify.info({
+		text: 'hi!',
+	})
+	return false // to prevent default
+})
+
 //////////////////////// SEARCH BAR ////////////////////////
 $mousetrap('#search-box').bind('enter', function(){
 	// empty the search results (in case there were old searches)
