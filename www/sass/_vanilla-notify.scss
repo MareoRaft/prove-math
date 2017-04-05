@@ -132,8 +132,10 @@ $vn-hover-opacity: 1;
 }
 
 .vnotify-item {
-  width: 30em; // matt
-  pointer-events: auto; //matt
+  max-height: 10em;
+  width: 30em;
+  pointer-events: auto;
+
   padding: 15px;
   position: relative;
   @include vn-border-radius($vn-border-radius);

@@ -26,11 +26,11 @@ define([], function() {
 
 var positionOption = {
   topLeft: 'topLeft',
+  topCenter: 'topCenter',
   topRight: 'topRight',
   bottomLeft: 'bottomLeft',
   bottomRight: 'bottomRight',
   center: 'center',
-  topCenter: 'topCenter', // created by matt
 };
 
 var options = { // DEFAULTS
@@ -178,14 +178,14 @@ var getPositionClass = function(option) {
   switch (option) {
     case positionOption.topLeft:
       return 'vn-top-left';
+    case positionOption.topCenter:
+      return 'vn-top-center';
     case positionOption.bottomRight:
       return 'vn-bottom-right';
     case positionOption.bottomLeft:
       return 'vn-bottom-left';
     case positionOption.center:
       return 'vn-center';
-    case positionOption.topCenter: // added by matt
-      return 'vn-top-center';
     default:
       return 'vn-top-right';
   }

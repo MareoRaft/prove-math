@@ -218,8 +218,8 @@ ws.onclose = function() {
 ws.onopen = function() {
 	ws.jsend({command: 'first-steps'})
 	//TEMP
-	// guestLogin()
-	// promptStartingNodes()
+	guestLogin()
+	promptStartingNodes()
 	// addNode()
 	// ws.jsend({ command: 'search', search_term: 'dual' })
 }
