@@ -24,16 +24,16 @@
 
 define([], function() {
 
-var positionOption = {
+let positionOption = {
   topLeft: 'topLeft',
   topCenter: 'topCenter',
   topRight: 'topRight',
   bottomLeft: 'bottomLeft',
   bottomRight: 'bottomRight',
   center: 'center',
-};
+}
 
-var options = { // DEFAULTS
+let options = { // DEFAULTS
   fadeInDuration: 1000,
   fadeOutDuration: 1000,
   fadeInterval: 50,
@@ -42,156 +42,156 @@ var options = { // DEFAULTS
   position: 'topCenter',
   sticky: false,
   showClose: true
-};
+}
 
-var info = function(params) {
-  params.notifyClass = 'vnotify-info';
-  return addNotify(params);
-};
+let info = function(params) {
+  params.notifyClass = 'vnotify-info'
+  return addNotify(params)
+}
 
-var success = function(params) {
-  params.notifyClass = 'vnotify-success';
-  return addNotify(params);
-};
+let success = function(params) {
+  params.notifyClass = 'vnotify-success'
+  return addNotify(params)
+}
 
-var error = function(params) {
-  params.notifyClass = 'vnotify-error';
-  return addNotify(params);
-};
+let error = function(params) {
+  params.notifyClass = 'vnotify-error'
+  return addNotify(params)
+}
 
-var warning = function(params) {
-  params.notifyClass = 'vnotify-warning';
-  return addNotify(params);
-};
+let warning = function(params) {
+  params.notifyClass = 'vnotify-warning'
+  return addNotify(params)
+}
 
-var notify = function(params) {
-  params.notifyClass = 'vnotify-notify';
-  return addNotify(params);
-};
+let notify = function(params) {
+  params.notifyClass = 'vnotify-notify'
+  return addNotify(params)
+}
 
-var custom = function(params) {
-  return addNotify(params);
-};
+let custom = function(params) {
+  return addNotify(params)
+}
 
-var addNotify = function(params) {
+let addNotify = function(params) {
   if (!params.title && !params.text) {
-    return null;
+    return null
   }
 
-  var frag = document.createDocumentFragment();
+  let frag = document.createDocumentFragment()
 
-  var item = document.createElement('div');
-  item.classList.add('vnotify-item');
-  item.classList.add(params.notifyClass);
-  item.style.opacity = 0;
+  let item = document.createElement('div')
+  item.classList.add('vnotify-item')
+  item.classList.add(params.notifyClass)
+  item.style.opacity = 0
 
-  item.options = getOptions(params);
+  item.options = getOptions(params)
 
   if (params.title) {
-    item.appendChild(addTitle(params.title));
+    item.appendChild(addTitle(params.title))
   }
   if (params.text) {
-    item.appendChild(addText(params.text));
+    item.appendChild(addText(params.text))
   }
   if (item.options.showClose) {
-    item.appendChild(addClose(item));
+    item.appendChild(addClose(item))
   }
 
-  item.visibleDuration = item.options.visibleDuration; //option
+  item.visibleDuration = item.options.visibleDuration //option
 
-  var hideNotify = function() {
-    item.fadeInterval = fade('out', item.options.fadeOutDuration, item);
-  };
+  let hideNotify = function() {
+    item.fadeInterval = fade('out', item.options.fadeOutDuration, item)
+  }
 
-  var resetInterval = function() {
-    clearTimeout(item.interval);
-    clearTimeout(item.fadeInterval);
-    item.style.opacity = null;
-    item.visibleDuration = item.options.postHoverVisibleDuration;
-  };
+  let resetInterval = function() {
+    clearTimeout(item.interval)
+    clearTimeout(item.fadeInterval)
+    item.style.opacity = null
+    item.visibleDuration = item.options.postHoverVisibleDuration
+  }
 
-  var hideTimeout = function () {
+  let hideTimeout = function () {
     if( item.visibleDuration === 'forever' ){
       // pass
     } else {
-      item.interval = setTimeout(hideNotify, item.visibleDuration);
+      item.interval = setTimeout(hideNotify, item.visibleDuration)
     }
-  };
+  }
 
-  frag.appendChild(item);
-  var container = getNotifyContainer(item.options.position);
-  container.appendChild(frag);
+  frag.appendChild(item)
+  let container = getNotifyContainer(item.options.position)
+  container.appendChild(frag)
 
-  item.addEventListener("mouseover", resetInterval);
+  item.addEventListener("mouseover", resetInterval)
 
-  fade('in', item.options.fadeInDuration, item);
+  fade('in', item.options.fadeInDuration, item)
 
   if (!item.options.sticky){
-    item.addEventListener("mouseout", hideTimeout);
-    hideTimeout();
+    item.addEventListener("mouseout", hideTimeout)
+    hideTimeout()
   }
 
-  return item;
-};
+  return item
+}
 
-var addText = function(text) {
-  var item = document.createElement('div');
-  item.classList.add('vnotify-text');
-  item.innerHTML = text;
-  return item;
-};
+let addText = function(text) {
+  let item = document.createElement('div')
+  item.classList.add('vnotify-text')
+  item.innerHTML = text
+  return item
+}
 
-var addTitle = function(title) {
-  var item = document.createElement('div');
-  item.classList.add('vnotify-title');
-  item.innerHTML = title;
-  return item;
-};
+let addTitle = function(title) {
+  let item = document.createElement('div')
+  item.classList.add('vnotify-title')
+  item.innerHTML = title
+  return item
+}
 
-var addClose = function(parent) {
-  var item = document.createElement('span');
-  item.classList.add('vn-close');
-  item.addEventListener('click', function(){remove(parent);});
-  return item;
-};
+let addClose = function(parent) {
+  let item = document.createElement('span')
+  item.classList.add('vn-close')
+  item.addEventListener('click', function(){remove(parent)})
+  return item
+}
 
-var getNotifyContainer = function(position) {
-  var positionClass = getPositionClass(position);
-  var container = document.querySelector('.' + positionClass);
-  return container ? container : createNotifyContainer(positionClass);
-};
+let getNotifyContainer = function(position) {
+  let positionClass = getPositionClass(position)
+  let container = document.querySelector('.' + positionClass)
+  return container ? container : createNotifyContainer(positionClass)
+}
 
-var createNotifyContainer = function(positionClass) {
-  var frag = document.createDocumentFragment();
-  let container = document.createElement('div');
-  container.classList.add('vnotify-container');
-  container.classList.add(positionClass);
-  container.setAttribute('role', 'alert');
+let createNotifyContainer = function(positionClass) {
+  let frag = document.createDocumentFragment()
+  let container = document.createElement('div')
+  container.classList.add('vnotify-container')
+  container.classList.add(positionClass)
+  container.setAttribute('role', 'alert')
 
-  frag.appendChild(container);
-  document.getElementById('notify-overlay').appendChild(frag); // changed by matt
+  frag.appendChild(container)
+  document.getElementById('notify-overlay').appendChild(frag) // changed by matt
 
-  return container;
-};
+  return container
+}
 
-var getPositionClass = function(option) {
+let getPositionClass = function(option) {
   switch (option) {
     case positionOption.topLeft:
-      return 'vn-top-left';
+      return 'vn-top-left'
     case positionOption.topCenter:
-      return 'vn-top-center';
+      return 'vn-top-center'
     case positionOption.bottomRight:
-      return 'vn-bottom-right';
+      return 'vn-bottom-right'
     case positionOption.bottomLeft:
-      return 'vn-bottom-left';
+      return 'vn-bottom-left'
     case positionOption.center:
-      return 'vn-center';
+      return 'vn-center'
     default:
-      return 'vn-top-right';
+      return 'vn-top-right'
   }
-};
+}
 
-var getOptions = function(opts) {
+let getOptions = function(opts) {
   return {
     fadeInDuration: opts.fadeInDuration || options.fadeInDuration,
     fadeOutDuration: opts.fadeOutDuration || options.fadeOutDuration,
@@ -201,54 +201,54 @@ var getOptions = function(opts) {
     position: opts.position || options.position,
     sticky: opts.sticky != null ? opts.sticky : options.sticky,
     showClose: opts.showClose != null ? opts.showClose : options.showClose
-  };
-};
+  }
+}
 
-var remove = function(item) {
-  item.style.display = 'none';
-  item.outerHTML = '';
-  item = null;
-};
+let remove = function(item) {
+  item.style.display = 'none'
+  item.outerHTML = ''
+  item = null
+}
 
 //New fade - based on http://toddmotto.com/raw-javascript-jquery-style-fadein-fadeout-functions-hugo-giraudel/
-var fade = function(type, ms, el) {
-  var isIn = type === 'in',
+let fade = function(type, ms, el) {
+  let isIn = type === 'in',
     opacity = isIn ? 0 : el.style.opacity || 1,
     goal = isIn ? 0.8 : 0,
-    gap = options.fadeInterval / ms;
+    gap = options.fadeInterval / ms
 
   if(isIn) {
-    el.style.display = 'block';
-    el.style.opacity = opacity;
+    el.style.display = 'block'
+    el.style.opacity = opacity
   }
 
   function func() {
-    opacity = isIn ? opacity + gap : opacity - gap;
-    el.style.opacity = opacity;
+    opacity = isIn ? opacity + gap : opacity - gap
+    el.style.opacity = opacity
 
     if(opacity <= 0) {
-      remove(el);
-      checkRemoveContainer();
+      remove(el)
+      checkRemoveContainer()
     }
     if((!isIn && opacity <= goal) || (isIn && opacity >= goal)) {
-      window.clearInterval(fading);
+      window.clearInterval(fading)
     }
   }
 
-  var fading = window.setInterval(func, options.fadeInterval);
-  return fading;
-};
+  let fading = window.setInterval(func, options.fadeInterval)
+  return fading
+}
 
-var checkRemoveContainer = function() {
-  var item = document.querySelector('.vnotify-item');
+let checkRemoveContainer = function() {
+  let item = document.querySelector('.vnotify-item')
   if (!item) {
-    var container = document.querySelectorAll('.vnotify-container');
-    for (var i=0; i< container.length; i++) {
-      container[i].outerHTML = '';
-      container[i] = null;
+    let container = document.querySelectorAll('.vnotify-container')
+    for (let i=0 i< container.length i++) {
+      container[i].outerHTML = ''
+      container[i] = null
     }
   }
-};
+}
 
 return {
   info: info,
@@ -259,6 +259,6 @@ return {
   custom: custom,
   options: options,
   positionOption: positionOption
-};
+}
 
 }) // end define

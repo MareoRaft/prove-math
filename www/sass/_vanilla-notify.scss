@@ -49,130 +49,130 @@ $vn-opacity: .75;
 $vn-hover-opacity: 1;
 
 @mixin vn-border-radius($radius) {
-  -webkit-border-radius: $radius;
-     -moz-border-radius: $radius;
-      -ms-border-radius: $radius;
-          border-radius: $radius;
+	-webkit-border-radius: $radius;
+		 -moz-border-radius: $radius;
+			-ms-border-radius: $radius;
+					border-radius: $radius;
 }
 
 @mixin vn-opacity($vn-value){
-  $vn-IEValue: $vn-value*100;
-  opacity: $vn-value;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity="+$vn-IEValue+")";
-  filter: alpha(opacity=$vn-IEValue);
+	$vn-IEValue: $vn-value*100;
+	opacity: $vn-value;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity="+$vn-IEValue+")";
+	filter: alpha(opacity=$vn-IEValue);
 }
 
 @mixin vn-transform($vn-deg) {
-  -webkit-transform: rotate($vn-deg);
-  -moz-transform: rotate($vn-deg);
-  transform: rotate($vn-deg);
+	-webkit-transform: rotate($vn-deg);
+	-moz-transform: rotate($vn-deg);
+	transform: rotate($vn-deg);
 }
 
 .vnotify-container {
-  position: fixed;
+	position: fixed;
 
-  &.vn-top-right {
-    right: $vn-container-right;
-    top: $vn-container-top;
-  }
+	&.vn-top-right {
+		right: $vn-container-right;
+		top: $vn-container-top;
+	}
 
-  &.vn-top-left {
-    top: $vn-container-top;
-    left: $vn-container-left;
-  }
+	&.vn-top-left {
+		top: $vn-container-top;
+		left: $vn-container-left;
+	}
 
-  &.vn-bottom-right {
-    bottom: $vn-container-bottom;
-    right: $vn-container-right;
-  }
+	&.vn-bottom-right {
+		bottom: $vn-container-bottom;
+		right: $vn-container-right;
+	}
 
-  &.vn-bottom-left {
-    bottom: $vn-container-bottom;
-    left: $vn-container-left;
-  }
+	&.vn-bottom-left {
+		bottom: $vn-container-bottom;
+		left: $vn-container-left;
+	}
 
-  &.vn-center {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+	&.vn-center {
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
 
-  &.vn-top-center {
-    top: $vn-container-top;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
+	&.vn-top-center {
+		top: $vn-container-top;
+		left: 50%;
+		transform: translate(-50%, 0);
+	}
 
-  .vn-close {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    width: $vn-close-size;
-    height: $vn-close-size;
-    padding: 2px;
-    cursor: pointer;
+	.vn-close {
+		position: absolute;
+		top: 5px;
+		right: 10px;
+		width: $vn-close-size;
+		height: $vn-close-size;
+		padding: 2px;
+		cursor: pointer;
 
-    &:before, &:after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      top: 50%;
-      height: 2px;
-      background: $vn-close-color;
-    }
+		&:before, &:after {
+			content: '';
+			position: absolute;
+			width: 100%;
+			top: 50%;
+			height: 2px;
+			background: $vn-close-color;
+		}
 
-    &:before {
-      @include vn-transform(45deg);
-    }
+		&:before {
+			@include vn-transform(45deg);
+		}
 
-    &:after {
-      @include vn-transform(-45deg);
-    }
-  }
+		&:after {
+			@include vn-transform(-45deg);
+		}
+	}
 }
 
 .vnotify-item {
-  max-height: 10em;
-  width: 30em;
-  pointer-events: auto;
-  overflow: scroll;
+	max-height: 10em;
+	width: 30em;
+	pointer-events: auto;
+	overflow: scroll;
 
-  padding: 15px;
-  position: relative;
-  @include vn-border-radius($vn-border-radius);
-  margin-bottom: 15px;
-  @include vn-opacity($vn-opacity);
+	padding: 15px;
+	position: relative;
+	@include vn-border-radius($vn-border-radius);
+	margin-bottom: 15px;
+	@include vn-opacity($vn-opacity);
 
-  &:hover {
-    opacity: $vn-hover-opacity;
-  }
+	&:hover {
+		opacity: $vn-hover-opacity;
+	}
 }
 
 .vnotify-title {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 .vnotify-info {
-  background: $vn-info-background;
-  color: $vn-info-color;
+	background: $vn-info-background;
+	color: $vn-info-color;
 }
 
 .vnotify-success {
-  background: $vn-success-background;
-  color: $vn-success-color;
+	background: $vn-success-background;
+	color: $vn-success-color;
 }
 
 .vnotify-error {
-  background: $vn-error-background;
-  color: $vn-error-color;
+	background: $vn-error-background;
+	color: $vn-error-color;
 }
 
 .vnotify-warning {
-  background: $vn-warning-background;
-  color: $vn-warning-color;
+	background: $vn-warning-background;
+	color: $vn-warning-color;
 }
 
 .vnotify-notify {
-  background: $vn-notify-background;
-  color: $vn-notify-color;
+	background: $vn-notify-background;
+	color: $vn-notify-color;
 }
