@@ -163,7 +163,7 @@ var getNotifyContainer = function(position) {
 
 var createNotifyContainer = function(positionClass) {
   var frag = document.createDocumentFragment();
-  container = document.createElement('div');
+  let container = document.createElement('div');
   container.classList.add('vnotify-container');
   container.classList.add(positionClass);
   container.setAttribute('role', 'alert');

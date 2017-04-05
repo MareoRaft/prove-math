@@ -36,6 +36,7 @@ www/scripts/lib/graph.js
 www/scripts/lib/graph-animation.js
 www/scripts/lib/node.js
 www/scripts/lib/mousetrap-extended.js
+www/scripts/lib/vanilla-notify.js
 
 # css things (we are using sass and compass to overwrite these)
 www/stylesheets
