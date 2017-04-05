@@ -268,7 +268,10 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		})
 	}
 	else if( ball.command === 'display-error' ) {
-		alert('Server-Side Error: '+ball.message)
+		let errorMessage = 'Server-Side Error: ' + ball.message
+		notify.error({
+			text: errorMessage,
+		})
 	}
 	else if(ball.command === 'search-results'){
 		let $search_results_wrapper = $('#search-results-wrapper')
@@ -294,8 +297,10 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			choice = true
 		}
 		else{
-			alert("The goal " + goal.name + " has been suggested.  Details: " + JSON.stringify(ball.goal))
-			choice = window.prompt("Would you like to accept the goal?  Type 'yes' to accept.")
+			let details = goal.description
+			let message = 'The goal "' + goal.name + '" has been suggested.  Details: "' + details + '"'
+			notify.success({ text: message, })
+			choice = window.prompt("Would you like to accept the goal?  Type 'yes' to accept.") // TODO: can we prompt the user things within notify?  So like the notify box would have "yes" and "no" buttons.
 			choice = (choice === 'yes')
 		}
 		if (choice) {
@@ -319,7 +324,9 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	}
 	else if (ball.command === "highlight-goal") {
 		let goal = new Node(ball.goal)
-		alert("Your new goal is " + goal.name + "!!!!")
+		notify.success({
+			text: 'Your new goal is "' + goal.name + '"!!!!',
+		})
 	}
 	else log('Unrecognized command '+ball.command+'.')
 }
@@ -362,7 +369,7 @@ $('.logout-circle').click(function() {
 
 
 function login() { // this is what runs when the user clicks "login"
-	if( !def(oauth_url_dict) ) alert('oauth login broken.')
+	if( !def(oauth_url_dict) ) notify.error({ text: 'oauth login broken.' })
 	let account_type = $('input[type=radio][name=provider]:checked').val()
 	if( !def(account_type) || account_type === '' ){
 		if( !def(account_type) ){

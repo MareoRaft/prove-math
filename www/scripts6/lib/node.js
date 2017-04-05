@@ -1,4 +1,4 @@
-define(["underscore", "check-types", "profile", "user", "graph"], function(_, is, undefined, user, graph) {
+define(["underscore", "check-types", "profile", "user", "graph", "vanilla-notify"], function(_, is, undefined, user, graph, notify) {
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
 let LOCAL_ID_PREFIX = 'Local-Node-ID-'
@@ -123,7 +123,10 @@ class Node {
 			// updating the blinds attrs is part of read_mode_action in main.js
 		}
 		else{
-			alert('Bad node type.  The node type will not be changed.')
+			notify.error({
+				text: 'Bad node type.  The node type will not be changed.',
+				visibleDuration: 3800,
+			})
 		}
 	}
 
@@ -304,7 +307,9 @@ class Node {
 	}
 
 	alert() {
-		alert(this.stringify())
+		notify.info({
+			text: this.stringify(),
+		})
 	}
 
 	set learned(bool) {
