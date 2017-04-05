@@ -110,7 +110,7 @@ $vn-hover-opacity: 1;
 		width: $vn-close-size;
 		height: $vn-close-size;
 		padding: 2px;
-		cursor: pointer;
+		cursor: pointer; // not working either.  i remember it was working before!
 
 		&:before, &:after {
 			content: '';
@@ -148,9 +148,28 @@ $vn-hover-opacity: 1;
 	}
 }
 
+/* item types */
+
 .vnotify-title {
 	font-weight: bold;
 }
+
+.vnotify-button {
+	display: inline-block;
+	background-color: white;
+	color: black;
+	min-width: 80px;
+	border-radius: 4px;
+	margin: 10px;
+	padding: 5px;
+	text-align: center;
+
+	&:hover {
+		cursor: pointer; // not working
+	}
+}
+
+/* box types*/
 
 .vnotify-info {
 	background: $vn-info-background;

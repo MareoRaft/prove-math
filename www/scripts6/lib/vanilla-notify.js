@@ -98,6 +98,9 @@ let addNotify = function(params) {
 			item.appendChild(addButton(button))
 		}
 	}
+	if (params.details) {
+		item.appendChild(addDetails(params.details))
+	}
 	if (item.options.showClose) {
 		item.appendChild(addClose(item))
 	}
@@ -142,6 +145,13 @@ let addNotify = function(params) {
 let addText = function(text) {
 	let item = document.createElement('div')
 	item.classList.add('vnotify-text')
+	item.innerHTML = text
+	return item
+}
+
+let addDetails = function(text) {
+	let item = document.createElement('div')
+	item.classList.add('vnotify-details')
 	item.innerHTML = text
 	return item
 }

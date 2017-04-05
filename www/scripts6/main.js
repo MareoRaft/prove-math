@@ -296,10 +296,9 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		}
 		else{
 			let details = goal.description
-			let message = 'The goal "' + goal.name + '" has been suggested.  Details: "' + details + '"'
-			notify.success({ text: message, })
+			let message = 'The goal "' + goal.name + '" has been suggested.  Would you like to accept the goal?'
 			notify.info({
-				text: "Would you like to accept the goal?",
+				text: message,
 				buttons: [
 					{
 						text: 'yes',
@@ -309,6 +308,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 						text: 'no',
 					},
 				],
+				details: 'Details: "' + details + '"',
 			})
 		}
 	}
