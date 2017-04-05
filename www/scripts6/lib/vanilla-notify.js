@@ -22,7 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-define([], function() {
+define(["check-types"], function(is) {
 
 let positionOption = {
 	topLeft: 'topLeft',
@@ -95,7 +95,7 @@ let addNotify = function(params) {
 	}
 	if (params.buttons) {
 		for (let button of params.buttons) {
-			item.appendChild(addButton(button))
+			item.appendChild(addButton(item, button))
 		}
 	}
 	if (params.details) {
@@ -156,11 +156,22 @@ let addDetails = function(text) {
 	return item
 }
 
-let addButton = function(button_obj) {
+let addButton = function(parent, button_obj) {
 	let item = document.createElement('div')
 	item.classList.add('vnotify-button')
 	item.innerHTML = button_obj.text
-	item.addEventListener('click', button_obj.action)
+	let action = function(){}
+	if ('action' in button_obj) {
+		if (is.function(button_obj.action)){
+			action = button_obj.action
+		} else {
+			alert('bad action')
+		}
+	}
+	item.addEventListener('click', function(){
+		action()
+		remove(parent)
+	})
 	return item
 }
 
