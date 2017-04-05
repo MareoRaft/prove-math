@@ -74,7 +74,7 @@ let custom = function(params) {
 }
 
 let addNotify = function(params) {
-	if (!params.title && !params.text) {
+	if (!params.title && !params.text && !params.buttons) {
 		return null
 	}
 
@@ -92,6 +92,11 @@ let addNotify = function(params) {
 	}
 	if (params.text) {
 		item.appendChild(addText(params.text))
+	}
+	if (params.buttons) {
+		for (let button of params.buttons) {
+			item.appendChild(addButton(button))
+		}
 	}
 	if (item.options.showClose) {
 		item.appendChild(addClose(item))
@@ -138,6 +143,14 @@ let addText = function(text) {
 	let item = document.createElement('div')
 	item.classList.add('vnotify-text')
 	item.innerHTML = text
+	return item
+}
+
+let addButton = function(button_obj) {
+	let item = document.createElement('div')
+	item.classList.add('vnotify-button')
+	item.innerHTML = button_obj.text
+	item.addEventListener('click', button_obj.action)
 	return item
 }
 
@@ -243,7 +256,7 @@ let checkRemoveContainer = function() {
 	let item = document.querySelector('.vnotify-item')
 	if (!item) {
 		let container = document.querySelectorAll('.vnotify-container')
-		for (let i=0 i< container.length i++) {
+		for (let i in container) {
 			container[i].outerHTML = ''
 			container[i] = null
 		}

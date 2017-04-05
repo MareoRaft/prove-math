@@ -253,13 +253,9 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			links: ready_graph.links,
 		})
 
-		// // TEMP TEST
-		// if (raw_graph.nodes.length > 0) {
-		// 	let node = raw_graph.nodes[0]
-		// }
-
-		// TEMP FOR COLORS
+		// TEMP
 		// openNode('module')
+		ws.jsend({command: 'get-goal-suggestion'})
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -292,19 +288,28 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	}
 	else if (ball.command === "suggest-goal") {
 		let goal = new Node(ball.goal)
-		let choice = undefined
 		if (user.prefs.always_accept_suggested_goal) {
-			choice = true
+			$.event.trigger({
+				type: 'accept-goal',
+				message: goal.id,
+			})
 		}
 		else{
 			let details = goal.description
 			let message = 'The goal "' + goal.name + '" has been suggested.  Details: "' + details + '"'
 			notify.success({ text: message, })
-			choice = window.prompt("Would you like to accept the goal?  Type 'yes' to accept.") // TODO: can we prompt the user things within notify?  So like the notify box would have "yes" and "no" buttons.
-			choice = (choice === 'yes')
-		}
-		if (choice) {
-			ws.jsend({ command: "set-goal", goal_id: goal.id })
+			notify.info({
+				text: "Would you like to accept the goal?",
+				buttons: [
+					{
+						text: 'yes',
+						action: function(){$.event.trigger({type: 'accept-goal', message: goal.id})},
+					},
+					{
+						text: 'no',
+					},
+				],
+			})
 		}
 	}
 	else if (ball.command === "suggest-pregoal") {
@@ -345,6 +350,9 @@ $(document).on('request-node', function(Event) {
 $(document).on('save-node', function(){
 	// console.log('sending dict: '+JSON.stringify(current_node.dict()))
 	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
+})
+$(document).on('accept-goal', function(Event){
+	ws.jsend({ command: "set-goal", goal_id: Event.message })
 })
 updateSearchResultsWrapperMaxHeight()
 $(window).resize(updateSearchResultsWrapperMaxHeight)
