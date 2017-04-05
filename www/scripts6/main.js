@@ -314,17 +314,28 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	}
 	else if (ball.command === "suggest-pregoal") {
 		let pregoal = new Node(ball.pregoal)
-		let choice = undefined
 		if (user.prefs.always_accept_suggested_pregoal) {
-			choice = true
+			$.event.trigger({
+				type: 'accept-pregoal',
+				message: pregoal.id,
+			})
 		}
 		else{
-			alert("The pregoal " + pregoal.name + " has been suggested.  Details: " + JSON.stringify(ball.pregoal))
-			choice = window.prompt("Would you like to accept the pregoal?  Type 'yes' to accept.")
-			choice = (choice === 'yes')
-		}
-		if (choice) {
-			ws.jsend({ command: "set-pregoal", pregoal_id: pregoal.id })
+			let details = pregoal.description
+			let message = 'The pregoal "' + pregoal.name + '" has been suggested.  Would you like to accept the pregoal?'
+			notify.info({
+				text: message,
+				buttons: [
+					{
+						text: 'yes',
+						action: function(){$.event.trigger({type: 'accept-pregoal', message: pregoal.id})},
+					},
+					{
+						text: 'no',
+					},
+				],
+				details: 'Details: "' + details + '"',
+			})
 		}
 	}
 	else if (ball.command === "highlight-goal") {
@@ -353,6 +364,9 @@ $(document).on('save-node', function(){
 })
 $(document).on('accept-goal', function(Event){
 	ws.jsend({ command: "set-goal", goal_id: Event.message })
+})
+$(document).on('accept-pregoal', function(Event){
+	ws.jsend({ command: "set-pregoal", pregoal_id: Event.message })
 })
 updateSearchResultsWrapperMaxHeight()
 $(window).resize(updateSearchResultsWrapperMaxHeight)
