@@ -32,7 +32,7 @@ require.config({
 		],
 		mousetrap: [
 			"mousetrap.min",
-			"https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.0/mousetrap.min",
+			// "https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.0/mousetrap.min",
 		],
 		chosen: [
 			"chosen-min",

@@ -1,4 +1,4 @@
-define( ["check-types", "mousetrap", "vanilla-notify"], function(is, mousetrap, notify) {
+define( ["check-types", "mousetrap-extended", "vanilla-notify"], function(is, mousetrap, notify) {
 
 // create a shortcut for mousetrap selectors
 window.$mousetrap = function(selector) {

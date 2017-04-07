@@ -1,4 +1,4 @@
-define( ["jquery", "underscore", "profile", "check-types", "graph", "mousetrap", "user"], function($, _, undefined, is, graph, mousetrap, user){
+define( ["jquery", "underscore", "profile", "check-types", "graph", "mousetrap-extended", "user"], function($, _, undefined, is, graph, mousetrap, user){
 
 //////////////////////////// HELPERS ////////////////////////////
 $.fn.selectRange = function(start, end) {
