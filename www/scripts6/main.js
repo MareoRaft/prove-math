@@ -218,8 +218,8 @@ ws.onclose = function() {
 ws.onopen = function() {
 	ws.jsend({command: 'first-steps'})
 	//TEMP
-	guestLogin()
-	promptStartingNodes()
+	// guestLogin()
+	// promptStartingNodes()
 	// addNode()
 	// ws.jsend({ command: 'search', search_term: 'dual' })
 }
@@ -255,7 +255,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 
 		// TEMP
 		// openNode('module')
-		ws.jsend({command: 'get-goal-suggestion'})
+		// ws.jsend({command: 'get-goal-suggestion'})
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -653,13 +653,22 @@ function seePreferences() {
 	show('#preference-pane')
 }
 
-function promptStartingNodes(){
+function promptStartingNodes() {
 	let subjects_clone = _.clone(subjects)
 	let last_subject = subjects_clone.pop()
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
-	let default_subject = 'graph theory'
-	// let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
-	let subject = 'a' // DEVELOPMENT CONVENIENCE, TEMP
+	// let subject = 'a' // DEVELOPMENT CONVENIENCE, TEMP
+	let subject = notify.success({
+		text: 'What subject would you like to learn? Type ' + subjects_string + '.',
+		prompt: {
+			action: replyToStartingNodesPrompt,
+			placeholder: 'subject',
+		},
+	})
+}
+
+function replyToStartingNodesPrompt(subject) {
+	let default_subject = 'a'
 	if( !_.contains(subjects, subject) ) subject = default_subject
 	ws.jsend({'command': 'get-starting-nodes', 'subject': subject})
 }

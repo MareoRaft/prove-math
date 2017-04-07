@@ -22,7 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-define(["check-types"], function(is) {
+define(["check-types", "jquery"], function(is, $) {
 
 let positionOption = {
 	topLeft: 'topLeft',
@@ -97,6 +97,9 @@ let addNotify = function(params) {
 		for (let button of params.buttons) {
 			item.appendChild(addButton(item, button))
 		}
+	}
+	if (params.prompt) {
+		item.appendChild(addPrompt(item, params.prompt))
 	}
 	if (params.details) {
 		item.appendChild(addDetails(params.details))
@@ -173,6 +176,37 @@ let addButton = function(parent, button_obj) {
 		remove(parent)
 	})
 	return item
+}
+
+let addPrompt = function(parent, prompt_obj) {
+	let $item = $('<input>')
+	// set input type to 'text'
+	$item.attr('type', 'text')
+	// give a unique id
+	let uniqueID = 'vnotify-prompt-' + Date.now().toString()
+	$item.attr('id', uniqueID)
+	// put a placeholder/default if one is specified
+	if ('placeholder' in prompt_obj) {
+		$item.attr('placeholder', prompt_obj.placeholder)
+	}
+	$item.addClass('vnotify-prompt')
+	let action = function(){}
+	if ('action' in prompt_obj) {
+		if (is.function(prompt_obj.action)){
+			action = prompt_obj.action
+		} else {
+			alert('bad action')
+		}
+	}
+	$item.on('keydown', function(event){ // for some reason $mousetrap wasn't working, so i went with jQuery
+		if (event.which === 13 /* ENTER */) {
+			// get the user input
+			let userInput = $('#'+uniqueID).val()
+			action(userInput)
+			remove(parent)
+		}
+	})
+	return $item.get(0)
 }
 
 let addTitle = function(title) {
