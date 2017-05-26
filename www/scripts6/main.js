@@ -111,7 +111,17 @@ let node_blinds = new Blinds({
 		// return string
 		// make all \ into \\ instead, so that they will be \ again when marked is done. This is for MathJax postrender compatability.
 		string = string.replace(/\\/g, '\\\\')
-		return marked(string)
+		string = marked(string)
+
+		// unfortunately, it looks like these strings are encoded...
+		// change <img23> shortcuts to <img src="http://provemath.org/image/NUMBER.jpg"
+		// string = string.replace(/im&amp;g/g, 'HITHER')
+		// string = string.replace(/&lbrack;/g, 'left  ')
+		// string = string.replace(/&#91;/g, 'left  ')
+		string = string.replace(/img(\d+)/g, '<img src="image/$1.jpg" />') // this is maybe NOT a good markup choice, since it is an HTML tag
+		string = string.replace(/\\includegraphics\{(.*?)\}/g, '<img src="image/$1.jpg" />')
+
+		return string
 	},
 	post_render: function(idToEdit) {
 		// See https://github.com/MareoRaft/prove-math/issues/37 for info.
@@ -418,15 +428,6 @@ function logout(){ // this is what runs when the user clicks "logout"
 	show('#login')
 }
 
-
-/////////// TEMP
-mousetrap.bind('ctrl+z', function(){
-	notify.info({
-		text: 'hi!',
-	})
-	return false // to prevent default
-})
-
 //////////////////////// SEARCH BAR ////////////////////////
 $mousetrap('#search-box').bind('enter', function(){
 	// empty the search results (in case there were old searches)
@@ -657,7 +658,7 @@ function promptStartingNodes() {
 	let subjects_clone = _.clone(subjects)
 	let last_subject = subjects_clone.pop()
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
-	// let subject = 'a' // DEVELOPMENT CONVENIENCE, TEMP
+	// replyToStartingNodesPrompt('a'); return // DEVELOPMENT CONVENIENCE, TEMP
 	let subject = notify.success({
 		text: 'What subject would you like to learn? Type ' + subjects_string + '.',
 		prompt: {
