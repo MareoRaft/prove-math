@@ -76,7 +76,10 @@ class Node(Votable):
 			if self.attrs['name'].value != '':
 				self._id = reduce_string(self.attrs['name'].value)
 			elif self.type == 'definition' and 'description' in self.attrs:
-				self._id = get_contents_of_dunderscores(self.attrs['description'].value)
+				try:
+					self._id = get_contents_of_dunderscores(self.attrs['description'].value)
+				except:
+					raise ValueError('Node {} has no dunderscores in description "{}".'.format(self, self.attrs['description'].value))
 			elif self.type == 'exercise':
 				self._id = reduce_string(self.attrs['description'].value)
 			elif self.type == 'theorem': # maybe in the future we won't allow this
