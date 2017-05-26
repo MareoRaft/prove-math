@@ -6,7 +6,8 @@
 
 
 {
-	"def":"Something satisfying conditions is __unique__ if it is the only thing satisfying those conditions.",
+	"type": "definition",
+	"description":"Something satisfying conditions is __unique__ if it is the only thing satisfying those conditions.",
 	"intuition":"The prefix \"uni\" means \"one\".  Something is *unique* if it is the only one of its kind.",
 	"examples": [
 		"Sarah is the unique daughter of Henry.  This means that Henry has exactly one daughter, and her name is Sarah.",
@@ -15,14 +16,16 @@
 }
 
 {
-	"definition":"A __vertex__ is a fundamental unit used to create graphs.",
+	"type": "definition",
+	"description":"A __vertex__ is a fundamental unit used to create graphs.",
 	"plural":"__vertices__",
 	"note":"Vertices are often drawn as a dot.  They are also called *nodes*.",
 	"example":"The following image represents a graph.  <img24>  The graph has $5$ vertices.",
 }
 
 {
-	"definition":"An __edge__ is a multiset ${a,b}$ where $a$ and $b$ are vertices.",
+	"type": "definition",
+	"description":"An __edge__ is a multiset ${a,b}$ where $a$ and $b$ are vertices.",
 	"note":"It is possible that $a=b$.",
 	"intuition":"Edges are usually drawn as a line or curve connecting two vertices.  In the case that $a=b$, the edge is drawn as a small loop that connects $a$ to itself.",
 	"example":"The following image represents a graph.  <img25>  The graph has $7$ edges.",
@@ -30,7 +33,8 @@
 }
 
 {
-	"definition":"A __loop__ is an edge of the form ${a,a}$ for some vertex $a$.",
+	"type": "definition",
+	"description":"A __loop__ is an edge of the form ${a,a}$ for some vertex $a$.",
 	"intuition":"A **loop** is an edge that connects a vertex to itself.",
 	"dependencies": ["edge"],
 	"example":"The following image represents a graph.  <img26>  The graph has $3$ edges, one of which is a loop.",
@@ -38,7 +42,8 @@
 
 {
 	"name": "simple (edge)",
-	"definition":"An edge is __simple__ if it is not a loop.",
+	"type": "definition",
+	"description":"An edge is __simple__ if it is not a loop.",
 	"dependencies": ["edge", "loop"],
 	"example":"The edge circled in the image <img27> is simple.",
 	"counterexample":"The edge circle in the image <img28> is *not* simple.",
@@ -46,7 +51,8 @@
 
 {
 	"name": "adjacent (vertices)",
-	"definition":"Vertices $a$ and $b$ are __adjacent__, denoted $a \sim b$, if there is an edge ${a,b}$.",
+	"type": "definition",
+	"description":"Vertices $a$ and $b$ are __adjacent__, denoted $a \sim b$, if there is an edge ${a,b}$.",
 	"note":"It is also phrased \"$a$ is adjacent to $b$\".",
 	// "denotation":"$a \sim b$", // let's keep the denotations in the definitions
 	"dependencies": ["vertex", "edge"],
@@ -55,7 +61,8 @@
 }
 
 {
-	"definition":"An edge $e$ and a vertex $v$ are __incident__ iff $v \in $e$.",
+	"type": "definition",
+	"description":"An edge $e$ and a vertex $v$ are __incident__ iff $v \in $e$.",
 	"intuition":"An edge is *incident* to a vertex if it touches that vertex.  A loop, for example, is considered to be incident to its vertex at both ends.",
 	"dependencies": ["edge", "vertex"],
 	"example":"In the image <img30>, vertex $t$ is incident to edge $e$.",
@@ -64,7 +71,8 @@
 
 {
 	"name": "adjacent (edges)",
-	"def":"Two edges are __adjacent__ if there is a vertex that they are both incident to.",
+	"type": "definition",
+	"description":"Two edges are __adjacent__ if there is a vertex that they are both incident to.",
 	"note":"For edges $a$ and $b$, it is also phrased \"$a$ is adjacent to $b$\".",
 	"dependencies": ["edge", "vertex", "incident"],
 	"example":"In the image <img30>, edge $e$ is adjacent to edge $f$.",
@@ -73,7 +81,8 @@
 
 {
 	"name": "on (edges on vertices)",
-	"definition":"A set of edges $E$ is __on__ a set of vertices $V$ iff every edge in $E$ is incident to only vertices in $V$.",
+	"type": "definition",
+	"description":"A set of edges $E$ is __on__ a set of vertices $V$ iff every edge in $E$ is incident to only vertices in $V$.",
 	"dependencies": ["edge", "vertex", "set", "incident"],
 	"examples": [
 		"In image <img31>, there is a set of vertices $\{l, m, t, z\}$ and a set of edges $\{b, e, f\}$ on those vertices.",
@@ -84,7 +93,8 @@
 }
 
 { // THIS IS THE GENERAL VERSION
-	"definition":"A __multigraph__ is an ordered pair $(V,E)$ where $V$ is a set of vertices and $E$ is a multiset of edges on $V$.",
+	"type": "definition",
+	"description":"A __multigraph__ is an ordered pair $(V,E)$ where $V$ is a set of vertices and $E$ is a multiset of edges on $V$.",
 	"intuition":"$E$ is a multiset, so a pair of vertices could have more than one edge incident to them!  Also, there can be loops!",
 	"dependencies":["ordered pair", "multiset", "on (edges on vertices)"],
 	"examples": [
@@ -99,7 +109,8 @@
 
 {
 	"name":"multiple (edges)",
-	"definition":"The vertices $a$ and $b$ have __multiple__ edges if there is more than one edge ${a,b}$.",
+	"type": "definition",
+	"description":"The vertices $a$ and $b$ have __multiple__ edges if there is more than one edge ${a,b}$.",
 	"note":"$a$ and $b$ need not be distinct.",
 	"dependencies": ["edge", "vertex"],
 	"example": "In the graph depicted by <img33>, $x$ and $y$ have multiple edges.",
@@ -108,7 +119,8 @@
 
 {
 	"name":"multiple (loops)",
-	"def":"Vertex $a$ has __multiple__ loops if there is more than one loop ${a}$.",
+	"type": "definition",
+	"description":"Vertex $a$ has __multiple__ loops if there is more than one loop ${a}$.",
 	"dependencies":["vertex", "loop"],
 	"example": "In the graph depicted by <img34>, $z$ has multiple loops.",
 	"counterexample": "In the graph depicted by <img34>, $x$ does *not* have multiple loops.",
@@ -116,7 +128,8 @@
 
 {
 	"name": "simple (graph)",
-	"definition":"A multigraph $G = (V,E)$ is __simple__ if $E$ is a set that contains no loops.",
+	"type": "definition",
+	"description":"A multigraph $G = (V,E)$ is __simple__ if $E$ is a set that contains no loops.",
 	"note": [
 		"Here, $E$ is a set, so multiple edges do not occur either.",
 		"Multigraphs are more general than simple graphs.",
@@ -137,7 +150,8 @@
 
 {
 	"name": "null (multigraph)",
-	"def":"The __null__ multigraph is the multigraph with 0 vertices.",
+	"type": "definition",
+	"description":"The __null__ multigraph is the multigraph with 0 vertices.",
 	"intuition": "The null multigraph is $(\{\}, \{\})$.  That is, it has no vertices and no edges.",
 	"note": "Because the null multigraph is also a simple graph, it is usually called the *null graph*.",
 	"dependencies":["multigraph"],
@@ -146,7 +160,8 @@
 
 {
 	"name": "trivial (multigraph)",
-	"def":"A __trivial__ multigraph is a multigraph with exactly 1 vertex.",
+	"type": "definition",
+	"description":"A __trivial__ multigraph is a multigraph with exactly 1 vertex.",
 	"dependencies":["multigraph"],
 	"example": [
 		"The multigraph depicted by <img37> is trivial.",
@@ -162,14 +177,16 @@
 
 {
 	"name": "nontrivial (multigraph)",
-	"def":"A __nontrivial__ multigraph is a multigraph with more than 1 vertex.",
+	"type": "definition",
+	"description":"A __nontrivial__ multigraph is a multigraph with more than 1 vertex.",
 	"note":"This is different from being not trivial, since it discludes the null graph.",
 	"dependencies":["multigraph"],
 }
 
 {
 	"name": "empty (multigraph)",
-	"def":"An __empty__ multigraph is a multigraph with 0 edges.",
+	"type": "definition",
+	"description":"An __empty__ multigraph is a multigraph with 0 edges.",
 	"dependencies":["multigraph"],
 	"negation": "nonempty",
 	"example": [
@@ -186,7 +203,8 @@
 
 {
 	"name": "degree (vertex)",
-	"definition":"Given a multigraph $(V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the multiplicity of $v$ in the union of $E$.",
+	"type": "definition",
+	"description":"Given a multigraph $(V,E)$, the __degree__ of a vertex $v \in V$, denoted $d(v)$, is the multiplicity of $v$ in the union of $E$.",
 	// alternatively, we can say that its the: number of edges in $E$ incident to $v$, where loops are counted twice.
 	"intuition":"The degree of vertex $v$ is the number of edge ends that touch it.",
 	"dependencies":["vertex", "incident", "loop", "union"],
@@ -198,7 +216,8 @@
 }
 
 {
-	"def":"The __minimum degree__ of a graph $G=(V,E)$ is the minimum of the degrees of the vertices in $V$.",
+	"type": "definition",
+	"description":"The __minimum degree__ of a graph $G=(V,E)$ is the minimum of the degrees of the vertices in $V$.",
 	"den":"$\delta(G)$",
 	"dependencies":["degree (vertex)", "minimum"],
 	"example": [
@@ -210,7 +229,8 @@
 }
 
 {
-	"def":"The __maximum degree__ of a graph $G=(V,E)$ is the maximum of the degrees of the vertices in $V$.",
+	"type": "definition",
+	"description":"The __maximum degree__ of a graph $G=(V,E)$ is the maximum of the degrees of the vertices in $V$.",
 	"den":"$\Delta(G)$",
 	"dependencies":["degree (vertex)", "maximum"],
 	"example": [
@@ -222,7 +242,8 @@
 }
 
 {
-	"definition":"A __walk__ is an alternating sequence of vertices and edges which starts and ends on a vertex, and satisfies the following condition:  For every edge ${a,b}$ in the sequence, the vertices adjacent to it in the sequence are $a$ and $b$.",
+	"type": "definition",
+	"description":"A __walk__ is an alternating sequence of vertices and edges which starts and ends on a vertex, and satisfies the following condition:  For every edge ${a,b}$ in the sequence, the vertices adjacent to it in the sequence are $a$ and $b$.",
 	"intuition":"Pretend you are an ant on the graph.  You begin at a vertex.  You cross an edge incident to you and arrive at the other side of that edge: another vertex.  You continue this process, going any way you please, and eventually stop at a vertex.",
 	"dependencies":["sequence", "vertex", "edge"],
 	"example": [
@@ -231,7 +252,8 @@
 }
 
 {
-	"def":"A multiset of vertices and edges where *no edge is repeated* satisfies the __trail condition__.",
+	"type": "definition",
+	"description":"A multiset of vertices and edges where *no edge is repeated* satisfies the __trail condition__.",
 	"dependencies":["multiset", "edge"],
 	"example": [
 		"In the graph depicted by <img42>, the multiset $\{a, w_1, b, w_2, d\}$ satisfies the trail condition.",
@@ -246,7 +268,8 @@
 }
 
 {
-	"definition":"A __trail__ is a walk that satisfies the trail condition.",
+	"type": "definition",
+	"description":"A __trail__ is a walk that satisfies the trail condition.",
 	"dependencies":["walk", "trail condition"],
 	"example": [
 		"In the graph depicted by <img42>, the walk $(a, w_1, b, w_2, d)$ is a trail.",
@@ -261,7 +284,8 @@
 }
 
 {
-	"def":"A multiset of vertices and edges where *no vertex is repeated* and *no edge is repeated* satisfies the __path condition__.",
+	"type": "definition",
+	"description":"A multiset of vertices and edges where *no vertex is repeated* and *no edge is repeated* satisfies the __path condition__.",
 	"dependencies":["multiset", "edge"],
 	"example": [
 		"In the graph depicted by <img42>, the multiset $\{b, w_2, d, w_3, e\}$ satisfies the path condition.",
@@ -276,7 +300,8 @@
 }
 
 {
-	"definition":"A __path__ is a trail that satisfies the path condition.",
+	"type": "definition",
+	"description":"A __path__ is a trail that satisfies the path condition.",
 	"dependencies":["trail", "path condition"],
 	"example": [
 	],
@@ -284,71 +309,83 @@
 
 {
 	"name": "closed (walk)",
-	"definition":"A walk is __closed__ if it begins and ends on the same vertex.", // but then how do we not repeat it.  we have to create an equivalence class so that there is no "start" or "end"
+	"type": "definition",
+	"description":"A walk is __closed__ if it begins and ends on the same vertex.", // but then how do we not repeat it.  we have to create an equivalence class so that there is no "start" or "end"
 	"dependencies":["walk"],
 }
 
 {
-	"def":"A walk's __end vertices__ are its first and last term.",
+	"type": "definition",
+	"description":"A walk's __end vertices__ are its first and last term.",
 	"dependencies":["walk", "sequence", "term (sequence)"],
 }
 
 { // these should be separate.
-	"definition":"A __stroll__ is a closed walk.",
+	"type": "definition",
+	"description":"A __stroll__ is a closed walk.",
 	"dependencies":["closed (walk)"],
 }
 
 {
-	"definition":"A __circuit__ is a closed trail.",
+	"type": "definition",
+	"description":"A __circuit__ is a closed trail.",
 	"dependencies":["closed (walk)", "trail"],
 }
 
 {
-	"definition":"A __cycle__ is a closed path.",
+	"type": "definition",
+	"description":"A __cycle__ is a closed path.",
 	"dependencies":["closed (walk)", "path"],
 	"note":"By convention, we do not think of the beginning vertex as occuring twice.  In particular, this means that a cycle is still a path by definition of a path.", // what do we do here?
 	"note":"In older books, the term *circuit* actually refers to a *cycle*.  If you are using other resources, double check the definition of *circuit* to make sure you know what you are dealing with.",
 }
 
 {
-	"def":"The __length__ of a walk is the number of edges in the walk.",
+	"type": "definition",
+	"description":"The __length__ of a walk is the number of edges in the walk.",
 	"dependencies":["walk"],
 }
 
 {
-	"def":"An __$a$,$b$-walk__ is a walk with end vertices $a$ and $b$.",
+	"type": "definition",
+	"description":"An __$a$,$b$-walk__ is a walk with end vertices $a$ and $b$.",
 	"note":"This defines the terms $a$,$b$-trail and $a$,$b$-path too.",
 	"dependencies":["walk", "end vertices"],
 }
 
 {
 	"name": "multiple (trails)",
-	"def":"Vertices $a$,$b$ have __multiple__ trails if there exists a class of $a$,$b$-trails (size at least 2) whose (internal) union satisfies the trail condition.",
+	"type": "definition",
+	"description":"Vertices $a$,$b$ have __multiple__ trails if there exists a class of $a$,$b$-trails (size at least 2) whose (internal) union satisfies the trail condition.",
 	"dependencies":["trail", "union", "class"],
 }
 
 {
 	"name": "multiple (paths)",
-	"def":"Vertices $a$,$b$ have __multiple__ paths if there exists a class of $a$,$b$-paths (size at least 2) whose (internal) union satisfies the path condition.",
+	"type": "definition",
+	"description":"Vertices $a$,$b$ have __multiple__ paths if there exists a class of $a$,$b$-paths (size at least 2) whose (internal) union satisfies the path condition.",
 	"dependencies":["path", "union", "class"],
 }
 
 {
 	"name":"Eulerian (trail)",
-	"definition":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
+	"type": "definition",
+	"description":"Given a multigraph $G = (V,E)$, a trail or circuit in $G$ that uses all the edges in $E$ is called __Eulerian__.",
 	"intuition":"An Eulerian trail is a trail that uses all the edges in the graph exactly once.",
 	"dependencies":["multigraph", "trail"],
 }
 
 {
 	"name": "Eulerian (graph)",
-	"def": "A multigraph is called __Eulerian__ if it contains an Eulerian circuit.",
+	"type": "definition",
+	"description": "A multigraph is called __Eulerian__ if it contains an Eulerian circuit.",
 	"dependencies":["multigraph", "Eulerian (trail)", "circuit"],
 }
 
 {
 	"name": "Hamiltonian (walk)",
-	"definition":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
+	"type": "definition",
+	"description":"Given a multigraph $G = (V,E)$, a walk or stroll in $G$ that uses all the vertices in $V$ is called __Hamiltonian__.",
 	"note":"The word *Hamiltonian* can be used before any walk.  In particular, this defines the terms **Hamiltonian path** and **Hamiltonian cycle**.",
 	"note":"In older books, the term *Hamiltonian circuit* is used in place of *Hamiltonian cycle*.  So be careful!  When they say *circuit*, they may actually mean *cycle*.",
 	"intuition":"A Hamiltonian cycle is a cycle that uses all the vertices in the graph exactly once.",
@@ -366,14 +403,16 @@
 //insert combinatorics class graph theory things here:
 {
 	"name":"connected (vertices)",
-	"def":"Given a multigraph $G=(V,E)$, vertices $a,b\in V$ are __connected__ if there is an $ab$-walk in $G$.",
+	"type": "definition",
+	"description":"Given a multigraph $G=(V,E)$, vertices $a,b\in V$ are __connected__ if there is an $ab$-walk in $G$.",
 	"dependencies":["walk"],
 	"negation": "disconnected (vertices)",
 }
 
 {
 	"name":"connected (graph)",
-	"def": "A multigraph $(V,E)$ is __connected__ if for every $a,b\in V$, $a$ is connected to $b$.",
+	"type": "definition",
+	"description": "A multigraph $(V,E)$ is __connected__ if for every $a,b\in V$, $a$ is connected to $b$.",
 	"intuition": "All the vertices in the graph are tied to each other by edges.  We cannot pull the graph apart into pieces.",
 	"dependencies":["connected vertices"],
 	"negation": "disconnected (graph)",
@@ -396,15 +435,15 @@
 	"dependencies":["connected graph"],
 }
 
-{//1 b
-	"weight": 2,
-	"exercise": "Given the simple graph $G=(V,E)$, for every pair of vertices $a,b\in V$, $\text{deg}(a)+\text{deg}(b) \geq |V|-1.  Then $G$ is connected.",
-	"proof": {
-		"type": ["graph theoretic", "pigeonhole principle"],
-		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principle, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
-	},
-	"dependencies":["simple (graph)", "vertex", "connected graph"],
-}
+//{//1 b
+//	"weight": 2,
+//	"exercise": "Given the simple graph $G=(V,E)$, for every pair of vertices $a,b\in V$, $\text{deg}(a)+\text{deg}(b) \geq |V|-1.  Then $G$ is connected.",
+//	"proof": {
+//		"type": ["graph theoretic", "pigeonhole principle"],
+//		"content": "For each pair $a,b\in V$, there are at least $|V|-1$ edges incident to at least one of $a$ or $b$.  If any of these edges is incident to both $a$ and $b$, then $a$ is connected to $b$.  Otherwise, look at the other ends of the edges.  There are $|V|-1$ edges ends and only $|V|-2$ vertices that are not $a$ nor $b$.  By the pigeonhole principle, one vertex $c$ is incident to two edges.  Because $G$ is simple, those edges must be ${a,c}$ and ${c,b}$.  Therefore, $a$ is connected to $b$.  We have shown this for all pairs of vertices in $G$, so $G$ is connected.",
+//	},
+//	"dependencies":["simple (graph)", "vertex", "connected graph"],
+//}
 
 {//2
 	"weight": 1,
@@ -441,14 +480,16 @@
 
 {
 	"name": "size (set)",
-	"def": "The __size__ of a set is the number of elements in that set.  In the case of an infinite set, the size can be a specific type of infinity.",
+	"type": "definition",
+	"description": "The __size__ of a set is the number of elements in that set.  In the case of an infinite set, the size can be a specific type of infinity.",
 	"synonyms": "cardinality",
 	"dependencies": ["set"],
 }
 
 {
 	"name": "size (graph)",
-	"def": "The __size__ of a graph $G=(V,E)$ is the size of the set $V$.",
+	"type": "definition",
+	"description": "The __size__ of a graph $G=(V,E)$ is the size of the set $V$.",
 	"dependencies": ["size (set)", "multigraph"],
 }
 
@@ -476,20 +517,21 @@
 	"dependencies":["odd", "cycle"],
 }
 
-{
-	"name": "Cayley's Theorem",
-	"weight": 5,
-	"type": "thm",
-	"content": "The number of trees with vertex set $[n]$ is $n^{n-2}$.", // what do we call [n]?? that should be a dependency
-	"proof": {
-		"type": [],
-		"content": "There is a bijection between trees and Pr\u{00fc}fer sequences.  Trees with $n$ vertices has Pr\u{00fc}fer sequences of length $n-2$, and each entry can be any number from $1$ to $n$.  Therefore, there are $n^{n-2}$ possible Pr\u{00fc}fer sequences.",
-	},
-	"dependencies":["tree"],
-}
+//{
+//	"name": "Cayley's Theorem",
+//	"weight": 5,
+//	"type": "thm",
+//	"content": "The number of trees with vertex set $[n]$ is $n^{n-2}$.", // what do we call [n]?? that should be a dependency
+//	"proof": {
+//		"type": [],
+//		"content": "There is a bijection between trees and Pr\u{00fc}fer sequences.  Trees with $n$ vertices has Pr\u{00fc}fer sequences of length $n-2$, and each entry can be any number from $1$ to $n$.  Therefore, there are $n^{n-2}$ possible Pr\u{00fc}fer sequences.",
+//	},
+//	"dependencies":["tree"],
+//}
 
 {
-	"def": "A __clique__ is a set $S$ of vertices such that for every pair $a,b\in S$, $a~b$.",
+	"type": "definition",
+	"description": "A __clique__ is a set $S$ of vertices such that for every pair $a,b\in S$, $a~b$.",
 	"intuition": "A clique is a bunch of vertices where all edges between them are filled.  Everybody is adjacent to everybody.",
 	"dependencies":["vertex", "adjacent"],
 }
@@ -1158,7 +1200,8 @@
 // {//6 a // definition!
 // 	"name": "A-matching",
 // 	"weight": 2,
-// 	"definition": "Given a bigraph $G=(L,R,E)$, an __$L$-matching__ is a matching in $G$ that is an $L$ vertex cover.",
+// 	"type": "definition",
+//	"description": "Given a bigraph $G=(L,R,E)$, an __$L$-matching__ is a matching in $G$ that is an $L$ vertex cover.",
 // }
 
 // {//6 b // thm
@@ -1169,7 +1212,8 @@
 
 // {// 6 c def
 // 	"weight": 1,
-// 	"def": "Given a bigraph $G=(L,R,E)$, a __$(2,1)$-matching__ is a subset of $F$ of $E$ where every vertex in $L$ is incident with exactly $2$ edges in $F$ and every vertex in $R$ is incident with at most $1$ edge in $F$.",
+// 	"type": "definition",
+//	"description": "Given a bigraph $G=(L,R,E)$, a __$(2,1)$-matching__ is a subset of $F$ of $E$ where every vertex in $L$ is incident with exactly $2$ edges in $F$ and every vertex in $R$ is incident with at most $1$ edge in $F$.",
 // }
 
 // {//6 c thm
@@ -1320,12 +1364,14 @@
 // }
 
 // {
-// 	"def":"define a digraph!",
+// 	"type": "definition",
+//	"description":"define a digraph!",
 // 	"note":"*Digraph* is short for *directed graph*.  We use digraphs so often that it is convenient to use the shorter term.",
 // }
 
 // {
-// 	"definition":"A digraph is __strongly connected__ if for every pair of (distinct) vertices u, v, there exists a directed path from u to v.",
+// 	"type": "definition",
+//	"description":"A digraph is __strongly connected__ if for every pair of (distinct) vertices u, v, there exists a directed path from u to v.",
 // }
 
 // {
@@ -1334,32 +1380,38 @@
 // }
 
 // {
-// 	"definition":"A __component__ of a graph is a maximally connected subgraph.",
+// 	"type": "definition",
+//	"description":"A __component__ of a graph is a maximally connected subgraph.",
 // 	"note":"*Component* is short for *connected component*.",
 // }
 
 // {
-// 	"definition":"A __strong component__ of a graph is a maximally strongly connected subgraph.",
+// 	"type": "definition",
+//	"description":"A __strong component__ of a graph is a maximally strongly connected subgraph.",
 // 	"note":"*Strong component* is short for *strongly connected component*.", // i don't know if i like this entire definition.  because it sounds like a component that is strongly connected.  but a strongly connected component is not necc a connectec component!
 // }
 
 // {
-// 	"def":"An __arc__ is an ordered pair of vertices, $(a,b)$.",
+// 	"type": "definition",
+//	"description":"An __arc__ is an ordered pair of vertices, $(a,b)$.",
 // 	"note":"An arc is also called a *directed edge*.",
 // }
 
 // {
-// 	"def":"Given an arc $(a,b)$, $a$ is the __tail__.",
+// 	"type": "definition",
+//	"description":"Given an arc $(a,b)$, $a$ is the __tail__.",
 // 	"note":"Also called the *initial vertex*.",
 // }
 
 // {
-// 	"def":"Given an arc $(a,b)$, $b$ is the __head__.",
+// 	"type": "definition",
+//	"description":"Given an arc $(a,b)$, $b$ is the __head__.",
 // 	"note":"Also called the *terminal vertex*.",
 // }
 
 // {
-// 	"def":"A set of vertices (or edges) is __independent__ if no pair of vertices (or edges) is adjacent.",
+// 	"type": "definition",
+//	"description":"A set of vertices (or edges) is __independent__ if no pair of vertices (or edges) is adjacent.",
 // 	"note": "The term **matching** is a synonym for an independent edge set.",
 // }
 
@@ -1369,28 +1421,34 @@
 
 
 // {
-// 	"definition":"A vertex $a$ __dominates__ a vertex $b$ if there is an arc $(a,b)$.",
+// 	"type": "definition",
+//	"description":"A vertex $a$ __dominates__ a vertex $b$ if there is an arc $(a,b)$.",
 // }
 
 // {
-// 	"definition":"A vertex set $A$ __dominates__ a vertex set $B$ if for every $b \in B$, there exists an $a \in A$ such that $a$ dominates $b$.",
+// 	"type": "definition",
+//	"description":"A vertex set $A$ __dominates__ a vertex set $B$ if for every $b \in B$, there exists an $a \in A$ such that $a$ dominates $b$.",
 // }
 
 // { // or maybe we SHOULDNT union it with A!!!
-// 	"definition":"The __dominion__ of a vertex set $A$ is the union of $A$ and the largest set $B$ that $A$ dominates.",
+// 	"type": "definition",
+//	"description":"The __dominion__ of a vertex set $A$ is the union of $A$ and the largest set $B$ that $A$ dominates.",
 // 	"note":"The dominion of $x$ (WITHOUT x itself) is denoted $N+(x).", // another reason maybe we shouldn't include A
 // }
 
 // {
-// 	"definition":"Given a graph $G=(V,E)$, a set $T \sub V$ is __out-dominating__ if its dominion is $V$.",
+// 	"type": "definition",
+//	"description":"Given a graph $G=(V,E)$, a set $T \sub V$ is __out-dominating__ if its dominion is $V$.",
 // }
 
 // { // but now we need a version for digraphs!
-// 	"definition":"A __kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which is out-dominating.",
+// 	"type": "definition",
+//	"description":"A __kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which is out-dominating.",
 // }
 
 // {
-// 	"def":"An __$n$-kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which when closed under domination $n$ times is $V$.",
+// 	"type": "definition",
+//	"description":"An __$n$-kernel__ of a multigraph $G=(V,E)$ is an independent set $S \sub V$ which when closed under domination $n$ times is $V$.",
 // }
 
 // {
@@ -1437,16 +1495,19 @@
 // } // book uses different proof which i dont understand (gives overview)
 
 {
-	"def":"A graph $G=(V,E)$ is __bipartite__ is there exists a bipartition ${A,B}$ of $V$ such that $(\forall e \in E) e\cap A \neq {}$ and $e\cap B \neq {}$.",
+	"type": "definition",
+	"description":"A graph $G=(V,E)$ is __bipartite__ is there exists a bipartition ${A,B}$ of $V$ such that $(\forall e \in E) e\cap A \neq {}$ and $e\cap B \neq {}$.",
 	"note":"*Bigraph* is short for *bipartite graph*.",
 }
 
 // {
-// 	"def":"A __$k$-partite graph__, denoted $G=(A_1,,,A_k,E)$, is a graph $G=(V,E)$ such that ${A_1,,,A_k}$ is a $k$-partition of $V$, and $(\forall e \in E)(\forall i \in [k]) e \not\subset A_i$.",
+// 	"type": "definition",
+//	"description":"A __$k$-partite graph__, denoted $G=(A_1,,,A_k,E)$, is a graph $G=(V,E)$ such that ${A_1,,,A_k}$ is a $k$-partition of $V$, and $(\forall e \in E)(\forall i \in [k]) e \not\subset A_i$.",
 // }
 
 // {
-// 	"def":"The set ${s,t}$ is __bigraphic__ if there exists a bigraph where the set of the degrees of vertices in partite set $A$ is $s$, and the set of the degrees of vertices in partite set $B$ is $t$.",
+// 	"type": "definition",
+//	"description":"The set ${s,t}$ is __bigraphic__ if there exists a bigraph where the set of the degrees of vertices in partite set $A$ is $s$, and the set of the degrees of vertices in partite set $B$ is $t$.",
 // }
 
 // {
@@ -1456,7 +1517,8 @@
 // // Bipartite 2-switch and 0,1-matrices with fixed row and column sums // what is this stuff??? // komlos
 
 // {
-// 	"def":"A __round-robin tournament__ ...?", // shall we call it tournament or round-robin or round-robin tournament?  i feel like we need the last.
+// 	"type": "definition",
+//	"description":"A __round-robin tournament__ ...?", // shall we call it tournament or round-robin or round-robin tournament?  i feel like we need the last.
 // }
 
 // {
@@ -1466,11 +1528,13 @@
 // // come back to 1.4.35
 
 // {
-// 	"def":"Vertex $a$ __virtually dominates__ vertex $b$ if $a$ dominates $b$ or $a$ dominates any $t$ who dominates $b$.",
+// 	"type": "definition",
+//	"description":"Vertex $a$ __virtually dominates__ vertex $b$ if $a$ dominates $b$ or $a$ dominates any $t$ who dominates $b$.",
 // }
 
 // {
-// 	"def":"Given a round-robin tournament $R=(V,E)$, a vertex $v \in V$ is a __king__ if it virtually dominates every vertex in $V$ besides itself.",
+// 	"type": "definition",
+//	"description":"Given a round-robin tournament $R=(V,E)$, a vertex $v \in V$ is a __king__ if it virtually dominates every vertex in $V$ besides itself.",
 // }
 
 // {
@@ -1490,7 +1554,8 @@
 // }
 
 // {
-// 	"def":"A digraph is called __unipathic__ if for any two vertices $j$ and $k$, there is at most one (simple??) path from $j$ to $k$.",
+// 	"type": "definition",
+//	"description":"A digraph is called __unipathic__ if for any two vertices $j$ and $k$, there is at most one (simple??) path from $j$ to $k$.",
 // }// ask komlos
 
 // {
@@ -1508,23 +1573,27 @@
 
 // // chapter 2
 {
-	"def": "A multigraph is __cyclic__ if it has a at least one cycle.",
+	"type": "definition",
+	"description": "A multigraph is __cyclic__ if it has a at least one cycle.",
 	"dependencies": ["multigraph", "cycle"],
 }
 
 {
-	"def":"A multigraph is __acyclic__ if it is not cyclic.",
+	"type": "definition",
+	"description":"A multigraph is __acyclic__ if it is not cyclic.",
 	"intuition": "If it has no cycles.",
 	"dependencies": ["multigraph", "cyclic"],
 }
 
 {
-	"def":"A __forest__ is an acyclic graph.",
+	"type": "definition",
+	"description":"A __forest__ is an acyclic graph.",
 	"dependencies": ["acyclic"],
 }
 
 {
-	"def":"A __tree__ is a connected forest.",
+	"type": "definition",
+	"description":"A __tree__ is a connected forest.",
 	"intuition":"A forest is one or more trees.  That is, each component of a forest is a tree.",
 	"dependencies": ["connected (graph)", "forest"],
 }
@@ -1538,7 +1607,8 @@
 // }
 
 // {
-// 	"def":"A __spanning tree__ of a multigraph $M=(V,E)$ is a subtree of $M$ of the form $T=(V,E_T)$.",
+// 	"type": "definition",
+//	"description":"A __spanning tree__ of a multigraph $M=(V,E)$ is a subtree of $M$ of the form $T=(V,E_T)$.",
 // 	"intuition":"A spanning tree *spans* all the vertices $V$ of the multigraph $M$.",
 // }
 
@@ -1589,28 +1659,34 @@
 // }
 
 // {
-// 	"def":"The __distance__ between vertices $a$ and $b$ is the length of the shortest path connecting $a$ and $b$.  When there is no path connecting them, $a$ and $b$ have distance infinity.",
+// 	"type": "definition",
+//	"description":"The __distance__ between vertices $a$ and $b$ is the length of the shortest path connecting $a$ and $b$.  When there is no path connecting them, $a$ and $b$ have distance infinity.",
 // }
 
 // {
-// 	"def":"The __eccentricity__ of a vertex $v$ is the maximum of the distances between $v$ and every other vertex.",
+// 	"type": "definition",
+//	"description":"The __eccentricity__ of a vertex $v$ is the maximum of the distances between $v$ and every other vertex.",
 // }
 
 // {
-// 	"def":"A __central vertex__ is a vertex with minimum eccentricity.",
+// 	"type": "definition",
+//	"description":"A __central vertex__ is a vertex with minimum eccentricity.",
 // }
 
 // {
-// 	"def":"The __center__ is the subgraph induced by the central vertices.",
+// 	"type": "definition",
+//	"description":"The __center__ is the subgraph induced by the central vertices.",
 // }
 
 // {
-// 	"def":"The __radius__ is the eccentricity of a central vertex.",
+// 	"type": "definition",
+//	"description":"The __radius__ is the eccentricity of a central vertex.",
 // 	// alt def
 // }
 
 {
-	"def":"Given a graph, the __diameter__ is the maximum distance between all pairs of vertices.",
+	"type": "definition",
+	"description":"Given a graph, the __diameter__ is the maximum distance between all pairs of vertices.",
 }
 
 // {
@@ -1666,7 +1742,8 @@
 // }
 
 // {
-// 	"def":"A __star__, denoted $S_t$, is a bigraph of the form $K_{1,t}.",
+// 	"type": "definition",
+//	"description":"A __star__, denoted $S_t$, is a bigraph of the form $K_{1,t}.",
 // 	"note":"Under this definition, the trivial graph is not a star.",
 // }
 
