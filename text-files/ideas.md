@@ -1,4 +1,4 @@
-1. a "review" mode which is like a QuizUp quiz.  It quizzes you on things you know, in such a way as to not be redundant. (won't repeat anything, won't repeat things too closely related (depending on settings you set)).
+ 1. a "review" mode which is like a QuizUp quiz.  It quizzes you on things you know, in such a way as to not be redundant. (won't repeat anything, won't repeat things too closely related (depending on settings you set)).
 
 The quiz and the program itself may have some sort of positive feedback feature (points, stars, or whatnot), since that seems to motivate ppl on KA and SO.
 
@@ -112,3 +112,29 @@ After a user has upvoted, the upvote arrow remains highlighted in green.  (and r
 81.  just like "importance", there could be a "difficulty" too.
 
 introduce an edit history for node values, etc., nodes, etc.
+
+
+
+82.
+IDEAAAA:  We need a NAME SHORTENER that chooses what names to display on the screen!  It's gotta be smart for humans!  That means you favor the beginning and ending of words!  Example:
+characteristic of a field --> charistic of field --> char of field --> char field --> chr field --> chr fld --> chr F
+see
+http://www.npr.org/sections/alltechconsidered/2014/01/16/263096375/researchers-are-totes-studying-how-ppl-shorten-words-on-twitter
+https://en.wikipedia.org/wiki/Clipping_(morphology)
+https://github.com/d-ying/string_truncate
+https://github.com/cdcabrera/js-php-c--truncate
+A node can have an abbreviations field for commonly used abbreviations of names.  Or maybe that doesn't belong to a node but rather to the math language dictionary as a whole, which belongs to this word truncator program, which certainly can be its very own repository.  Things like characteristic --> char and field --> F.
+THIS IS THE ONE THAT WORKS: https://github.com/d-ying/string_truncate
+MORE SPECIFICALLY: https://github.com/d-ying/string_truncate/blob/master/stringtruncate/StringTruncate.java
+MORE SPECIFICALLY: the wordTruncate function.
+a word is built of subwords:
+"subword" = "sub" + "word"
+"canister" = "can" + "i" + "ster"
+"weight" = "w" + "eight"
+"refridgerator" = "re" + "fr" + "i" + "dge" + "e" + "r" + "a" + "tor"
+
+
+83.
+issue/idea
+If A-->B-->C on the graph, but B is not showing, then shouldn't we show an edge A-->C ?
+

@@ -82,7 +82,7 @@ class Node(Votable):
 			elif self.type == 'theorem': # maybe in the future we won't allow this
 				self._id = reduce_string(self.attrs['description'].value)
 			else:
-				raise ValueError('There is no id!')
+				raise ValueError('There is no id for nodedic {}'.format(dic))
 
 	@property
 	def id(self):
