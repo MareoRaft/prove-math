@@ -226,7 +226,10 @@ ws.onclose = function() {
 	})
 }
 ws.onopen = function() {
-	ws.jsend({command: 'first-steps'})
+	let requested_id = $('body').attr('data-requested-id')
+	ws.jsend({command: 'first-steps', requested_id: requested_id})
+	// if( is.nonEmptyString(requested_id) ){
+
 	//TEMP
 	// guestLogin()
 	// promptStartingNodes()
@@ -250,6 +253,10 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	}
 	else if( ball.command === 'prompt-starting-nodes' ){
 		// promptStartingNodes(subjects) // but not before x'ing out the login :(
+	}
+	else if( ball.command === 'open-node' ) {
+		let node_id = ball.node_id
+		openNode(node_id)
 	}
 	else if( ball.command === 'load-graph' ) {
 		let raw_graph = ball.new_graph
@@ -296,7 +303,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			})
 		}
 	}
-	else if (ball.command === "suggest-goal") {
+	else if (ball.command === 'suggest-goal') {
 		let goal = new Node(ball.goal)
 		if (user.prefs.always_accept_suggested_goal) {
 			$.event.trigger({
@@ -322,7 +329,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			})
 		}
 	}
-	else if (ball.command === "suggest-pregoal") {
+	else if (ball.command === 'suggest-pregoal') {
 		let pregoal = new Node(ball.pregoal)
 		if (user.prefs.always_accept_suggested_pregoal) {
 			$.event.trigger({
@@ -348,7 +355,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			})
 		}
 	}
-	else if (ball.command === "highlight-goal") {
+	else if (ball.command === 'highlight-goal') {
 		let goal = new Node(ball.goal)
 		notify.success({
 			text: 'Your new goal is "' + goal.name + '"!!!!',

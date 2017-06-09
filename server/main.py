@@ -77,6 +77,7 @@ class IndexHandler(BaseHandler):
 		user_dict = {}
 		method = self.get_argument("method", default=None, strip=False)
 		authorization_code = self.get_argument("code", default=None, strip=False)
+		requested_id = self.get_argument("nodeid", default='', strip=True)
 
 		cookie = self.get_secure_cookie("mycookie")
 		if cookie:
@@ -128,6 +129,7 @@ class IndexHandler(BaseHandler):
 					host=self.request.host,
 					subjects=json.dumps(list(config.starting_nodes.keys())),
 					javascript_kickoff_file=config.javascript_kickoff_file,
+					requested_id=requested_id,
 					)
 
 
@@ -183,6 +185,12 @@ class SocketHandler (WebSocketHandler):
 			print(ball['message'])
 
 		elif ball['command'] == 'first-steps':
+			# if a node was requested, send it immediately
+			requested_id = ball['requested_id']
+			if requested_id is not '':
+				self.request_nodes([requested_id], ball, userless=True)
+				self.jsend({'command': 'open-node', 'node_id': requested_id})
+			# set up user and nodes
 			self.user = User(ball['identifier'])
 			self.jsend({'command': 'update-user'})
 			if self.ids(ball):
@@ -328,12 +336,15 @@ class SocketHandler (WebSocketHandler):
 				'pregoal': pregoal_node.as_dict(),
 			})
 
-	def request_nodes(self, node_ids, ball):
+	def request_nodes(self, node_ids, ball, userless=False):
 		# user manually requests a node.  So we want to preserve client_node_ids as not to change anything for them.  We only want to ADD the requested nodes additionally.
 		for node_id in node_ids:
 			if node_id not in our_MG.nodes():
 				raise ValueError('The node_id "'+node_id+'" does not exist.')
-		ids = set(self.ids(ball)).union(set(node_ids))
+		if userless:
+			ids = set(node_ids)
+		else:
+			ids = set(self.ids(ball)).union(set(node_ids))
 		H = our_MG.subgraph(ids)
 		dict_graph = H.as_js_ready_dict()
 		self.jsend({
