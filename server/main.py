@@ -415,11 +415,10 @@ class RedirectPreserveQueryHandler(BaseHandler):
 def make_app():
 	return Application(
 		[
-			url(r'/?', RedirectPreserveQueryHandler, {"url": "index.html"}, name="rooth"),
+			url(r'(?:/(?:index(?:\.htm(?:l)?)?)?)?', IndexHandler, name="indexh"),
 			url(r'/websocket', SocketHandler),
 			url(r'/json', JSONHandler, name="jsonh"),
-			url(r'/index(?:\.html?)?', IndexHandler, name="indexh"),
-			url(r'/docs(?:\.html?)?', RedirectHandler, {"url": "docs/index.html"}, name='docsh'),
+			url(r'/docs(?:\.htm(?:l)?)?', RedirectHandler, {"url": "docs/index.html"}, name='docsh'),
 			url(r'/docs/(.*)', StaticHandler, {"path": "../docs/build/html/"}),
 			url(r'/image/(.*)', StaticHandler, {"path": "../server/data/graph-theory-images/"}), # ON THE OTHER HAND, images (plural) refers to the folder www/images
 			url(r'/(.*)', StaticHandler, {"path": "../www/"}),
