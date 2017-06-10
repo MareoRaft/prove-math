@@ -58,6 +58,7 @@ class BaseHandler(RequestHandler):
 
 	def prepare(self):
 		if self.request.host != 'provemath.org' and self.request.host != 'localhost':
+			# TODO: preserve params here too
 			self.redirect('http://provemath.org', self.request.uri)
 			Finish()
 
@@ -75,54 +76,54 @@ class IndexHandler(BaseHandler):
 
 	def get(self):
 		user_dict = {}
-		method = self.get_argument("method", default=None, strip=False)
-		authorization_code = self.get_argument("code", default=None, strip=False)
+		method = self.get_argument("method", default='', strip=False)
+		authorization_code = self.get_argument("code", default='', strip=False)
 		requested_id = self.get_argument("nodeid", default='', strip=True)
 
-		cookie = self.get_secure_cookie("mycookie")
-		if cookie:
-			print('COOKIE IS: '+str(cookie))
-			user_identifier = json.loads(str(cookie, 'UTF-8'))
-			print('user identifier IS: '+str(user_identifier))
-			user = User(user_identifier)
-			user_dict = user.dict # WHAT ABOUT THE PICTURE? maybe...
-			# user_dict = provider.id_and_picture(request_root, user.dict)
+		if requested_id == '': # in this case, don't log in.  just show them what they want.  This path-like behavior will be removed once we change the oauth method.
 
-		elif method is not None and authorization_code is not None:
-			print('got params!!!!')
-			redirect_response = 'https://' + self.request.host + \
-				'/index?method=' + method + '&code=' + authorization_code
-			provider = auth.get_new_provider(method, host=self.request.host)
-			try:
-				provider.oauth_obj.fetch_token(
-					provider.token_url,
-					client_secret=provider.secret,
-					authorization_response=redirect_response
-					)
-				user_info = provider.oauth_obj.get(provider.request_url)
+			cookie = self.get_secure_cookie("mycookie")
+			if cookie:
+				print('COOKIE IS: '+str(cookie))
+				user_identifier = json.loads(str(cookie, 'UTF-8'))
+				print('user identifier IS: '+str(user_identifier))
+				user = User(user_identifier)
+				user_dict = user.dict # WHAT ABOUT THE PICTURE? maybe...
+				# user_dict = provider.id_and_picture(request_root, user.dict)
 
-				if provider.request_format == 'json':
-					request_root = json.loads(user_info.text)
-					account_id = request_root['id']
-				else:
-					request_root = ET.fromstring(user_info.text)
-					account_id = request_root.find('id').text
-				user = User({
-					'type': provider.name,
-					'id': account_id
-				})
-				user_dict = provider.id_and_picture(request_root, user.dict)
-				print("logged in dict is:"+ str(user_dict)+"\n")
-				self.set_secure_cookie("mycookie", json.dumps(user.identifier))
-			except Exception as e:
-				print('Login failed.  Exception message below:')
-				print(e) # user_dict is still {}
-				# inspect.stack()
-				(typ, val, tb) = sys.exc_info()
-				traceback.print_tb(tb)
+			elif method is not '' and authorization_code is not '':
+				redirect_response = 'https://{}/index?method={}&code={}&nodeid={}'.format(self.request.host, method, authorization_code, requested_id) # but this is still not enough for requested_id to work, since the oauth providers send you to a static url, they don't remember your params and send you back with the same params
+				provider = auth.get_new_provider(method, host=self.request.host)
+				try:
+					provider.oauth_obj.fetch_token(
+						provider.token_url,
+						client_secret=provider.secret,
+						authorization_response=redirect_response
+						)
+					user_info = provider.oauth_obj.get(provider.request_url)
 
-		else:
-			pass # user not logged in
+					if provider.request_format == 'json':
+						request_root = json.loads(user_info.text)
+						account_id = request_root['id']
+					else:
+						request_root = ET.fromstring(user_info.text)
+						account_id = request_root.find('id').text
+					user = User({
+						'type': provider.name,
+						'id': account_id
+					})
+					user_dict = provider.id_and_picture(request_root, user.dict)
+					print("logged in dict is:"+ str(user_dict)+"\n")
+					self.set_secure_cookie("mycookie", json.dumps(user.identifier))
+				except Exception as e:
+					print('Login failed.  Exception message below:')
+					print(e) # user_dict is still {}
+					# inspect.stack()
+					(typ, val, tb) = sys.exc_info()
+					traceback.print_tb(tb)
+
+			else:
+				pass # user not logged in
 
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
@@ -188,8 +189,13 @@ class SocketHandler (WebSocketHandler):
 			# if a node was requested, send it immediately
 			requested_id = ball['requested_id']
 			if requested_id is not '':
-				self.request_nodes([requested_id], ball, userless=True)
-				self.jsend({'command': 'open-node', 'node_id': requested_id})
+				try:
+					# self.request_nodes will fail if the requested_id does not exist
+					self.request_nodes([requested_id], ball, userless=True)
+					self.jsend({'command': 'open-node', 'node_id': requested_id})
+				except ValueError:
+					self.jsend({'command': 'display-error', 'message': 'Sorry, the requested node (with ID "{}") does not exist.'.format(requested_id)})
+
 			# set up user and nodes
 			self.user = User(ball['identifier'])
 			self.jsend({'command': 'update-user'})
@@ -389,10 +395,32 @@ class StaticHandler(StaticFileHandler, BaseHandler):
 	pass
 
 
+class RedirectPreserveParamsHandler(BaseHandler):
+
+
+	URL = None
+
+	def initialize(self, url):
+		self.URL = url
+
+	def get(self):
+		if self.URL is None:
+			raise ValueError('No URL specified.')
+		# fetch all params
+		method = self.get_argument("method", default='', strip=False)
+		authorization_code = self.get_argument("code", default='', strip=False)
+		requested_id = self.get_argument("nodeid", default='', strip=True)
+		# prepare the url
+		params_string = 'method={}&code={}&nodeid={}'.format(method, authorization_code, requested_id)
+		url_string = '{}?{}'.format(self.URL, params_string)
+		self.redirect(url_string)
+		Finish()
+
+
 def make_app():
 	return Application(
 		[
-			url(r'/?', RedirectHandler, {"url": "index.html"}, name="rooth"),
+			url(r'/?', RedirectPreserveParamsHandler, {"url": "index.html"}, name="rooth"),
 			url(r'/websocket', SocketHandler),
 			url(r'/json', JSONHandler, name="jsonh"),
 			url(r'/index(?:\.html?)?', IndexHandler, name="indexh"),
