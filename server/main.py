@@ -128,7 +128,7 @@ class IndexHandler(BaseHandler):
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
 					host=self.request.host,
-					subjects=json.dumps(list(config.starting_nodes.keys())),
+					subjects=json.dumps(list(config.public_starting_node_keys)),
 					javascript_kickoff_file=config.javascript_kickoff_file,
 					requested_id=requested_id,
 					)
