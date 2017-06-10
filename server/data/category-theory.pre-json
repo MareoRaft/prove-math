@@ -67,9 +67,11 @@
 {
     "name": "Types are objects",
     "theorem": "All types are objects.",
-    "proof": {
-        "type": "by definition",
-        "content": "
+    "proofs": [
+//    {
+//        "type": "by definition",
+//        "content":
+"
             Overview:
                 We will prove this theorem in two parts.
                 Firstly, we will show that any type $T$ is a thing.
@@ -91,7 +93,8 @@
             Conclusion:
                 Because any type $T$ is a thing and because any type $T$ has a type (namely: *type*), it follows by definition of object that any type $T$ is an object.
         ",
-    },
+//    },
+    ],
     "dependencies": ["type", "object"],
 }
 
