@@ -3,12 +3,12 @@
 {
     "name": "equatable",
     "def": "Given any two things $x, y$ and given any classification of things, we say that $x$ is __equatable to__ $y$ according to the classification if $x$ and $y$ are interchangeable with each other when used as any occurrence within any statement that uses the occurrence as a representative of the classification. Alternatively, we say that $x$ and $y$ are __equatable__ things.",
-    "example": [
+    "examples": [
         "A ripe apple is equatable to a rotten orange according to the classification *fruit*. To illustrate, the statement \"I ate a ripe apple for breakfast\" uses its occurrence of \"a ripe apple\" as a *fruit* just as the statement \"I ate a rotten orange for breakfast\" uses its occurrence of \"a rotten orange\" as a *fruit*.",
         "The color green is equatable to the word edible according to the classification *adjective*. To illustrate, the famous statement \"Colorless green ideas sleep furiously\" uses its occurrence of \"green\" as an *adjective* just the statement \"Colorless edible ideas sleep furiously\" uses its occurrence of \"edible\" as an *adjective*, even though both statements are nonsensical in meaning.",
         "The *integer* 43 is equatable with the *integer* 15. To illustrate, the statement \"43 is odd and 43 is prime\" uses its second occurrence of \"43\" as an *integer* just as the statement \"43 is odd and 15 is prime\" uses its occurrence of \"15\" as an *integer*, even though the former statement is true yet the latter statement is false. Notice that first occurrence of \"43\" remains unaltered across both statements, demonstrating that we are allowed to interchange just some of the occurrences with equatable things.",
     ],
-    "counterexample": [
+    "counterexamples": [
         "A ripe apple is not equatable to a rotten orange according to the classification *apples*. To illustrate, the statement \"I ate a ripe apple for breakfast\" uses its occurrence of \"a ripe apple\" as an item of *apples*, yet the statement \"I ate a rotten orange for breakfast\" does not use its occurrence of \"a rotten orange\" as an item of *apples*.",
     ],
 }
@@ -17,12 +17,12 @@
     "name": "type",
     "def": "A __type__ is a classification of things that are all equatable to each other according to the classification. We say that a thing $x$ __has type__ $T$ if $x$ is classified under $T$; alternatively, we may say that $x$ is __of type__ $T$, or we may directly say that $x$ *is a(n)* $T$, or we may consider $x$ *as a(n)* $T$, or we may even succintly say a $T$ $x$ when clear to do so.",
     "note": "A type will be often denoted in italics whenever a type is used as a *type*. However, beware that not every *italics text* denotes a type.",
-    "example": [
+    "examples": [
         "Both a ripe apple and a rotten orange have type *fruit*",
         "The color green is of type *adjective* just as is the word edible.",
         "The *integer* 43 has been explicitly typed as an *integer* and it is equatable to every integer (including itself).",
     ],
-    "counterexample": [
+    "counterexamples": [
         "An orange is not of type *apples*. To quote a famous idiom: you can't compare *apples* to *oranges*.",
     ],
     "dependencies": ["equatable"],
@@ -37,11 +37,11 @@
         // I want to emphasize this abuse in a note rather than a(n) (counter)example, even though this note illustrates a(n) (counter)example (because I use it as an example of *abuse* and not a(n) (counter)example of *equal*).
         "Both mathematicians and laypeople very often abuse the notion of *equal* with a different-yet-related concept. To illustrate, $4+1$ does not equal $3+2$ when both are considered as *arithmetic expressions*; the reasons are (1) that arithmetic expressions are syntactic constructs and (2) that the $4+1$ and $3+2$ as *syntactic constructs* have different symbols in the first and third positions. When people say that $4+1 = 3+2$, people really mean that both sides *result in* equal values (i.e. the *arithmetic expressions* $4+1$ and $3+2$ both result in the *number* $5$). In order to prevent misunderstandings, we will try to avoid such inexplicit intentions.",
     ],
-    "example": [
+    "examples": [
         "$32 = 32$ when each side is an *integer*. To illustrate, the statement \"32 is even\" has the same truth value as the statement \"32 is even\". Similarly, the statement \"32 is prime\" has the same truth value as the statement \"32 is prime\".",
         "The *rational number* $\\frac{3}{5}$ is equal to the *rational number* $\\frac{6}{10}$. Note that equal rational numbers may have multiple syntactic representations, just as equal numbers may result from multiple arithmetic expressions.",
     ],
-    "counterexample": [
+    "counterexamples": [
         "The *integer* $43$ is not equal to the *integer* $15$. To illustrate, the statement '43 is odd and 43 is prime' is true yet the statement '43 is odd and 15 is prime' is false.",
         "$\\frac{3}{5}$ is unequal to the $\\frac{6}{10}$ as *syntactic representations*, because they use different symbols in the upper and lower positions. (The type really matters!)",
     ],
@@ -54,11 +54,11 @@
         "Any person, place, thing, or idea can be considered an object, as long as its type is inferable from context. In mathematics, we usually study mathematical constructs as objects.",
     ],
     "intuition": "If you can unambiguously identify it (and its type), it must be an object!",
-    "example": [
+    "examples": [
         "The *integer* $-34$.",
         "The *time* 10:42 PM.",
     ],
-    "counterexample": [
+    "counterexamples": [
         "$\\{7, 7\\}$, without any additional context. We can't infer if its type is a *set* or a *multiset* or something else entirely!",
     ],
     "dependencies": ["type"],
