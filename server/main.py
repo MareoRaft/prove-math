@@ -58,7 +58,7 @@ class BaseHandler(RequestHandler):
 
 	def prepare(self):
 		if self.request.host != 'provemath.org' and self.request.host != 'localhost':
-			# TODO: preserve params here too
+			# note: the request.uri INCLUDES the query string
 			self.redirect('http://provemath.org', self.request.uri)
 			Finish()
 
@@ -92,7 +92,7 @@ class IndexHandler(BaseHandler):
 				# user_dict = provider.id_and_picture(request_root, user.dict)
 
 			elif method is not '' and authorization_code is not '':
-				redirect_response = 'https://{}/index?method={}&code={}&nodeid={}'.format(self.request.host, method, authorization_code, requested_id) # but this is still not enough for requested_id to work, since the oauth providers send you to a static url, they don't remember your params and send you back with the same params
+				redirect_response = 'https://{}/index?method={}&code={}&nodeid={}'.format(self.request.host, method, authorization_code, requested_id) # but this is still not enough for requested_id to work, since the oauth providers send you to a static url, they don't remember your query and send you back with the same query
 				provider = auth.get_new_provider(method, host=self.request.host)
 				try:
 					provider.oauth_obj.fetch_token(
@@ -395,7 +395,7 @@ class StaticHandler(StaticFileHandler, BaseHandler):
 	pass
 
 
-class RedirectPreserveParamsHandler(BaseHandler):
+class RedirectPreserveQueryHandler(BaseHandler):
 
 
 	URL = None
@@ -406,21 +406,16 @@ class RedirectPreserveParamsHandler(BaseHandler):
 	def get(self):
 		if self.URL is None:
 			raise ValueError('No URL specified.')
-		# fetch all params
-		method = self.get_argument("method", default='', strip=False)
-		authorization_code = self.get_argument("code", default='', strip=False)
-		requested_id = self.get_argument("nodeid", default='', strip=True)
-		# prepare the url
-		params_string = 'method={}&code={}&nodeid={}'.format(method, authorization_code, requested_id)
-		url_string = '{}?{}'.format(self.URL, params_string)
-		self.redirect(url_string)
+		# see http://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+		uri_string = '{}?{}'.format(self.URL, self.request.query)
+		self.redirect(uri_string)
 		Finish()
 
 
 def make_app():
 	return Application(
 		[
-			url(r'/?', RedirectPreserveParamsHandler, {"url": "index.html"}, name="rooth"),
+			url(r'/?', RedirectPreserveQueryHandler, {"url": "index.html"}, name="rooth"),
 			url(r'/websocket', SocketHandler),
 			url(r'/json', JSONHandler, name="jsonh"),
 			url(r'/index(?:\.html?)?', IndexHandler, name="indexh"),
