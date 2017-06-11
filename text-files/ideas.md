@@ -138,3 +138,5 @@ a word is built of subwords:
 issue/idea
 If A-->B-->C on the graph, but B is not showing, then shouldn't we show an edge A-->C ?
 
+84.
+copying to clipboard.  try https://clipboardjs.com
