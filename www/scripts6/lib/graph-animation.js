@@ -81,6 +81,10 @@ function _tick(){
 		.attr({
 			transform: node => 'translate('+node.x+','+node.y+')',
 		})
+	gA.svg.selectAll('.node-circle')
+		.attr({
+			r: _node_radius,
+		})
 	gA.svg.selectAll('.link')
 		.attr({
 			x1: link => endpointLessRadius(link, 'x1'),
@@ -135,7 +139,7 @@ function update() { // this function gets called AGAIN when new nodes come in
 			.on('mouseup', mouseup)
 			.on('contextmenu', function(){d3.event.preventDefault()}) // disable the browser's default contextmenu
 			.on(gA.circle_events)
-		node_group.append('text') // must appear ABOVE node-circle
+		node_group.append('text') // must appear (to the user) ABOVE node-circle, so is located below in the code
 			.classed('node-text', true)
 	node.exit().remove()
 
