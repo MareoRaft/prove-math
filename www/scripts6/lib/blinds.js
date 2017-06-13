@@ -1,4 +1,4 @@
-define( ["jquery", "underscore", "profile", "check-types", "graph", "mousetrap-extended", "user"], function($, _, undefined, is, graph, mousetrap, user){
+define( ["jquery", "underscore", "profile", "check-types", "graph", "mousetrap-extended", "user", "mathjax"], function($, _, undefined, is, graph, mousetrap, user, mathjax){
 
 //////////////////////////// HELPERS ////////////////////////////
 $.fn.selectRange = function(start, end) {
@@ -95,6 +95,10 @@ class Blinds {
 		collapse_array_keys = def(collapse_array_keys)? collapse_array_keys: []
 		append_keys = def(append_keys)? append_keys: []
 
+		// before TeXing anything, create a "\begingroup" and let TeX render it, effectively opening a scope for TeX macros
+		$('#begingroup-endgroup').html('$\\begingroup$')
+		mathjax.Hub.Queue(['Typeset', mathjax.Hub, "begingroup-endgroup"])
+
 		let iterable = (keys === 'own')? this.object: keys
 		for( let key in iterable ){
 			if( is.array(iterable) ) key = iterable[key] // for the keys array, grab the STRINGS, not the INDECIS
@@ -154,6 +158,7 @@ class Blinds {
 				}
 			}
 		}
+
 		// ASSUMING that when we open a blind, it is always in read mode, then we would run post_render here:
 		// TODO -- check this isn't messing things up, when we start blinds in edit mode.
 		this.post_render()
@@ -164,6 +169,10 @@ class Blinds {
 		this.$window.empty() // attached triggers and things are automatically removed by jQuery (see http://stackoverflow.com/questions/34189052/if-i-bind-a-javascript-event-to-an-element-then-delete-the-element-what-happen)
 		this.blinds = []
 		this.object = undefined
+
+		// (after TeXing everything), create an "\endgroup" and let TeX render it, effectively closing the scope for TeX macros
+		$('#begingroup-endgroup').html('$\\endgroup$')
+		mathjax.Hub.Queue(['Typeset', mathjax.Hub, "begingroup-endgroup"])
 	}
 
 	_openBlind({ parent_object=this.object, key, expand_array, display_key, $before }) { // at this point, expand_array represents whether we should expand for THIS key specifically.

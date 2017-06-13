@@ -590,12 +590,21 @@ function fromBlindsToGraphAnimation(){
 	else toggleToGraphAnimation()
 }
 function toggleToGraphAnimation() {
-	hide('#node-template')
-	hide('#preference-pane')
+	let please_close_node = false
+	if( show_hide_dict['#node-template'] === 'visible' ){
+		hide('#node-template')
+		please_close_node = true
+	}
+	let please_close_prefs = false
+	if( show_hide_dict['#preference-pane'] === 'visible' ){
+		hide('#preference-pane')
+		please_close_prefs = true
+	}
 	show('svg')
 	show('#overlay')
-	node_blinds.close()
-	pref_blinds.close()
+	// figure out which blinds are open, and close that one (closing unopened blinds could have side-effects)
+	if( please_close_node ) node_blinds.close()
+	if( please_close_prefs ) pref_blinds.close()
 }
 
 ////////////////////////// HELPERS /////////////////////////
@@ -704,7 +713,7 @@ function promptStartingNodes() {
 	let subjects_clone = _.clone(subjects)
 	let last_subject = subjects_clone.pop()
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
-	// replyToStartingNodesPrompt('a'); return // DEVELOPMENT CONVENIENCE, TEMP
+	// replyToStartingNodesPrompt('combinatorics'); return // DEVELOPMENT CONVENIENCE, TEMP
 	let subject = notify.success({
 		text: 'What subject would you like to learn? Type ' + subjects_string + '.',
 		prompt: {

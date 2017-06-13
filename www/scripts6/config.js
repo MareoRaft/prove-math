@@ -52,6 +52,9 @@ require.config({
 			exports: "MathJax",
 			init: function (){
 				MathJax.Hub.Config({
+					TeX: {
+						extensions: ["begingroup.js"],
+					},
 					tex2jax: {
 						inlineMath: [['$','$'], ['\\(','\\)']],
 						processEscapes: true, // this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
