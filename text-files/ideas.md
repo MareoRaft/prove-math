@@ -1,4 +1,4 @@
-1. a "review" mode which is like a QuizUp quiz.  It quizzes you on things you know, in such a way as to not be redundant. (won't repeat anything, won't repeat things too closely related (depending on settings you set)).
+ 1. a "review" mode which is like a QuizUp quiz.  It quizzes you on things you know, in such a way as to not be redundant. (won't repeat anything, won't repeat things too closely related (depending on settings you set)).
 
 The quiz and the program itself may have some sort of positive feedback feature (points, stars, or whatnot), since that seems to motivate ppl on KA and SO.
 
@@ -109,3 +109,17 @@ After a user has upvoted, the upvote arrow remains highlighted in green.  (and r
 
 80.  both of the following can be helpful: 1. A markdown/html or html to LaTeX translation for internal content.  That way, content can be outputted on the site (as always) AND as a pdf (new feature) and as latex (the 'source' for grad students).  2. A latex subset to markdown/html translator.  That way, grad student written material can be translated to the DB.
 
+81.  just like "importance", there could be a "difficulty" too.
+
+introduce an edit history for node values, etc., nodes, etc.
+
+
+83.
+issue/idea
+If A-->B-->C on the graph, but B is not showing, then shouldn't we show an edge A-->C ?
+
+84.
+copying to clipboard.  try https://clipboardjs.com
+
+85.
+Is there a way to EDIT what appears in the URL of a browser using JavaScript?  (In particular, can I edit the args or the query?  It seems that gmail does this whenever you compose a message!!!)

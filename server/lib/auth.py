@@ -25,7 +25,7 @@ def auth_url_dict(host):
 
 def facebook_id_and_pic(self, user_info, user_dict):
 	r = json.loads(self.oauth_obj.get('https://graph.facebook.com/me?fields = first_name').text)
-	user_dict['id_name'] = r['first_name']
+	# user_dict['id_name'] = r['first_name']
 	user_dict['profile_pic'] = 'https://graph.facebook.com/'+r['id']+'/picture'
 	return user_dict
 

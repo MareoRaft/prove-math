@@ -79,6 +79,8 @@ NODE_MAX_IMPORTANCE = 10
 
 THEOREM_MIN_IMPORTANCE = 3
 
+EXAMPLE_MAX_IMPORTANCE = 7
+
 EXERCISE_MAX_IMPORTANCE = 3
 
 
@@ -147,21 +149,31 @@ DEFINITION_ATTR_SETTINGS['description']['setter'] = definition_description_sette
 AXIOM_ATTR_SETTINGS = deepcopy(DEFINITION_ATTR_SETTINGS)
 AXIOM_ATTR_SETTINGS['dependencies']['setter'] = axiom_dependencies_setter
 
+proofs_dict = {
+	'keywords': ['proofs', 'proof'],
+	# 'cclass': 'list of dict', for the semester, proofs will just be a list of content
+	'cclass': 'list of content str',
+	# 'setter': proofs_setter, for the semester, proofs will just be a list of content
+	'setter': list_of_content_setter,
+}
+
+EQUIV_DEFS_SETTINGS = deepcopy(DEFINITION_ATTR_SETTINGS)
+EQUIV_DEFS_SETTINGS.update({
+	'proofs': proofs_dict,
+})
+
 PRETHEOREM_ATTR_SETTINGS = deepcopy(NODE_ATTR_SETTINGS)
 PRETHEOREM_ATTR_SETTINGS.update({
-	'proofs': {
-		'keywords': ['proofs', 'proof'],
-		# 'cclass': 'list of dict', for the semester, proofs will just be a list of content
-		'cclass': 'list of content str',
-		# 'setter': proofs_setter, for the semester, proofs will just be a list of content
-		'setter': list_of_content_setter,
-	},
+	'proofs': proofs_dict,
 })
 PRETHEOREM_ATTR_SETTINGS['description']['setter'] = pretheorem_description_setter
 
 THEOREM_ATTR_SETTINGS = deepcopy(PRETHEOREM_ATTR_SETTINGS)
 THEOREM_ATTR_SETTINGS['importance']['default'] = 6
 THEOREM_ATTR_SETTINGS['name']['setter'] = theorem_name_setter
+
+EXAMPLE_ATTR_SETTINGS = deepcopy(THEOREM_ATTR_SETTINGS)
+EXAMPLE_ATTR_SETTINGS['importance']['default'] = 2
 
 EXERCISE_ATTR_SETTINGS = deepcopy(PRETHEOREM_ATTR_SETTINGS)
 EXERCISE_ATTR_SETTINGS['importance']['default'] = 1

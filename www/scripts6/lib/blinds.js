@@ -1,4 +1,4 @@
-define( ["jquery", "underscore", "profile", "check-types", "graph", "mousetrap", "user"], function($, _, undefined, is, graph, mousetrap, user){
+define( ["jquery", "underscore", "profile", "check-types", "graph", "mousetrap-extended", "user", "mathjax"], function($, _, undefined, is, graph, mousetrap, user, mathjax){
 
 //////////////////////////// HELPERS ////////////////////////////
 $.fn.selectRange = function(start, end) {
@@ -21,6 +21,29 @@ $.fn.selectRange = function(start, end) {
 		}
 	})
 }
+
+function handlePaste(jEvent) {
+// strip HTML tags from pasted content.  See http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser#6804718
+
+	// get non-jQuery event
+	let event = jEvent.originalEvent
+
+	// Stop data actually being pasted into div
+	event.stopPropagation()
+	event.preventDefault()
+
+	// Get pasted data via clipboard API
+	let clipboardData = event.clipboardData || window.clipboardData
+	let pastedData = clipboardData.getData('Text')
+
+	// Clean the pasteddata
+	// here I opted to use the jQuery method.  See http://stackoverflow.com/questions/5002111/javascript-how-to-strip-html-tags-from-string#5002618
+	let strippedData = $('<body>'+pastedData+'</body>').text()
+
+	// Actually paste the data
+	window.document.execCommand('insertText', false, strippedData)
+}
+
 
 //////////////////////////// BLINDS CLASS ////////////////////////////
 class Blinds {
@@ -52,7 +75,7 @@ class Blinds {
 		this.blind_id_counter = 0 // this would fail in the future if we allow more than one Blinds to be used simultaneously.  We might need to add an ID for the specific instance of blinds.
 
 		// enable toggleBlinds keycut
-		mousetrap.bind(user.prefs.edit_save_all_blinds, function(){
+		mousetrap.bind(user.prefs.edit_save_all_blinds_keycut, function(){
 			this._toggleBlinds()
 			return false
 		}.bind(this))
@@ -71,6 +94,10 @@ class Blinds {
 		expand_array_keys = def(expand_array_keys)? expand_array_keys: []
 		collapse_array_keys = def(collapse_array_keys)? collapse_array_keys: []
 		append_keys = def(append_keys)? append_keys: []
+
+		// before TeXing anything, create a "\begingroup" and let TeX render it, effectively opening a scope for TeX macros
+		$('#begingroup-endgroup').html('$\\begingroup$')
+		mathjax.Hub.Queue(['Typeset', mathjax.Hub, "begingroup-endgroup"])
 
 		let iterable = (keys === 'own')? this.object: keys
 		for( let key in iterable ){
@@ -131,6 +158,7 @@ class Blinds {
 				}
 			}
 		}
+
 		// ASSUMING that when we open a blind, it is always in read mode, then we would run post_render here:
 		// TODO -- check this isn't messing things up, when we start blinds in edit mode.
 		this.post_render()
@@ -141,6 +169,10 @@ class Blinds {
 		this.$window.empty() // attached triggers and things are automatically removed by jQuery (see http://stackoverflow.com/questions/34189052/if-i-bind-a-javascript-event-to-an-element-then-delete-the-element-what-happen)
 		this.blinds = []
 		this.object = undefined
+
+		// (after TeXing everything), create an "\endgroup" and let TeX render it, effectively closing the scope for TeX macros
+		$('#begingroup-endgroup').html('$\\endgroup$')
+		mathjax.Hub.Queue(['Typeset', mathjax.Hub, "begingroup-endgroup"])
 	}
 
 	_openBlind({ parent_object=this.object, key, expand_array, display_key, $before }) { // at this point, expand_array represents whether we should expand for THIS key specifically.
@@ -202,6 +234,10 @@ class Blinds {
 		$mousetrap('#'+blind.id+' '+'.value').bind(user.prefs.save_blind_keycut, function(){
 			this._toggleBlind(blind)
 		}.bind(this))
+
+		// also enable html stripping on paste operation
+		// document.getElementById('editableDiv').addEventListener('paste', handlePaste);
+		$('#'+blind.id+' '+'.value').on('paste', handlePaste)
 	}
 
 	_enableAppending(blind, expand_array, is_one_time_only) {
@@ -289,7 +325,7 @@ class Blinds {
 
 		$value.html(blind.value_htmlified)
 		$('#'+blind.id+' '+'.edit-save').attr('src', 'images/edit.svg')
-		this.post_render()
+		this.post_render(blind.id)
 
 		if( is.function(this.read_mode_action) ){
 			this.read_mode_action(blind.value, blind.key, blind.parent_object)
@@ -303,7 +339,7 @@ class Blinds {
 		$value.html(blind.value_htmlified)
 		// TODO: MAYBE THIS CHOSEN STUFF SHOULD BELONG SOMEWHERE ELSE.  If a blind is created in WRITE mode to BEGIN with, this doesn't run.  Perhaps it's an organizational mistake?  Otherwise, we can cheat by having even 'write' mode blinds start in read mode, but then run _startWriteMode immediately.  not advised.
 		if( blind.mode === 'chosen' ){
-			$('#'+blind.id+' > .value > .tags').chosen({ // this seems to work, as opposed to '#'+blind.id+'.tags'
+			$('#'+blind.id+' > .value > .tags').chosen({
 				inherit_select_classes: true,
 				search_contains: true,
 				width: '100%'
@@ -311,7 +347,7 @@ class Blinds {
 			// $('.tags').append('<option value="new" selected>NEW</option>')
 			// the following might be messing things up.  leave it commented until we need that feature
 			$('#'+blind.id+' > .value > .tags').trigger('chosen:updated') // this is how to update chosen after adding more options
-
+			$('#'+blind.id+' '+'.search-field > input').focus()
 		}
 		else if( blind.mode === 'standard' ){
 			$value.prop('contenteditable', true)
@@ -481,7 +517,7 @@ class BlindValue {
 
 ////////////////////////////// HELPERS //////////////////////////////
 function as_select_html(array_selected) {
-	let client_node_names = graph.nodeNamesList()
+	let client_node_names = graph.nodeNamesAndIdsList()
 
 	let string = '<select class="tags" multiple>'
 	_.each(client_node_names, function(el){

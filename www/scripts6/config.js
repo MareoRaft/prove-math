@@ -21,9 +21,9 @@ require.config({
 		// 	"https://cdn.jsdelivr.net/katex/0.6.0/katex.min"
 		// ], // or 0.2.0
 		mathjax: [
-			"mathjax-min.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured", // we also placed MathMenu and MathZoom in the extensions folder, since mathjax depends on these.
-			"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
-			"https://cdn.jsdelivr.net/mathjax/2.1/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
+			"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
+			// "https://cdn.jsdelivr.net/mathjax/2.1/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured", // no longer works.  don't know why.
+			// "mathjax-min-2.7.0.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured", // we also placed MathMenu and MathZoom in the extensions folder, since mathjax depends on these. // no longer working. don't know why.
 		],
 		marked: [
 			"marked",
@@ -32,7 +32,7 @@ require.config({
 		],
 		mousetrap: [
 			"mousetrap.min",
-			"https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.0/mousetrap.min",
+			// "https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.0/mousetrap.min",
 		],
 		chosen: [
 			"chosen-min",
@@ -52,6 +52,9 @@ require.config({
 			exports: "MathJax",
 			init: function (){
 				MathJax.Hub.Config({
+					TeX: {
+						extensions: ["begingroup.js"],
+					},
 					tex2jax: {
 						inlineMath: [['$','$'], ['\\(','\\)']],
 						processEscapes: true, // this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)

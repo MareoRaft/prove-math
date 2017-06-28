@@ -1,4 +1,4 @@
-define( ["check-types", "mousetrap"], function(is, mousetrap) {
+define( ["check-types", "mousetrap-extended", "vanilla-notify"], function(is, mousetrap, notify) {
 
 // create a shortcut for mousetrap selectors
 window.$mousetrap = function(selector) {
@@ -47,7 +47,9 @@ window.reduce_string = function(string) {
 	return string.replace(/[_\W]/g, '').toLowerCase()
 }
 window.die = function(string) {
-	alert(string)
+	notify.error({
+		text: string,
+	})
 	throw(string)
 }
 window.def = function(input) {

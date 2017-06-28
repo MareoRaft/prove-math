@@ -1,4 +1,6 @@
-# general things to ignore:
+# To get useful gitignore things, use https://www.gitignore.io
+
+### General things to ignore:
 *.log
 server/dictionary_maker.py
 text-files/things-to-go-over-with-contributors.txt
@@ -19,14 +21,14 @@ mongo-dumps/
 # mergetool files:
 *.orig
 
-# sphinx things
+### Sphinx things
 docs/build
 
-# python things
+### Python things
 __pycache__/
 *.pyc
 
-# javascript 5 things (we are using scripts6 and babel to overwrite these things)
+### Javascript 5 things (we are using scripts6 and babel to overwrite these things)
 www/scripts/config.js
 www/scripts/config-optimized.min.js
 www/scripts/main.js
@@ -37,11 +39,13 @@ www/scripts/lib/profile.js
 www/scripts/lib/graph.js
 www/scripts/lib/graph-animation.js
 www/scripts/lib/node.js
+www/scripts/lib/mousetrap-extended.js
+www/scripts/lib/vanilla-notify.js
 
-# css things (we are using sass and compass to overwrite these)
+### CSS things (we are using sass and compass to overwrite these)
 www/stylesheets
 
-# TeX output files that get generated from the .tex files:
+### TeX output files that get generated from the .tex files:
 Output/
 *.pdf
 *.synctex.gz
@@ -50,6 +54,20 @@ Output/
 *.fls
 *.toc
 
-# node things
+### node things
 node_modules
+
+### Vim things
+# swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+# session
+Session.vim
+# temporary
+.netrwhist
+*~
+# auto-generated tag files
+tags
 

@@ -52,7 +52,7 @@ num_nodes = len(our_MG.nodes())
 num_edges = len(our_MG.edges())
 print('Node array loaded with length: {}'.format(num_nodes))
 print('Edge array loaded with length: {}'.format(num_edges))
-print('Already extand nodes loaded.\n')
+print('Already extant nodes loaded.\n')
 
 
 # populate new nodes into DB

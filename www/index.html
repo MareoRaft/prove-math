@@ -8,7 +8,7 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css" /> -->
 	<script src='scripts/lib/require-min.js?' data-main='scripts/{{ javascript_kickoff_file }}'></script>
 </head>
-<body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}" data-subjects="{{ subjects }}">
+<body data-host="{{ host }}" data-user-dict-json-string="{{ user_dict_json_string }}" data-subjects="{{ subjects }}" data-requested-id="{{ requested_id }}">
 <section id='login'>
 	<img id='x' src="images/x.svg">
 	<div>
@@ -50,6 +50,7 @@
 		<img class='back' src='images/arrow-left.svg'>
 		<div id='toggle-learn-state'></div>
 		<div id='discard-node'>discard node</div>
+		<div id='get-link'>get link</div>
 		<!-- <div><img class='icon edit-save' src='images/edit.svg'></div> -->
 	</header>
 	<section id='node-template-blinds'>
@@ -57,7 +58,7 @@
 </section>
 <section id='banner'>
   <div id='search_results_return'></div>
-	<div id='explanation'>ProveMath is a growing <a href='http://github.com/ProveMath/prove-math'>project</a>.  If you are interested in collaborating or just want to say hello, feel free to <a href='mailto:admin@provemath.org'>contact</a> us.</div>
+	<div id='explanation'>ProveMath is a growing <a href='http://github.com/ProveMath/prove-math'>project</a>.  If you are interested in collaborating or just want to say hello, feel free to <a href='mailto:admin@provemath.org'>contact</a> us.  &#169; provemath.org 2016</div>
 </section>
 <section id='overlay'>
 	<div id='search-wrapper'>
@@ -66,7 +67,18 @@
 			<input id="search-box" type="text" placeholder="node search">
 		</div>
 		<div id='search-results-wrapper'>
-			<!-- here we can TRY to populate the search results -->
+			<!-- Here is where we populate the search results -->
+			<!-- example search box:
+			<div class='preview-box'>
+				<div class='preview-top-bar'>
+					<div class='preview-circle-wrapper'><div></div></div>
+					<div class='preview-name'>node name</div>
+				</div>
+				<div class='preview-description'>
+					node description
+				</div>
+			</div>
+			-->
 		</div>
 	</div>
 	<div id='login-circle'>login</div> <!-- overlaps avatar.  never should both appear at the same time -->
@@ -80,6 +92,10 @@
 	<div id='push'>push me</div>
 	<img id="add-node" src="images/add.svg">
 </section>
+<section id='notify-overlay'>
+	<!-- notifications will be populated here -->
+</section>
+<div id="begingroup-endgroup"></div><!-- CSS hides this from view -->
 <!-- svg should appear here, the FINAL thing before </body> (populated by JS) -->
 </body>
 </html>

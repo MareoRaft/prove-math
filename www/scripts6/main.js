@@ -12,7 +12,8 @@ define( [
 	"blinds",
 	"chosen",
 	"user",
-	"mousetrap",
+	"mousetrap-extended",
+	"vanilla-notify",
 ], function(
 	$,
 	_,
@@ -27,7 +28,8 @@ define( [
 	Blinds,
 	chosen,
 	user,
-	mousetrap
+	mousetrap,
+	notify
 ){
 
 
@@ -35,9 +37,17 @@ define( [
 // expose some things as true globals, so i can access them from the JS console!
 window.graph = graph
 window.is = is
+// window.user = user
 
 let css_show_hide_array = ['#avatar', '#login-circle', '.logout-circle', '.see-preferences']
 let show_hide_dict = {}
+let circleClassConditions = {
+	'bright-circle': node => node.learned,
+	'axiom-circle': node => node.type === 'axiom' || node.type === null,
+	'definition-circle': node => node.type === 'definition' || node.type === 'equivdefs',
+	'theorem-circle': node => node.type === 'theorem' || node.type === 'example',
+	'exercise-circle': node => node.type === 'exercise',
+}
 
 ////////////////////// INITIALIZATION //////////////////////
 let subjects = JSON.parse($('body').attr('data-subjects'))
@@ -67,7 +77,7 @@ let pref_blinds = new Blinds({
 		animated: user.prefs.animate_blinds,
 		flipInX: user.prefs.animate_blinds,
 	},
-	read_mode_action: user.setPref,
+	read_mode_action: function(val, key){ user.setPref(key, val) },
 })
 
 
@@ -78,13 +88,7 @@ graphAnimation.init({
 		let val = is.number(node.attrs['importance'].value)? node.attrs['importance'].value: 5
 		return 7.9 * Math.sqrt(val)
 	},
-	circle_class_conditions: {
-		'bright-circle': node => node.learned,
-		'axiom-circle': node => node.type === 'axiom' || node.type === null,
-		'definition-circle': node => node.type === 'definition',
-		'theorem-circle': node => node.type === 'theorem',
-		'exercise-circle': node => node.type === 'exercise',
-	},
+	circle_class_conditions: circleClassConditions,
 	circle_events: { // this will not update if the user changes their preferences.  maybe we can hand graph-animation the user, and then it can access the prefs itself
 		mouseover: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.attrs.description.value },
 		mouseout: node => { if( user.prefs.show_description_on_hover ) node.gA_display_name = node.display_name },
@@ -96,10 +100,10 @@ show('#banner')
 let node_blinds = new Blinds({
 	open_blind_default_state: user.prefs.open_node_default_state,
 	window_id: 'node-template-blinds',
-	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // if you change this, you may also need to edit the Node.key_list method.
+	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependency_name_and_ids'], // if you change this, you may also need to edit the Node.key_list method.
 	expand_array: true,
-	collapse_array_keys: ['dependencies', 'synonyms', 'plurals'],
-	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependencies'], // but remember, expand_arrays always have an append key (this excludes 'dependencies')
+	collapse_array_keys: ['dependency_name_and_ids', 'synonyms', 'plurals'],
+	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependency_name_and_ids'], // but remember, expand_arrays always have an append key (this excludes dependencies)
 	render: function(string) {
 		if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
 		// run katex
@@ -107,11 +111,21 @@ let node_blinds = new Blinds({
 		// return string
 		// make all \ into \\ instead, so that they will be \ again when marked is done. This is for MathJax postrender compatability.
 		string = string.replace(/\\/g, '\\\\')
-		return marked(string)
+		string = marked(string)
+
+		// unfortunately, it looks like these strings are encoded...
+		// change <img23> shortcuts to <img src="http://provemath.org/image/NUMBER.jpg"
+		// string = string.replace(/im&amp;g/g, 'HITHER')
+		// string = string.replace(/&lbrack;/g, 'left  ')
+		// string = string.replace(/&#91;/g, 'left  ')
+		string = string.replace(/img(\d+)/g, '<img src="image/$1.jpg" />') // this is maybe NOT a good markup choice, since it is an HTML tag
+		string = string.replace(/\\includegraphics\{(.*?)\}/g, '<img src="image/$1.jpg" />')
+
+		return string
 	},
-	post_render: function() {
-		// the following should be equivalent to // mathjax.Hub.Queue(['Typeset', mathjax.Hub])
-		mathjax.Hub.Typeset() // this can't be passed in without the parenthesis
+	post_render: function(idToEdit) {
+		// See https://github.com/MareoRaft/prove-math/issues/37 for info.
+		mathjax.Hub.Queue(['Typeset', mathjax.Hub, idToEdit])
 	},
 	read_mode_action: function(value, key, parent_object){
 		// retrieve the node
@@ -196,6 +210,15 @@ $('#discard-node').click(function(){
 	// tell server (maybe server wants to avoid sending this node over again) to discard-node too
 	ws.jsend({command: 'discard-node', node_id: current_node.id})
 })
+$('#get-link').click(function(){
+	let node_id = current_node.id
+	let url = host+"?nodeid="+node_id
+	copyToClipboard(url)
+	notify.info({
+		text: url,
+		details: '<br>The link above was automatically copied to your clipboard, unless you have an older browser.',
+	})
+})
 
 
 let host = $('body').attr('data-host')
@@ -206,17 +229,26 @@ ws.jsend = function(raw_object) {
 	$.extend(raw_object, {identifier: user.get_identifier(), client_node_ids: graph.nodeIdsList()})
 	ws.send(JSON.stringify(raw_object))
 }
+ws.onclose = function() {
+	notify.warning({
+		text: 'You are disconnected from the server.  Any changes you make at this time will not be saved.',
+	})
+}
 ws.onopen = function() {
-	ws.jsend({command: 'first-steps'})
+	let requested_id = $('body').attr('data-requested-id')
+	ws.jsend({command: 'first-steps', requested_id: requested_id})
+	// if( is.nonEmptyString(requested_id) ){
+
 	//TEMP
-	guestLogin()
+	// guestLogin()
 	// promptStartingNodes()
-	addNode()
+	// addNode()
+	// ws.jsend({ command: 'search', search_term: 'dual' })
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
 	window.ball = ball
-	logj('got message: ', ball)
+	// logj('got message: ', ball)
 	if( ball.command === 'populate-oauth-urls' ) {
 		oauth_url_dict = ball.url_dict
 	}
@@ -231,6 +263,10 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	else if( ball.command === 'prompt-starting-nodes' ){
 		// promptStartingNodes(subjects) // but not before x'ing out the login :(
 	}
+	else if( ball.command === 'open-node' ) {
+		let node_id = ball.node_id
+		openNode(node_id)
+	}
 	else if( ball.command === 'load-graph' ) {
 		let raw_graph = ball.new_graph
 
@@ -243,14 +279,9 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			links: ready_graph.links,
 		})
 
-		// // TEMP TEST
-		// if (raw_graph.nodes.length > 0) {
-		// 	let node = raw_graph.nodes[0]
-		// 	display_search_results([node])
-		// }
-
-		// TEMP FOR COLORS
-		// openNode('a')
+		// TEMP
+		// openNode('module')
+		// ws.jsend({command: 'get-goal-suggestion'})
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
@@ -259,47 +290,87 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		})
 	}
 	else if( ball.command === 'display-error' ) {
-		alert('Server-Side Error: '+ball.message)
+		let errorMessage = 'Server-Side Error: ' + ball.message
+		notify.error({
+			text: errorMessage,
+		})
 	}
-		else if(ball.command === 'search-results'){
-		alert('Search results: '+JSON.stringify(ball.results))
-		document.getElementById("search_results_return").innerHTML = JSON.stringify(ball.results);
+	else if(ball.command === 'search-results'){
+		let $search_results_wrapper = $('#search-results-wrapper')
+		for( let result of ball.results ){
+			let node = new Node(result)
+			let html = result_htmlified(node)
+			$search_results_wrapper.append(html)
+			// Bind a click event! This must be done AFTER the html element is created.
+			let $result = $search_results_wrapper.children().last()
+			$result.click(function(){
+				preview_box_clicked(node.id)
+			})
+			let $nodecircle = $result.find('.preview-circle-wrapper > div')
+			$nodecircle.click(function(){
+				node_in_preview_box_clicked(node.id)
+			})
+		}
 	}
-	else if (ball.command === "suggest-goal") {
+	else if (ball.command === 'suggest-goal') {
 		let goal = new Node(ball.goal)
-		let choice = undefined
 		if (user.prefs.always_accept_suggested_goal) {
-			choice = true
+			$.event.trigger({
+				type: 'accept-goal',
+				message: goal.id,
+			})
 		}
 		else{
-			alert("The goal " + goal.name + " has been suggested.  Details: " + JSON.stringify(ball.goal))
-			choice = window.prompt("Would you like to accept the goal?  Type 'yes' to accept.")
-			choice = (choice === 'yes')
-		}
-		if (choice) {
-			ws.jsend({ command: "set-goal", goal_id: goal.id })
+			let details = goal.description
+			let message = 'The goal "' + goal.name + '" has been suggested.  Would you like to accept the goal?'
+			notify.info({
+				text: message,
+				buttons: [
+					{
+						text: 'yes',
+						action: function(){$.event.trigger({type: 'accept-goal', message: goal.id})},
+					},
+					{
+						text: 'no',
+					},
+				],
+				details: 'Details: "' + details + '"',
+			})
 		}
 	}
-	else if (ball.command === "suggest-pregoal") {
+	else if (ball.command === 'suggest-pregoal') {
 		let pregoal = new Node(ball.pregoal)
-		let choice = undefined
 		if (user.prefs.always_accept_suggested_pregoal) {
-			choice = true
+			$.event.trigger({
+				type: 'accept-pregoal',
+				message: pregoal.id,
+			})
 		}
 		else{
-			alert("The pregoal " + pregoal.name + " has been suggested.  Details: " + JSON.stringify(ball.pregoal))
-			choice = window.prompt("Would you like to accept the pregoal?  Type 'yes' to accept.")
-			choice = (choice === 'yes')
-		}
-		if (choice) {
-			ws.jsend({ command: "set-pregoal", pregoal_id: pregoal.id })
+			let details = pregoal.description
+			let message = 'The pregoal "' + pregoal.name + '" has been suggested.  Would you like to accept the pregoal?'
+			notify.info({
+				text: message,
+				buttons: [
+					{
+						text: 'yes',
+						action: function(){$.event.trigger({type: 'accept-pregoal', message: pregoal.id})},
+					},
+					{
+						text: 'no',
+					},
+				],
+				details: 'Details: "' + details + '"',
+			})
 		}
 	}
-	else if (ball.command === "highlight-goal") {
+	else if (ball.command === 'highlight-goal') {
 		let goal = new Node(ball.goal)
-		alert("Your new goal is " + goal.name + "!!!!")
+		notify.success({
+			text: 'Your new goal is "' + goal.name + '"!!!!',
+		})
 	}
-	else die('Unrecognized command '+ball.command+'.')
+	else log('Unrecognized command '+ball.command+'.')
 }
 
 $(document).on('jsend', function(Event) {
@@ -314,9 +385,17 @@ $(document).on('request-node', function(Event) {
 	ws.jsend({command: 'request-node', node_id: Event.message})
 })
 $(document).on('save-node', function(){
-	console.log('sending dict: '+JSON.stringify(current_node.dict()))
+	// console.log('sending dict: '+JSON.stringify(current_node.dict()))
 	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
 })
+$(document).on('accept-goal', function(Event){
+	ws.jsend({ command: "set-goal", goal_id: Event.message })
+})
+$(document).on('accept-pregoal', function(Event){
+	ws.jsend({ command: "set-pregoal", pregoal_id: Event.message })
+})
+updateSearchResultsWrapperMaxHeight()
+$(window).resize(updateSearchResultsWrapperMaxHeight)
 
 
 //////////////////// LOGIN/LOGOUT STUFF ////////////////////
@@ -338,7 +417,7 @@ $('.logout-circle').click(function() {
 
 
 function login() { // this is what runs when the user clicks "login"
-	if( !def(oauth_url_dict) ) alert('oauth login broken.')
+	if( !def(oauth_url_dict) ) notify.error({ text: 'oauth login broken.' })
 	let account_type = $('input[type=radio][name=provider]:checked').val()
 	if( !def(account_type) || account_type === '' ){
 		if( !def(account_type) ){
@@ -365,9 +444,11 @@ function logout(){ // this is what runs when the user clicks "logout"
 	show('#login')
 }
 
-
 //////////////////////// SEARCH BAR ////////////////////////
 $mousetrap('#search-box').bind('enter', function(){
+	// empty the search results (in case there were old searches)
+	$('#search-results-wrapper').empty()
+	// perform a new search
 	ws.jsend({ command: 'search', search_term: $('#search-box').val() })
 })
 $('#search-wrapper').click(function(){
@@ -380,31 +461,9 @@ mousetrap.bind(user.prefs.search_keycut, function(){
 $('#search-box').focus(expand_search_wrapper)
 $(document).click(function(event) { // click anywhere BUT the #search-wrapper
 	if (!$(event.target).closest('#search-wrapper').length && !$(event.target).is('#search-wrapper')) {
-		collapse_search_wrapper()
+		close_search()
 	}
 })
-
-function display_search_results(nodes) {
-	_.each(nodes, function(node) {
-		let box_html = 	"<div class='preview-box'>"
-		+	"<div class='preview-top-bar'>"
-		+		"<div class='preview-circle-wrapper'>"
-		+			"<div><!--the circle itself--></div>"
-		+		"</div>"
-		+		"<div class='preview-name'>"
-		+			"<!--node name goes here-->The Inclusion-Exclusion Principal"
-		+		"</div>"
-		+	"</div>"
-		+	"<div class='preview-description'>"
-		+		"<!--node description goes here-->Given $n\in\mathbb{N}$ sets $A_1,,,A_n$, each finite, then the number of elements in the union of the sets can be found using the formula $\left|\cup_{i=1}^{n} A_i\right| = \sum_{S\subset [n]} (-1)^{|S|+1} \left|\cap_{j\in S} A_j\right|$."
-		+	"</div>"
-		+"</div>"
-
-		$('#search-results-wrapper').append(box_html)
-		$('#search-results-wrapper').append(box_html)
-	})
-	expand_search_wrapper()
-}
 
 function expand_search_wrapper() {
 	$('#search-wrapper').width('800px')
@@ -414,9 +473,33 @@ function collapse_search_wrapper() {
 	$('#search-wrapper').width('300px')
 	// $('#search-wrapper').height('50px')
 }
+function close_search() {
+	$('#search-results-wrapper').empty()
+	collapse_search_wrapper()
+	// move focus off search, to make sure CSS will shrink it
+	$('#search-box').blur()
+}
 
 
 /////////////////////// ACTION STUFF ///////////////////////
+function preview_box_clicked(node_id){
+	// 1. add the node to the actual graph (REQUEST node to get any needed edges)
+	ws.jsend({command: 'request-node', node_id: node_id})
+}
+function node_in_preview_box_clicked(node_id){
+	// get the node (in the FUTURE we should not actually put it on the GRAPH ANIMATION though)
+	ws.jsend({command: 'request-node', node_id: node_id})
+	// display node
+	if( node_id in graph.nodes ){
+		openNode(node_id)
+	}
+}
+
+mousetrap.bind(user.prefs.toggle_name_display_keycut, function(){
+	user.prefs.display_number_instead_of_name = !user.prefs.display_number_instead_of_name
+	graphAnimation.update()
+	return false
+})
 $('#avatar').click(push_pull_drawer)
 $('#get-starting-nodes').click(promptStartingNodes)
 mousetrap.bind(user.prefs.start_subject_keycut, function(){
@@ -461,13 +544,19 @@ function push_pull_drawer() {
 		$display_name.removeClass('display-name-out')
 		$see_prefs.removeClass('see-preferences-out')
 	}
-	else die('unexpected drawer position')
+	else log('unexpected drawer position')
 }
 
 /////////////////////// TOGGLE STUFF ///////////////////////
 $(document).on('node-click', function(Event){
 	let node_id = Event.message
 	openNode(node_id)
+})
+$(document).on('node-right-click', function(Event){
+	let node_id = Event.message
+	let node = graph.nodes[node_id]
+	node.learned = !node.learned
+	graphAnimation.update()
 })
 $('.see-preferences').click(seePreferences)
 mousetrap.bind(user.prefs.prefs_keycut, function(){
@@ -476,7 +565,12 @@ mousetrap.bind(user.prefs.prefs_keycut, function(){
 })
 
 $('.back').click(fromBlindsToGraphAnimation)
-mousetrap.bind('esc', function(){
+mousetrap.bindGlobal(user.prefs.back_keycut, function(){
+	// if search bar is in focus, shrink it
+	if( $('#search-box').is(':focus') ){
+		close_search()
+	}
+
 	// if blinds are showing, hide them
 	if( show_hide_dict['#node-template'] === 'visible' || show_hide_dict['#preference-pane'] === 'visible' ){
 		fromBlindsToGraphAnimation()
@@ -496,15 +590,90 @@ function fromBlindsToGraphAnimation(){
 	else toggleToGraphAnimation()
 }
 function toggleToGraphAnimation() {
-	hide('#node-template')
-	hide('#preference-pane')
+	let please_close_node = false
+	if( show_hide_dict['#node-template'] === 'visible' ){
+		hide('#node-template')
+		please_close_node = true
+	}
+	let please_close_prefs = false
+	if( show_hide_dict['#preference-pane'] === 'visible' ){
+		hide('#preference-pane')
+		please_close_prefs = true
+	}
 	show('svg')
 	show('#overlay')
-	node_blinds.close()
-	pref_blinds.close()
+	// figure out which blinds are open, and close that one (closing unopened blinds could have side-effects)
+	if( please_close_node ) node_blinds.close()
+	if( please_close_prefs ) pref_blinds.close()
 }
 
 ////////////////////////// HELPERS /////////////////////////
+// NOTE: the below function was found on https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript#6055620
+// Copies a string to the clipboard. Must be called from within an
+// event handler such as click. May return false if it failed, but
+// this is not always possible. Browser support for Chrome 43+,
+// Firefox 42+, Safari 10+, Edge and IE 10+.
+// IE: The clipboard feature may be disabled by an administrator. By
+// default a prompt is shown the first time the clipboard is
+// used (per session).
+function copyToClipboard(text) {
+    if (window.clipboardData && window.clipboardData.setData) {
+        // IE specific code path to prevent textarea being shown while dialog is visible.
+        return clipboardData.setData("Text", text);
+
+    } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var textarea = document.createElement("textarea");
+        textarea.textContent = text;
+        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+        } catch (ex) {
+            console.warn("Copy to clipboard failed.", ex);
+            return false;
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    }
+}
+
+function updateSearchResultsWrapperMaxHeight() {
+	$('#search-results-wrapper').css('max-height', $(window).height() - 90)
+}
+
+function result_htmlified(node){
+	let classNames = getClassesFromClassConditions(circleClassConditions, node)
+	let classString = classNames.join(' ')
+	return '<div class="preview-box">'
+			+ '<div class="preview-top-bar">'
+				+ '<div class="preview-circle-wrapper">'
+					+ '<div class="'+classString+'"></div>' // the circle itself
+				+ '</div>'
+				+ '<div class="preview-name">'+node.display_name+'</div>'
+			+ '</div>'
+			+ '<div class="preview-description">'
+				+ node.description
+			+ '</div>'
+		+ '</div>'
+}
+
+function getClassesFromClassConditions(class_conditions, node) {
+	let class_names = []
+	for( let class_name in class_conditions ){
+		let value = class_conditions[class_name]
+		if( is.function(value) ){
+			let bool_func = value
+			if( bool_func(node) ) class_names.push(class_name)
+		}
+		else if( is.boolean(value) ){
+			let bool = value
+			if( bool ) class_names.push(class_name)
+		}
+	}
+	return class_names
+}
+
 function addNode() {
 	let new_node = new Node()
 	graph.addNode(new_node)
@@ -520,7 +689,7 @@ function openNode(node_id) {
 	setTimeout(function() { // see http://stackoverflow.com/questions/35138875/d3-dragging-event-does-not-terminate-in-firefox
 		node_blinds.open({
 			object: current_node,
-			keys: current_node.key_list,
+			keys: current_node.key_list(true),
 		})
 		hide('svg')
 		hide('#overlay')
@@ -540,13 +709,22 @@ function seePreferences() {
 	show('#preference-pane')
 }
 
-function promptStartingNodes(){
+function promptStartingNodes() {
 	let subjects_clone = _.clone(subjects)
 	let last_subject = subjects_clone.pop()
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
-	let default_subject = 'graph theory'
-	// let subject = prompt('What subject would you like to learn? Type ' + subjects_string + '.', default_subject)
-	let subject = 'test' // DEVELOPMENT CONVENIENCE, TEMP
+	// replyToStartingNodesPrompt('combinatorics'); return // DEVELOPMENT CONVENIENCE, TEMP
+	let subject = notify.success({
+		text: 'What subject would you like to learn? Type ' + subjects_string + '.',
+		prompt: {
+			action: replyToStartingNodesPrompt,
+			placeholder: 'subject',
+		},
+	})
+}
+
+function replyToStartingNodesPrompt(subject) {
+	let default_subject = 'a'
 	if( !_.contains(subjects, subject) ) subject = default_subject
 	ws.jsend({'command': 'get-starting-nodes', 'subject': subject})
 }
@@ -580,6 +758,7 @@ function show(css_selector) { // this stuff fails for svg when using .addClass, 
 
 function nodeKeyToDisplayKey(word, node) {
 	if( word === 'description' ) return node.type
+	if( word === 'dependency_name_and_ids' ) return 'dependencies'
 	if( word === 'dependencies' || word === 'synonyms' || word === 'plurals' ) return word // we want these to stay plural
 	if( word[word.length - 1] === 's' ) return word.substr(0, word.length - 1)
 	return word // word may have ALREADY been singular

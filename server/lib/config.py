@@ -2,22 +2,26 @@ javascript_kickoff_file = 'config'
 
 LINEAR_ALGEBRA = ['rank', 'a'] # soon: null space, row space, matrix, etc
 ABSTRACT_ALGEBRA = ['set', 'magma', 'composition']
+ABSTRACT_ALGEBRA_II = ['leftrmodule']
 MULTIVARIABLE_CALCULUS = ['tangent plane', 'directional derivative', 'homeomorphism']
 starting_nodes = {
-	'test': ['a'],
 	'graph theory': ['set', 'multiset', 'vertex'],
 	'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
 	'category theory': ['equatable', 'type'],
-	'l': LINEAR_ALGEBRA,
 	'linear algebra': LINEAR_ALGEBRA,
-	'abstract algebra': ABSTRACT_ALGEBRA,
-	'algebra': ABSTRACT_ALGEBRA,
+	'l': LINEAR_ALGEBRA,
+	'abstract algebra i': ABSTRACT_ALGEBRA,
+	'abstract algebra ii': ABSTRACT_ALGEBRA_II,
+	'algebra': ABSTRACT_ALGEBRA_II,
+	'a': ABSTRACT_ALGEBRA_II,
 	'multivariable calculus': MULTIVARIABLE_CALCULUS,
 	'multivariable calc': MULTIVARIABLE_CALCULUS,
 	'calculus': MULTIVARIABLE_CALCULUS,
 	'calc': MULTIVARIABLE_CALCULUS,
 	'differential topology': ['n-sphere', 'tangent bundle'],
+	'test': ['a'],
 }
+public_starting_node_keys = ['graph theory', 'combinatorics', 'category theory', 'abstract algebra ii']
 
 DEF_USER_PREFS = {
 'display_name_capitalization': None,
