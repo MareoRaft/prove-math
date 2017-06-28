@@ -114,29 +114,12 @@ After a user has upvoted, the upvote arrow remains highlighted in green.  (and r
 introduce an edit history for node values, etc., nodes, etc.
 
 
-
-82.
-IDEAAAA:  We need a NAME SHORTENER that chooses what names to display on the screen!  It's gotta be smart for humans!  That means you favor the beginning and ending of words!  Example:
-characteristic of a field --> charistic of field --> char of field --> char field --> chr field --> chr fld --> chr F
-see
-http://www.npr.org/sections/alltechconsidered/2014/01/16/263096375/researchers-are-totes-studying-how-ppl-shorten-words-on-twitter
-https://en.wikipedia.org/wiki/Clipping_(morphology)
-https://github.com/d-ying/string_truncate
-https://github.com/cdcabrera/js-php-c--truncate
-A node can have an abbreviations field for commonly used abbreviations of names.  Or maybe that doesn't belong to a node but rather to the math language dictionary as a whole, which belongs to this word truncator program, which certainly can be its very own repository.  Things like characteristic --> char and field --> F.
-THIS IS THE ONE THAT WORKS: https://github.com/d-ying/string_truncate
-MORE SPECIFICALLY: https://github.com/d-ying/string_truncate/blob/master/stringtruncate/StringTruncate.java
-MORE SPECIFICALLY: the wordTruncate function.
-a word is built of subwords:
-"subword" = "sub" + "word"
-"canister" = "can" + "i" + "ster"
-"weight" = "w" + "eight"
-"refridgerator" = "re" + "fr" + "i" + "dge" + "e" + "r" + "a" + "tor"
-
-
 83.
 issue/idea
 If A-->B-->C on the graph, but B is not showing, then shouldn't we show an edge A-->C ?
 
 84.
 copying to clipboard.  try https://clipboardjs.com
+
+85.
+Is there a way to EDIT what appears in the URL of a browser using JavaScript?  (In particular, can I edit the args or the query?  It seems that gmail does this whenever you compose a message!!!)
