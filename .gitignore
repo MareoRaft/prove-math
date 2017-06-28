@@ -5,6 +5,8 @@ text-files/things-to-go-over-with-contributors.txt
 server/data/*.json
 .sass-cache/
 .cache/
+*.swp
+*.swo
 *secrets.txt
 ignore/
 email-backup/
