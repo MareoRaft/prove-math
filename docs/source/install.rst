@@ -135,9 +135,8 @@ Gulp dependencies
 ~~~~~~~~~~~~~~~~~~~~~~
 
 	npm install dependency-name
-
-
-
+	
+Remember to install ALL of the following: `babel-preset-es2015`, `gulp-babel`, `gulp-for-compass`, `gulp-autoprefixer`, and `child_process`.
 
 ..	_install-npm:
 
