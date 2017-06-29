@@ -127,13 +127,14 @@ After installing node, you can install gulp and other dependencies:
 
 Gulp
 ~~~~~
-npm install gulp-cli -g
-npm install gulp -D
+
+	npm install gulp-cli -g
+	npm install gulp -D
 
 Gulp dependencies
 ~~~~~~~~~~~~~~~~~~~~~~
-npm install dependency-name
 
+	npm install dependency-name
 
 
 
