@@ -143,16 +143,17 @@ After installing npm, you can install gulp and other dependencies:
 
 Gulp
 ~~~~~
+Install gulp::
 
 	npm install gulp-cli -g
 	npm install gulp -D
 
 Gulp dependencies
 ~~~~~~~~~~~~~~~~~~~~~~
+Remember to install ALL of the following: `babel-preset-es2015`, `gulp-babel`, `gulp-for-compass`, `gulp-autoprefixer`, and `child_process`::
 
 	npm install dependency-name
 	
-Remember to install ALL of the following: `babel-preset-es2015`, `gulp-babel`, `gulp-for-compass`, `gulp-autoprefixer`, and `child_process`.
 
 
 
