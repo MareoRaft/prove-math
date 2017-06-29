@@ -123,7 +123,16 @@ __ node-install-site_
 ..	_node-install-site: https://nodejs.org/en/download/
 ..	_Node: https://nodejs.org
 
+After installing node, you can install gulp and other dependencies:
 
+Gulp
+~~~~~
+npm install gulp-cli -g
+npm install gulp -D
+
+Gulp dependencies
+~~~~~~~~~~~~~~~~~~~~~~
+npm install dependency-name
 
 
 
