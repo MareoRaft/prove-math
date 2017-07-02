@@ -19,6 +19,10 @@ If you wish, you may read more about brew_.
 
 
 
+zsh
+------------
+The z-shell comes pre-installed with Mac OS X.  If you are running Linux, use your package manager to install zsh.  All of our shell scripts and commands are meant to run on zsh, so one should use zsh for everything.
+
 
 ..	_install-ruby:
 
@@ -123,12 +127,6 @@ __ node-install-site_
 ..	_node-install-site: https://nodejs.org/en/download/
 ..	_Node: https://nodejs.org
 
-
-
-
-
-
-
 ..	_install-npm:
 
 npm
@@ -144,6 +142,22 @@ You can confirm installation and view the version of npm on the command line::
 There is a manual method for installing npm_.
 
 ..	_npm: http://jason.pureconcepts.net/2011/12/installing-node-js-npm-redis-mac-os-x/
+
+After installing npm, you can install gulp and other dependencies:
+
+Gulp
+~~~~~
+Install gulp::
+
+	npm install gulp-cli -g
+	npm install gulp -D
+
+Gulp dependencies
+~~~~~~~~~~~~~~~~~~~~~~
+Remember to install ALL of the following: `babel-preset-es2015`, `gulp-babel`, `gulp-for-compass`, `gulp-autoprefixer`, and `child_process`::
+
+	npm install dependency-name
+	
 
 
 
