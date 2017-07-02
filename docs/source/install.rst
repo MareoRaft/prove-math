@@ -19,6 +19,10 @@ If you wish, you may read more about brew_.
 
 
 
+zsh
+------------
+The z-shell comes pre-installed with Mac OS X.  If you are running Linux, use your package manager to install zsh.  All of our shell scripts and commands are meant to run on zsh, so one should use zsh for everything.
+
 
 ..	_install-ruby:
 
