@@ -5,8 +5,9 @@
 names=(attr clogging  decorate helper math_graph mongo node nodeattribute pmdag user)
 
 test_names=()
-for name in $names; do
+for name in $names
+do
 	test_names=($test_names "test_${name}.py")
-done;
+done
 
 py.test -x -s -vv $test_names
