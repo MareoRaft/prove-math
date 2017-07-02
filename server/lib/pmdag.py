@@ -1,9 +1,11 @@
 ############################ IMPORTS #############################
 # sys imports
 
+# third party
 import networkx as nx
-from lib.networkx.classes import dag
 
+# local
+from lib.networkx.classes import dag
 from lib.decorate import record_elapsed_time
 from lib import helper
 from lib.node import Node

@@ -1,5 +1,6 @@
 ############################ IMPORTS ############################
 from collections import OrderedDict
+
 import pytest
 import networkx as nx
 

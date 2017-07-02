@@ -1,3 +1,4 @@
+# third party:
 import pymongo
 # from passlib.context import CryptContext
 # Set up a text index db.nodes.createIndex( { _id:"text", _plural:"text", _negation:"text", _description:"text" }, {weights:{ _id:10, _plural:5, _negation:5,_description:5}, name:"Provemath_Search_Index" } )

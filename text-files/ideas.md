@@ -105,6 +105,12 @@ When a user upvotes, the disk can animate, increasing in radius and greening in 
 
 After a user has upvoted, the upvote arrow remains highlighted in green.  (and red for downvote).  woohoo!
 
+Another idea. You can have a rectangle image that is a gradient (red to grey to green) and use it like a sprite. Literally slide it according to the node's rating. Then the disk would not be one solid color, which is kinda cool. Also, the color change animation would be cooler. 
+
+On hover or click, show the numbers: number upvotes & number down votes. Total number of people visited. And other stats. 
+
+
+
 79. A SAVE and EDIT button on the top right for the WHOLE node.  This should make node editing a BREEZE.  It would populate EVERY attr with a blank string (if it was empty), and put EVERYTHING in edit mode.  Then the user can just tab through.  ALSO, i want to support keyboard shortcuts for EDIT and SAVE, and NEW NODE, so we can go direct.
 
 80.  both of the following can be helpful: 1. A markdown/html or html to LaTeX translation for internal content.  That way, content can be outputted on the site (as always) AND as a pdf (new feature) and as latex (the 'source' for grad students).  2. A latex subset to markdown/html translator.  That way, grad student written material can be translated to the DB.
@@ -123,3 +129,6 @@ copying to clipboard.  try https://clipboardjs.com
 
 85.
 Is there a way to EDIT what appears in the URL of a browser using JavaScript?  (In particular, can I edit the args or the query?  It seems that gmail does this whenever you compose a message!!!)
+
+
+codeanywhere seems to work pretty well at this point.  This may be easier than using a VM in future scenarios.  There may even be container replication (but I haven't looked into it).  The downside, of course, is that one needs internet connection in order to work.

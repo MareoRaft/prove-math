@@ -1,6 +1,6 @@
 import networkx as nx
-from lib.pmdag import PMDAG
 
+from lib.pmdag import PMDAG
 from lib.decorate import record_elapsed_time
 from lib.config import starting_nodes
 

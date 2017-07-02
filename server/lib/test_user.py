@@ -1,4 +1,5 @@
 import pytest
+
 from lib import user
 from lib.user import User
 

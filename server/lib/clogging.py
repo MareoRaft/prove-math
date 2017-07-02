@@ -7,6 +7,7 @@ log = clogging.getLogger('somename')
 log.debug('my message') or log.warning('my message'), etc.
 """
 import logging
+
 import colorlog
 
 FORMAT_TEMPLATE = '%(asctime)s.%(msecs)03d sec  %(filename)s line %(lineno)d  {}%(levelname)s{}: {}%(message)s'
