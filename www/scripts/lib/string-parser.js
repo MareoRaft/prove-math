@@ -3,7 +3,9 @@
 function string_parser(string_test) {
   //var string_test='Here is a test <img1> and here is a question A tree <<[is]|is not>> an object and the answer is [[10]].Here is <<[exists]| does not exist>> another picture <img2>. Check this one out too [[true]]'
 
+
   //var string_test1='There is nothing to replace here'
+
 
   var path = '<img src="path/to/the/image/';
   var content = '<span class="coverup">';
