@@ -10,6 +10,8 @@ const compass = require('gulp-for-compass')
 const autoprefixer = require('gulp-autoprefixer')
 const babel = require('gulp-babel')
 const exec = require('child_process').exec
+const moment = require('moment')
+const prop_reader = require('properties-reader')
 
 
 /////////////////// GLOBALS ///////////////////
@@ -47,7 +49,8 @@ gulp.task('js', function() {
 
 gulp.task('docs', function(cb) {
 	// generate docs/build/html from docs/source using sphinx's `sphinx-build` command
-	exec('cd docs && sphinx-build -b html source build/html', function (err, stdout, stderr) {
+	var command = 'cd docs && sphinx-build -b html source build/html'
+	exec(command, function (err, stdout, stderr) {
 		console.log(stdout)
 		console.log(stderr)
 		cb(err)
@@ -56,7 +59,8 @@ gulp.task('docs', function(cb) {
 
 gulp.task('minify', function(cb) {
 	// so using config.js as the mainConfigFile doesn't work, so we have to use main.js instead.  But that means the 'paths' option in the config file is missing, so I had to create symlinks in the www/scripts/lib directory to point to all the correct JS files :(
-	exec('node build/r.js -o build/rbuild.js && echo \'REMEMBER to switch "config" to "config-optimized.min" in config.py!\'', function (err, stdout, stderr) {
+	var command = 'node build/r.js -o build/rbuild.js && echo \'REMEMBER to switch "config" to "config-optimized.min" in config.py!\''
+	exec(command, function (err, stdout, stderr) {
 		console.log(stdout)
 		console.log(stderr)
 		cb(err)
@@ -64,7 +68,21 @@ gulp.task('minify', function(cb) {
 })
 
 gulp.task('search', function(cb) {
-	exec('mongo provemath build/mongo-create-search-index.js', function (err, stdout, stderr) {
+	var command = 'mongo provemath build/mongo-create-search-index.js'
+	exec(command, function (err, stdout, stderr) {
+		console.log(stdout)
+		console.log(stderr)
+		cb(err)
+	})
+})
+
+gulp.task('dump', function(cb) {
+	// Dump a backup of the current database contents into the mongo-dumps folder.
+	var props = prop_reader('local-config.ini')
+	var location = props.get('computer_name')
+	var date = moment().format()
+	var command = 'DUMPDIR="server/data/mongo-dumps/'+location+'.'+date+'" && mkdir "$DUMPDIR" && mongodump --db provemath --out "$DUMPDIR"'
+	exec(command, function (err, stdout, stderr) {
 		console.log(stdout)
 		console.log(stderr)
 		cb(err)

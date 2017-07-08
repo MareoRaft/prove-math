@@ -39,7 +39,7 @@ gem list | grep compass
 npm -v
 npm install gulp-cli -g
 npm install gulp -D
-gulp_deps=(babel-preset-es2015 gulp-babel gulp-for-compass gulp-autoprefixer child_process)
+gulp_deps=(babel-preset-es2015 gulp-babel gulp-for-compass gulp-autoprefixer child_process moment properties-reader)
 for gulp_dep in $gulp_deps
 do
 	npm install "$gulp_dep"

@@ -1,6 +1,7 @@
 # To get useful gitignore things, use https://www.gitignore.io
 
 ### General things to ignore:
+local-config.ini
 *.log
 server/dictionary_maker.py
 text-files/things-to-go-over-with-contributors.txt
