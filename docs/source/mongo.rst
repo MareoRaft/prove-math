@@ -10,6 +10,8 @@ Well, you can try ``brew``!  If you are using Linux, we suggest using Mongo's so
 
 Creating a Search Index
 -------------------------------
+This NO LONGER needs to be done manually, as we have a build process in `gulpfile.js` and a file `build/mongo-create-search-index.js` that does it automatically when running the gulp build.  But I will LEAVE THE LEGACY EXPLANATION BELOW ANYWAY.
+
 In MongoDB, once you are in your database of choice, ``show collections`` will list `system.indexes` among your other collections.  This may not be helpful, but it's proof that indexes exist!
 
 For the rest of this example, I will assume you are working with the `nodes` collection.  The commands ``db.nodes.getIndexes()`` (or ``db.nodes.getIndices()``) will list any indices associated with the collection.  You will always see the default index listed, which looks something like this::
