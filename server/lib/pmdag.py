@@ -51,7 +51,7 @@ class PMDAG (nx.DAG):
 		d['links'] = [{'source': source, 'target': target} for (source, target) in self.edges()]
 		return d
 
-	# @record_elapsed_time
+	@record_elapsed_time
 	def unselected_dependency_tree(self, target, selected_nodes):
 		if not self.acceptable_iterable(selected_nodes):
 			raise ValueError('Argument {} is not iterable'.format(selected_nodes))
@@ -71,7 +71,7 @@ class PMDAG (nx.DAG):
 		return [len(G.ancestors(target).union({target})) for target in target_bunch]
 
 	# FROM DAG
-	# @record_elapsed_time
+	@record_elapsed_time
 	def importance_weight(self, node):
 		distance_from_node = 0
 		current_depth_nodes = {node}
@@ -111,7 +111,7 @@ class PMDAG (nx.DAG):
 		neighbors_weight = sum(weighted_importances)
 		return neighbors_weight #(neighbors_weight, self.n(node).id)
 
-	# @record_elapsed_time
+	@record_elapsed_time
 	def most_important(self, nbunch, number=1):
 		def most_important_sorter(node): # the "node" here is actually a node_id!
 			# two sanity checks before returning
@@ -126,7 +126,7 @@ class PMDAG (nx.DAG):
 		num_to_return = min(len(nodes_by_importance), number) # in case there are not actually at least :number: nodes available in nbunch
 		return nodes_by_importance[:num_to_return]
 
-	# @record_elapsed_time
+	@record_elapsed_time
 	def choose_destination(self, axioms, selected_nodes): # short sighted, depth-first
 		"""
 		:returns: One immediate successor to selected_nodes which we should set as the new destination (chosen by depth, then learn count, then importance, then id).
@@ -157,14 +157,14 @@ class PMDAG (nx.DAG):
 		destination = sorted(deepest_successors, key=unselected_count_sorter)[0]
 		return destination
 
-	# @record_elapsed_time
+	@record_elapsed_time
 	def selectable_predestinations(self, destination, selected_nodes):
 		# a predestination is an unselected dependency of the destination, or the destination itself
 		unselected_dependency_graph = self.subgraph(self.unselected_dependency_tree(destination, selected_nodes))
 		selectable_dependencies = unselected_dependency_graph.sources()
 		return selectable_dependencies
 
-	# @record_elapsed_time
+	@record_elapsed_time
 	def choose_selectable_predestinations(self, axioms, selected_nodes, number=1, destination=None):
 		if destination is None:
 			destination = self.choose_destination(axioms, selected_nodes)

@@ -54,7 +54,7 @@ class MathGraph (PMDAG):
 
 		return self.choose_selectable_predestinations(axioms, learned_nodes, number=number, destination=goal)
 
-	# @record_elapsed_time
+	@record_elapsed_time
 	def nodes_to_send(self, user, client_node_ids=[]):
 		learned_ids = user.dict['learned_node_ids']
 		pref = user.dict['prefs']

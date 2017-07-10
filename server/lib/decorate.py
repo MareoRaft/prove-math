@@ -16,7 +16,7 @@ def transparent(decorator):
 	are fairly simple. If a decorator expects a function and
 	returns a function (no descriptors), and if it doesn't
 	modify function attributes or docstring, then it is
-	eligible to use this. Simply apply @simple_decorator to
+	eligible to use this. Simply apply @transparent to
 	your decorator and it will automatically preserve the
 	docstring and function attributes of functions to which
 	it is applied.
