@@ -55,9 +55,14 @@ class PMDAG (nx.DAG):
 	def unselected_dependency_tree(self, target, selected_nodes):
 		if not self.acceptable_iterable(selected_nodes):
 			raise ValueError('Argument {} is not iterable'.format(selected_nodes))
-		G = self.copy()
-		G.remove_nodes_from(selected_nodes)
-		return nx.ancestors(G, target).union({target})
+		# graph.copy() is expensive operation, so instead we use nx.ancestors:
+		# Remember, nx.ancestors does NOT include the target node itself
+		ancestors = nx.ancestors(self, target).union({target})
+		selected_ancestors = set()
+		for selected_node in selected_nodes:
+			to_add = nx.ancestors(self, selected_node).union({selected_node})
+			selected_ancestors.update(to_add)
+		return ancestors.difference(selected_ancestors)
 
 	def unselected_count(self, target, selected_nodes):
 		return len(self.unselected_dependency_tree(target, selected_nodes))

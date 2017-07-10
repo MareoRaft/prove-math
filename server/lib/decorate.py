@@ -21,8 +21,8 @@ def transparent(decorator):
 	docstring and function attributes of functions to which
 	it is applied.
 	"""
-	def new_decorator(func):
-		g = decorator(func)
+	def new_decorator(func, *args, **kwargs):
+		g = decorator(func, *args, **kwargs)
 		g.__name__ = func.__name__
 		g.__doc__ = func.__doc__
 		g.__dict__.update(func.__dict__)

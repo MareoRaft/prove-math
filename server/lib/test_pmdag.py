@@ -113,7 +113,8 @@ def test_unselected_dependency_tree():
 	with pytest.raises(ValueError):
 		G.unselected_dependency_tree('t', 'l1')
 	assert G.unselected_dependency_tree('t', []) == {'l1', 'u1', 't'}
-	assert G.unselected_dependency_tree('t', ['NotANode', 'StillNotANode']) == {'l1', 'u1', 't'}
+	with pytest.raises(nx.NetworkXError):
+		G.unselected_dependency_tree('t', ['NotANode', 'StillNotANode'])
 
 	G = PMDAG()
 	G.add_path(['l1', 'u1', 't'])
@@ -146,7 +147,8 @@ def test_unselected_count():
 		G.unselected_count(['t'], ['l1'])
 	with pytest.raises(ValueError):
 		G.unselected_count('t', 'l1')
-	assert G.unselected_count('t', ['NotANode']) == 3
+	with pytest.raises(nx.NetworkXError):
+		G.unselected_count('t', ['NotANode'])
 	assert G.unselected_count('t', []) == 3
 	assert G.unselected_count('t', ['l1']) == 2
 	assert G.unselected_count('t', ['u1']) == 1
