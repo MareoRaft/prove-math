@@ -89,6 +89,16 @@ gulp.task('dump', function(cb) {
 	})
 })
 
+gulp.task('mongo-config', function(cb) {
+	// Write the mongod config file. (meant for the SERVER) See issue #43
+	var command = 'cp -nv build/mongod.conf /usr/local/etc/mongodb.conf && echo \'You can run "use admin" and then "db.runCommand({ getCmdLineOpts: 1 })" in the mongo interactive prompt to see which config file mongo is actually using.\''
+	exec(command, function (err, stdout, stderr) {
+		console.log(stdout)
+		console.log(stderr)
+		cb(err)
+	})
+})
+
 gulp.task('watch', function() {
 	// css watcher
 	var watch_css = gulp.watch(src_scss, ['css'])
@@ -102,4 +112,7 @@ gulp.task('watch', function() {
 })
 
 gulp.task('default', ['js', 'css', 'docs', 'watch'])
+// The 'deploy' task is what the server should run when updating ProveMath for real users.
 gulp.task('deploy', ['search', 'js', 'css', 'docs', 'minify', 'watch'])
+// The 'setup' task is for setting up a new server (which is rare).
+gulp.task('setup', ['mongo-config'])
