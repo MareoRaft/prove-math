@@ -239,7 +239,7 @@ ws.onopen = function() {
 	ws.jsend({command: 'first-steps', requested_id: requested_id})
 	// if( is.nonEmptyString(requested_id) ){
 
-	//TEMP
+	// TEMP
 	// guestLogin()
 	// promptStartingNodes()
 	// addNode()
