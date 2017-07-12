@@ -35,16 +35,16 @@ gem install compass
 gem list | grep compass
 
 # gulp + babel
+# see https://stackoverflow.com/questions/41005744/babel-error-couldnt-find-preset-latest-relative-to-directory-when-preset-w#41005814
 "$package_manager" install node
 npm -v
 npm install gulp-cli -g
 npm install gulp -D
-gulp_deps=(babel-preset-es2015 gulp-babel gulp-for-compass gulp-autoprefixer child_process moment properties-reader)
+gulp_deps=(gulp-babel babel-cli babel-preset-es2015 gulp-for-compass gulp-autoprefixer child_process moment properties-reader)
 for gulp_dep in $gulp_deps
 do
 	npm install "$gulp_dep"
 done
-npm install --save-dev babel-cli
 
 # python 3 + libraries
 "$package_manager" install python3
