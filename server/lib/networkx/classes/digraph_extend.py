@@ -112,10 +112,12 @@ class _DiGraphExtended (nx.DiGraph):
 	def ancestors(self, nbunch):
 		self.validate_input_nodes(nbunch)
 		if not self.acceptable_iterable(nbunch):	# single input node
-			return nx.ancestors(self, nbunch)
+			node = nbunch
+			return nx.ancestors(self, node)
 		else:
 			if len(nbunch) == 1:	# still a single node
-				return nx.ancestors(self, nbunch[0])
+				node = nbunch[0]
+				return nx.ancestors(self, node)
 			else:	# multiple input nodes
 				DG = self.copy()
 				t = DG.add_node_unique()
@@ -163,10 +165,10 @@ class _DiGraphExtended (nx.DiGraph):
 			if len(nbunch) == 0:	# empty iterable
 				raise ValueError('Argument {} is empty'.format(nbunch))
 			else:
-				source = {}
+				source = dict()
 				for node in nbunch:
 					source[node] = 1
-		seen = {}                  # level (number of hops) when seen in BFS
+		seen = dict()              # level (number of hops) when seen in BFS
 		level = 0                  # the current level
 		nextlevel = source  # set of nodes to check at next level
 		while nextlevel:
@@ -188,10 +190,10 @@ class _DiGraphExtended (nx.DiGraph):
 			if len(nbunch) == 0:
 				raise ValueError('Argument {} is empty'.format(nbunch))
 			else:
-				source = {}
+				source = dict()
 				for node in nbunch:
 					source[node] = 1
-		seen = {}
+		seen = dict()
 		level = 0
 		nextlevel = source
 		while nextlevel:

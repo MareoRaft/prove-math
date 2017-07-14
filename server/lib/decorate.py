@@ -53,7 +53,7 @@ def memoize(obj):
 
 		This basically takes any recursive function and uses memoizing to make it faster (sacrificing space instead).  This could be a "cheap" way to quickly speed up functions!
 	"""
-	cache = obj.cache = {}
+	cache = obj.cache = dict()
 
 	@functools.wraps(obj)
 	def memoizer(*args, **kwargs):

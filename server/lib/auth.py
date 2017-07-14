@@ -18,7 +18,7 @@ github_client_secret = secret_array[3]
 
 ############################## Methods ##################################
 def auth_url_dict(host):
-	url_dict = {}
+	url_dict = dict()
 	for provider_name in provider_dict.keys():
 		url_dict[provider_name] = get_new_provider(provider_name, host=host).auth_url
 	return url_dict
