@@ -60,27 +60,21 @@ class _DiGraphExtended (nx.DiGraph):
 	# @record_elapsed_time
 	def predecessors(self, nbunch):	# works for single or multiple input nodes
 		if not self.acceptable_iterable(nbunch): # single input node
-			node = nbunch
-			pred = set(self.predecessors_iter(node))
-			slim_pred = pred - {node} # set('hi') returns {'h', 'i'}, which is unwanted
-		else:
-			pred = set()
-			for node in nbunch:
-				pred = pred.union(set(self.predecessors_iter(node)))
-			slim_pred = pred - set(nbunch)
+			nbunch = [nbunch]
+		pred = set()
+		for node in nbunch:
+			pred = pred.union(set(self.predecessors_iter(node)))
+		slim_pred = pred - set(nbunch)
 		return slim_pred
 
 	# @record_elapsed_time
 	def successors(self, nbunch):	# should follow the same exact pattern as predecessors
 		if not self.acceptable_iterable(nbunch):
-			node = nbunch
-			succ = set(self.successors_iter(node))
-			slim_succ = succ - {node}
-		else:
-			succ = set()
-			for node in nbunch:
-				succ = succ.union(set(self.successors_iter(node)))
-			slim_succ = succ - set(nbunch)
+			nbunch = [nbunch]
+		succ = set()
+		for node in nbunch:
+			succ = succ.union(set(self.successors_iter(node)))
+		slim_succ = succ - set(nbunch)
 		return slim_succ
 
 	def sources(self):
