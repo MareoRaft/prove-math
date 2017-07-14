@@ -115,15 +115,17 @@ class _DiGraphExtended (nx.DiGraph):
 			node = nbunch
 			return nx.ancestors(self, node)
 		else:
+			if len(nbunch) == 0:
+				return set()
 			if len(nbunch) == 1:	# still a single node
 				node = nbunch[0]
 				return nx.ancestors(self, node)
-			else:	# multiple input nodes
+			else:	# multiple input nodes, or 0 input nodes
 				DG = self.copy()
-				t = DG.add_node_unique()
+				t_id = DG.add_node_unique()
 				for node in nbunch:
-					DG.add_edge(node, t) # this automatically adds t to DG too
-				return nx.ancestors(DG, t) - set(nbunch) # returns a SET
+					DG.add_edge(node, t_id) # this automatically adds t to DG too
+				return nx.ancestors(DG, t_id) - set(nbunch) # returns a SET
 
 	@record_elapsed_time
 	def common_ancestors(self, nbunchA, nbunchB):

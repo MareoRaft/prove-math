@@ -5,6 +5,7 @@ from warnings import warn
 import networkx as nx
 
 from lib.node import Node
+from lib.helper import reduce_string
 
 ############################ HELPERS #############################
 def string_unique():
@@ -44,12 +45,14 @@ class _GraphExtended (nx.Graph):
 
 	def add_node_unique(self):
 		while True:
-			n_id = 'node_unique.' + string_unique()
+			n_name = 'node_unique.' + string_unique()
+			n_id = reduce_string(n_name)
 			if self.has_node(n_id):
 				warn('The node already existed.')
 				continue
 			else:
-				node = Node({"name":n_id,"type":"thm","description":"This is a unique nodeeeeeee","importance":1})
+				# it's a little dangerous that we actually add this node to the graph, which could be a problem when doing asynchronous stuff later.
+				node = Node({"name":n_name, "type":"thm", "description":"This is a unique nodeeeeeee", "importance":1})
 				self.add_n(node)
 				break
 		return n_id
