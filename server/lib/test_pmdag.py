@@ -107,7 +107,7 @@ def test_unselected_dependency_tree():
 	G.add_path(['l1', 'u1', 't']) #selected, unselected, target
 	with pytest.raises(nx.NetworkXError):
 		G.unselected_dependency_tree('NotANode', ['l1'])
-	with pytest.raises(nx.NetworkXError):
+	with pytest.raises(Exception):
 		G.unselected_dependency_tree(['t'], ['l1'])
 	assert G.unselected_dependency_tree('t', ['l1']) == {'u1', 't'}
 	with pytest.raises(ValueError):
@@ -143,7 +143,7 @@ def test_unselected_count():
 	G.add_path(['l1', 'u1', 't'])
 	with pytest.raises(nx.NetworkXError):
 		G.unselected_count('NotANode', ['l1'])
-	with pytest.raises(nx.NetworkXError):
+	with pytest.raises(Exception):
 		G.unselected_count(['t'], ['l1'])
 	with pytest.raises(ValueError):
 		G.unselected_count('t', 'l1')
@@ -301,7 +301,7 @@ def test_choose_destination():
 def test_selectable_predestinations():
 	G = PMDAG()
 	G.add_path(['l1', 't'])
-	with pytest.raises(nx.NetworkXError):
+	with pytest.raises(Exception):
 		G.selectable_predestinations(['t'], ['l1'])
 	with pytest.raises(ValueError):
 		G.selectable_predestinations('t', 'l1')
@@ -382,105 +382,111 @@ def test_choose_selectable_predestinations():
 def test_linearized_predestinations():
 	a = create_appropriate_node({"type":"theorem", "description":"This is node aaaaaaaaaa", "name":"A", "importance":3})
 	b = create_appropriate_node({"type":"theorem", "description":"This is node bbbbbbbbbb", "name":"B", "importance":4})
-	c = create_appropriate_node({"type":"theorem", "description":"This is node cccccccccc", "name":"C", "importance":4})
-	d = create_appropriate_node({"type":"theorem", "description":"This is node dddddddddd", "name":"D", "importance":6})
-	e = create_appropriate_node({"type":"theorem", "description":"This is node eeeeeeeeee", "name":"E", "importance":8})
-	f = create_appropriate_node({"type":"theorem", "description":"This is node ffffffffff", "name":"F", "importance":8})
 
 	# nodeless graph
 	G = PMDAG()
-	with pytest.raises(nx.NetworkXError):
+	with pytest.raises(Exception):
 		G.linearized_predestinations(None, [])
 
 	# trivial graph
 	G = PMDAG()
 	G.add_n(a)
-	assert G.linearized_predestinations(a, [], choice_function=set.pop) == ['a']
+	assert G.has_node(a.id)
+	assert G.linearized_predestinations('a', [], choice_function=set.pop) == ['a']
 
-	# # two nodes
-	# G = PMDAG()
-	# G.add_path(['a', 'b'])
-	# assert G.linearized_predestinations('a', choice_function=set.pop) == ['a']
-	# assert G.linearized_predestinations('b', choice_function=set.pop) == ['a', 'b']
+	# default choice_function
+	G = PMDAG()
+	G.add_n(a)
+	assert G.linearized_predestinations('a') == ['a']
 
-# 	# a target with two dependency nodes
-# 	G = PMDAG()
-# 	G.add_path(['a1', 'b'])
-# 	G.add_path(['a2', 'b'])
-# 	def alphabetical(s):
-# 		lis = sorted(s)
-# 		return lis[0]
-# 	assert G.linearized_predestinations('b', choice_function=alphabetical) == ['a1', 'a2', 'b']
+	# two nodes
+	G = PMDAG()
+	G.add_n([a, b])
+	G.add_edge('a', 'b')
+	assert G.linearized_predestinations('a', choice_function=set.pop) == ['a']
+	assert G.linearized_predestinations('b', choice_function=set.pop) == ['a', 'b']
 
-# 	# a fork that reconnects
-# 	G = PMDAG()
-# 	G.add_path(['z', 'r1', 'r2', 'b'])
-# 	G.add_path(['z', 'lzar', 'lwar', 'b'])
-# 	def alphabetical(s):
-# 		lis = sorted(s)
-# 		return lis[0]
-# 	assert G.linearized_predestinations('b', choice_function=alphabetical) == ['z', 'lzar', 'lwar', 'r1', 'r2', 'b']
+	# a target with two dependency nodes
+	G = PMDAG()
+	G.add_path(['a1', 'b'])
+	G.add_path(['a2', 'b'])
+	def alphabetical(s):
+		lis = sorted(s)
+		return lis[0]
+	assert G.linearized_predestinations('b', choice_function=alphabetical) == ['a1', 'a2', 'b']
 
-# 	# we also need mock nodes to test most important choice function
+	# a fork that reconnects
+	G = PMDAG()
+	G.add_path(['z', 'r1', 'r2', 'b'])
+	G.add_path(['z', 'lzar', 'lwar', 'b'])
+	def alphabetical(s):
+		lis = sorted(s)
+		return lis[0]
+	assert G.linearized_predestinations('b', choice_function=alphabetical) == ['z', 'lzar', 'lwar', 'r1', 'r2', 'b']
 
-# def test_linearized_predestinations2():
-# 	# nodeless graph
-# 	G = PMDAG()
-# 	with pytest.raises(nx.NetworkXError):
-# 		G.linearized_predestinations2(None, [])
+def test_linearized_predestinations2():
+	a = create_appropriate_node({"type":"theorem", "description":"This is node aaaaaaaaaa", "name":"A", "importance":3})
+	b = create_appropriate_node({"type":"theorem", "description":"This is node bbbbbbbbbb", "name":"B", "importance":4})
 
-# 	# trivial graph
-# 	G = PMDAG()
-# 	G.add_node('aaa')
-# 	assert G.linearized_predestinations2('aaa', choice_function=set.pop) == ['aaa']
+	# nodeless graph
+	G = PMDAG()
+	with pytest.raises(Exception):
+		G.linearized_predestinations2(None, [])
 
-# 	# two nodes
-# 	G = PMDAG()
-# 	G.add_path(['a', 'b'])
-# 	assert G.linearized_predestinations2('a', choice_function=set.pop) == ['a']
-# 	assert G.linearized_predestinations2('b', choice_function=set.pop) == ['a', 'b']
+	# trivial graph
+	G = PMDAG()
+	G.add_node('aaa')
+	assert G.linearized_predestinations2('aaa', choice_function=set.pop) == ['aaa']
 
-# 	# a target with two dependency nodes
-# 	G = PMDAG()
-# 	G.add_path(['a1', 'b'])
-# 	G.add_path(['a2', 'b'])
-# 	def alphabetical(s):
-# 		lis = sorted(s)
-# 		return lis[0]
-# 	assert G.linearized_predestinations2('b', choice_function=alphabetical) == ['a1', 'a2', 'b']
+	# default choice_function
+	G = PMDAG()
+	G.add_n(a)
+	assert G.linearized_predestinations('a') == ['a']
 
-# 	# a fork that reconnects
-# 	G = PMDAG()
-# 	G.add_path(['z', 'r1', 'r2', 'b'])
-# 	G.add_path(['z', 'lzar', 'lwar', 'b'])
-# 	def alphabetical(s):
-# 		lis = sorted(s)
-# 		return lis[0]
-# 	assert G.linearized_predestinations2('z', choice_function=alphabetical) == ['z']
+	# two nodes
+	G = PMDAG()
+	G.add_path(['a', 'b'])
+	assert G.linearized_predestinations2('a', choice_function=set.pop) == ['a']
+	assert G.linearized_predestinations2('b', choice_function=set.pop) == ['a', 'b']
 
-# 	G = PMDAG()
-# 	G.add_path(['z', 'r1', 'r2', 'b'])
-# 	G.add_path(['z', 'lzar', 'lwar', 'b'])
-# 	def alphabetical(s):
-# 		lis = sorted(s)
-# 		return lis[0]
-# 	assert G.linearized_predestinations2('lzar', choice_function=alphabetical) == ['z', 'lzar']
+	# a target with two dependency nodes
+	G = PMDAG()
+	G.add_path(['a1', 'b'])
+	G.add_path(['a2', 'b'])
+	def alphabetical(s):
+		lis = sorted(s)
+		return lis[0]
+	assert G.linearized_predestinations2('b', choice_function=alphabetical) == ['a1', 'a2', 'b']
 
-# 	G = PMDAG()
-# 	G.add_path(['z', 'r1', 'r2', 'b'])
-# 	G.add_path(['z', 'lzar', 'lwar', 'b'])
-# 	def alphabetical(s):
-# 		lis = sorted(s)
-# 		return lis[0]
-# 	assert G.linearized_predestinations2('lwar', choice_function=alphabetical) == ['z', 'lzar', 'lwar']
+	# a fork that reconnects
+	G = PMDAG()
+	G.add_path(['z', 'r1', 'r2', 'b'])
+	G.add_path(['z', 'lzar', 'lwar', 'b'])
+	def alphabetical(s):
+		lis = sorted(s)
+		return lis[0]
+	assert G.linearized_predestinations2('z', choice_function=alphabetical) == ['z']
 
-# 	G = PMDAG()
-# 	G.add_path(['z', 'r1', 'r2', 'b'])
-# 	G.add_path(['z', 'lzar', 'lwar', 'b'])
-# 	def alphabetical(s):
-# 		lis = sorted(s)
-# 		return lis[0]
-# 	assert G.linearized_predestinations2('b', choice_function=alphabetical) == ['z', 'lzar', 'lwar', 'r1', 'r2', 'b']
+	G = PMDAG()
+	G.add_path(['z', 'r1', 'r2', 'b'])
+	G.add_path(['z', 'lzar', 'lwar', 'b'])
+	def alphabetical(s):
+		lis = sorted(s)
+		return lis[0]
+	assert G.linearized_predestinations2('lzar', choice_function=alphabetical) == ['z', 'lzar']
 
-# 	# we also need mock nodes to test most important choice function
+	G = PMDAG()
+	G.add_path(['z', 'r1', 'r2', 'b'])
+	G.add_path(['z', 'lzar', 'lwar', 'b'])
+	def alphabetical(s):
+		lis = sorted(s)
+		return lis[0]
+	assert G.linearized_predestinations2('lwar', choice_function=alphabetical) == ['z', 'lzar', 'lwar']
 
+	G = PMDAG()
+	G.add_path(['z', 'r1', 'r2', 'b'])
+	G.add_path(['z', 'lzar', 'lwar', 'b'])
+	def alphabetical(s):
+		lis = sorted(s)
+		return lis[0]
+	assert G.linearized_predestinations2('b', choice_function=alphabetical) == ['z', 'lzar', 'lwar', 'r1', 'r2', 'b']

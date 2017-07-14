@@ -19,6 +19,8 @@ class PMDAG (nx.DAG):
 	""" Prove Math specific graph methods go here; that is, anything using our custom node objects.
 
 	A few of the methods in here (unselected_dependency_tree, unselected_count, unselected_counts, and selectable_predestinations) could actually do just fine in nx.DAG, since they don't use our custom node objects ("self.n()").  However, I will leave them here because they seem to belong organizationally.
+
+	REMEMBER that most of these functions take node IDs as inputs, even though the variables aren't called "target_id", for example!
 	"""
 
 
@@ -185,10 +187,10 @@ class PMDAG (nx.DAG):
 		while predestination_graph.nodes():
 			selectable_predestinations = predestination_graph.sources()
 			if choice_function is None:
-				next_predestination = predestination_graph.most_important(selectable_predestinations, 1)
+				next_predestination = predestination_graph.most_important(selectable_predestinations, 1)[0]
 			else:
 				next_predestination = choice_function(selectable_predestinations)
-			predestination_graph.remove_n(next_predestination)
+			predestination_graph.remove_node(next_predestination)
 			linearized_predestinations.append(next_predestination)
 		return linearized_predestinations
 
@@ -200,13 +202,13 @@ class PMDAG (nx.DAG):
 		if len(deps) >= 1:
 			if choice_function is None:
 				# self is NOT the ENTIRE provemath graph, so this could be undesireable
-				dep = self.most_important(deps, 1)
+				dep = self.most_important(deps, 1)[0]
 			else:
 				dep = choice_function(deps)
 			lin_piece1 = self._linearized_predestinations2_eater(dep, selected_nodes, choice_function)
-			self.remove_n(lin_piece1)
+			self.remove_nodes_from(lin_piece1)
 			lin_piece2 = self._linearized_predestinations2_eater(destination, selected_nodes, choice_function)
-			self.remove_n(lin_piece2) # unnecessary, but ok
+			self.remove_nodes_from(lin_piece2) # unnecessary, but ok
 			lin_nodes = lin_piece1 + lin_piece2
 			return lin_nodes
 		else:
