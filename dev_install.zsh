@@ -51,7 +51,7 @@ done
 "$package_manager" install wget
 wget https://bootstrap.pypa.io/get-pip.py
 python3 get-pip.py
-py_deps=(tornado networkx pytest requests_oauthlib colorlog pymongo Sphinx)
+py_deps=(tornado networkx pytest requests_oauthlib colorlog pymongo Sphinx git-lint)
 for py_dep in $py_deps
 do
 	pip3 install "$py_dep"

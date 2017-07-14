@@ -51,6 +51,7 @@ let circleClassConditions = {
 
 ////////////////////// INITIALIZATION //////////////////////
 let subjects = JSON.parse($('body').attr('data-subjects'))
+let all_subjects = JSON.parse($('body').attr('data-all-subjects'))
 
 let user_dict = JSON.parse($('body').attr('data-user-dict-json-string'))
 log('user dict is...')
@@ -725,7 +726,7 @@ function promptStartingNodes() {
 
 function replyToStartingNodesPrompt(subject) {
 	let default_subject = 'a'
-	if( !_.contains(subjects, subject) ) subject = default_subject
+	if( !_.contains(all_subjects, subject) ) subject = default_subject
 	ws.jsend({'command': 'get-starting-nodes', 'subject': subject})
 }
 

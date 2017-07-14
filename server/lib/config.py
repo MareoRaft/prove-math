@@ -4,10 +4,18 @@ LINEAR_ALGEBRA = ['rank', 'a'] # soon: null space, row space, matrix, etc
 ABSTRACT_ALGEBRA = ['set', 'magma', 'composition']
 ABSTRACT_ALGEBRA_II = ['leftrmodule']
 MULTIVARIABLE_CALCULUS = ['tangent plane', 'directional derivative', 'homeomorphism']
+COMBINATORICS = ['set', 'multiset', 'identical', 'factorial', 'finiteset']
+CATEGORY_THEORY = ['equatable', 'type']
+GRAPH_THEORY = ['set', 'multiset', 'vertex']
+TOPOLOGY = ['n-sphere', 'tangent bundle']
+SAMPLE_NODE_TYPES = ['sampledefinition', 'sampleequivdefs', 'sampleaxiom', 'sampletheorem', 'sampleexample', 'sampleexercise']
 starting_nodes = {
-	'graph theory': ['set', 'multiset', 'vertex'],
-	'combinatorics': ['set', 'multiset', 'identical', 'factorial', 'finiteset'],
-	'category theory': ['equatable', 'type'],
+	'graph theory': GRAPH_THEORY,
+	'g': GRAPH_THEORY,
+	'combinatorics': COMBINATORICS,
+	'c': COMBINATORICS,
+	'category theory': CATEGORY_THEORY,
+	'cat': CATEGORY_THEORY,
 	'linear algebra': LINEAR_ALGEBRA,
 	'l': LINEAR_ALGEBRA,
 	'abstract algebra i': ABSTRACT_ALGEBRA,
@@ -18,8 +26,9 @@ starting_nodes = {
 	'multivariable calc': MULTIVARIABLE_CALCULUS,
 	'calculus': MULTIVARIABLE_CALCULUS,
 	'calc': MULTIVARIABLE_CALCULUS,
-	'differential topology': ['n-sphere', 'tangent bundle'],
+	'differential topology': TOPOLOGY,
 	'test': ['a'],
+	's': SAMPLE_NODE_TYPES,
 }
 public_starting_node_keys = ['graph theory', 'combinatorics', 'category theory', 'abstract algebra ii']
 
