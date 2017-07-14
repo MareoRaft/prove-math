@@ -80,6 +80,15 @@ def test_predecessors():
 	assert DG.predecessors(['d', 'c']) == {'y', 't'}
 	assert DG.predecessors(['c', 'b']) == {'y', 't', 'a'}
 
+	G = nx.DiGraph()
+	G.add_edge('z', 'lzar')
+	assert G.predecessors('lzar') == {'z'}
+
+	G = nx.DiGraph()
+	G.add_path(['z', 'r1', 'r2', 'b'])
+	G.add_path(['z', 'lzar', 'lwar', 'b'])
+	assert G.predecessors('lzar') == {'z'}
+
 def test_successors():
 	DG = nx.DiGraph()
 	DG.add_edges_from([
@@ -104,6 +113,15 @@ def test_successors():
 	assert DG.successors(['y', 'd']) == {'c'}
 	assert DG.successors(['y', 'c']) == {'L', 'd'}
 	assert DG.successors(['c', 'a']) == {'L', 'd', 'b'}
+
+	G = nx.DiGraph()
+	G.add_edge('z', 'lzar')
+	assert G.successors('z') == {'lzar'}
+
+	G = nx.DiGraph()
+	G.add_path(['z', 'r1', 'r2', 'b'])
+	G.add_path(['z', 'lzar', 'lwar', 'b'])
+	assert G.successors('z') == {'lzar', 'r1'}
 
 def test_sources():
 	DG = nx.DiGraph()

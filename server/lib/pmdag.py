@@ -53,6 +53,7 @@ class PMDAG (nx.DAG):
 
 	@record_elapsed_time
 	def unselected_dependency_tree(self, target, selected_nodes):
+		""" note that an unselected_dependency_tree is NOT necessarily a tree! """
 		if not self.acceptable_iterable(selected_nodes):
 			raise ValueError('Argument {} is not iterable'.format(selected_nodes))
 		# graph.copy() is expensive operation, so instead we use nx.ancestors:
@@ -175,3 +176,42 @@ class PMDAG (nx.DAG):
 			destination = self.choose_destination(axioms, selected_nodes)
 		selectable_predestinations = self.selectable_predestinations(destination, selected_nodes)
 		return self.most_important(selectable_predestinations, number)
+
+	def linearized_predestinations(self, destination, selected_nodes=[], choice_function=None):
+		""" Given some nodes to choose between, choice function decides which one the user should learn first. """
+		predestination_graph = self.subgraph(self.unselected_dependency_tree(destination, selected_nodes))
+		linearized_predestinations = []
+		while predestination_graph.nodes():
+			selectable_predestinations = predestination_graph.sources()
+			if choice_function is None:
+				next_predestination = predestination_graph.most_important(selectable_predestinations, 1)
+			else:
+				next_predestination = choice_function(selectable_predestinations)
+			predestination_graph.remove_node(next_predestination) # remove_n when testing is fixed
+			linearized_predestinations.append(next_predestination)
+		return linearized_predestinations
+
+	def _linearized_predestinations2_eater(self, destination, selected_nodes=[], choice_function=None):
+		""" helper function.  eats the graph as it processes, so make a copy! """
+		if choice_function is None:
+			raise ValueError('no choice func')
+		deps = self.predecessors(destination) - set(selected_nodes)
+		if len(deps) == 0:
+			return [destination]
+		if len(deps) >= 1:
+			dep = choice_function(deps)
+			lin_piece1 = self._linearized_predestinations2_eater(dep, selected_nodes, choice_function)
+			self.remove_nodes_from(lin_piece1)
+			lin_piece2 = self._linearized_predestinations2_eater(destination, selected_nodes, choice_function)
+			self.remove_nodes_from(lin_piece2) # unnecessary, but ok
+			lin_nodes = lin_piece1 + lin_piece2
+			return lin_nodes
+		else:
+			raise ValueError('bad bad bad')
+
+	def linearized_predestinations2(self, destination, selected_nodes=[], choice_function=None):
+		""" Same as linearized_predestinations, but chooses recursively. """
+		copy_graph = self.subgraph(self.unselected_dependency_tree(destination, selected_nodes))
+		lin_nodes = copy_graph._linearized_predestinations2_eater(destination, selected_nodes, choice_function)
+		return lin_nodes
+
