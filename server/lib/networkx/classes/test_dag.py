@@ -154,3 +154,28 @@ def test_depth_to_successors_dict():
 		(2, {'six'}),
 	])
 
+def test_is_forward_order():
+	DAG = nx.DAG()
+	assert DAG.is_forward_order([])
+
+	DAG = nx.DAG()
+	DAG.add_path(['one', 'two', 'three', 'four'])
+	assert DAG.is_forward_order([])
+	assert DAG.is_forward_order(['one'])
+	assert DAG.is_forward_order(['one', 'two'])
+	assert DAG.is_forward_order(['one', 'three'])
+	assert DAG.is_forward_order(['two', 'four'])
+	assert not DAG.is_forward_order(['two', 'one'])
+	assert not DAG.is_forward_order(['two', 'two'])
+	assert not DAG.is_forward_order(['one', 'two', 'four', 'three'])
+
+	DAG = nx.DAG()
+	DAG.add_path(['1', 'a2', 'a3', '4'])
+	DAG.add_path(['1', 'b2', 'b3', '4'])
+	DAG.add_node('float')
+	assert DAG.is_forward_order(['b3', 'a2'])
+	assert DAG.is_forward_order(['float', '4'])
+	assert DAG.is_forward_order(['4', 'float'])
+	assert DAG.is_forward_order(['1', 'float', 'a3', 'b2', 'b3', '4'])
+	assert not DAG.is_forward_order(['4', 'a2'])
+

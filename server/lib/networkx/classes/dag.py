@@ -58,4 +58,20 @@ class _DAG (nx.DiGraph):
 		depth_to_successors_dict = helper.reversed_dict(successors_to_distance_dict)
 		return OrderedDict(sorted(depth_to_successors_dict.items(), key=lambda t: t[0], reverse=True))
 
+	def is_forward_order(self, list_of_nodes):
+		"""
+		Verifies that the list_of_nodes is in a forward order.  That is, for each new node b, none of the previous nodes a depends on it
+		"""
+		dependencies = set()
+		for i, new_node_soon_to_be_old in enumerate(list_of_nodes):
+			new_nodes = list_of_nodes[i:]
+			# make sure the new nodes are NOT a dependency of the old ones
+			for new_node in new_nodes:
+				if new_node in dependencies:
+					return False
+			# update the dependencies for the next round
+			deps_to_add = self.ancestors(new_node_soon_to_be_old).union({new_node_soon_to_be_old})
+			dependencies.update(deps_to_add)
+		return True
+
 nx.DAG = _DAG

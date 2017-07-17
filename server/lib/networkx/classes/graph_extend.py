@@ -8,6 +8,8 @@ from lib.node import Node
 from lib.helper import reduce_string
 
 ############################ HELPERS #############################
+NODE_MISSING = 'The input node "{0}" is not in the graph.'
+
 def string_unique():
 	# this could be improved.  it should guarantee to create a unique string.
 	return str(time.time())
@@ -63,7 +65,7 @@ class _GraphExtended (nx.Graph):
 			nbunch = [nbunch]
 		for node in nbunch:
 			if not self.has_node(node):
-				raise nx.NetworkXError('The input node {0} is not in the graph'.format(node))
+				raise nx.NetworkXError(NODE_MISSING.format(node))
 		return True
 
 for key, value in _GraphExtended.__dict__.items():

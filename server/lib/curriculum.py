@@ -21,12 +21,28 @@ class Curriculum (Votable):
 	NODES = Mongo("provemath", "nodes")
 	CURRICULUMS = Mongo("provemath", "curriculums")
 
-	def __init__(self, node_ids, name=None):
+	def __init__(self, graph, init_method='node_ids', node_ids=[], destination=None, selected_nodes=[], name=None):
 		self.name = name
-		self.node_ids = node_ids
+		self.graph = graph
+		self.init_method = init_method
+
+		if self.init_method == 'node_ids':
+			self.node_ids = node_ids
+		elif self.init_method == 'destination':
+			self.destination = destination
+			self.selected_nodes = selected_nodes
+			self.init_node_ids()
+		else:
+			raise ValueError('bad method')
+
 		self.set_id()
 
 		# TODO: verify the curriculum doesn't already exist? Allow override?
+
+	def init_node_ids(self):
+		node_ids = self.graph.linearized_predestinations2(self.destination, self.selected_nodes)
+		self.node_ids = node_ids
+		# should a curriculum even store this?  What is the graph changes, and the curriculum becomes logically invalid? -- i think the curriculum SHOULD store this, but there should be some VERIFY method that catches when a curriculum becomes invalid, and alerts the professor
 
 	@property
 	def name(self):
@@ -35,7 +51,7 @@ class Curriculum (Votable):
 	def name(self, new_name):
 		if new_name is not None:
 			if not isinstance(new_name, str):
-				raise ValueError('Name must be a string.')
+				raise TypeError('Name must be a string.')
 		self._name = new_name
 
 	@property
@@ -59,7 +75,9 @@ class Curriculum (Votable):
 		for node_id in node_ids:
 			next(self.NODES.find({"_id": node_id}))
 			# the above should error if no node exists, so we have verified that the id exists
-		# TODO: verify that node_ids follow LOGICAL order?
+		# verify that node_ids follow LOGICAL order
+		# or...at least..forward order.  this allows skipping over nodes
+		assert self.graph.is_forward_order(node_ids)
 		self._node_ids = node_ids
 
 	def store(self):
@@ -68,7 +86,9 @@ class Curriculum (Votable):
 
 	def as_dict(self):
 		d = deepcopy(self.__dict__)
-		# store the id under "_id", so nothing to adjust for mongo
+		# we store the id under "_id", so nothing to adjust for mongo there
+		del d['graph']
+		del d['init_method']
 		return d
 
 
