@@ -33,7 +33,7 @@ svg {
 	scroll: none;
 	z-index: 1;
 	@include hide;
-	background: radial-gradient(white, transparent);
+	background: radial-gradient($login_background_center_gradient, $login_background_outer_gradient);
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
@@ -124,7 +124,7 @@ svg {
 	bottom: 0;
 	left: 4px;
 	pointer-events: auto;
-	background-color: rgba( white, 0.7 );
+	background-color: rgba( $hover-things_explanation_background-color, 0.7 );
 }
 
 #notify-overlay {
@@ -136,7 +136,7 @@ svg {
 
 	z-index: 4;
 	pointer-events: none;
-	background-color: transparent;
+	background-color: $hover-things_notify-overlay_background-color;
 }
 
 #overlay {
@@ -160,7 +160,7 @@ $circle-diameter: 60px;
 .hover-circle-with-text {
 	@extend .hover-circle;
 	@extend .centered-text;
-	background-color: black;
+	background-color: $hover-things_hover-circle-with-text_background-color;
 	color: white;
 }
 #login-circle {
@@ -245,11 +245,11 @@ $circle-diameter: 60px;
 
 .invalid {
 	border-style: solid;
-	border-color: $yellow !important; // soft red: rgba( 255, 51, 0, 0.9 )
+	border-color: $hover-things_invalid_border-color; //!important;
 }
 
 $search-font: 300 normal 26px Helvetica, Tahoma, Arial, sans-serif;
-$search-border: 4px solid $eggshell;
+$search-border: 4px solid $hover-things_search-border;
 #search-wrapper {
 	@include side-hover;
 	border: $search-border;
@@ -297,16 +297,16 @@ $search-border: 4px solid $eggshell;
 	justify-content: space-around;
 	align-items: stretch;
 	min-height: 80px;
-	background-color: rgba(white, 0.85);
+	background-color: rgba( $hover-things_preview-box_background-color, 0.85 );
 	&:hover {
-		background-color: rgba(lightyellow, 0.96);
+		background-color: rgba( $hover-things_preview-box_hover_background-color, 0.96 );
 	}
 }
 $bar-height: 50px;
 .preview-top-bar {
 	min-height: $bar-height;
 	max-height: $bar-height;
-	border-top: 1px solid $white;
+	border-top: 1px solid $hover-things_preview-top-bar_border-top;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
@@ -346,14 +346,14 @@ $bar-height: 50px;
 
 // for nodes, both in SVG and in search results:
 .axiom-circle {
-	@include bright-and-unbright-bg-and-opacity($grey);
+	@include bright-and-unbright-bg-and-opacity($hover-things_axiom-circle);
 }
 .definition-circle {
-	@include bright-and-unbright-bg-and-opacity($green);
+	@include bright-and-unbright-bg-and-opacity($hover-things_definition-circle);
 }
 .theorem-circle {
-	@include bright-and-unbright-bg-and-opacity(blue);
+	@include bright-and-unbright-bg-and-opacity($hover-things_theorem-circle);
 }
 .exercise-circle {
-	@include bright-and-unbright-bg-and-opacity($darkwhite);
+	@include bright-and-unbright-bg-and-opacity($hover-things_exercise-circle);
 }

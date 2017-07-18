@@ -1,18 +1,49 @@
+
 /* Baby color scheme */
 
-/* This is a compilation of the new color_variable_names for existing scss files. As of now, their values are the same as those in the existing scss file. Once all of these values have been mapped, and the new color_variable_names approved, we will be able to change the values of the color_variable_names to match our color palette, which would give us control over all colors on the provemath site from this one file! */
+// Comment what each of the colors below impacts and then consolidate all colors into this file
+
+// Find variables that need to be split into separate variables to allow for additional customization
+
+/* This is a compilation of the new color_variable_names for existing scss files. As of now, their values are the same as those in the existing scss file. 
+Once all of these values have been mapped, and the new color_variable_names approved,
+we will be able to change the values of the color_variable_names to match our color palette, which would give us control over all colors on the provemath site from this one file! */
 
 
 /* Color Palette */
-$black: #633d11; $darkgrey: #333; $grey: #555; $lightgrey: #777; $transgrey: rgba( 80, 80, 80, 0.5 );
-$lightestgrey: #bbb; $darkwhite: #999; $white: #eee;
 
+// ********* BLACK/GRAY/WHITE
+$black: #633d11;
+$darkgrey: #333;
+$grey: #555;
+$lightgrey: #777;
+$transgrey: rgba( 80, 80, 80, 0.5 );
+$lightestgrey: #bbb;
+$darkwhite: #999;
+$white: #eee;
+
+// ********* BROWNS
 $darkbrown: #6a3500;
+$eggshell: #f9e2c7;
 
-$eggshell: #f9e2c7; $yellow: #fd0; $gold: #e6d460; $blue: #0af;
-$rose: #f02b4c; $pink: #f12772; $red: $rose;
-$brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $mediumgreen;
+// ********* YELLOWS
+$yellow: #fd0;
+$lightyellow: #fffdd0;
+$gold: #e6d460;
 
+// ********* REDS
+$rose: #f02b4c;
+$pink: #f12772;
+$red: $rose;
+
+// ********* GREENS
+$brightgreen: #a6de2a;
+$lightgreen: #0d0;
+$mediumgreen: #00b000;
+$green: $mediumgreen;
+
+// ********* BLUES
+$blue: #0af;
 
 /* From _animate.scss */
 
@@ -21,24 +52,66 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $medium
 
 /* From _blinds.scss */
 
-	$mixin_white: white;
+	// ************************** COLORS OF NODE PANES **************************
 
-	$blind_nth-child4n1_background-color: #fffdd0;
+	/* background color of 4n+1 (e.g. first, fifth, ninth, etc.) panes once inside a node. Note that the first pane is not the navigation banner */
+	$blind_nth-child4n1_background-color: $lightyellow;
+	/* font color for 4n+1 pane */
 	$blind_nth-child4n1_color: $darkbrown;
 
+	/* background color of 4n+2 (e.g. second, sixth, tenth, etc.) panes once inside a node */
 	$blind_nth-child4n2_background-color: #fff5ee;
+	/* font color for 4n+2 panes */
 	$blind_nth-child4n2_color: $darkbrown;
 
+	/* background color of 4n+3 panes once inside a node */
 	$blind_nth-child4n3_background-color: #fff8dc;
+	/* font color for 4n+3 panes */
 	$blind_nth-child4n3_color: $darkbrown;
-
+	
+	/* background color of 4n+4 panes once inside a node */
 	$blind_nth-child4n4_background-color: #fdf5e6;
+	/* font color for 4n+4 panes */
 	$blind_nth-child4n4_color: $darkbrown;
 
+	// ************************** COLORS OF PREFERENCES PANES **************************
+
+	/* font color of preferences page; navigate here by logging in and clicking on profile image$
+        // note: variable needs to be split into fonts for different blinds
+        $mixin_white: white;
+
+        /* background color of 4n+1 (e.g. first, fifth, ninth, etc.) panes on the preferences page. Note that the first pane is not the navigation banner */
+        $pref-attribute_nth-child4n1_background-color: #4b0054;
+	/* font color for 4n+1 preference page panes */
+	$pref-attribute_nth-child4n1_color: white;
+
+	/* background color of 4n+2 (e.g. second, sixth, tenth, etc.) panes on the preferences page */
+	$pref-attribute_nth-child4n2_background-color: #6a0059;
+	/* font color for 4n+2 preference page panes */
+	$pref-attribute_nth-child4n2_color: white;
+
+	/* background color of 4n+3 panes on the preference page */
+	$pref-attribute_nth-child4n3_background-color: #f0f888;
+	/* font color for 4n+3 preference page panes */
+	$pref-attribute_nth-child4n3_color: white;
+
+	/* background color of 4n+4 panes on the preference page */
+	$pref-attribute_nth-child4n4_background-color: #a2dc8a;
+	/* font color for 4n+4 preference page panes */
+	$pref-attribute_nth-child4n4_color: white;
+
+	/* background color of 4n+5 panes on the preference page */
+	$pref-attribute_nth-child4n5_background-color: #004873;
+	/* font color for 4n+5 preference page panes */
+	$pref-attribute_nth-child4n5_color: white;
+
+	// ************************** COLORS OF 'CHOSEN' LIBRARY **************************
+	/* font color of auto-complete drop-down options. For example, can be found within nodes when modifying node dependency data */
 	$tags_chosen-results_color: #444;
-
-	$tags_chosen-results_background-color: purple;
-
+	/* background color of auto-complete drop-down options. Note that hovering over the box changes the color */
+	// !!!!!!!!!!!!!!! CHANGE THIS TO A COLOR THAT IS MORE PLEASING TO THE EYE. ALSO CONVERT TO VARIABLES
+	$tags_chosen-results_background-color: white;// purple;
+		/* ??????? not sure what this controls -> does not impact already selected options from the dropdown */
 		$disabled-result: #ccc;
 
 		$highlighted_background-color: pink;
@@ -61,13 +134,111 @@ $brightgreen: #a6de2a; $lightgreen: #0d0; $mediumgreen: #00b000; $green: $medium
 
 
 /* From _chosen_normalize.scss */
-
-	$chosen-container-multi_chosen-choices_background-color: transparent; // makes the BIG box see-through
-
+	
+	/* The following apply to anything with drop-down autocomplete (e.g. modifying 'dependencies' once inside a node) */
+	
+	/* Color of the top box that the user types into. This box can contain smaller boxes of options from the drop-down menu once they are selected. */
+	$chosen-container-multi_chosen-choices_background-color: purple;
+	
+	/* Option to make the box that the user types into have a background image */
 	$chosen-container-multi_chosen-choices_background-image: none;
 
+	/* optional background image of a tag (once a drop-down item is selected, the selected choice will appear as a tag in the search box) */
+	$chosen-container-multi_chosen-choices_li_search-choice_background-image: none;
+
+	/* background color of tags. */
+	$chosen-container-multi_chosen-choices_li_search-choice_background-color: orange;
+
+	/* unused? reference is commented out at the bottom of _chosen_normalize.scss */
 	$chosen-container-multi_chosen-drop_result-selected: red;
 
+	/* unused? reference is commented out at the bottom of _chosen_normalize.scss */
 	$chosen-container_chosen-results: green;
 
 
+/* From _graph_animation.scss */
+
+	/* font color of links tied to _graph_animation, need to find this reference */
+	$svg_link_stroke: $lightestgrey;
+
+	/* unused? */
+	$svg_arrow-head_fill: $lightestgrey;
+
+/* From main.scss */
+
+	/* when logging in and out, the background color of the page below the login buttons is controlled by a radial gradient that uses two colors: one for the center of the page and the transition color towards the edges of the page. */
+	/* color of the central color of the gradient */
+	$login_background_center_gradient: white;
+	/* color of the outside ring of the gradient */
+	$login_background_outer_gradient: transparent;
+
+	/*  */
+	$hover-things_explanation_background-color: white;
+
+	/*  */
+	$hover-things_notify-overlay_background-color: transparent;
+
+	/*  */
+	$hover-things_hover-circle-with-text_background-color: black;
+
+	/*  */
+	$hover-things_invalid_border-color: $yellow; // soft red: rgba( 255, 51, 0, 0.9 )
+	
+	/*  */
+	$hover-things_search-border: $eggshell;
+
+	/*  */
+	$hover-things_preview-box_background-color: white;
+
+	/*  */
+	$hover-things_preview-box_hover_background-color: lightyellow;
+
+	/*  */
+	$hover-things_preview-top-bar_border-top: $white;
+
+	/*  */
+	$hover-things_axiom-circle: $grey;
+
+	/*  */
+	$hover-things_definition-circle: $green;
+
+        /*  */
+	$hover-things_theorem-circle: blue;
+
+        /*  */
+	$hover-things_exercise-circle: $darkwhite;
+
+
+/* From _normalize.scss */
+
+	/*  */
+	$button_background-color: linear-gradient(#ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+
+	/* unused */
+	$button_box-shadow: white;
+
+	/* unused */
+	$button_box-shadow_inset: rgba(0, 0, 0, 0.1);
+
+	/*  */
+	$button_border: #aaa;
+	
+
+/* From _reset.scss */
+
+	/* No colors. Customized third-party file */
+
+/* From _vanilla-notify.scss */
+
+	/* third-party file */
+
+/* From _variables.scss */
+
+	/*  */
+	$font_color: $black;
+
+	/*  */
+	$bright-and-unbright-bg-and-opacity_fill_mixer-color_1: gray;
+
+	/*  */
+	$bright-and-unbright-bg-and-opacity_background-color_mixer-color_1: gray;

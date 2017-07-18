@@ -18,12 +18,12 @@ svg {
 	}
 
 	.link {
-		stroke: $lightestgrey;
+		stroke: $svg_link_stroke;
 		stroke-width: 2px;
 	}
 
 	.arrow-head {
-		fill: $lightestgrey;
+		fill: $svg_arrow-head_fill;
 	}
 }
 // }

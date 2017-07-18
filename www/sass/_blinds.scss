@@ -70,7 +70,7 @@
 }
 
 @mixin white {
-	color: $mixin_white;
+	// color: $mixin_white;
 	img {
 		filter: invert(1);
 	}
@@ -80,12 +80,12 @@
 		background-color: $blind_nth-child4n1_background-color;
 		color: $blind_nth-child4n1_color;
 		// how can we make the image colored too?
-		// @include white;
+		@include white;
 	}
 	&:nth-child(4n+2) {
 		background-color: $blind_nth-child4n2_background-color;
 		color: $blind_nth-child4n2_color;
-		// @include white;
+		@include white;
 	}
 	&:nth-child(4n+3) {
 		background-color: $blind_nth-child4n3_background-color;
@@ -99,21 +99,26 @@
 // OVERRIDE for user prefs:
 .pref-attribute {
 	&:nth-child(4n+1) {
-		background-color: #4b0054;
+		background-color: $pref-attribute_nth-child4n1_background-color;
+		color: $pref-attribute_nth-child4n1_color;
 		@include white;
 	}
 	&:nth-child(4n+2) {
-		background-color: #6a0059;
+		background-color: $pref-attribute_nth-child4n2_background-color;
+		color: $pref-attribute_nth-child4n2_color;
 		@include white;
 	}
 	&:nth-child(4n+3) {
-		background-color: #f0f888;
+		background-color: $pref-attribute_nth-child4n3_background-color;
+		color: $pref-attribute_nth-child4n3_color;
 	}
 	&:nth-child(4n+4) {
-		background-color: #a2dc8a;
+		background-color: $pref-attribute_nth-child4n4_background-color;
+		color: $pref-attribute_nth-child4n4_background-color;
 	}
 	&:nth-child(4n+5) {
-		background-color: #004873;
+		background-color: $pref-attribute_nth-child4n5_background-color;
+		color: $pref-attribute_nth-child4n5_color;
 		@include white;
 	}
 }

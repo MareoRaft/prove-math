@@ -13,8 +13,8 @@
 
 .chosen-container-multi .chosen-choices li.search-choice { // there is also a search-choice-focus you may need to look into
 	box-shadow: none;
-	background-image: none;
-	// background-color: orange; // use this to override background-color of tags
+	background-image: $chosen-container-multi_chosen-choices_li_search-choice_background-image;
+	background-color: $chosen-container-multi_chosen-choices_li_search-choice_background-color;
 	border: none;
 }
 
