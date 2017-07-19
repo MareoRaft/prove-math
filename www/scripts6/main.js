@@ -297,21 +297,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		})
 	}
 	else if(ball.command === 'search-results'){
-		let $search_results_wrapper = $('#search-results-wrapper')
-		for( let result of ball.results ){
-			let node = new Node(result)
-			let html = result_htmlified(node)
-			$search_results_wrapper.append(html)
-			// Bind a click event! This must be done AFTER the html element is created.
-			let $result = $search_results_wrapper.children().last()
-			$result.click(function(){
-				preview_box_clicked(node.id)
-			})
-			let $nodecircle = $result.find('.preview-circle-wrapper > div')
-			$nodecircle.click(function(){
-				node_in_preview_box_clicked(node.id)
-			})
-		}
+		populate_search_results(ball.results)
 	}
 	else if (ball.command === 'suggest-goal') {
 		let goal = new Node(ball.goal)
@@ -493,6 +479,38 @@ function node_in_preview_box_clicked(node_id){
 	// display node
 	if( node_id in graph.nodes ){
 		openNode(node_id)
+	}
+}
+function node_in_preview_box_right_clicked(node, results){
+	node.learned = !node.learned
+	// update search results and graph animation visually
+	$('#search-results-wrapper').empty()
+	populate_search_results(results)
+	graphAnimation.update()
+}
+function populate_search_results(results){
+	let $search_results_wrapper = $('#search-results-wrapper')
+	for( let result of results ){
+		// if the node is in the graph, use that one.  otherwise, make it here.  This should be improved in the future.  There should be like a shared node pool of all nodes on hand, to eliminate redundancy.  This is an issue because users could overwrite one version of the node with another, etc.
+		let node = new Node(result)
+		if( node.id in graph.nodes ){
+			node = graph.nodes[node.id]
+		}
+		let html = result_htmlified(node)
+		$search_results_wrapper.append(html)
+		// Bind a click event! This must be done AFTER the html element is created.
+		let $result = $search_results_wrapper.children().last()
+		$result.click(function(){
+			preview_box_clicked(node.id)
+		})
+		let $nodecircle = $result.find('.preview-circle-wrapper > div')
+		$nodecircle.click(function(){
+			node_in_preview_box_clicked(node.id)
+		})
+		$nodecircle.on('contextmenu', function(Event){ // on right click
+			Event.preventDefault() // don't show contextmenu
+			node_in_preview_box_right_clicked(node, results)
+		})
 	}
 }
 
