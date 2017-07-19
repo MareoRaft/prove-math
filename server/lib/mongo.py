@@ -1,5 +1,8 @@
 # third party:
 import pymongo
+
+from lib.helper import increment_string_counter
+
 # from passlib.context import CryptContext
 # Set up a text index db.nodes.createIndex( { _id:"text", _plural:"text", _negation:"text", _description:"text" }, {weights:{ _id:10, _plural:5, _negation:5,_description:5}, name:"Provemath_Search_Index" } )
 #Search bar issues include blocking the way when node arises, back button issues, doesn't search all nodes?
@@ -76,4 +79,12 @@ class Mongo:
         # This will delete from all fields which match the parameter!!
         results = self.address[self.database][self.collection].delete_many(dict_fields)
         print("Number deleted: " + str(results.deleted_count))
+
+    def proposed_id_to_good_id(self, proposed_id):
+        while True:
+            result = self.find_one({ "_id": proposed_id })
+            if result is None:
+                return proposed_id
+            else:
+                proposed_id = increment_string_counter(proposed_id)
 

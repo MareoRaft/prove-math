@@ -18,8 +18,8 @@ def test_property_setter():
     assert a.collection == "new_collection"
 
 def test_Mongo_equality():
-    a = Mongo("test","people")
-    b = Mongo("test","people")
+    a = Mongo("test", "people")
+    b = Mongo("test", "people")
     assert a == b
 
 def test_Mongo_insert_then_find():
@@ -36,7 +36,7 @@ def test_Mongo_insert_then_find():
 
 def test_Mongo_insert_then_delete():
     #Mongodb must be running in background for this to work
-    a = Mongo("test","people")
+    a = Mongo("test", "people")
     dic = {"name": "Prof I", "company": "Rutgers", "interests": "Statistics"}
     a.insert_one(dic)
     a.delete_many({"name":"Prof I"})
@@ -45,7 +45,7 @@ def test_Mongo_insert_then_delete():
 
 def test_Mongo_list_insert_then_find():
     #Mongodb must be running in background for this to work
-    a = Mongo("test","people")
+    a = Mongo("test", "people")
     dic1 = {"name": "Ethan Hunt", "company": "IMF", "interests": "Epionage"}
     dic2 = {"name": "Chef Eddie", "company": "Unemployed", "interests": "food"}
     x = [dic1,dic2]
@@ -61,27 +61,30 @@ def test_Mongo_list_insert_then_find():
         del x["_id"]
         assert dic2 == x
 
+def test_Mongo_find_one():
+    a = Mongo("test", "people")
+    dic = {"name": "Prof I", "company": "Rutgers", "interests": "Statistics"}
+    a.insert_one(dic)
+    result = a.find_one({"name": "Prof I"})
+    assert result is not None
 
+    a.delete_many({"name":"Prof I"})
+    result = a.find_one({"name": "Prof I"})
+    assert result is None
 
-"""
-def test_...
+def test_Mongo_proposed_id_to_good_id():
+    a = Mongo("test", "people")
+    dic = {"_id": "takenid"}
+    a.delete_many(dic)
+    a.insert_one(dic)
+    proposed_id = "takenid"
+    assert a.proposed_id_to_good_id(proposed_id) == "takenid2"
 
-    dic = {"name": "Prof K", "company": "Rutgers", "interests": "Statistics"}
-    dic2 = {"name": "JohnnyV", "company": "Dirtbikes INC", "interests": "Math Prof"}
-    dic3 = {"name": "Dino", "company":"Unemployed"}
-    l = [dic2,dic3]
+    a.delete_many(dic)
+    assert a.proposed_id_to_good_id(proposed_id) == "takenid"
+    # the above ID is NO LONGER TAKEN
 
-    a = Mongo("test","people")
-    b = Users()
-    b.add_user("Theodore","lala123","sampleEmail@gmail.com")
-    print(b.validate_login("Theo","wrongpassword"))
-    print(b.validate_login("Theo","lala123"))
+    a.insert_one(dic)
+    a.insert_one({"_id": "takenid2"})
+    assert a.proposed_id_to_good_id(proposed_id) == "takenid3"
 
-    #print(a)
-    #print(a.address)
-    #a.single_insert_to_mongo(dic)
-    #a.list_insert_to_mongo(l)
-    #a.find_mongo({"_name":"vertex"})
-    #a.delete_from_mongo({"name":"Prof K"})
-
-"""

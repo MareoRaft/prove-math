@@ -195,8 +195,8 @@ ws.onopen = function() {
 	// if( is.nonEmptyString(requested_id) ){
 
 	// TEMP
-	// guestLogin()
-	// promptStartingNodes()
+	guestLogin()
+	promptStartingNodes()
 	// addNode()
 	// ws.jsend({ command: 'search', search_term: 'dual' })
 }
@@ -311,6 +311,11 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 			text: 'Your new goal is "' + goal.name + '"!!!!',
 		})
 	}
+	else if (ball.command === 'change-node-id') {
+		let old_id = ball.old_node_id
+		let new_id = ball.new_node_id
+		change_node_id(old_id, new_id)
+	}
 	else log('Unrecognized command '+ball.command+'.')
 }
 
@@ -325,9 +330,12 @@ $(document).on('add-links', function(Event) {
 $(document).on('request-node', function(Event) {
 	ws.jsend({command: 'request-node', node_id: Event.message})
 })
-$(document).on('save-node', function(){
+$(document).on('save-node', function(Event){
 	// console.log('sending dict: '+JSON.stringify(current_node.dict()))
-	ws.jsend({ command: 'save-node', node_dict: current_node.dict() })
+	let proposed_id = Event.message // this is undefined if no message exists
+	let is_new = def(proposed_id)
+	ws.jsend({ command: 'save-node', node_dict: current_node.dict(), is_new: is_new, proposed_id: proposed_id })
+	alert(proposed_id)
 })
 $(document).on('accept-goal', function(Event){
 	ws.jsend({ command: "set-goal", goal_id: Event.message })
@@ -593,13 +601,14 @@ function save_node(value, key, parent_object) {
 
 	if (!is.assigned(node.id)) die('No node id.')
 	if (node.id.startsWith(LOCAL_ID_PREFIX)) { // if it was a temp ID, update the id
-		let potential_id = reduce_string(node.name)
-		if (is.emptyString(potential_id)) {
+		let proposed_id = reduce_string(node.name)
+		if (is.emptyString(proposed_id)) {
 			// pass.  do not update id.  do not save node.
 			console.log('Cannot create a real ID yet.')
 		}
 		else {
-			change_node_id(node, potential_id)
+			// attempt to save to server.  Server will pick an ID
+			$.event.trigger({ type: 'save-node', message: proposed_id })
 		}
 	}
 
@@ -615,9 +624,7 @@ function save_node(value, key, parent_object) {
 	}
 }
 
-function change_node_id(node, new_id) {
-	let old_id = node.id
-
+function change_node_id(old_id, new_id) {
 	// update id in graph
 	if ( ! _.contains(graph.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
 	if ( _.contains(graph.nodeIdsList(), new_id) ) die('That id is already being used for another node!')
@@ -740,7 +747,7 @@ function promptStartingNodes() {
 	let subjects_clone = _.clone(subjects)
 	let last_subject = subjects_clone.pop()
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
-	// replyToStartingNodesPrompt('combinatorics'); return // DEVELOPMENT CONVENIENCE, TEMP
+	replyToStartingNodesPrompt('combinatorics'); return // DEVELOPMENT CONVENIENCE, TEMP
 	let subject = notify.success({
 		text: 'What subject would you like to learn? Type ' + subjects_string + '.',
 		prompt: {

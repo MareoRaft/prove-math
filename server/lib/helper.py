@@ -5,6 +5,24 @@ from itertools import chain
 from collections import OrderedDict
 from copy import deepcopy
 
+def increment_string_counter(string):
+	""" example input ==> output:
+		word ==> word2
+		word0 ==> word1
+		word1 ==> word2
+		word764 ==> word765
+	"""
+	match = re.match(r'^(.*?)(\d*)$', string)
+	if match is None:
+		raise ValueError('input string did not match regex')
+	head = match.group(1)
+	tail = match.group(2)
+	if tail == '':
+		tail = '1'
+	tail = str(int(tail) + 1)
+	new_string = head + tail
+	return new_string
+
 def move_attribute(dic, aliases, strict=True):
 	for key, value in dic.items():
 		if key in aliases:

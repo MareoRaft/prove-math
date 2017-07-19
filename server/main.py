@@ -229,7 +229,8 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'set-pref':
 			self.user.set_pref(ball['pref_dict'])
 
-		elif ball['command'] == 'save-node': # hopefully this can handle both new nodes and changes to nodes
+		elif ball['command'] == 'save-node': # handles both new nodes and changes to nodes
+			is_new = ball['is_new']
 			node_dict = ball['node_dict']
 			try:
 				node_obj = create_appropriate_node(node_dict)
@@ -245,22 +246,21 @@ class SocketHandler (WebSocketHandler):
 				log.debug('Now time to put node into the DB...\n')
 
 				# take a look at the dependencies now
-				log.debug('node.id: {}'.format(node_obj.id))
+				# log.debug('node.id: {}'.format(node_obj.id))
 				previous_node_dict = our_mongo.find_one({"_id": node_obj.id})
 				if previous_node_dict is None: # it must be a brand new node!
 					previous_dependency_ids = []
 				else:
-					log.debug('prev_node_dict: {}'.format(previous_node_dict))
+					# log.debug('prev_node_dict: {}'.format(previous_node_dict))
 					previous_node = create_appropriate_node(previous_node_dict)
-					log.debug('prev_node: {}'.format(previous_node))
+					# log.debug('prev_node: {}'.format(previous_node))
 					previous_dependency_ids = previous_node.dependency_ids
 
-				log.debug('prev deps are: '+str(previous_dependency_ids))
+				# log.debug('prev deps are: '+str(previous_dependency_ids))
 				current_dependency_ids = node_obj.dependency_ids
-				log.debug('curr deps are: '+str(current_dependency_ids))
+				# log.debug('curr deps are: '+str(current_dependency_ids))
 				new_dependency_ids = set(current_dependency_ids) - set(previous_dependency_ids)
 				removed_dependency_ids = set(previous_dependency_ids) - set(current_dependency_ids)
-
 
 				# VERIFY THAT THE GRAPH WITH THESE NEW ARCS IS STILL ACYCLIC:
 				H = our_MG.copy()
@@ -270,7 +270,24 @@ class SocketHandler (WebSocketHandler):
 					# print node_obj.attrs['name'].value + ' cannot depend on ' + our_MG.n(new_dependency_id).attrs['name'].value + ' because ' + our_MG.n(new_dependency_id).attrs['name'].value + ' already depends on ' + node_obj.attrs['name'].value + '!'
 					H.validate()
 
-				our_mongo.upsert({ "_id": node_obj.id }, node_obj.as_dict())
+				# add node to DB, changing the ID if necessary for a brand new node
+				if is_new:
+					old_JS_id = node_dict['_id']
+					print('OLDD')
+					print(old_JS_id)
+					proposed_id = ball['proposed_id']
+					good_id = our_mongo.proposed_id_to_good_id(proposed_id)
+					node_obj._id = good_id
+					our_mongo.insert_one({ "_id": node_obj.id }, node_obj.as_dict())
+					# tell client about new id
+					self.jsend({
+						'command': 'change-node-id',
+						'old_node_id': old_JS_id,
+						'new_node_id': node_obj.id,
+					})
+				else:
+					our_mongo.upsert({ "_id": node_obj.id }, node_obj.as_dict())
+
 				update_our_MG()
 
 				# send an update of the graph to the user if there are new dependencies:
@@ -435,7 +452,7 @@ def make_app_and_start_listening():
 
 def update_our_MG():
 	# 1. grab nodes and edges from database
-	all_node_dicts = list(Mongo("provemath", "nodes").find())
+	all_node_dicts = list(our_mongo.find())
 	# print('number of node dicts is: {}'.format(len(all_node_dicts)))
 
 	# 2. create a networkx graph with the info...

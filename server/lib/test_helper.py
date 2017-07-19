@@ -2,6 +2,12 @@ from collections import OrderedDict
 
 from lib.helper import *
 
+def test_increment_string_counter():
+	assert increment_string_counter('word') == 'word2'
+	assert increment_string_counter('word0') == 'word1'
+	assert increment_string_counter('word1') == 'word2'
+	assert increment_string_counter('word764') == 'word765'
+
 def test_json_import():
 	# TODO
 	pass
@@ -94,4 +100,3 @@ def test_reversed_dict():
 def test_DictToObject():
 	# TODO
 	pass
-
