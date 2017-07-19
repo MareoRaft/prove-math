@@ -98,8 +98,10 @@ class Node {
 		if ('_id' in object) {
 			return object['_id']
 		}
-		let id = LOCAL_ID_PREFIX + (local_node_id_counter++).toString()
-		return id
+		else{
+			let id = LOCAL_ID_PREFIX + (local_node_id_counter++).toString()
+			return id
+		}
 	}
 
 	nameAndId() {

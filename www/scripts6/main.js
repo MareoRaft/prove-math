@@ -128,56 +128,7 @@ let node_blinds = new Blinds({
 		// See https://github.com/MareoRaft/prove-math/issues/37 for info.
 		mathjax.Hub.Queue(['Typeset', mathjax.Hub, idToEdit])
 	},
-	read_mode_action: function(value, key, parent_object){
-		// retrieve the node
-		let node = undefined
-		if (is.instance(parent_object, Node)) {
-			node = parent_object
-		}
-		else { // parent_object is usually an array in this case
-			node = current_node
-		}
-
-		if (!is.assigned(node.id)) die('No node id.')
-		if (node.id.startsWith('Local-Node-ID-')) { // if it was a temp ID, update the id
-			let potential_id = reduce_string(node.name)
-			if (is.emptyString(potential_id)) {
-				// pass.  do not update id.  do not save node.
-				console.log('Cannot create a real ID yet.')
-			}
-			else {
-				let old_id = node.id
-				let new_id = potential_id
-
-				// update id in graph
-				if ( ! _.contains(graph.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
-				if ( _.contains(graph.nodeIdsList(), new_id) ) die('That id is already being used for another node!')
-				// update id key in graph
-				graph.nodes[new_id] = graph.nodes[old_id]
-				delete graph.nodes[old_id]
-
-				// update id in the node
-				node._id = new_id
-
-				// update id in the graph animation (but see below comment)
-				graphAnimation.update()
-
-				// but the problem is that the old id is still being used elsewhere in the program (like the graph animation).  We could force the user to give the node a name so that we update the ID BEFORE setting any dependencies.
-				// if any nodes depend on this node, we have a problem
-			}
-		}
-
-		// if the ID is not local, save it to the server (request-node will happen on the server side)
-		if (!node.id.startsWith('Local-Node-ID-')) {
-			$.event.trigger({ type: 'save-node' })
-		}
-
-		// update the node (close and reopen node-template) if internal things have changed
-		if( key === 'type' ){
-			node_blinds.close()
-			openNode(node.id)
-		}
-	},
+	read_mode_action: save_node,
 	transform_key: nodeKeyToDisplayKey,
 	blind_class_conditions: {
 		'node-attribute': true,
@@ -627,6 +578,57 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////// HELPERS /////////////////////////
+function save_node(value, key, parent_object) {
+	// retrieve the node
+	let node = undefined
+	if (is.instance(parent_object, Node)) {
+		node = parent_object
+	}
+	else { // parent_object is usually an array in this case
+		node = current_node
+	}
+
+	if (!is.assigned(node.id)) die('No node id.')
+	if (node.id.startsWith('Local-Node-ID-')) { // if it was a temp ID, update the id
+		let potential_id = reduce_string(node.name)
+		if (is.emptyString(potential_id)) {
+			// pass.  do not update id.  do not save node.
+			console.log('Cannot create a real ID yet.')
+		}
+		else {
+			let old_id = node.id
+			let new_id = potential_id
+
+			// update id in graph
+			if ( ! _.contains(graph.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
+			if ( _.contains(graph.nodeIdsList(), new_id) ) die('That id is already being used for another node!')
+			// update id key in graph
+			graph.nodes[new_id] = graph.nodes[old_id]
+			delete graph.nodes[old_id]
+
+			// update id in the node
+			node._id = new_id
+
+			// update id in the graph animation (but see below comment)
+			graphAnimation.update()
+
+			// but the problem is that the old id is still being used elsewhere in the program (like the graph animation).  We could force the user to give the node a name so that we update the ID BEFORE setting any dependencies.
+			// if any nodes depend on this node, we have a problem
+		}
+	}
+
+	// if the ID is not local, save it to the server (request-node will happen on the server side)
+	if (!node.id.startsWith('Local-Node-ID-')) {
+		$.event.trigger({ type: 'save-node' })
+	}
+
+	// update the node (close and reopen node-template) if internal things have changed
+	if( key === 'type' ){
+		node_blinds.close()
+		openNode(node.id)
+	}
+}
+
 // NOTE: the below function was found on https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript#6055620
 // Copies a string to the clipboard. Must be called from within an
 // event handler such as click. May return false if it failed, but
@@ -661,7 +663,7 @@ function updateSearchResultsWrapperMaxHeight() {
 	$('#search-results-wrapper').css('max-height', $(window).height() - 90)
 }
 
-function result_htmlified(node){
+function result_htmlified(node) {
 	let classNames = getClassesFromClassConditions(circleClassConditions, node)
 	let classString = classNames.join(' ')
 	return '<div class="preview-box">'
