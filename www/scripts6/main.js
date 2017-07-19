@@ -50,6 +50,9 @@ let circleClassConditions = {
 }
 
 ////////////////////// INITIALIZATION //////////////////////
+let LOCAL_ID_PREFIX = $('body').attr('data-local-id-prefix')
+window.LOCAL_ID_PREFIX = LOCAL_ID_PREFIX // for Node module.  could be passed in, but i'm lazy
+
 let subjects = JSON.parse($('body').attr('data-subjects'))
 let all_subjects = JSON.parse($('body').attr('data-all-subjects'))
 
@@ -589,36 +592,19 @@ function save_node(value, key, parent_object) {
 	}
 
 	if (!is.assigned(node.id)) die('No node id.')
-	if (node.id.startsWith('Local-Node-ID-')) { // if it was a temp ID, update the id
+	if (node.id.startsWith(LOCAL_ID_PREFIX)) { // if it was a temp ID, update the id
 		let potential_id = reduce_string(node.name)
 		if (is.emptyString(potential_id)) {
 			// pass.  do not update id.  do not save node.
 			console.log('Cannot create a real ID yet.')
 		}
 		else {
-			let old_id = node.id
-			let new_id = potential_id
-
-			// update id in graph
-			if ( ! _.contains(graph.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
-			if ( _.contains(graph.nodeIdsList(), new_id) ) die('That id is already being used for another node!')
-			// update id key in graph
-			graph.nodes[new_id] = graph.nodes[old_id]
-			delete graph.nodes[old_id]
-
-			// update id in the node
-			node._id = new_id
-
-			// update id in the graph animation (but see below comment)
-			graphAnimation.update()
-
-			// but the problem is that the old id is still being used elsewhere in the program (like the graph animation).  We could force the user to give the node a name so that we update the ID BEFORE setting any dependencies.
-			// if any nodes depend on this node, we have a problem
+			change_node_id(node, potential_id)
 		}
 	}
 
 	// if the ID is not local, save it to the server (request-node will happen on the server side)
-	if (!node.id.startsWith('Local-Node-ID-')) {
+	if (!node.id.startsWith(LOCAL_ID_PREFIX)) {
 		$.event.trigger({ type: 'save-node' })
 	}
 
@@ -627,6 +613,26 @@ function save_node(value, key, parent_object) {
 		node_blinds.close()
 		openNode(node.id)
 	}
+}
+
+function change_node_id(node, new_id) {
+	let old_id = node.id
+
+	// update id in graph
+	if ( ! _.contains(graph.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
+	if ( _.contains(graph.nodeIdsList(), new_id) ) die('That id is already being used for another node!')
+	// update id key in graph
+	graph.nodes[new_id] = graph.nodes[old_id]
+	delete graph.nodes[old_id]
+
+	// update id in the node
+	node._id = new_id
+
+	// update id in the graph animation (but see below comment)
+	graphAnimation.update()
+
+	// but the problem is that the old id is still being used elsewhere in the program (like the graph animation).  We could force the user to give the node a name so that we update the ID BEFORE setting any dependencies.
+	// if any nodes depend on this node, we have a problem
 }
 
 // NOTE: the below function was found on https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript#6055620

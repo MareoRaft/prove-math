@@ -1,8 +1,6 @@
 define(["underscore", "check-types", "profile", "user", "graph", "vanilla-notify"], function(_, is, undefined, user, graph, notify) {
 
 /////////////////////////////////// HELPERS ///////////////////////////////////
-let LOCAL_ID_PREFIX = 'Local-Node-ID-'
-
 let type_to_default_importance = {
 	'definition': 4,
 	'equivdefs': 5,

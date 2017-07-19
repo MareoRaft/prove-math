@@ -124,15 +124,14 @@ class IndexHandler(BaseHandler):
 
 			else:
 				pass # user not logged in
-
 		self.render("../www/index.html",
 					user_dict_json_string=json.dumps(user_dict),
 					host=self.request.host,
 					subjects=json.dumps(list(config.public_starting_node_keys)),
 					all_subjects=json.dumps(list(config.starting_nodes.keys())),
 					javascript_kickoff_file=config.javascript_kickoff_file,
-					requested_id=requested_id,
-					)
+					LOCAL_ID_PREFIX=config.LOCAL_ID_PREFIX,
+					requested_id=requested_id)
 
 
 class JSONHandler(BaseHandler):

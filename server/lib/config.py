@@ -1,5 +1,8 @@
 javascript_kickoff_file = 'config'
 
+# the prefix of new node ids created on the browser, before they get promoted to real/permanent ids
+LOCAL_ID_PREFIX = 'Local-Node-ID-'
+
 LINEAR_ALGEBRA = ['rank', 'a'] # soon: null space, row space, matrix, etc
 ABSTRACT_ALGEBRA = ['set', 'magma', 'composition']
 ABSTRACT_ALGEBRA_II = ['leftrmodule']
