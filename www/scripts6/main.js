@@ -335,7 +335,6 @@ $(document).on('save-node', function(Event){
 	let proposed_id = Event.message // this is undefined if no message exists
 	let is_new = def(proposed_id)
 	ws.jsend({ command: 'save-node', node_dict: current_node.dict(), is_new: is_new, proposed_id: proposed_id })
-	alert(proposed_id)
 })
 $(document).on('accept-goal', function(Event){
 	ws.jsend({ command: "set-goal", goal_id: Event.message })
@@ -628,8 +627,12 @@ function change_node_id(old_id, new_id) {
 	// update id in graph
 	if ( ! _.contains(graph.nodeIdsList(), old_id) ) die('That node isn\'t in the graph to begin with.')
 	if ( _.contains(graph.nodeIdsList(), new_id) ) die('That id is already being used for another node!')
+
+	// retrieve the node object
+	let node = graph.nodes[old_id]
+
 	// update id key in graph
-	graph.nodes[new_id] = graph.nodes[old_id]
+	graph.nodes[new_id] = node
 	delete graph.nodes[old_id]
 
 	// update id in the node

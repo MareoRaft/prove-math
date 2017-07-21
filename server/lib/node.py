@@ -20,7 +20,10 @@ def get_contents_of_dunderscores(string):
 	return list_contents[0]
 
 ######################## EXTERNAL HELPERS ########################
-def create_appropriate_node(dic):
+def create_appropriate_node(orig_dic):
+	# make a copy, so as not to destroy the original dictionary
+	dic = deepcopy(orig_dic)
+
 	# if there are underscored prefixed keys, clear them
 	strip_underscores(dic)
 

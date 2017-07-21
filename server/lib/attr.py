@@ -114,7 +114,7 @@ class Attr:
 
 		# Check type
 		if not is_cclass(new_in, self.cclass):
-			raise TypeError('Input value {} is not of class {}.  The Attr is {}.'.format(new_in, self.cclass, self))
+			raise TypeError('Input value {} is not of class {}.  The Attr is {}.'.format(new_in, type(self.cclass()), self))
 
 		# Clean any whitespace in strings
 		if self.cclass in ('list of content str', 'list of str'):

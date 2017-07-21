@@ -273,12 +273,10 @@ class SocketHandler (WebSocketHandler):
 				# add node to DB, changing the ID if necessary for a brand new node
 				if is_new:
 					old_JS_id = node_dict['_id']
-					print('OLDD')
-					print(old_JS_id)
 					proposed_id = ball['proposed_id']
 					good_id = our_mongo.proposed_id_to_good_id(proposed_id)
 					node_obj._id = good_id
-					our_mongo.insert_one({ "_id": node_obj.id }, node_obj.as_dict())
+					our_mongo.insert_one(node_obj.as_dict())
 					# tell client about new id
 					self.jsend({
 						'command': 'change-node-id',
@@ -286,7 +284,7 @@ class SocketHandler (WebSocketHandler):
 						'new_node_id': node_obj.id,
 					})
 				else:
-					our_mongo.upsert({ "_id": node_obj.id }, node_obj.as_dict())
+					our_mongo.replace_one({ "_id": node_obj.id }, node_obj.as_dict())
 
 				update_our_MG()
 

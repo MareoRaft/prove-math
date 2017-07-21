@@ -1,28 +1,21 @@
+""" See api.mongodb.com/python/current/api/pymongo/collection.html for documentation """
+
 # third party:
 import pymongo
 
 from lib.helper import increment_string_counter
-
-# from passlib.context import CryptContext
-# Set up a text index db.nodes.createIndex( { _id:"text", _plural:"text", _negation:"text", _description:"text" }, {weights:{ _id:10, _plural:5, _negation:5,_description:5}, name:"Provemath_Search_Index" } )
-#Search bar issues include blocking the way when node arises, back button issues, doesn't search all nodes?
 
 
 class Mongo:
 
 
     def __init__(self, database, collection):
-        self.address = pymongo.MongoClient("mongodb://localhost")
+        self.address = pymongo.MongoClient('mongodb://localhost')
         self.database = database
         self.collection = collection
-        # self.pass_hash = CryptContext(
-        #     schemes=[
-        #         "sha256_crypt",
-        #         "md5_crypt",
-        #         "des_crypt"])
 
     def __str__(self):
-        msg = "(address: %s, db: %s, collection: %s)" % (self.address, self.database, self.collection)
+        msg = '(address: {}, db: {}, collection: {})'.format(self.address, self.database, self.collection)
         return msg
 
     def __eq__(self, other):
@@ -60,6 +53,10 @@ class Mongo:
         # Will complain if you attempt to insert duplicates
         self.address[self.database][self.collection].insert_many(list_of_dicts)
 
+    def replace_one(self, query, replacement, **options):
+        self.address[self.database][self.collection].replace_one(query, replacement, **options)
+
+    # deprecated.  use replace_one(), update_one(), or update_many() instead.
     def update(self, query, update, options):
         self.address[self.database][self.collection].update(query, update, options)
 
