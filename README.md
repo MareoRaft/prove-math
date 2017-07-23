@@ -39,4 +39,4 @@ Credits
 
 Copyright 
 --------------
-© provemath.org 2017
+© provemath.org 2015
