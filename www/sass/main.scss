@@ -9,10 +9,10 @@
 //////////////////////////////////////// HELPERS ////////////////////////////////////////
 @function index-to-color($i, $alpha) {
 	$colors:
-		rgb( 60, 90, 153 ) // facebook
-		rgb( 221, 75, 57 ) // google
-		rgb( 24, 22, 22 ) // github
-		rgb( 0, 123, 181 ) // linkedin
+		$index-to-color_colors_oauth-provider_facebook
+		$index-to-color_colors_oauth-provider_google
+		$index-to-color_colors_oauth-provider_github
+		$index-to-color_colors_oauth-provider_linkedin
 	;
 	$color: nth($colors, $i);
 	@return rgba( $color, $alpha );
@@ -161,7 +161,7 @@ $circle-diameter: 60px;
 	@extend .hover-circle;
 	@extend .centered-text;
 	background-color: $hover-things_hover-circle-with-text_background-color;
-	color: white;
+	color: $hover-things_hover-circle-with-text_color;
 }
 #login-circle {
 	@extend .hover-circle-with-text;

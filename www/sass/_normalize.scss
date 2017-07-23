@@ -10,7 +10,7 @@ button {
 	border-radius: 5px;
 	background: $button_background-color;
 	// background-clip: padding-box; // no change
-	// box-shadow: 0 0 3px $button_box-shadow inset, 0 1px 1px $button_box-shadow_inset; // no change
+	box-shadow: 0 0 3px $button_box-shadow inset, 0 1px 1px $button_box-shadow_inset; // no change
 	// text-decoration: none; // no change
 	// white-space: nowrap; // no change
 	line-height: 20px;

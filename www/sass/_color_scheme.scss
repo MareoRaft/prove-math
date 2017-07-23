@@ -109,22 +109,21 @@ $blue: #0af;
 	/* font color of auto-complete drop-down options. For example, can be found within nodes when modifying node dependency data */
 	$tags_chosen-results_color: #444;
 	/* background color of auto-complete drop-down options. Note that hovering over the box changes the color */
-	// !!!!!!!!!!!!!!! CHANGE THIS TO A COLOR THAT IS MORE PLEASING TO THE EYE. ALSO CONVERT TO VARIABLES
 	$tags_chosen-results_background-color: white;// purple;
-		/* ??????? not sure what this controls -> does not impact already selected options from the dropdown */
-		$disabled-result: #ccc;
 
-		$highlighted_background-color: pink;
-
-		$highlighted_color: #fff;
-
-		$no-results_color: #777;
-
-		$no-results_background: red;
+		/* ??????? not sure what this controls -> does not impact already selected options from the dropdown.
+		 * Also does not appear to be connected to when only one node exists and therefore no potential dependencies exist.
+		 */
+		
+		$tags_chosen-results_li_disabled-result: cyan;
+		$tags_chosen-results_li_highlighted_background-color: cyan;
+		$tags_chosen-results_li_highlighted_color: cyan;
+		$tags_chosen-results_li_no-results_color: cyan;
+		$tags_chosen-results_li_no-results_background-color: red;
 
 	$tags_chosen-drop_background-color: yellow;
 
-	$tags_chosen-drop_result-selected_color: $grey;
+	$tags_chosen-drop_result-selected_color: cyan;
 
 
 
@@ -146,7 +145,7 @@ $blue: #0af;
 	/* optional background image of a tag (once a drop-down item is selected, the selected choice will appear as a tag in the search box) */
 	$chosen-container-multi_chosen-choices_li_search-choice_background-image: none;
 
-	/* background color of tags. */
+	/* background color of tags */
 	$chosen-container-multi_chosen-choices_li_search-choice_background-color: orange;
 
 	/* unused? reference is commented out at the bottom of _chosen_normalize.scss */
@@ -158,70 +157,80 @@ $blue: #0af;
 
 /* From _graph_animation.scss */
 
-	/* font color of links tied to _graph_animation, need to find this reference */
+	/* color of text-shadow of node text (i.e. every node has a name over top of the floating circle. Underneath this label is a text-shadow effect to increase visibility of the node's name */
+	$svg_text_text-shadow: white;
+
+	/* color of line between 2 connected nodes */
 	$svg_link_stroke: $lightestgrey;
 
-	/* unused? */
+	/* color of tiangle representing the tip of the arrow between 2 connecting nodes */
 	$svg_arrow-head_fill: $lightestgrey;
 
 /* From main.scss */
+	
+	/* These colors affect the colors of the buttons used for logging in. When a logo is hovered over or selected, the logo will invert, changing to the corresponding color below. */
+		/* for facebook login */
+		$index-to-color_colors_oauth-provider_facebook: rgb( 60, 90, 153 );
+		/* for google login */
+		$index-to-color_colors_oauth-provider_google: rgb( 221, 75, 57 );
+		/* for github login */
+		$index-to-color_colors_oauth-provider_github: rgb( 24, 22, 22 );
+		/* for linkedin login */
+		$index-to-color_colors_oauth-provider_linkedin: rgb( 0, 123, 181 );
 
 	/* when logging in and out, the background color of the page below the login buttons is controlled by a radial gradient that uses two colors: one for the center of the page and the transition color towards the edges of the page. */
-	/* color of the central color of the gradient */
-	$login_background_center_gradient: white;
-	/* color of the outside ring of the gradient */
-	$login_background_outer_gradient: transparent;
+		/* color of the central color of the gradient */
+		$login_background_center_gradient: white;
+		/* color of the outside ring of the gradient */
+		$login_background_outer_gradient: transparent;
 
-	/*  */
+	/* background color of the box anchored at the bottom of the login and node-web pages. Box contains info about prove-math project and copyright */
 	$hover-things_explanation_background-color: white;
 
-	/*  */
+	/* color of invisible forground window containing search box and anchored footer. A change to this color results in the whole window changing color and all functionality on the page becoming hidden*/
 	$hover-things_notify-overlay_background-color: transparent;
 
-	/*  */
-	$hover-things_hover-circle-with-text_background-color: black;
+	/* Circular node control buttons */
+		/* background color of the circles (i.e. "login", "start subject", "start goal", etc.) on the right hand side of the page relating to node control */
+		$hover-things_hover-circle-with-text_background-color: gray;
+		/* font color of node control circles */
+		$hover-things_hover-circle-with-text_color: white;
 
-	/*  */
-	$hover-things_invalid_border-color: $yellow; // soft red: rgba( 255, 51, 0, 0.9 )
+	/* border color surrounding all login logo buttons if 1 of the login logos is not selected and the user attempts to login */
+	$hover-things_invalid_border-color: $yellow;
 	
-	/*  */
-	$hover-things_search-border: $eggshell;
+	/* Search box colors */
+		/* border color of the floating search box in top left corner of the node-web page */
+		$hover-things_search-border: $eggshell;
+		/* background color of search box results */
+		$hover-things_preview-box_background-color: white;
+		/* background color of search box results while hovering over an individual result */
+		$hover-things_preview-box_hover_background-color: lightyellow;
+		/* color of thin line above each individual search result; used to visually separate search results */
+		$hover-things_preview-top-bar_border-top: $white;
 
-	/*  */
-	$hover-things_preview-box_background-color: white;
-
-	/*  */
-	$hover-things_preview-box_hover_background-color: lightyellow;
-
-	/*  */
-	$hover-things_preview-top-bar_border-top: $white;
-
-	/*  */
-	$hover-things_axiom-circle: $grey;
-
-	/*  */
-	$hover-things_definition-circle: $green;
-
-        /*  */
-	$hover-things_theorem-circle: blue;
-
-        /*  */
-	$hover-things_exercise-circle: $darkwhite;
+	/* colors of physical node circles appearing in search results and in the node-web. Currently, there are 4 different types of nodes and each has a different background color */
+		/* background color of "axiom" nodes */
+		$hover-things_axiom-circle: $white;
+		/* background color of "definition" nodes */
+		$hover-things_definition-circle: $green;
+	        /* background color of "theorem" nodes */
+		$hover-things_theorem-circle: blue;
+	        /* background color of "exercise" nodes */
+		$hover-things_exercise-circle: $darkwhite;
 
 
 /* From _normalize.scss */
 
-	/*  */
-	$button_background-color: linear-gradient(#ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
-
-	/* unused */
-	$button_box-shadow: white;
-
-	/* unused */
-	$button_box-shadow_inset: rgba(0, 0, 0, 0.1);
-
-	/*  */
-	$button_border: #aaa;
+	/* rectangular login button underneath the logo login buttons */
+		/* color of the rectangular login box */
+		$button_background-color: linear-gradient(#fff 20%, #f6f6f6 50%, #eee 52%, #f4f4f4 100%);
+		/* color of box shadow... when not transparent, produces a colored edge around this login box */
+		$button_box-shadow: transparent;
+		/* color of fine line at the bottom of the button, purely stylistic */
+		$button_box-shadow_inset: rgba(0, 0, 0, 0.1);
+		/* color of outermost outline of button */
+		$button_border: #aaa;
 	
 
 /* From _reset.scss */
@@ -234,11 +243,11 @@ $blue: #0af;
 
 /* From _variables.scss */
 
-	/*  */
+	/* POTENTIAL BUG: this color should be a blend color for the font color of node names in the node-web, but changing the color does not produce any noticeable effect in FireFox. The other properties (e.g. font-size) do change when the source document is changed. */
 	$font_color: $black;
 
-	/*  */
+	/* mix-in color for node circles in node-web (color of circular nodes in node-web are a blend of this color and the respective node-type color [e.g.  $hover-things_axiom-circle, hover-things_definition-circle, etc.]) */
 	$bright-and-unbright-bg-and-opacity_fill_mixer-color_1: gray;
 
-	/*  */
+	/* mix-in color for node circles in search results (type something in the top-left search bar and the circles that appear to the left of each search result have a blended color next to them. This color is the color blended with $hover-things_axiom-circle, hover-things_definition-circle, etc.) */
 	$bright-and-unbright-bg-and-opacity_background-color_mixer-color_1: gray;

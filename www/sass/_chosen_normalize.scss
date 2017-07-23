@@ -26,15 +26,15 @@
 	color: $chosen-container_chosen-results;
 	li {
 		&.disabled-result {
-			// color: #ccc;
+			// color: blue;
 		}
 		&.highlighted {
 			// background-image: none;
-			// background-color: pink;
+			// background-color: cyan;
 			// color: #fff;
 		}
 		&.no-results {
-			// color: #777;
+			// color: cyan;
 			// background: red;
 		}
 	}

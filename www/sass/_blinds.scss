@@ -136,16 +136,24 @@
 	background-color: $tags_chosen-results_background-color;
 	li {
 		&.disabled-result {
-			color: $disabled-result;
+			color: $tags_chosen-results_li_disabled-result;
 		}
 		&.highlighted {
 			// background-image: none;
-			background-color: $highlighted_background-color;
-			// color: $highlighted_color;
+			background-color: $tags_chosen-results_li_highlighted_background-color;
+			color: $tags_chosen-results_li_highlighted_color;
 		}
 		&.no-results {
-			color: $no-results_color;
-			background: $no-results_background;
+			color: $tags_chosen-results_li_no-results_color;
+
+
+// Check to see what this variable does
+
+			background: $tags_chosen-results_li_no-results_background-color;
+
+
+
+
 		}
 	}
 }
