@@ -108,29 +108,8 @@ let node_blinds = new Blinds({
 	expand_array: true,
 	collapse_array_keys: ['dependency_name_and_ids', 'synonyms', 'plurals'],
 	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependency_name_and_ids'], // but remember, expand_arrays always have an append key (this excludes dependencies)
-	render: function(string) {
-		if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
-		// run katex
-		// string = string.replace(/\$[^\$]*\$/g, katexRenderIfPossible)
-		// return string
-		// make all \ into \\ instead, so that they will be \ again when marked is done. This is for MathJax postrender compatability.
-		string = string.replace(/\\/g, '\\\\')
-		string = marked(string)
-
-		// unfortunately, it looks like these strings are encoded...
-		// change <img23> shortcuts to <img src="http://provemath.org/image/NUMBER.jpg"
-		// string = string.replace(/im&amp;g/g, 'HITHER')
-		// string = string.replace(/&lbrack;/g, 'left  ')
-		// string = string.replace(/&#91;/g, 'left  ')
-		string = string.replace(/img(\d+)/g, '<img src="image/$1.jpg" />') // this is maybe NOT a good markup choice, since it is an HTML tag
-		string = string.replace(/\\includegraphics\{(.*?)\}/g, '<img src="image/$1.jpg" />')
-
-		return string
-	},
-	post_render: function(idToEdit) {
-		// See https://github.com/MareoRaft/prove-math/issues/37 for info.
-		mathjax.Hub.Queue(['Typeset', mathjax.Hub, idToEdit])
-	},
+	render: render_content,
+	post_render: post_render_action,
 	read_mode_action: save_node,
 	transform_key: nodeKeyToDisplayKey,
 	blind_class_conditions: {
@@ -588,6 +567,31 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////// HELPERS /////////////////////////
+function render_content(string) {
+	if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
+	// run katex
+	// string = string.replace(/\$[^\$]*\$/g, katexRenderIfPossible)
+	// return string
+	// make all \ into \\ instead, so that they will be \ again when marked is done. This is for MathJax postrender compatability.
+	string = string.replace(/\\/g, '\\\\')
+	string = marked(string)
+
+	// unfortunately, it looks like these strings are encoded...
+	// change <img23> shortcuts to <img src="http://provemath.org/image/NUMBER.jpg"
+	// string = string.replace(/im&amp;g/g, 'HITHER')
+	// string = string.replace(/&lbrack;/g, 'left  ')
+	// string = string.replace(/&#91;/g, 'left  ')
+	string = string.replace(/img(\d+)/g, '<img src="image/$1.jpg" />') // this is maybe NOT a good markup choice, since it is an HTML tag
+	string = string.replace(/\\includegraphics\{(.*?)\}/g, '<img src="image/$1.jpg" />')
+
+	return string
+}
+
+function post_render_action(idToEdit) {
+	// See https://github.com/MareoRaft/prove-math/issues/37 for info.
+	mathjax.Hub.Queue(['Typeset', mathjax.Hub, idToEdit])
+}
+
 function save_node(value, key, parent_object) {
 	// retrieve the node
 	let node = undefined
