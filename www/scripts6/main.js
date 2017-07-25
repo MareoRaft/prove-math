@@ -567,6 +567,33 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////// HELPERS /////////////////////////
+function node_to_printable_html(node) { // arguably should be in node.js
+	// keys to display
+	let node_dict = node.dict()
+	let keys = ['type', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs']
+	let string = ''
+	for (let key of keys) {
+		if (!(key in node_dict['attrs'])) {
+			alert('skip')
+			continue
+		}
+		let value = node_dict['attrs'][key]['value']
+		string = string + '<h3>' + key + '</h3>'
+		string = string + value
+	}
+	string = render_content(string)
+	// post render?
+	return string
+}
+
+function print_node(node) {
+	let content = node_to_printable_html(node)
+	let win = window.open()
+	win.document.write(content)
+	// win.print()
+}
+window.print_node = print_node
+
 function render_content(string) {
 	if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
 	// run katex
