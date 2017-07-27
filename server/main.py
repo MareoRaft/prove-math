@@ -4,6 +4,8 @@ import sys
 import json
 from warnings import warn
 import pdb
+import inspect
+import traceback
 
 from tornado.ioloop import IOLoop
 from tornado.web import url  # constructs a URLSpec for you
@@ -27,8 +29,8 @@ from lib.math_graph import MathGraph
 from lib import user
 from lib.score import ScoreCard
 from lib import auth
-import inspect
-import traceback
+from lib.curriculum import Curriculum
+
 # this and relevant code should eventually be migrated into auth module
 import xml.etree.ElementTree as ET
 
@@ -132,6 +134,26 @@ class IndexHandler(BaseHandler):
 					javascript_kickoff_file=config.javascript_kickoff_file,
 					LOCAL_ID_PREFIX=config.LOCAL_ID_PREFIX,
 					requested_id=requested_id)
+
+
+class PrintableContentHandler(BaseHandler):
+
+
+	def get(self):
+		requested_curriculum_id = self.get_argument('curriculumid', default=None, strip=True)
+		requested_node_id = self.get_argument('nodeid', default=None, strip=True)
+		if requested_curriculum_id is not None:
+			curriculum = Curriculum(retrieve=True, wanted_id=requested_curriculum_id)
+			content = curriculum.as_printable_html()
+			self.render('../www/printable-content.html',
+						content=content)
+		elif requested_node_id is not None:
+			node = our_MG.n(requested_node_id)
+			content = node.as_printable_html()
+			self.render('../www/printable-content.html',
+						content=content)
+		else:
+			raise Exception('no node or curriculum specified')
 
 
 class JSONHandler(BaseHandler):
@@ -433,6 +455,7 @@ def make_app():
 			url(r'(?:/(?:index(?:\.htm(?:l)?)?)?)?', IndexHandler, name="indexh"),
 			url(r'/websocket', SocketHandler),
 			url(r'/json', JSONHandler, name="jsonh"),
+			url(r'/print', PrintableContentHandler, name="printh"),
 			url(r'/docs(?:\.htm(?:l)?)?', RedirectHandler, {"url": "docs/index.html"}, name='docsh'),
 			url(r'/docs/(.*)', StaticHandler, {"path": "../docs/build/html/"}),
 			url(r'/image/(.*)', StaticHandler, {"path": "../server/data/graph-theory-images/"}), # ON THE OTHER HAND, images (plural) refers to the folder www/images

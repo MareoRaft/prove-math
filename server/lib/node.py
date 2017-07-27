@@ -155,6 +155,24 @@ class Node(Votable):
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
+	def as_printable_html(self):
+		# keys to display
+		# 'type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'negation', 'proofs', 'importance'
+		keys = ['type', 'name', 'description', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs']
+		string = ''
+		string += '$\\begingroup$' # start scope
+		for key in keys:
+			if key not in self.as_dict()['attrs']:
+				pass
+			else:
+				attr = self.attrs[key]
+				attr_as_html = attr.as_printable_html()
+				string = string + attr_as_html
+		string += '$\\endgroup$' # end scope
+		# string = render_content_func(string)
+		# post render?
+		return string
+
 
 class Definition(Node):
 

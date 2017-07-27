@@ -49,41 +49,6 @@ let circleClassConditions = {
 	'exercise-circle': node => node.type === 'exercise',
 }
 
-function wrap_content_in_html(content) {
-	return String.raw`
-	<!DOCTYPE html>
-	<html>
-	<head>
-		<meta charset='UTF-8'>
-		<title>printable content</title>
-		<!-- see http://docs.mathjax.org/en/latest/configuration.html -->
-		<script type="text/javascript">
-			window.MathJax = {
-				TeX: {
-					extensions: ["begingroup.js"],
-				},
-				tex2jax: {
-					inlineMath: [['$','$'], ['\\(','\\)']],
-					processEscapes: true, // this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
-				},
-			};
-		</script>
-		<script type="text/javascript"
-			src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML">
-		</script>
-		<style>
-			body {
-				font: 300 normal 17px Helvetica, Tahoma, Arial, sans-serif;
-			}
-		</style>
-	</head>
-	<body>
-		<div id='content-id'>${content}</div>
-	</body>
-	</html>
-	`
-}
-
 function print_node(node, render_content_func) {
 	let content = node.as_printable_html(render_content_func)
 	let wrapped_content = wrap_content_in_html(content)

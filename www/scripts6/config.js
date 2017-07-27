@@ -23,7 +23,7 @@ require.config({
 		mathjax: [
 			"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured",
 			// "https://cdn.jsdelivr.net/mathjax/2.1/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured", // no longer works.  don't know why.
-			// "mathjax-min-2.7.0.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured", // we also placed MathMenu and MathZoom in the extensions folder, since mathjax depends on these. // no longer working. don't know why.
+			"mathjax-min-2.7.0.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured", // we also placed MathMenu and MathZoom in the extensions folder, since mathjax depends on these. // no longer working. don't know why.
 		],
 		marked: [
 			"marked",

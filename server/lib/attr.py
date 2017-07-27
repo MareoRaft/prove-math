@@ -144,3 +144,21 @@ class Attr:
 	def __str__(self):
 		return 'Attr{}'.format(self.as_dict())
 
+	def as_printable_html(self):
+		string = ''
+		string = string + '<h4>' + self.name + '</h4>'
+		# ALLOWED_TYPES = [str, int, 'list of content str', 'list of str', 'list of dict']
+		if self.cclass == str:
+			string = string + self.value
+		elif self.cclass == int:
+			string = string + str(self.value)
+		else:
+			values = self.value
+			for value in values:
+				if self.cclass == 'list of content str':
+					string = string + value
+				elif self.cclass == 'list of str':
+					string = string + value
+				elif self.cclass == 'list of dict':
+					string = string + str(value)
+		return string
