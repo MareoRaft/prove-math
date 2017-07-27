@@ -396,18 +396,6 @@ class Node {
 		return string
 	}
 
-	print(render_content_func, post_render_func) {
-		let content = this.as_printable_html(render_content_func)
-		let win = window.open()
-		win.document.write(content)
-		// below needs to run IN WINDOW
-		post_render_func()
-		// need font CSS
-		// win.print()
-		// win.close()
-	}
-
-
 }
 
 return Node

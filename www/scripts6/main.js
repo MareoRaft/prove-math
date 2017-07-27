@@ -49,6 +49,57 @@ let circleClassConditions = {
 	'exercise-circle': node => node.type === 'exercise',
 }
 
+function wrap_content_in_html(content) {
+	return String.raw`
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset='UTF-8'>
+		<title>printable content</title>
+		<!-- see http://docs.mathjax.org/en/latest/configuration.html -->
+		<script type="text/javascript">
+			window.MathJax = {
+				TeX: {
+					extensions: ["begingroup.js"],
+				},
+				tex2jax: {
+					inlineMath: [['$','$'], ['\\(','\\)']],
+					processEscapes: true, // this causes \$ to output as $ outside of latex (as well as \\ to \, and maybe more...)
+				},
+			};
+		</script>
+		<script type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML">
+		</script>
+		<style>
+			body {
+				font: 300 normal 17px Helvetica, Tahoma, Arial, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<div id='content-id'>${content}</div>
+	</body>
+	</html>
+	`
+}
+
+function print_node(node, render_content_func) {
+	let content = node.as_printable_html(render_content_func)
+	let wrapped_content = wrap_content_in_html(content)
+	let win = window.open()
+	win.document.write(wrapped_content)
+	let more = `<script type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML">
+		</script>`
+	win.document.write(more)
+	let more2 = `<script type="text/javascript">window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, 'content-id'])</script>`
+	win.document.write(more2)
+
+	// win.print()
+	// win.close()
+}
+
 ////////////////////// INITIALIZATION //////////////////////
 let LOCAL_ID_PREFIX = $('body').attr('data-local-id-prefix')
 window.LOCAL_ID_PREFIX = LOCAL_ID_PREFIX // for Node module.  could be passed in, but i'm lazy
@@ -154,7 +205,7 @@ $('#get-link').click(function(){
 	})
 })
 $('#print').click(function(){
-	current_node.print(render_content, post_render_action)
+	print_node(current_node, render_content)
 })
 
 
