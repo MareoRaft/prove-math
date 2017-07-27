@@ -374,6 +374,40 @@ class Node {
 				die('Unrecognized display_name_capitalization preference value "'+user.prefs.display_name_capitalization+'".')
 		}
 	}
+
+	as_printable_html(render_content_func) {
+		let node_dict = this.dict()
+		// keys to display
+		// 'type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'negation', 'proofs', 'importance'
+		let keys = ['type', 'name', 'description', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs']
+		let string = ''
+		string += '$\\begingroup$' // start scope
+		for (let key of keys) {
+			if (!(key in node_dict['attrs'])) {
+				continue
+			}
+			let value = node_dict['attrs'][key]['value']
+			string = string + '<h4>' + key + '</h4>'
+			string = string + value
+		}
+		string += '$\\endgroup$' // end scope
+		string = render_content_func(string)
+		// post render?
+		return string
+	}
+
+	print(render_content_func, post_render_func) {
+		let content = this.as_printable_html(render_content_func)
+		let win = window.open()
+		win.document.write(content)
+		// below needs to run IN WINDOW
+		post_render_func()
+		// need font CSS
+		// win.print()
+		// win.close()
+	}
+
+
 }
 
 return Node
