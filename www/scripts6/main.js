@@ -154,7 +154,7 @@ $('#get-link').click(function(){
 	})
 })
 $('#print').click(function(){
-	print_node(current_node, render_content)
+	print_node(current_node)
 })
 
 
@@ -573,8 +573,9 @@ function toggleToGraphAnimation() {
 function print_node(node) {
 	let url = "print"+"?nodeid="+node.id // the url is relative
 	let win = window.open(url)
-	win.print()
-	win.close()
+	// the following is no good because it sometimes gets called before mathjax finishes its job.  mathjax runs async, so it's a race issue
+	// win.print()
+	// win.close()
 }
 
 function render_content(string) {
