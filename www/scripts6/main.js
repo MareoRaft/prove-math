@@ -217,7 +217,7 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		})
 
 		// TEMP
-		openNode('factorial')
+		// openNode('factorial')
 		// ws.jsend({command: 'get-goal-suggestion'})
 	}
 	else if( ball.command === 'remove-edges' ) {

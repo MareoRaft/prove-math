@@ -7,7 +7,7 @@ from copy import deepcopy
 
 def render_content(string):
 	""" see main.js for the original version of this function """
-	assert type(string) == str
+	assert isinstance(string, str)
 	string = re.sub(r'\\', '\\\\', string) # g (global) is default
 	# run marked server-side
 	# string = marked(string)

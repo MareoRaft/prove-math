@@ -3,6 +3,7 @@ from copy import deepcopy
 from lib.mongo import Mongo
 from lib import helper
 from lib.vote import Votable
+from lib.node import create_appropriate_node
 
 ############################ HELPERS ############################
 NODES = Mongo("provemath", "nodes")
@@ -26,7 +27,7 @@ def get_all_curriculum_ids():
 class Curriculum(Votable):
 
 
-	def __init__(self, node_ids, name=None, retrieve=False, wanted_id=None):
+	def __init__(self, node_ids=None, name=None, retrieve=False, wanted_id=None):
 		"""
 		If retrieve is True, it will look for the curriculum by id in the DB.  if it exists, create the object.  Otherwise, fail.
 		"""
@@ -94,7 +95,8 @@ class Curriculum(Votable):
 	def as_printable_html(self):
 		string = ''
 		for node_id in self.node_ids:
-			node = NODES.find_one({"_id": node_id})
+			node_dict = NODES.find_one({"_id": node_id})
+			node = create_appropriate_node(node_dict)
 			string = string + node.as_printable_html()
 		return string
 

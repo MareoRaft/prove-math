@@ -144,22 +144,38 @@ class Attr:
 	def __str__(self):
 		return 'Attr{}'.format(self.as_dict())
 
-	def as_printable_html(self):
+	def as_printable_html(self, display_large_name=False):
 		string = ''
+
+		# check for stupid blank stuff
+		if self.value == '':
+			return string
+		elif self.value == ['']:
+			return string
+
+		# make the name a big title
+		if display_large_name:
+			if self.name == 'name':
+				string = string + '<h2>' + self.value + '</h2>'
+				return string
+
+		# move onto real stuff
 		string = string + '<h4>' + self.name + '</h4>'
-		# ALLOWED_TYPES = [str, int, 'list of content str', 'list of str', 'list of dict']
 		if self.cclass == str:
 			string = string + self.value
 		elif self.cclass == int:
 			string = string + str(self.value)
 		else:
 			values = self.value
-			for value in values:
+			for index, value in enumerate(values):
+				number = index + 1
+				string = string + '{}. '.format(number)
 				if self.cclass == 'list of content str':
 					string = string + value
 				elif self.cclass == 'list of str':
 					string = string + value
 				elif self.cclass == 'list of dict':
 					string = string + str(value)
+				string = string + '<br />'
 		string = render_content(string)
 		return string

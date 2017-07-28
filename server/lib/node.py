@@ -166,7 +166,7 @@ class Node(Votable):
 				pass
 			else:
 				attr = self.attrs[key]
-				attr_as_html = attr.as_printable_html()
+				attr_as_html = attr.as_printable_html(display_large_name=True)
 				string = string + attr_as_html
 		string += '$\\endgroup$' # end scope
 		# string = render_content_func(string)

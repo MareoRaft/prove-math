@@ -79,3 +79,7 @@ def test_store():
 	# DELETE the guy you just made, so as not to clutter the DB
 	CURRICULUMS.delete_one({"_id": c.id})
 
+# TMP
+# ids = ["ifkandfarefieldswesaythatkfisafieldextensioniffisasubfieldofk", "charf", "inseparableextension", "charofdomain", "finchar0issep", "fpremark", "charofr", "616rmks", "corto635", "minpolyrootminpoly", "primesubring", "finiteext", "minimalpolypartition", "transcendentalcor", "algebaric", "charidp", "fielddegs", "minpolythm2", "fielddegree", "algebraicfieldextension", "primesubfieldqorzp", "minimalpoly", "primesubfield", "ifkfisafieldextensionthendivbrdivdivaifkfisfinitethenitsalsoalgebraicdivdivbrdivdivbifkfalpha1alphamwithallalphaiinkandalgebraicoverfthenkfisfinitediv", "characterizationprimesubfield", "finitefieldextension", "fieldordersandchars", "minpolythm1"]
+# c = Curriculum(ids)
+# c.store()
