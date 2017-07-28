@@ -38,9 +38,9 @@ class Curriculum(Votable):
 			if wanted_id not in curriculum_ids:
 				raise ValueError('That curriculum_id doesn\'t exist in the database!')
 			curriculum_dict = CURRICULUMS.find_one({"_id": wanted_id})
-			self.name = curriculum_dict['name']
+			self.name = curriculum_dict['_name']
 			self._id = curriculum_dict['_id'] # bypass setter, since we already know it's right
-			self.node_ids = curriculum_dict['node_ids']
+			self.node_ids = curriculum_dict['_node_ids']
 		else:
 			# create new Curriculum and store in DB
 			self.name = name
@@ -77,7 +77,7 @@ class Curriculum(Votable):
 			raise ValueError('A {} needs a NONEMPTY list of node ids.'.format(type(self).__name__))
 		# verify that each node id actually exists
 		for node_id in node_ids:
-			next(self.NODES.find({"_id": node_id}))
+			next(NODES.find({"_id": node_id}))
 			# the above should error if no node exists, so we have verified that the id exists
 		# TODO: verify that node_ids follow LOGICAL order?
 		self._node_ids = node_ids

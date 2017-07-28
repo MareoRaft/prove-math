@@ -5,6 +5,17 @@ from itertools import chain
 from collections import OrderedDict
 from copy import deepcopy
 
+def render_content(string):
+	""" see main.js for the original version of this function """
+	assert type(string) == str
+	string = re.sub(r'\\', '\\\\', string) # g (global) is default
+	# run marked server-side
+	# string = marked(string)
+	# TODO
+	string = re.sub(r'img(\d+)', '<img src="image/$1.jpg" />', string)
+	string = re.sub(r'\\includegraphics\{(.*?)\}', '<img src="image/$1.jpg" />', string)
+	return string
+
 def increment_string_counter(string):
 	""" example input ==> output:
 		word ==> word2

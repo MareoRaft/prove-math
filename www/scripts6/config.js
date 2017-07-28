@@ -27,7 +27,7 @@ require.config({
 		],
 		marked: [
 			"marked",
-			"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min",
+			"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js",
 			"https://cdn.jsdelivr.net/marked/0.3.5/marked.min"
 		],
 		mousetrap: [

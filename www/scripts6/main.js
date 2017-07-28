@@ -49,22 +49,6 @@ let circleClassConditions = {
 	'exercise-circle': node => node.type === 'exercise',
 }
 
-function print_node(node, render_content_func) {
-	let content = node.as_printable_html(render_content_func)
-	let wrapped_content = wrap_content_in_html(content)
-	let win = window.open()
-	win.document.write(wrapped_content)
-	let more = `<script type="text/javascript"
-			src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML">
-		</script>`
-	win.document.write(more)
-	let more2 = `<script type="text/javascript">window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, 'content-id'])</script>`
-	win.document.write(more2)
-
-	// win.print()
-	// win.close()
-}
-
 ////////////////////// INITIALIZATION //////////////////////
 let LOCAL_ID_PREFIX = $('body').attr('data-local-id-prefix')
 window.LOCAL_ID_PREFIX = LOCAL_ID_PREFIX // for Node module.  could be passed in, but i'm lazy
@@ -586,6 +570,13 @@ function toggleToGraphAnimation() {
 }
 
 ////////////////////////// HELPERS /////////////////////////
+function print_node(node) {
+	let url = "print"+"?nodeid="+node.id // the url is relative
+	let win = window.open(url)
+	win.print()
+	win.close()
+}
+
 function render_content(string) {
 	if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
 	// run katex

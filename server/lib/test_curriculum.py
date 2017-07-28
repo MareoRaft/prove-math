@@ -20,12 +20,12 @@ def test_init():
 	# VERTEX and ONEDGESONVERTICES must be in the nodes collection of the provemath database on your local mongo for this to work!
 	ids = ["vertex"]
 	c = Curriculum(ids) # this errors if vertex is not in the DB, which it should.
-	assert c.ids == ["vertex"]
+	assert c.node_ids == ["vertex"]
 
 	# multiple element list
 	ids = ["vertex", "onedgesonvertices"]
 	c = Curriculum(ids)
-	assert c.ids == ["vertex", "onedgesonvertices"]
+	assert c.node_ids == ["vertex", "onedgesonvertices"]
 
 	# a nonexistent id should fail
 	with pytest.raises(StopIteration):
@@ -53,8 +53,8 @@ def test_as_dict():
 	c = Curriculum(ids)
 	assert c.as_dict() == {
 		"_id": c.id,
-		"_ids": ["vertex"],
-		"_name": None
+		"_node_ids": ["vertex"],
+		"_name": None,
 	}
 
 	# complex dict
@@ -62,7 +62,7 @@ def test_as_dict():
 	c = Curriculum(ids, "Graph Theory")
 	assert c.as_dict() == {
 		"_id": c.id,
-		"_ids": ["vertex", "onedgesonvertices"],
+		"_node_ids": ["vertex", "onedgesonvertices"],
 		"_name": "Graph Theory",
 	}
 

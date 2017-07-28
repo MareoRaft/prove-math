@@ -1,7 +1,7 @@
 import re
 from copy import deepcopy
 
-from lib import helper
+from lib.helper import render_content
 from lib.config import ERR
 from lib.score import ScoreCard
 from lib.decorate import read_only
@@ -161,4 +161,5 @@ class Attr:
 					string = string + value
 				elif self.cclass == 'list of dict':
 					string = string + str(value)
+		string = render_content(string)
 		return string
