@@ -144,7 +144,7 @@ class Attr:
 	def __str__(self):
 		return 'Attr{}'.format(self.as_dict())
 
-	def as_printable_html(self, display_large_name=False):
+	def as_printable_html(self, display_large_name=True):
 		string = ''
 
 		# check for stupid blank stuff

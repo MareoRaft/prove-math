@@ -155,7 +155,7 @@ class Node(Votable):
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
-	def as_printable_html(self):
+	def as_printable_html(self, display_node_type_in_description=True):
 		# keys to display
 		# 'type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'negation', 'proofs', 'importance'
 		keys = ['type', 'name', 'description', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs']
@@ -166,7 +166,12 @@ class Node(Votable):
 				pass
 			else:
 				attr = self.attrs[key]
-				attr_as_html = attr.as_printable_html(display_large_name=True)
+				attr_as_html = attr.as_printable_html()
+				# make the 'description' say the node type
+				if display_node_type_in_description:
+					if key == 'description':
+						node_type = self.type
+						attr_as_html = re.sub(r'description', node_type, attr_as_html, count=1)
 				string = string + attr_as_html
 		string += '$\\endgroup$' # end scope
 		# string = render_content_func(string)
