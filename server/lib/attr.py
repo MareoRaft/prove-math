@@ -144,7 +144,7 @@ class Attr:
 	def __str__(self):
 		return 'Attr{}'.format(self.as_dict())
 
-	def as_printable_html(self, display_large_name=True):
+	def as_printable_html(self, display_large_name=True, display_number_small=True):
 		string = ''
 
 		# check for stupid blank stuff
@@ -156,11 +156,17 @@ class Attr:
 		# make the name a big title
 		if display_large_name:
 			if self.name == 'name':
-				string = string + '<h2>' + self.value + '</h2>'
+				string = string + '<h2>{}</h2>'.format(self.value)
+				return string
+
+		# make the number small
+		if display_number_small:
+			if self.name == 'number':
+				string = string + '<span class="number"># {}</span>'.format(self.value)
 				return string
 
 		# move onto real stuff
-		string = string + '<h4>' + self.name + '</h4>'
+		string = string + '<h4>{}</h4>'.format(self.name)
 		if self.cclass == str:
 			string = string + self.value
 		elif self.cclass == int:
