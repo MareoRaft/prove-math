@@ -335,6 +335,9 @@ class Node {
 	}
 
 	get display_name() {
+		if( user.prefs.display_id_instead_of_name ){
+			return this.id
+		}
 		if( user.prefs.display_number_instead_of_name && is.nonEmptyString(this.number) ){
 			return this.number
 		}

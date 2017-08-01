@@ -462,6 +462,11 @@ mousetrap.bind(user.prefs.toggle_name_display_keycut, function(){
 	graphAnimation.update()
 	return false
 })
+mousetrap.bind('ctrl+i', function(){
+	user.prefs.display_id_instead_of_name = !user.prefs.display_id_instead_of_name
+	graphAnimation.update()
+	return false
+})
 $('#avatar').click(push_pull_drawer)
 $('#get-starting-nodes').click(promptStartingNodes)
 mousetrap.bind(user.prefs.start_subject_keycut, function(){
