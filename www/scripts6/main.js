@@ -177,8 +177,8 @@ ws.onopen = function() {
 	// if( is.nonEmptyString(requested_id) ){
 
 	// TEMP
-	guestLogin()
-	promptStartingNodes()
+	// guestLogin()
+	// promptStartingNodes()
 	// addNode()
 	// ws.jsend({ command: 'search', search_term: 'dual' })
 }
@@ -773,7 +773,7 @@ function promptStartingNodes() {
 	let subjects_clone = _.clone(subjects)
 	let last_subject = subjects_clone.pop()
 	let subjects_string = '"' + subjects_clone.join('", "') + '"' + ', or "' + last_subject + '"'
-	replyToStartingNodesPrompt('combinatorics'); return // DEVELOPMENT CONVENIENCE, TEMP
+	// replyToStartingNodesPrompt('combinatorics'); return // DEVELOPMENT CONVENIENCE, TEMP
 	let subject = notify.success({
 		text: 'What subject would you like to learn? Type ' + subjects_string + '.',
 		prompt: {
