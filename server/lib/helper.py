@@ -5,7 +5,7 @@ from itertools import chain
 from collections import OrderedDict
 from copy import deepcopy
 
-import markdown2
+from lib import markdown2
 
 def render_content(string):
 	""" see main.js for the original version of this function """
@@ -13,7 +13,7 @@ def render_content(string):
 	string = re.sub(r'\\', '\\\\', string) # g (global) is default
 
 	# run markdown server-side
-	string = markdown2.markdown(string)
+	string = markdown2.markdown(string, extras=["code-friendly", "underline"])
 	string = string.strip()
 
 	# enable images
