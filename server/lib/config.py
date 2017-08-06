@@ -1,3 +1,11 @@
+from os import path
+import sys
+
+BASE_DIR = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
+sys.path.insert(0, BASE_DIR)
+SERVER_DIR = path.join(BASE_DIR, 'server')
+LIB_DIR = path.join(SERVER_DIR, 'lib')
+
 javascript_kickoff_file = 'config'
 
 # the prefix of new node ids created on the browser, before they get promoted to real/permanent ids

@@ -100,3 +100,15 @@ def test_reversed_dict():
 def test_DictToObject():
 	# TODO
 	pass
+
+def test_render_content():
+	content = 'hi *there*'
+	correct_rendered_content = '<p>hi <em>there</em></p>'
+	assert render_content(content) == correct_rendered_content
+
+	content = '__underline__, *italic*, **bold**, _nothing_, and a <span>span</span>.'
+	correct_rendered_content = '<p><u>underline</u>, <em>italic</em>, <strong>bold</strong>, _nothing_, and a <span>span</span>.</p>'
+	assert render_content(content) == correct_rendered_content
+
+
+

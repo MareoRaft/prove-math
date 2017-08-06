@@ -132,3 +132,7 @@ Is there a way to EDIT what appears in the URL of a browser using JavaScript?  (
 
 
 codeanywhere seems to work pretty well at this point.  This may be easier than using a VM in future scenarios.  There may even be container replication (but I haven't looked into it).  The downside, of course, is that one needs internet connection in order to work.
+
+86.  This library apparently extends markdown for use with mathjax.  this may be better than what we do manually now:
+https://pypi.python.org/pypi/markdown2Mathjax/0.3.8
+
