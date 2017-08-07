@@ -110,5 +110,17 @@ def test_render_content():
 	correct_rendered_content = '<p><u>underline</u>, <em>italic</em>, <strong>bold</strong>, _nothing_, and a <span>span</span>.</p>'
 	assert render_content(content) == correct_rendered_content
 
+	content = '\\['
+	correct_rendered_content = '<p>\\[</p>'
+	assert render_content(content) == correct_rendered_content
+
+	content = '''
+\\[this is display math\\]
+$$this is display math$$'''
+	correct_rendered_content = '''<p>\\[this is display math\\]
+$$this is display math$$</p>'''
+	assert render_content(content) == correct_rendered_content
+
+
 
 

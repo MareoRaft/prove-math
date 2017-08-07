@@ -1,11 +1,14 @@
 import re
 import random
 import json
+import tempfile
+import subprocess
+from os import path
 from itertools import chain
 from collections import OrderedDict
 from copy import deepcopy
 
-from lib import markdown2
+from lib.config import LIB_DIR
 
 def render_content(string):
 	""" see main.js for the original version of this function """
@@ -13,7 +16,15 @@ def render_content(string):
 	string = re.sub(r'\\', '\\\\', string) # g (global) is default
 
 	# run markdown server-side
-	string = markdown2.markdown(string, extras=["code-friendly", "underline"])
+	tfile = tempfile.NamedTemporaryFile(mode='w+', suffix='.txt', prefix='prove-math-')
+	tfile.write(string)
+	tfile.flush()
+	fpath = tfile.name
+	markdown_path = path.join(LIB_DIR, 'Markdown.pl')
+	command = [markdown_path, fpath]
+	completed_process = subprocess.run(command, check=True, stdout=subprocess.PIPE)
+	tfile.close()
+	string = completed_process.stdout.decode()
 	string = string.strip()
 
 	# enable images
