@@ -263,7 +263,7 @@ class SocketHandler (WebSocketHandler):
 				if not isinstance(sc, ScoreCard):
 					raise TypeError('sc is not a ScoreCard.')
 				if not sc.is_passing():
-					raise Exception('Your score is {}.  Your strikes are: {}'.format(sc.total_score(), sc.as_dict()))
+					raise Exception('Node not worthy to be saved.  Your score is {}.  Your strikes are: {}'.format(sc.total_score(), sc.as_dict()))
 
 				log.debug('Now time to put node into the DB...\n')
 
