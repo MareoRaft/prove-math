@@ -1,36 +1,25 @@
 import re
 import random
 import json
-import tempfile
-import subprocess
-from os import path
 from itertools import chain
 from collections import OrderedDict
 from copy import deepcopy
 
-from lib.config import LIB_DIR
+from lib import markdown2
 
 def render_content(string):
 	""" see main.js for the original version of this function """
 	assert isinstance(string, str)
 	string = re.sub(r'\\', '\\\\', string) # g (global) is default
 
-	# protect \[ and \]
+	# protect \[ and \] from markdown
 	SLOSH_BRACKET_OPEN_STRING = r'Slosh-Bracket-Open-ry087qt3briuynpr98yn2p83ynriynr723nyr7ny2o3rn2083ry'
 	SLOSH_BRACKET_CLOSE_STRING = r'Slosh-Bracket-Close-ry087qt3briuynpr98yn2p83ynriynr723nyr7ny2o3rn2083ry'
 	string = re.sub(r'\\\[', SLOSH_BRACKET_OPEN_STRING, string)
 	string = re.sub(r'\\\]', SLOSH_BRACKET_CLOSE_STRING, string)
 
 	# run markdown server-side
-	tfile = tempfile.NamedTemporaryFile(mode='w+', suffix='.txt', prefix='prove-math-')
-	tfile.write(string)
-	tfile.flush()
-	fpath = tfile.name
-	markdown_path = path.join(LIB_DIR, 'Markdown.pl')
-	command = [markdown_path, fpath]
-	completed_process = subprocess.run(command, check=True, stdout=subprocess.PIPE)
-	tfile.close()
-	string = completed_process.stdout.decode()
+	string = markdown2.markdown(string, extras=["code-friendly", "underline"])
 	string = string.strip()
 
 	# re-enable \[ and \]
