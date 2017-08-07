@@ -15,6 +15,12 @@ def render_content(string):
 	assert isinstance(string, str)
 	string = re.sub(r'\\', '\\\\', string) # g (global) is default
 
+	# protect \[ and \]
+	SLOSH_BRACKET_OPEN_STRING = r'Slosh-Bracket-Open-ry087qt3briuynpr98yn2p83ynriynr723nyr7ny2o3rn2083ry'
+	SLOSH_BRACKET_CLOSE_STRING = r'Slosh-Bracket-Close-ry087qt3briuynpr98yn2p83ynriynr723nyr7ny2o3rn2083ry'
+	string = re.sub(r'\\\[', SLOSH_BRACKET_OPEN_STRING, string)
+	string = re.sub(r'\\\]', SLOSH_BRACKET_CLOSE_STRING, string)
+
 	# run markdown server-side
 	tfile = tempfile.NamedTemporaryFile(mode='w+', suffix='.txt', prefix='prove-math-')
 	tfile.write(string)
@@ -26,6 +32,10 @@ def render_content(string):
 	tfile.close()
 	string = completed_process.stdout.decode()
 	string = string.strip()
+
+	# re-enable \[ and \]
+	string = re.sub(SLOSH_BRACKET_OPEN_STRING, '\\[', string)
+	string = re.sub(SLOSH_BRACKET_CLOSE_STRING, '\\]', string)
 
 	# enable images
 	string = re.sub(r'img(\d+)', '<img src="image/$1.jpg" />', string)
