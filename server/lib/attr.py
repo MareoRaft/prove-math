@@ -2,7 +2,7 @@ import re
 from copy import deepcopy
 
 from lib.helper import render_content
-from lib.config import ERR
+from lib.config import ERR, DEFAULT_PREAMBLE
 from lib.score import ScoreCard
 from lib.decorate import read_only
 
@@ -144,7 +144,7 @@ class Attr:
 	def __str__(self):
 		return 'Attr{}'.format(self.as_dict())
 
-	def as_printable_html(self, display_large_name=True, display_number_small=True):
+	def as_printable_html(self, display_large_name=True, display_number_small=True, hide_preamble=True):
 		string = ''
 
 		# check for stupid blank stuff
@@ -163,6 +163,15 @@ class Attr:
 		if display_number_small:
 			if self.name == 'number':
 				string = string + '<span class="number"># {}</span>'.format(self.value)
+				return string
+
+		# include the preamble but don't show the word 'preamble'
+		if hide_preamble:
+			if self.name == 'preamble':
+				if self.value == DEFAULT_PREAMBLE:
+					pass # default preamble is basically no preamble, and we don't want the default message to appear here (at least for now)
+				else:
+					string = string + '{}'.format(self.value)
 				return string
 
 		# move onto real stuff

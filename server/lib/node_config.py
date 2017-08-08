@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from lib.helper import remove_outer_dunderscores, dunderscore_count, move_attribute
-from lib.config import ERR
+from lib.config import ERR, DEFAULT_PREAMBLE
 
 # the following setters are used by the attr
 def name_setter(attr, new_name):
@@ -88,7 +88,7 @@ NODE_ATTR_SETTINGS = {
 	'preamble': {
 		'keywords': ['preamble'],
 		'cclass': str,
-		'default': 'Put your $\LaTeX$ macros for the node here.  Remember to wrap them in \$\'s!',
+		'default': DEFAULT_PREAMBLE,
 	},
 	'number': {
 		'keywords': ['number', 'num'],

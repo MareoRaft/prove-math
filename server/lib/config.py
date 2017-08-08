@@ -150,5 +150,5 @@ ERR = {
 "NOT_CAPITALIZED": "Please capitalize the first letter of your first sentence.",
 }
 
-
+DEFAULT_PREAMBLE = 'Put your $\LaTeX$ macros for the node here.  Remember to wrap them in \$\'s!'
 

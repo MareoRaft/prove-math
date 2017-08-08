@@ -157,8 +157,8 @@ class Node(Votable):
 
 	def as_printable_html(self, display_node_type_in_description=True):
 		# keys to display
-		# 'type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'negation', 'proofs', 'importance'
-		keys = ['type', 'name', 'number', 'description', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs']
+		# 'type', 'preamble', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'negation', 'proofs', 'importance'
+		keys = ['type', 'preamble', 'name', 'number', 'description', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs']
 		string = ''
 		string += '$\\begingroup$' # start scope
 		for key in keys:
