@@ -104,7 +104,7 @@ show('#banner')
 let node_blinds = new Blinds({
 	open_blind_default_state: user.prefs.open_node_default_state,
 	window_id: 'node-template-blinds',
-	keys: ['type', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependency_name_and_ids'], // if you change this, you may also need to edit the Node.key_list method.
+	keys: ['type', 'preamble', 'number', 'name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependency_name_and_ids'], // if you change this, you may also need to edit the Node.key_list method.
 	expand_array: true,
 	collapse_array_keys: ['dependency_name_and_ids', 'synonyms', 'plurals'],
 	append_keys: ['name', 'description', 'synonyms', 'plurals', 'notes', 'intuitions', 'examples', 'counterexamples', 'proofs', 'dependency_name_and_ids'], // but remember, expand_arrays always have an append key (this excludes dependencies)
@@ -637,7 +637,7 @@ function save_node(value, key, parent_object) {
 	}
 
 	// update the node (close and reopen node-template) if internal things have changed
-	if( key === 'type' ){
+	if( _.contains(['type', 'preamble'], key) ){
 		node_blinds.close()
 		openNode(node.id)
 	}

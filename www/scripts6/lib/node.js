@@ -168,6 +168,12 @@ class Node {
 	set number(new_in) {
 		this.attrs['number'].value = new_in
 	}
+	get preamble() {
+		return this.attrs['preamble'].value
+	}
+	set preamble(new_in) {
+		this.attrs['preamble'].value = new_in
+	}
 	get intuitions() {
 		return this.attrs['intuitions'].value
 	}
@@ -233,7 +239,7 @@ class Node {
 	key_list(user_friendly=false) {
 		// construct the keys relevant to the node, depending on its type
 		// if node.py is edited, then this needs to be edited to reflect that:
-		let keys = ['type', 'number', 'name', 'description', 'intuitions', 'notes', 'examples', 'counterexamples']
+		let keys = ['type', 'preamble', 'number', 'name', 'description', 'intuitions', 'notes', 'examples', 'counterexamples']
 
 		// add keys specific to certain node types
 		if( this.type === 'axiom' ) pushArray(keys, ['plurals', 'negation'])

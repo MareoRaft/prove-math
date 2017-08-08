@@ -85,6 +85,11 @@ EXERCISE_MAX_IMPORTANCE = 3
 
 
 NODE_ATTR_SETTINGS = {
+	'preamble': {
+		'keywords': ['preamble'],
+		'cclass': str,
+		'default': 'Put your $\LaTeX$ macros for the node here.  Remember to wrap them in \$\'s!',
+	},
 	'number': {
 		'keywords': ['number', 'num'],
 		'cclass': str,
