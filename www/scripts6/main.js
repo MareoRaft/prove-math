@@ -733,6 +733,9 @@ function getClassesFromClassConditions(class_conditions, node) {
 
 function addNode() {
 	let new_node = new Node()
+	// put user preamble into node
+	new_node.preamble = user.prefs.custom_preamble
+	// add to graph and optionally open
 	graph.addNode(new_node)
 	if( user.prefs.open_new_nodes ){
 		let node_id = new_node.id

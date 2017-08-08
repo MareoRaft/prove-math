@@ -9,6 +9,7 @@ let user = {
 		id: null,
 	},
 	prefs: {
+		custom_preamble: 'Put your $\\LaTeX$ macros for the node here. Remember to wrap them in \\$\'s!', // User can populate a custom LaTeX preamble, which automatically appears in the preamble of new nodes they create.  can be any string.
 		new_node_default_type: 'definition', // can be 'definition', 'theorem', 'axiom', or 'exercise'
 		// 'write' state DOESNT FULLY WORK YET
 		open_node_default_state: 'read', // can be 'read' or 'write'

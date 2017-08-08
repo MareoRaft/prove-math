@@ -111,6 +111,11 @@ DEF_USER_PREFS = {
 'sticky_client_nodes': False,
 # :description: User will always receive every node already included in the client graph.  Nodes will not be removed.
 # :type: bool
+
+# moved to user.js
+# 'custom_preamble': '',
+# # :description: User can populate a custom LaTeX preamble, which automatically appears in the preamble of new nodes they create.
+# # :type: str
 }
 
 ERR = {
