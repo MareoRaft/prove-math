@@ -219,6 +219,14 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 		// TEMP
 		// openNode('factorial')
 		// ws.jsend({command: 'get-goal-suggestion'})
+
+		// now start getting updates every 30 seconds
+		function updateNodes() {
+			// alert('asking')
+			ws.jsend({command: 'update-nodes'})
+			// setTimeout(updateNodes, 7000);
+		}
+		setTimeout(updateNodes, 7000);
 	}
 	else if( ball.command === 'remove-edges' ) {
 		graph.removeLinks({
