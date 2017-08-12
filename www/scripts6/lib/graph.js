@@ -65,10 +65,10 @@ function _addNodesHereAndJSNetworkX(nodes) {
 			_removeNodes([node])
 		}
 		else{
-
 			if( node.id in graph.nodes ){
-				console.log('redundant node')
-				//die('THAT node is already in the node hash (add support for this later if it makes sense to allow this sort of thing).')
+				console.log('redundant node. replacing old with new.')
+				graph.nodes[node.id] = node
+				// TODO be smart about what current_node is to prevent ppl from overwriting each other. (see issue #49)
 			}
 			else{
 				graph.nodes[node.id] = node
@@ -102,8 +102,8 @@ function _addLinksHereAndJSNetworkX(links) {
 
 		let source_before = source_key
 		link.source = graph.nodes[source_key]
-		console.log('target key: '+target_key)
-		console.log('taget NODE: '+JSON.stringify(graph.nodes[target_key]))
+		// console.log('target key: '+target_key)
+		// console.log('target NODE: '+JSON.stringify(graph.nodes[target_key]))
 		link.target = graph.nodes[target_key]
 		if( !def(link.source) ){
 			$.event.trigger({
