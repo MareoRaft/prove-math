@@ -18,6 +18,10 @@ def render_content(string):
 	string = re.sub(r'\\\[', SLOSH_BRACKET_OPEN_STRING, string)
 	string = re.sub(r'\\\]', SLOSH_BRACKET_CLOSE_STRING, string)
 
+	# strip garbage '<div>'s added by certain browsers (will not escape user typed '<div>'s which are HTML escaped and therefore purposeless)
+	string = re.sub(r'<div>', '', string)
+	string = re.sub(r'</div>', '', string)
+
 	# run markdown server-side
 	string = re.sub(r'\n', '<br />', string)
 	string = markdown2.markdown(string, extras=["code-friendly", "underline"])
