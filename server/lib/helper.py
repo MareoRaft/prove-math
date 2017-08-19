@@ -19,6 +19,7 @@ def render_content(string):
 	string = re.sub(r'\\\]', SLOSH_BRACKET_CLOSE_STRING, string)
 
 	# run markdown server-side
+	string = re.sub(r'\n', '<br />', string)
 	string = markdown2.markdown(string, extras=["code-friendly", "underline"])
 	string = string.strip()
 

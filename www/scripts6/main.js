@@ -585,18 +585,21 @@ function print_node(node) {
 
 function render_content(string) {
 	if (typeof string !== "string") die('The inputted variable is NOT a string!  It has type ' + typeof string + '!  It looks like: ' + JSON.stringify(string))
+
+	// strip garbage '<div>'s added by certain browsers (will not escape user typed '<div>'s which are HTML escaped and therefore purposeless)
+	string = string.replace(/<div>/g, '')
+	string = string.replace(/<\/div>/g, '')
+
 	// run katex
 	// string = string.replace(/\$[^\$]*\$/g, katexRenderIfPossible)
 	// return string
+
+	// run marked
 	// make all \ into \\ instead, so that they will be \ again when marked is done. This is for MathJax postrender compatability.
 	string = string.replace(/\\/g, '\\\\')
 	string = marked(string)
 
-	// unfortunately, it looks like these strings are encoded...
 	// change <img23> shortcuts to <img src="http://provemath.org/image/NUMBER.jpg"
-	// string = string.replace(/im&amp;g/g, 'HITHER')
-	// string = string.replace(/&lbrack;/g, 'left  ')
-	// string = string.replace(/&#91;/g, 'left  ')
 	string = string.replace(/img(\d+)/g, '<img src="image/$1.jpg" />') // this is maybe NOT a good markup choice, since it is an HTML tag
 	string = string.replace(/\\includegraphics\{(.*?)\}/g, '<img src="image/$1.jpg" />')
 

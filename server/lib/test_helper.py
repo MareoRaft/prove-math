@@ -117,10 +117,13 @@ def test_render_content():
 	content = '''
 \\[this is display math\\]
 $$this is display math$$'''
-	correct_rendered_content = '''<p>\\[this is display math\\]
-$$this is display math$$</p>'''
+	correct_rendered_content = '''<p>\\[this is display math\\]<br />$$this is display math$$</p>'''
 	assert render_content(content) == correct_rendered_content
 
+	content = '''line one
+line two'''
+	correct_rendered_content = '''<p>line one<br />line two</p>'''
+	assert render_content(content) == correct_rendered_content
 
 
 
