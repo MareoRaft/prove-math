@@ -148,9 +148,11 @@ class Attr:
 		string = ''
 
 		# check for stupid blank stuff
-		if self.value == '':
+		def is_blank(val):
+			return val.strip() == ''
+		if isinstance(self.value, str) and is_blank(self.value):
 			return string
-		elif self.value == ['']:
+		if isinstance(self.value, list) and all([is_blank(val) for val in self.value]): # NOT elif
 			return string
 
 		# make the name a big title
