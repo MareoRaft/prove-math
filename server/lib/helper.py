@@ -10,7 +10,7 @@ from lib import markdown2
 def render_content(string):
 	""" see main.js for the original version of this function """
 	assert isinstance(string, str)
-	string = re.sub(r'\\', '\\\\', string) # g (global) is default
+	string = re.sub(r'\\', '\\\\\\\\', string) # g (global) is default
 
 	# protect \[ and \] from markdown
 	SLOSH_BRACKET_OPEN_STRING = r'Slosh-Bracket-Open-ry087qt3briuynpr98yn2p83ynriynr723nyr7ny2o3rn2083ry'
