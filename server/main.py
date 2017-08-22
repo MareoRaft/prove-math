@@ -336,6 +336,15 @@ class SocketHandler (WebSocketHandler):
 		elif ball['command'] == 'request-node':
 			self.request_nodes([ball['node_id']], ball)
 
+		elif ball['command'] == 'update-nodes':
+			nodes_to_send = ball['client_node_ids']
+			subgraph_to_send = our_MG.subgraph(nodes_to_send)
+			dict_graph = subgraph_to_send.as_js_ready_dict()
+			self.jsend({
+				'command': 'load-graph',
+				'new_graph': dict_graph,
+			})
+
 		elif ball['command'] == 'search':
 			search_results = our_mongo.find({'$text':{'$search':ball['search_term']}},{'score':{'$meta':"textScore"}})
 			self.jsend({
