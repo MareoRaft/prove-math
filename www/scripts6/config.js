@@ -30,10 +30,7 @@ require.config({
 			"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js",
 			"https://cdn.jsdelivr.net/marked/0.3.5/marked.min"
 		],
-		mousetrap: [
-			"mousetrap.min",
-			// "https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.0/mousetrap.min",
-		],
+		mousetrap: "mousetrap.min",
 		chosen: [
 			"chosen-min",
 			"https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min",

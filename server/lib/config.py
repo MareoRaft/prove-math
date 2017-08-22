@@ -6,7 +6,7 @@ sys.path.insert(0, BASE_DIR)
 SERVER_DIR = path.join(BASE_DIR, 'server')
 LIB_DIR = path.join(SERVER_DIR, 'lib')
 
-javascript_kickoff_file = 'config'
+javascript_kickoff_file = 'config-optimized.min'
 
 # the prefix of new node ids created on the browser, before they get promoted to real/permanent ids
 LOCAL_ID_PREFIX = 'Local-Node-ID-'
