@@ -7,6 +7,5 @@ For Programmers
 	install
 	mongo
 	auth
-	database
 	CHANGELOG
 
