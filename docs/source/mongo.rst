@@ -1,4 +1,4 @@
-MongoDB Setup
+MongoDB
 =====================
 
 
@@ -61,5 +61,45 @@ If you messed up or need to delete an index, type::
 where `name` is the name of the index that you see in the output of ``db.nodes.getIndexes()``.
 
 You can also check out `this resource <https://dzone.com/articles/mongodb-full-text-search>`_ for more help.
+
+
+
+Running MongoDB
+------------------
+First, the mongo daemon (`mongod`) needs to be running.  If things were configured nicely (which they are NOT), then::
+
+	sudo service mongod start
+
+would work, but you should do it manually with::
+
+	sudo /usr/local/bin/mongod --logpath /var/db/mongodb/mongod.log --logappend --config /usr/local/etc/mongodb.conf --dbpath /var/db/mongodb
+
+Now that the mongo daemon is running, you can access the mongo shell via::
+
+	mongo
+
+
+
+Backing up provemath db on MongoDB
+-----------------------------------
+Make sure you have the correct bind IP configured in ``build/mongod.conf`` (If you're not sure, then it's probably 127.0.0.1).  You can read more about MongoDB config options in the `mongo docs config <https://docs.mongodb.com/manual/reference/configuration-options/#configuration-file>`_.
+
+We already have a build process called `dump` in ``gulpfile.js`` that does the backup for you.  Just run::
+
+    gulp dump
+
+and the provemath db in MongDB will be backed up to the folder ``server/data/mongo-dumps/server-blackberry.2018-03-03T15:55:07+00:00`` with the appropriate date and time at the end.
+
+You can create a copy of this backup to a safe location::
+
+    scp -r freebsd@provemath.org:prove-math/server/data/mongo-dumps/server-blackberry.2018-03-03T15:55:07+00:00 .
+
+
+
+Restoring provemath db to MongoDB
+-----------------------------------
+To restore, use the `mongorestore` command (more at `mongo docs mongorestore <https://docs.mongodb.com/manual/reference/program/mongorestore/>`_)::
+
+    mongorestore prove-math/server/data/mongo-dumps/server-blackberry.2018-03-03T15:55:07+00:00
 
 

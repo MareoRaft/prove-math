@@ -4,7 +4,10 @@
 local-config.ini
 *.log
 server/dictionary_maker.py
+# text files we don't want to be public
 text-files/things-to-go-over-with-contributors.txt
+text-files/org-v-com.txt
+
 server/data/*.json
 .sass-cache/
 .cache/

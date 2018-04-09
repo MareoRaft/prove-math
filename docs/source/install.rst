@@ -154,18 +154,11 @@ Install gulp::
 
 Gulp dependencies
 ~~~~~~~~~~~~~~~~~~~~~~
-Remember to install ALL of the following: `babel-preset-es2015`, `gulp-babel`, `gulp-for-compass`, `gulp-autoprefixer`, and `child_process`::
+The following command installs all gulp dependencies.  Although babel may run without `babel-preset-es2015`, it won't work properly::
 
-	npm install dependency-name
-	
+	npm install babel-preset-es2015 gulp-babel gulp-for-compass gulp-autoprefixer child_process moment properties-reader
 
-
-
-
-
-
-
-
+You can also take a look at the ``require()`` calls in ``gulpfile.js`` to see which dependencies are needed.
 
 ..	_install-babel:
 

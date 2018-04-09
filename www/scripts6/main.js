@@ -48,6 +48,7 @@ let circleClassConditions = {
 	'theorem-circle': node => node.type === 'theorem' || node.type === 'example',
 	'exercise-circle': node => node.type === 'exercise',
 }
+let repeatedly_updating_nodes = false
 
 ////////////////////// INITIALIZATION //////////////////////
 let LOCAL_ID_PREFIX = $('body').attr('data-local-id-prefix')
@@ -181,6 +182,8 @@ ws.onopen = function() {
 	// promptStartingNodes()
 	// addNode()
 	// ws.jsend({ command: 'search', search_term: 'dual' })
+
+	repeatedlyUpdateNodes()
 }
 ws.onmessage = function(event) { // i don't think this is hoisted since its a variable definition. i want this below graphAnimation.init() to make sure that's initialized first
 	let ball = JSON.parse(event.data)
@@ -300,6 +303,20 @@ ws.onmessage = function(event) { // i don't think this is hoisted since its a va
 	}
 	else log('Unrecognized command '+ball.command+'.')
 }
+
+function repeatedlyUpdateNodes() {
+	// update the nodes every "seconds" seconds
+	let seconds = 30
+	if( !repeatedly_updating_nodes ){ // to ensure idempotency
+		setInterval(updateNodes, seconds * 1000)
+		repeatedly_updating_nodes = true
+	}
+}
+function updateNodes() {
+	// needs user, graph, and ws to be defined
+	ws.jsend({command: 'update-nodes'})
+}
+
 
 $(document).on('jsend', function(Event) {
 	ws.jsend(Event.message)
