@@ -1,6 +1,8 @@
 # provemath.org
 It's an add venture!  The next generation of math education ;-)
 
+http://provemath.org
+
 I think this will be very engaging for people interested in programming or math, since it poses a number of challenges.  Contributors *can* put this on their resume.  Students can do this as an independent study (with approval from a faculty member).
 
 ![](http://learnnation.org/pm-pic.png)
