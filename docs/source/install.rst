@@ -66,6 +66,15 @@ There is an alternative method for installing rubygems_.
 
 SASS
 -----------
+IMPORTANT NOTE:
+
+Ruby Sass is deprecated and will be unmaintained as of 26 March 2019.
+
+* If you use Sass as a command-line tool, we recommend using Dart Sass, the new
+  primary implementation: https://sass-lang.com/install
+  
+
+
 Note: You must have :ref:`ruby gems installed <install-gem>` before you can install sass.
 
 Sass is a ruby gem, so update your ruby gem system::
