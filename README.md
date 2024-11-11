@@ -21,7 +21,7 @@ There are interesting results of this setup. One example is that a person is lea
 
 Another example is that a user can select a high level theorem and receive the ancestor tree, that is, the concepts they must know to build up to the high level theorem. This feature would be useful for a professor who wishes to design a course for his students. He can even share the course online, etc.
 
-More in-depth writeup: ![matthewlancellotti.com/provemath](https://matthewlancellotti.com/provemath)
+More in-depth writeup: [matthewlancellotti.com/provemath](https://matthewlancellotti.com/provemath)
 
 Programming to make this work
 ------------------------------------
@@ -29,7 +29,7 @@ Programming to make this work
   * We have a virtual server on DigitalOcean.
   * Python on the server-side grabs info from the DB, processes it with NetworkX library, and serves it with Tornado Web Server.
   * Javascript on the client side w/ jQuery, JSNetworkX, bundled together with RequireJS.  We are using LaTeX for math typesetting and MathJax to render it.
-  * We have a GitHub at https://github.com/ProveMath/prove-math
+  * We have a GitHub at [github.com/MareoRaft/prove-math](https://github.com/MareoRaft/prove-math)
 
 Credits
 ------------
