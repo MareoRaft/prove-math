@@ -37,6 +37,7 @@ Credits
   - Theodore Siu - Python contributor
   - Greg Mattson - Python NetworkX contributor
   - Tim Naumovitz - The combinatorics material is based on his lectures
+  - Fred Chapman - Contributed abstract algebra content
 
 Copyright 
 --------------
