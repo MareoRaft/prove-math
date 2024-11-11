@@ -1,8 +1,6 @@
 # provemath.org
 It's an add venture!  The next generation of math education ;-)
 
-http://provemath.org
-
 I think this will be very engaging for people interested in programming or math, since it poses a number of challenges.  Contributors *can* put this on their resume.  Students can do this as an independent study (with approval from a faculty member).
 
 ![](http://learnnation.org/pm-pic.png)
@@ -23,6 +21,7 @@ There are interesting results of this setup. One example is that a person is lea
 
 Another example is that a user can select a high level theorem and receive the ancestor tree, that is, the concepts they must know to build up to the high level theorem. This feature would be useful for a professor who wishes to design a course for his students. He can even share the course online, etc.
 
+More in-depth writeup: ![matthewlancellotti.com/provemath](https://matthewlancellotti.com/provemath)
 
 Programming to make this work
 ------------------------------------
@@ -34,7 +33,7 @@ Programming to make this work
 
 Credits
 ------------
-  - Matthew Lancellotti - contributor
+  - Matthew Lancellotti - founder
   - Theodore Siu - Python contributor
   - Greg Mattson - Python NetworkX contributor
   - Tim Naumovitz - The combinatorics material is based on his lectures
